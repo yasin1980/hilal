@@ -13951,14 +13951,45 @@ main.page,
 </style>
 
 
-<style id="hilal-v1431-qibla-stable">
-#calendarPage .q1431-note{
-  margin-top:10px;padding:10px 12px;border-radius:12px;
-  border:1px solid rgba(239,199,94,.20);
-  background:rgba(0,0,0,.12);
-  font-size:11px;line-height:1.45;color:#c8d6d0;text-align:center
+<style id="hilal-v1431-qibla-pro-style">
+#calendarPage .hilal-qibla-v1428{
+  width:calc(100% - 20px)!important;max-width:660px!important;margin:14px auto 22px!important;padding:18px 14px 16px!important;
+  border:1px solid rgba(232,190,82,.55)!important;border-radius:26px!important;
+  background:linear-gradient(155deg,#052f25 0%,#074b38 56%,#063527 100%)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.04)!important;color:#f8f1dd!important;
 }
-#calendarPage .q1431-note strong{color:#f0cd6e}
+#calendarPage .q1428-head{margin-bottom:14px!important}
+#calendarPage .q1428-title{font-size:19px!important;letter-spacing:.055em!important;color:#f7d777!important;text-shadow:0 1px 12px rgba(240,197,83,.15)!important}
+#calendarPage .q1428-status{max-width:48%;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08);font-weight:800;color:#d7e5df!important}
+#calendarPage .q1431-subtitle{text-align:center;font-size:11px;color:#a9c5ba;margin:-4px 0 10px;letter-spacing:.02em}
+#calendarPage .q1428-compass{
+ position:relative!important;width:min(82vw,334px)!important;aspect-ratio:1!important;margin:4px auto 16px!important;border-radius:50%!important;
+ border:0!important;overflow:visible!important;
+ background:
+ radial-gradient(circle at 50% 50%,rgba(24,123,87,.28) 0 15%,rgba(4,45,34,.96) 16% 60%,#021d17 61% 100%)!important;
+ box-shadow:0 16px 36px rgba(0,0,0,.34),inset 0 0 0 2px #d7aa45,inset 0 0 0 8px #092f27,inset 0 0 0 10px rgba(247,211,111,.68),inset 0 0 42px rgba(0,0,0,.58)!important;
+}
+#calendarPage .q1428-compass::before{content:"";position:absolute;inset:19px;border-radius:50%;background:repeating-conic-gradient(from -1deg,rgba(239,203,105,.86) 0 1deg,transparent 1deg 5deg);-webkit-mask:radial-gradient(circle,transparent 0 72%,#000 72.4% 100%);mask:radial-gradient(circle,transparent 0 72%,#000 72.4% 100%);opacity:.72;pointer-events:none}
+#calendarPage .q1428-compass::after{content:"";position:absolute;inset:34px;border-radius:50%;border:1px solid rgba(247,214,119,.18);box-shadow:inset 0 0 24px rgba(0,0,0,.36);pointer-events:none}
+#calendarPage .q1428-ring{inset:12px!important;border:1px solid rgba(255,223,133,.25)!important;box-shadow:0 0 0 1px rgba(0,0,0,.32)!important}
+#calendarPage .q1431-degree{position:absolute;z-index:5;font-size:8px;font-weight:800;color:rgba(231,218,182,.72);letter-spacing:.02em}
+#calendarPage .q1431-d0{top:31px;left:50%;transform:translateX(-50%)}#calendarPage .q1431-d90{right:29px;top:50%;transform:translateY(-50%)}#calendarPage .q1431-d180{bottom:31px;left:50%;transform:translateX(-50%)}#calendarPage .q1431-d270{left:28px;top:50%;transform:translateY(-50%)}
+#calendarPage .q1428-cardinal{z-index:7!important;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;font-size:18px!important;color:#fff0ba!important;background:rgba(3,37,29,.78);border:1px solid rgba(239,199,94,.28);text-shadow:0 1px 4px #000}
+#calendarPage .q1428-n{top:42px!important;color:#ffd96b!important}.q1428-s{bottom:42px!important}.q1428-w{left:43px!important}.q1428-e{right:43px!important}
+#calendarPage .q1431-kaaba-mark{position:absolute;left:50%;top:17%;transform:translate(-50%,-50%);z-index:10;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,#16130c,#050504);border:2px solid #d8ad4d;box-shadow:0 8px 18px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,225,139,.12);font-size:25px}
+#calendarPage .q1431-kaaba-mark::after{content:"KIBLE";position:absolute;top:55px;font-size:8px;font-weight:950;letter-spacing:.18em;color:#edcf76;white-space:nowrap}
+#calendarPage .q1428-kaaba{display:none!important}
+#calendarPage .q1428-needle-wrap{z-index:8!important;transition:transform .16s cubic-bezier(.2,.7,.2,1)!important}
+#calendarPage .q1428-needle{left:50%!important;top:18.5%!important;width:18px!important;height:105px!important;border:0!important;border-radius:14px 14px 8px 8px!important;transform:translateX(-50%)!important;transform-origin:50% 100%!important;background:linear-gradient(180deg,#fff3ba 0%,#f2c955 48%,#9b6d18 100%)!important;clip-path:polygon(50% 0,100% 28%,68% 100%,32% 100%,0 28%)!important;filter:drop-shadow(0 5px 4px rgba(0,0,0,.52))!important}
+#calendarPage .q1431-tail{position:absolute;left:50%;top:50%;width:10px;height:76px;transform:translateX(-50%);transform-origin:50% 0;background:linear-gradient(#8d6720,#3c2b0c);clip-path:polygon(20% 0,80% 0,58% 100%,42% 100%);opacity:.95}
+#calendarPage .q1428-center{width:32px!important;height:32px!important;background:radial-gradient(circle,#fff2b6 0 18%,#ddb24b 19% 48%,#604615 49% 100%)!important;border:2px solid #f2cf71!important;box-shadow:0 3px 10px rgba(0,0,0,.5),0 0 0 5px rgba(4,43,33,.85)!important;z-index:12!important}
+#calendarPage .q1431-center-readout{position:absolute;z-index:13;left:50%;top:61%;transform:translateX(-50%);min-width:122px;text-align:center;padding:7px 10px;border-radius:14px;background:rgba(1,22,17,.74);border:1px solid rgba(239,199,94,.22);backdrop-filter:blur(4px);box-shadow:0 6px 20px rgba(0,0,0,.22)}
+#calendarPage .q1431-center-readout strong{display:block;font-size:22px;color:#f4d06d;line-height:1.05}#calendarPage .q1431-center-readout span{display:block;font-size:9px;color:#b7d0c5;margin-top:3px;letter-spacing:.07em}
+#calendarPage .q1431-alignment{display:flex;justify-content:center;align-items:center;gap:7px;margin:-2px auto 13px;font-size:11px;font-weight:850;color:#bdd2ca}.q1431-dot{width:9px;height:9px;border-radius:50%;background:#8f9b96;box-shadow:0 0 0 4px rgba(255,255,255,.04)}.q1431-alignment.on{color:#dff8e9}.q1431-alignment.on .q1431-dot{background:#55d78a;box-shadow:0 0 0 4px rgba(85,215,138,.12),0 0 12px rgba(85,215,138,.5)}
+#calendarPage .q1428-data{gap:9px!important}.q1428-box{padding:11px!important;border-radius:15px!important;background:linear-gradient(145deg,rgba(0,0,0,.14),rgba(255,255,255,.025))!important}.q1428-box span{font-size:9px!important;text-transform:uppercase;letter-spacing:.08em}.q1428-box strong{font-size:15px!important}
+#calendarPage .q1428-actions button{min-height:47px!important;border-radius:15px!important;font-size:12px!important;box-shadow:0 7px 18px rgba(0,0,0,.14)}
+#calendarPage .q1428-help{font-size:10.5px!important;color:#a9c3b8!important;padding:0 5px}
+@media(max-width:380px){#calendarPage .q1428-compass{width:min(86vw,310px)!important}.q1428-cardinal{width:29px!important;height:29px!important}.q1431-center-readout{top:62%!important}}
 </style>
 
 </head>
@@ -28887,6 +28918,20 @@ function render(){
  if(b&&qiblaBearing!=null)b.textContent=Math.round(qiblaBearing)+"° · "+dir(qiblaBearing);
  if(h)h.textContent=heading==null?"Sensör bekleniyor":Math.round(heading)+"°";
  if(n&&qiblaBearing!=null)n.style.transform="rotate("+norm(qiblaBearing-(heading||0))+"deg)";
+ const deltaEl=document.getElementById("q1431Delta");
+ const align=document.getElementById("q1431Alignment");
+ const alignText=document.getElementById("q1431AlignmentText");
+ if(qiblaBearing!=null && heading!=null){
+   let d=norm(qiblaBearing-heading); if(d>180)d-=360;
+   if(deltaEl)deltaEl.textContent=Math.abs(Math.round(d))+"°";
+   const ok=Math.abs(d)<=5;
+   if(align)align.classList.toggle("on",ok);
+   if(alignText)alignText.textContent=ok?"Kıble yönündesiniz":(d>0?"Sağa "+Math.abs(Math.round(d))+"° dönün":"Sola "+Math.abs(Math.round(d))+"° dönün");
+ }else{
+   if(deltaEl)deltaEl.textContent="—°";
+   if(align)align.classList.remove("on");
+   if(alignText)alignText.textContent=qiblaBearing!=null?"Pusula sensörü bekleniyor":"Kıble yönü bekleniyor";
+ }
  if(qiblaBearing!=null && heading!=null)statusText("Canlı GPS + pusula aktif");
  else if(qiblaBearing!=null)statusText("Kıble hesaplandı · pusula sensörünü etkinleştirin");
 }
@@ -28899,7 +28944,11 @@ function screenAngle(){
 }
 function setHeading(v){
  if(!Number.isFinite(v))return;
- heading=norm(v + screenAngle());
+ const next=norm(v + screenAngle());
+ if(heading==null){heading=next;}else{
+   let diff=((next-heading+540)%360)-180;
+   heading=norm(heading+diff*0.22);
+ }
  lastSensorAt=Date.now();
  render();
 }
@@ -28953,9 +29002,9 @@ async function enableCompass(){
      if(Date.now()-lastSensorAt<2500){
        statusText("Canlı GPS + pusula aktif");
      }else{
-       statusText("Telefon yön sensöründen veri alınamadı");
+       statusText("Sensör verisi alınamadı · pusulaya tekrar dokunun");
        const h=document.getElementById("q1428Heading");
-       if(h)h.textContent="Sensör erişimi yok";
+       if(h)h.textContent="Veri yok";
      }
    },2600);
  }catch(e){
@@ -28989,17 +29038,23 @@ function install(){
 
  const q=document.createElement("section");
  q.id="hilalQiblaV1428"; q.className="hilal-qibla-v1428";
- q.innerHTML=`<div class="q1428-head"><div class="q1428-title">🕋 KIBLE PUSULASI</div><div class="q1428-status" id="q1428Status">Hazır</div></div>
- <div class="q1428-compass" aria-label="Kıble pusulası"><div class="q1428-ring"></div><span class="q1428-cardinal q1428-n">K</span><span class="q1428-cardinal q1428-e">D</span><span class="q1428-cardinal q1428-s">G</span><span class="q1428-cardinal q1428-w">B</span><span class="q1428-kaaba">🕋</span><div class="q1428-needle-wrap" id="q1428Needle"><div class="q1428-needle"></div></div><div class="q1428-center"></div></div>
- <div class="q1428-data"><div class="q1428-box"><span>Kıble yönü</span><strong id="q1428Bearing">—</strong></div><div class="q1428-box"><span>Telefon yönü</span><strong id="q1428Heading">Sensör bekleniyor</strong></div><div class="q1428-box"><span>GPS konumu</span><strong id="q1428Location">—</strong></div><div class="q1428-box"><span>GPS doğruluğu</span><strong id="q1428Accuracy">—</strong></div></div>
- <div class="q1428-actions"><button class="btn primary" id="q1428Start">🧭 GPS + Pusulayı Başlat</button></div>
- <div class="q1428-help">İlk kullanımda konum ve hareket/yön sensörü izni verin. Pusula sapıyorsa telefonu havada birkaç kez “8” çizerek kalibre edin. Metal veya mıknatıslı kılıflar yönü etkileyebilir.</div>`;
+ q.innerHTML=`<div class="q1428-head"><div class="q1428-title">🕋 KIBLE PUSULASI</div><div class="q1428-status" id="q1428Status">Pusulaya dokunun</div></div>
+ <div class="q1428-compass" id="q1428CompassTap" role="button" tabindex="0" aria-label="Kıble pusulasını başlat">
+   <div class="q1428-ring"></div>
+   <span class="q1431-degree q1431-d0">0°</span><span class="q1431-degree q1431-d90">90°</span><span class="q1431-degree q1431-d180">180°</span><span class="q1431-degree q1431-d270">270°</span>
+   <span class="q1428-cardinal q1428-n">K</span><span class="q1428-cardinal q1428-e">D</span><span class="q1428-cardinal q1428-s">G</span><span class="q1428-cardinal q1428-w">B</span>
+   <div class="q1431-kaaba-mark">🕋</div>
+   <div class="q1428-needle-wrap" id="q1428Needle"><div class="q1428-needle"></div><div class="q1431-tail"></div></div>
+   <div class="q1428-center"></div>
+   <div class="q1431-center-readout"><strong id="q1431Delta">—°</strong><span>KIBLE</span></div>
+ </div>
+ <div class="q1431-alignment" id="q1431Alignment"><span class="q1431-dot"></span><span id="q1431AlignmentText">Pusulaya dokunarak başlatın</span></div>`;
  page.appendChild(q);
 
- document.getElementById("q1428Start").addEventListener("click",async()=>{
-   locate();
-   await enableCompass();
- });
+ const startCompass=async()=>{ locate(); await enableCompass(); };
+ const tap=document.getElementById("q1428CompassTap");
+ tap.addEventListener("click",startCompass);
+ tap.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();startCompass();}});
 }
 document.addEventListener("DOMContentLoaded",()=>setTimeout(install,250));
 document.addEventListener("click",()=>setTimeout(install,50),true);
@@ -29007,6 +29062,15 @@ document.addEventListener("click",()=>setTimeout(install,50),true);
 </script>
 
 
+
+<style id="hilal-qibla-simple-final">
+#calendarPage .q1431-subtitle,#calendarPage .q1428-data,#calendarPage .q1428-actions,#calendarPage .q1428-help{display:none!important}
+#q1430Overlay{display:none!important}
+#calendarPage .hilal-qibla-v1428{padding-bottom:14px!important}
+#calendarPage .q1428-compass{cursor:pointer;touch-action:manipulation;margin-bottom:15px!important}
+#calendarPage .q1428-compass:active{transform:scale(.992)}
+#calendarPage .q1431-center-readout span{letter-spacing:.16em!important}
+</style>
 <script id="hilal-v1430-qibla-permission-calibration">
 (function(){
 "use strict";
@@ -29068,25 +29132,8 @@ function addButton(){
  b.addEventListener("click",()=>window.q1430ShowCalibration());
  actions.appendChild(b);
 }
-document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{ensureOverlay();},350));
-
-})();
-</script>
-
-
-<script id="hilal-v1431-qibla-stable">
-(function(){
-"use strict";
-function decorate(){
- const q=document.getElementById("hilalQiblaV1428");
- if(!q||document.getElementById("q1431Note"))return;
- const note=document.createElement("div");
- note.id="q1431Note"; note.className="q1431-note";
- note.innerHTML="<strong>Not:</strong> GPS kıble açısını hesaplar. Telefonun ekrana göre canlı dönmesi için cihazın yön/pusula sensörünün tarayıcı veya Android WebView tarafından erişilebilir olması gerekir.";
- q.appendChild(note);
-}
-document.addEventListener("DOMContentLoaded",()=>setTimeout(decorate,400));
-document.addEventListener("click",()=>setTimeout(decorate,80),true);
+document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{ensureOverlay();addButton()},350));
+document.addEventListener("click",()=>setTimeout(addButton,60),true);
 })();
 </script>
 
