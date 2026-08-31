@@ -1,0 +1,22 @@
+HILAL - GITHUB UZERINDEN OTOMATIK APK
+====================================
+
+Bu projede .github/workflows/android-apk.yml dosyasi hazirdir.
+
+YAPACAGINIZ:
+1. GitHub'da yeni veya mevcut Hilal repository'sini acin.
+2. Bu ZIP'i telefonda/bilgisayarda klasore cikartin.
+3. HILAL_ANDROID_TELEFON_TEST klasorunun ICINDEKI tum dosya ve klasorleri repository'nin ana dizinine yukleyin.
+   Onemli: .github klasoru da yuklenmelidir.
+4. Commit changes / Degisiklikleri kaydet secenegine basin.
+5. GitHub'da ust menuden Actions'a girin.
+6. "Hilal Android APK" islemi otomatik baslar. Baslamazsa workflow'u acip "Run workflow" deyin.
+7. Islem yesil tik olunca ilgili calismayi acin.
+8. Sayfanin altindaki Artifacts bolumunden "HILAL-ANDROID-APK" dosyasini indirin.
+9. ZIP artifact'i acin; icinde HILAL-ANDROID-TEST.apk bulunur.
+10. APK'yi Android telefona kurun. Gerekirse "Bilinmeyen uygulamalari yukleme" iznini verin.
+
+NOTLAR:
+- Bu APK debug imzali test APK'sidir; Play Store icin degildir.
+- Baska Android telefona WhatsApp, Telegram, e-posta veya Quick Share ile gonderebilirsiniz.
+- Iki telefonda ayni Supabase projesine baglaniliyorsa ortak veriler/gercek zamanli islemler test edilebilir.
