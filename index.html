@@ -13961,31 +13961,6 @@ main.page,
 #calendarPage .q1431-note strong{color:#f0cd6e}
 </style>
 
-
-<style id="hilal-v1432-qibla-pro-visual">
-#calendarPage .hilal-qibla-v1428{padding:18px!important;border-radius:24px!important;border:1px solid rgba(239,199,94,.48)!important;background:radial-gradient(circle at 50% 42%,rgba(11,99,70,.22),transparent 42%),linear-gradient(145deg,#052f25,#064634 56%,#03261e)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 16px 38px rgba(0,0,0,.24)!important}
-#calendarPage .q1428-head{display:block!important;text-align:center!important;margin-bottom:14px!important}
-#calendarPage .q1428-title{font-family:Georgia,serif!important;font-size:clamp(21px,5.5vw,28px)!important;letter-spacing:.055em!important;color:#f1c55c!important;text-shadow:0 2px 3px rgba(0,0,0,.55)!important}
-#calendarPage .q1428-status{margin-top:4px!important;text-align:center!important;color:#d9e5df!important;font-size:11px!important}
-#calendarPage .q1428-compass{width:min(82vw,335px)!important;border:5px solid #c99a32!important;box-shadow:0 0 0 3px rgba(244,207,105,.18),inset 0 0 0 6px #3d2c09,inset 0 0 0 10px rgba(232,183,71,.55),inset 0 0 34px rgba(0,0,0,.68),0 10px 30px rgba(0,0,0,.30)!important;background:radial-gradient(circle at center,rgba(5,78,56,.20) 0 25%,rgba(1,35,27,.95) 26% 100%)!important}
-#calendarPage .q1428-compass:before,#calendarPage .q1428-compass:after{content:"";position:absolute;inset:17%;border-radius:50%;border:1px solid rgba(219,174,65,.22);pointer-events:none}
-#calendarPage .q1428-compass:after{inset:29%;border-color:rgba(14,130,88,.28)}
-#calendarPage .q1428-ring{inset:15px!important;border:1px dashed rgba(242,203,102,.48)!important}
-#calendarPage .q1428-cardinal{font-family:Georgia,serif!important;font-size:22px!important;color:#f5deb0!important;text-shadow:0 2px 2px #000!important;z-index:6}
-#calendarPage .q1428-kaaba{top:43px!important;font-size:28px!important;z-index:7!important}
-#calendarPage .q1428-needle{top:18%!important;border-left-width:10px!important;border-right-width:10px!important;border-bottom:126px solid #e3b84e!important;filter:drop-shadow(0 4px 4px rgba(0,0,0,.58))!important}
-#calendarPage .q1428-center{width:27px!important;height:27px!important;background:radial-gradient(circle,#0d6f4e 0 30%,#e7bd55 31% 70%,#6f4f14 71%)!important;border:3px solid #bc8c2c!important;box-shadow:0 2px 6px rgba(0,0,0,.55)!important}
-#calendarPage .q1428-data{grid-template-columns:1fr 1fr!important;gap:9px!important;margin-top:13px!important}
-#calendarPage .q1428-box{padding:11px!important;border-radius:14px!important;border:1px solid rgba(239,199,94,.27)!important;background:linear-gradient(145deg,rgba(3,44,33,.78),rgba(5,78,56,.38))!important}
-#calendarPage .q1428-box span{color:#b9cbc3!important;font-size:10px!important;letter-spacing:.02em!important}
-#calendarPage .q1428-box strong{color:#f2cd6a!important;font-size:17px!important}
-#calendarPage .q1428-actions button{border-radius:14px!important;min-height:46px!important;font-size:12px!important}
-#calendarPage .q1431-note{border-radius:14px!important;background:rgba(0,0,0,.14)!important;border-color:rgba(239,199,94,.20)!important}
-#calendarPage .q1432-kaaba-label{display:flex;align-items:center;justify-content:center;gap:8px;margin:3px auto 10px;color:#e8d9af;font-size:12px}
-#calendarPage .q1432-kaaba-label b{color:#f1c55c}
-@media(max-width:380px){#calendarPage .q1428-compass{width:min(84vw,300px)!important}#calendarPage .q1428-data{grid-template-columns:1fr!important}}
-</style>
-
 </head>
 <body>
 <div class="app">
@@ -29112,26 +29087,6 @@ function decorate(){
 }
 document.addEventListener("DOMContentLoaded",()=>setTimeout(decorate,400));
 document.addEventListener("click",()=>setTimeout(decorate,80),true);
-})();
-</script>
-
-
-<script id="hilal-v1432-qibla-pro-visual">
-(function(){
-"use strict";
-function decorateV1432(){
- const q=document.getElementById("hilalQiblaV1428");
- if(!q||document.getElementById("q1432Label"))return;
- const head=q.querySelector(".q1428-head");
- if(head){
-   const x=document.createElement("div");
-   x.id="q1432Label";x.className="q1432-kaaba-label";
-   x.innerHTML="<span>✦</span><span><b>Kâbe’ye yönünüzü bulun</b></span><span>✦</span>";
-   head.appendChild(x);
- }
-}
-document.addEventListener("DOMContentLoaded",()=>setTimeout(decorateV1432,420));
-document.addEventListener("click",()=>setTimeout(decorateV1432,80),true);
 })();
 </script>
 
