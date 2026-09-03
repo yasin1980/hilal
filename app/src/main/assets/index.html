@@ -3401,6 +3401,32 @@ body.teacher-mode .teacher-publication-fab{display:block}
   border:0;border-radius:13px;padding:11px;background:var(--green);color:#fff;font-weight:900
 }
 .virt-file-note{font-size:10px;color:var(--muted);line-height:1.4}
+.virt-arabic-input{direction:rtl;text-align:right;font-family:"Noto Naskh Arabic","Amiri","Tahoma",serif;font-size:18px!important;line-height:1.8}
+.virt-card-arabic{direction:rtl;text-align:right;font-family:"Noto Naskh Arabic","Amiri","Tahoma",serif;font-size:16px;line-height:1.65;margin-top:6px;color:var(--text);white-space:normal;overflow-wrap:anywhere}
+.virt-reader-arabic{direction:rtl;text-align:right;font-family:"Noto Naskh Arabic","Amiri","Tahoma",serif;font-size:24px;line-height:2;white-space:pre-wrap;word-break:break-word;margin-bottom:14px}
+.virt-schedule-box{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.virt-day-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.virt-day-grid label{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:800}
+.virt-day-grid input{width:auto!important}
+.virt-hijri-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.virt-prayer-grid{display:grid;grid-template-columns:1fr;gap:7px}
+.virt-prayer-setting-row{display:grid;grid-template-columns:minmax(82px,1fr) minmax(72px,.8fr) minmax(78px,.9fr);align-items:center;gap:6px;padding:7px;border:1px solid var(--line);border-radius:11px;background:var(--card);opacity:.62}
+.virt-prayer-setting-row.active{opacity:1;border-color:var(--gold)}
+.virt-prayer-setting-row label{display:flex;align-items:center;gap:5px;min-height:34px;font-size:11px;font-weight:850}
+.virt-prayer-setting-row input{width:auto!important;margin:0}
+.virt-prayer-setting-row select{padding:8px 5px!important;font-size:10px!important}
+.virt-time-wheel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.virt-time-wheel-col{position:relative;display:grid;gap:5px;text-align:center}
+.virt-time-wheel-col b{font-size:10px;color:var(--muted);letter-spacing:.08em}
+.virt-time-wheel-col::after{content:"";position:absolute;z-index:3;left:7px;right:7px;top:56px;height:40px;border-top:1px solid rgba(127,127,127,.30);border-bottom:1px solid rgba(127,127,127,.30);background:transparent;pointer-events:none}
+.virt-time-wheel-viewport{position:relative;height:122px;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%)}
+.virt-time-wheel-viewport::-webkit-scrollbar{display:none}
+.virt-time-wheel-list{padding:41px 0}
+.virt-time-wheel-item{height:40px;display:grid;place-items:center;scroll-snap-align:center;color:var(--muted);font-size:18px;font-weight:550;line-height:40px;transform:scale(.90);opacity:.58;transition:font-size .16s ease,transform .16s ease,opacity .16s ease,color .16s ease;font-variant-numeric:tabular-nums;user-select:none}
+.virt-time-wheel-item.selected{color:var(--text);font-size:32px;font-weight:950;transform:scale(1);opacity:1;text-shadow:0 .5px 0 currentColor}
+.virt-sound-picker-row{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:8px;align-items:center}
+.virt-sound-preview{width:48px;height:44px;border:1px solid rgba(191,151,55,.55);border-radius:12px;background:rgba(191,151,55,.10);color:var(--gold);font-size:21px;display:grid;place-items:center}
+.virt-sound-preview.playing{background:var(--gold);color:#fff;box-shadow:0 0 0 3px rgba(191,151,55,.16)}
 
 
 /* ===== VİRTLERİM — NAVİGASYON KARTLARIYLA AYNI GÖRSEL DİL ===== */
@@ -26272,6 +26298,7 @@ function renderVirtList(){
 
       <div class="virt-summary">
         <div class="virt-title">${escapeHtml(v.title||"İsimsiz Vird")}</div>
+        ${v.arabic?`<div class="virt-card-arabic" lang="ar" dir="rtl">${escapeHtml(v.arabic)}</div>`:""}
         ${v.note?`<div class="virt-meta">${escapeHtml(v.note)}</div>`:""}
         <div class="virt-reminder-pill">${virtReminderText(v)}</div>
       </div>
@@ -26286,6 +26313,9 @@ function renderVirtList(){
 
       <div class="virt-remove-row">
         <button type="button"
+          class="virt-edit-btn"
+          onclick="event.stopPropagation();openVirtEditor('${v.id}')">✏️ Düzenle</button>
+        <button type="button"
           class="virt-remove-btn"
           onclick="event.stopPropagation();deleteVirt('${v.id}')">🗑️ Virdi Kaldır</button>
       </div>
@@ -26296,11 +26326,27 @@ function escapeHtml(x){
   return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 }
 function virtReminderText(v){
+  const schedule=virtScheduleText(v);
   if(v.mode==="prayer"){
-    const dir=v.direction==="after"?"sonra":"önce";
-    return `🔔 ${v.prayer||"Ezan"} vaktinden ${v.offset||0} dk ${dir}`;
+    const prayers=(Array.isArray(v.prayers)&&v.prayers.length?v.prayers:[v.prayer||"İmsak"]).map(p=>p==="Sabah"?"İmsak":p);
+    const details=prayers.map(p=>{
+      const c=v.prayerSettings?.[p]||{direction:v.direction||"before",offset:Number(v.offset||0)};
+      if(Number(c.offset||0)===0)return `${p}: tam vaktinde`;
+      return `${p}: ${c.offset} dk ${c.direction==="after"?"sonra":"önce"}`;
+    }).join(" • ");
+    return `🔔 ${schedule} • ${details}`;
   }
-  return `🔔 Her gün ${v.time||"--:--"}`;
+  return `🔔 ${schedule} • ${v.time||"--:--"}`;
+}
+function virtScheduleText(v){
+  const type=v.scheduleType||"daily";
+  if(type==="days"){
+    const names=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+    return (v.weekDays||[]).map(n=>names[Number(n)]).filter(Boolean).join(", ")||"Seçili günler";
+  }
+  if(type==="gregorian")return `Miladî ${v.gregorianDate||"tarih seçilmedi"}`;
+  if(type==="hijri")return `Hicrî ${v.hijriDay||"-"}.${v.hijriMonth||"-"}.${v.hijriYear||"-"}`;
+  return "Her gün";
 }
 function setVirtMode(mode){
   virtEditorMode=mode;
@@ -26308,12 +26354,85 @@ function setVirtMode(mode){
   document.getElementById("virtFreeFields").style.display=mode==="free"?"grid":"none";
   document.getElementById("virtPrayerFields").style.display=mode==="prayer"?"grid":"none";
 }
-function closeVirtEditor(){document.getElementById("virtModalBg")?.remove()}
+function toggleVirtPrayerRow(input){
+  const row=input.closest(".virt-prayer-setting-row");
+  if(!row)return;
+  row.classList.toggle("active",input.checked);
+  row.querySelectorAll("select").forEach(s=>s.disabled=!input.checked);
+}
+function setVirtSchedule(type){
+  ["daily","days","gregorian","hijri"].forEach(k=>{
+    const el=document.getElementById("virtSchedule_"+k);
+    if(el)el.style.display=k===type?"block":"none";
+  });
+}
+function setVirtSoundType(type){
+  const ezanBox=document.getElementById("virtEzanSoundBox");
+  const box=document.getElementById("virtCustomSoundBox");
+  if(ezanBox)ezanBox.style.display=type==="custom"?"none":"block";
+  if(box)box.style.display=type==="custom"?"block":"none";
+  try{hilalStopReminderPreview?.()}catch(e){}
+}
+function setupVirtTimeWheels(){
+  document.querySelectorAll(".virt-time-wheel-viewport").forEach(view=>{
+    const input=document.getElementById(view.dataset.input),items=[...view.querySelectorAll(".virt-time-wheel-item")];
+    if(!input||!items.length)return;
+    let frame=0;
+    const selectIndex=(index,smooth=false)=>{
+      index=Math.max(0,Math.min(items.length-1,index));
+      input.value=items[index].dataset.value;
+      items.forEach((item,i)=>{item.classList.toggle("selected",i===index);item.setAttribute("aria-selected",i===index?"true":"false")});
+      if(smooth)view.scrollTo({top:index*40,behavior:"smooth"});
+    };
+    const sync=()=>{frame=0;selectIndex(Math.round(view.scrollTop/40))};
+    view.addEventListener("scroll",()=>{if(!frame)frame=requestAnimationFrame(sync)},{passive:true});
+    items.forEach((item,index)=>item.addEventListener("click",()=>selectIndex(index,true)));
+    const initial=Math.max(0,items.findIndex(item=>item.dataset.value===input.value));
+    selectIndex(initial);view.scrollTop=initial*40;requestAnimationFrame(()=>{view.scrollTop=initial*40});
+  });
+}
+function updateVirtSoundPreview(){try{hilalStopReminderPreview?.()}catch(e){}}
+function toggleVirtSoundPreview(btn){
+  const id=document.getElementById("virtSoundId")?.value||"fav1";
+  if(typeof hilalPreviewReminderSound==="function")hilalPreviewReminderSound(id,btn);
+}
+function closeVirtEditor(){try{hilalStopReminderPreview?.()}catch(e){}document.getElementById("virtModalBg")?.remove()}
 function fileToDataUrl(file){
   return new Promise((resolve,reject)=>{
     const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file);
   });
 }
+function updateVirtFileStatus(inputId,statusId,kind){
+  const input=document.getElementById(inputId);
+  const status=document.getElementById(statusId);
+  const file=input?.files?.[0];
+  if(!status)return;
+  if(!file){status.textContent="Henüz dosya seçilmedi.";return}
+  const isImage=kind==="image" && (file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif)$/i.test(file.name));
+  const isPdf=kind==="pdf" && (file.type==="application/pdf" || /\.pdf$/i.test(file.name));
+  const isAudio=kind==="audio" && (file.type.startsWith("audio/") || /\.(mp3|m4a|wav|ogg)$/i.test(file.name));
+  if(!isImage && !isPdf && !isAudio){input.value="";status.textContent="Bu dosya türü desteklenmiyor.";alert(kind==="pdf"?"Lütfen bir PDF dosyası seçiniz.":kind==="audio"?"Lütfen desteklenen bir ses dosyası seçiniz.":"Lütfen JPG, PNG, WEBP veya GIF görseli seçiniz.");return}
+  status.textContent=`✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) seçildi`;
+}
+function openVirtMediaDb(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open("HilalVirtMedia",1);
+    req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains("files"))req.result.createObjectStore("files")};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+}
+async function putVirtMedia(key,file){
+  const db=await openVirtMediaDb();
+  return new Promise((resolve,reject)=>{const tx=db.transaction("files","readwrite");tx.objectStore("files").put(file,key);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}});
+}
+async function getVirtMedia(key){
+  const db=await openVirtMediaDb();
+  return new Promise((resolve,reject)=>{const tx=db.transaction("files","readonly"),req=tx.objectStore("files").get(key);req.onsuccess=()=>{db.close();resolve(req.result||null)};req.onerror=()=>{db.close();reject(req.error)}});
+}
+async function deleteVirtMedia(key){
+  try{const db=await openVirtMediaDb();await new Promise((resolve,reject)=>{const tx=db.transaction("files","readwrite");tx.objectStore("files").delete(key);tx.oncomplete=resolve;tx.onerror=reject});db.close()}catch(e){}
+}
+function virtMediaKey(id,kind){return `${virtPrivateOwnerKey()}|${id}|${kind}`}
 async function openVirtEditor(id=""){
   const arr=loadVirts();
   const v=arr.find(x=>x.id===id)||{};
@@ -26330,6 +26449,7 @@ async function openVirtEditor(id=""){
       <div class="virt-form">
         <input id="virtTitle" placeholder="Vird adı" value="${escapeHtml(v.title||"")}">
         <textarea id="virtNote" rows="3" placeholder="Açıklama / not">${escapeHtml(v.note||"")}</textarea>
+        <textarea id="virtArabic" class="virt-arabic-input" rows="4" dir="rtl" lang="ar" placeholder="النص العربي — Arapça metni buraya yazınız">${escapeHtml(v.arabic||"")}</textarea>
 
         <div class="virt-reminder-tabs">
           <button type="button" class="virt-tab ${virtEditorMode==="free"?"active":""}" data-mode="free" onclick="setVirtMode('free')">Serbest Saat</button>
@@ -26337,32 +26457,87 @@ async function openVirtEditor(id=""){
         </div>
 
         <div id="virtFreeFields" style="display:${virtEditorMode==="free"?"grid":"none"};gap:8px">
-          <input id="virtTime" type="time" value="${v.time||"09:00"}">
+          ${(()=>{const tp=String(v.time||"09:00:00").split(":").map(Number);return `
+          <div class="virt-time-wheel" aria-label="Hatırlatma saati">
+            ${[["virtTimeHour","SAAT",24,tp[0]||0],["virtTimeMinute","DAKİKA",60,tp[1]||0],["virtTimeSecond","SANİYE",60,tp[2]||0]].map(([inputId,label,count,current])=>`<div class="virt-time-wheel-col"><b>${label}</b><input id="${inputId}" type="hidden" value="${String(current).padStart(2,"0")}"><div class="virt-time-wheel-viewport" data-input="${inputId}" role="listbox" aria-label="${label}"><div class="virt-time-wheel-list">${Array.from({length:count},(_,i)=>`<div class="virt-time-wheel-item ${i===current?"selected":""}" data-value="${String(i).padStart(2,"0")}" role="option" aria-selected="${i===current}">${String(i).padStart(2,"0")}</div>`).join("")}</div></div></div>`).join("")}
+          </div>`})()}
         </div>
 
         <div id="virtPrayerFields" style="display:${virtEditorMode==="prayer"?"grid":"none"};gap:8px">
-          <select id="virtPrayer">
-            ${["İmsak","Öğle","İkindi","Akşam","Yatsı"].map(p=>`<option ${v.prayer===p?"selected":""}>${p}</option>`).join("")}
+          <b style="font-size:12px">🕌 Hatırlatılacak namaz vakitleri</b>
+          <div class="virt-prayer-grid">
+            ${["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"].map(p=>{
+              const selected=(Array.isArray(v.prayers)&&v.prayers.length?v.prayers:[v.prayer||"İmsak"]).map(x=>x==="Sabah"?"İmsak":x);
+              const checked=selected.includes(p);
+              const cfg=v.prayerSettings?.[p]||{direction:v.direction||"before",offset:Number(v.offset||0)};
+              return `<div class="virt-prayer-setting-row ${checked?"active":""}" data-prayer="${p}">
+                <label><input class="virtPrayerChoice" type="checkbox" value="${p}" ${checked?"checked":""} onchange="toggleVirtPrayerRow(this)">${p}</label>
+                <select class="virtPrayerDirection" ${checked?"":"disabled"}>
+                  <option value="before" ${cfg.direction!=="after"?"selected":""}>Önce</option>
+                  <option value="after" ${cfg.direction==="after"?"selected":""}>Sonra</option>
+                </select>
+                <select class="virtPrayerOffset" ${checked?"":"disabled"}>
+                  ${[0,5,10,15,20,30,45,60].map(n=>`<option value="${n}" ${Number(cfg.offset||0)===n?"selected":""}>${n===0?"Tam vakit":n+" dk"}</option>`).join("")}
+                </select>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>
+
+        <div class="virt-schedule-box">
+          <b style="font-size:12px">📆 Hatırlatma günü</b>
+          <select id="virtScheduleType" onchange="setVirtSchedule(this.value)">
+            <option value="daily" ${(v.scheduleType||"daily")==="daily"?"selected":""}>Her Gün</option>
+            <option value="days" ${v.scheduleType==="days"?"selected":""}>Haftanın Günlerine Göre</option>
+            <option value="gregorian" ${v.scheduleType==="gregorian"?"selected":""}>Miladî Tarih Seç</option>
+            <option value="hijri" ${v.scheduleType==="hijri"?"selected":""}>Hicrî Tarih Seç</option>
           </select>
-          <select id="virtDirection">
-            <option value="before" ${v.direction!=="after"?"selected":""}>Önce</option>
-            <option value="after" ${v.direction==="after"?"selected":""}>Sonra</option>
+          <div id="virtSchedule_daily">Her gün aynı saatte hatırlatılır.</div>
+          <div id="virtSchedule_days" style="display:none">
+            <div class="virt-day-grid">${[[1,"Pzt"],[2,"Sal"],[3,"Çar"],[4,"Per"],[5,"Cum"],[6,"Cmt"],[0,"Paz"]].map(([n,t])=>`<label><input class="virtWeekDay" type="checkbox" value="${n}" ${(v.weekDays||[]).map(Number).includes(n)?"checked":""}>${t}</label>`).join("")}</div>
+          </div>
+          <div id="virtSchedule_gregorian" style="display:none"><input id="virtGregorianDate" type="date" value="${v.gregorianDate||formatDateInputLocal(new Date())}"></div>
+          <div id="virtSchedule_hijri" style="display:none">
+            <div class="virt-hijri-grid">
+              <select id="virtHijriDay">${Array.from({length:30},(_,i)=>`<option value="${i+1}" ${Number(v.hijriDay||1)===i+1?"selected":""}>${i+1}</option>`).join("")}</select>
+              <select id="virtHijriMonth">${HIJRI_MONTHS.map((m,i)=>`<option value="${i+1}" ${Number(v.hijriMonth||1)===i+1?"selected":""}>${m}</option>`).join("")}</select>
+              <select id="virtHijriYear">${Array.from({length:201},(_,i)=>currentHijriYear()-100+i).map(y=>`<option value="${y}" ${Number(v.hijriYear||currentHijriYear())===y?"selected":""}>${y}</option>`).join("")}</select>
+            </div>
+          </div>
+        </div>
+
+        <div class="virt-schedule-box">
+          <b style="font-size:12px">🔔 Hatırlatıcı zil sesi</b>
+          <select id="virtSoundType" onchange="setVirtSoundType(this.value)">
+            <option value="ezan" ${v.soundType!=="custom"?"selected":""}>Ezan Hatırlatıcı Zilleri</option>
+            <option value="custom" ${v.soundType==="custom"?"selected":""}>Telefondan Ses Seç</option>
           </select>
-          <select id="virtOffset">
-            ${[0,5,10,15,20,30,45,60].map(n=>`<option value="${n}" ${Number(v.offset||0)===n?"selected":""}>${n} dk</option>`).join("")}
-          </select>
+          <div id="virtEzanSoundBox" style="display:${v.soundType==="custom"?"none":"block"}">
+            <div class="virt-sound-picker-row">
+              <select id="virtSoundId" onchange="updateVirtSoundPreview()" aria-label="Ezan hatırlatıcı zilini seç">
+                ${HILAL_FAVORI_HATIRLATICI_SESLERI.map(x=>`<option value="${x.id}" ${(v.soundId||"fav1")===x.id?"selected":""}>${escapeHtml(x.name)}</option>`).join("")}
+              </select>
+              <button id="virtSoundPreviewBtn" class="virt-sound-preview" type="button" onclick="toggleVirtSoundPreview(this)" aria-label="Seçili zili dinle veya durdur" title="Bir kez dinle, tekrar basınca durdur">🔔</button>
+            </div>
+            <div class="virt-file-note">Bir kez zile dokun: dinle • tekrar dokun: durdur</div>
+          </div>
+          <div id="virtCustomSoundBox" style="display:${v.soundType==="custom"?"block":"none"}">
+            <input id="virtSound" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" onchange="updateVirtFileStatus('virtSound','virtSoundStatus','audio')">
+            <div id="virtSoundStatus" class="virt-file-note">${v.soundName?`✓ Kayıtlı ses: ${escapeHtml(v.soundName)}`:"MP3, M4A, WAV veya OGG sesi seçebilirsiniz."}</div>
+          </div>
+          <div class="virt-file-note">Telefon sesi yarı seviyenin altındaysa veya sessizdeyse titreşim kullanılır.</div>
         </div>
 
         <div>
           <b style="font-size:12px">🖼 Görsel ekle</b>
-          <input id="virtImage" type="file" accept="image/*">
-          <div class="virt-file-note">JPG, PNG veya cihazın desteklediği görsel dosyaları.</div>
+          <input id="virtImage" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif" onchange="updateVirtFileStatus('virtImage','virtImageStatus','image')">
+          <div id="virtImageStatus" class="virt-file-note">JPG, PNG, WEBP veya GIF seçebilirsiniz.</div>
         </div>
 
         <div>
           <b style="font-size:12px">📄 PDF ekle</b>
-          <input id="virtPdf" type="file" accept="application/pdf">
-          <div class="virt-file-note">Vird metni, ders notu veya dua PDF'si ekleyebilirsiniz.</div>
+          <input id="virtPdf" type="file" accept="application/pdf,.pdf" onchange="updateVirtFileStatus('virtPdf','virtPdfStatus','pdf')">
+          <div id="virtPdfStatus" class="virt-file-note">Vird metni, ders notu veya dua PDF'si seçebilirsiniz.</div>
         </div>
 
         <button class="virt-save" onclick="saveVirtFromEditor('${id}')">Kaydet</button>
@@ -26370,6 +26545,8 @@ async function openVirtEditor(id=""){
     </div>`;
   bg.addEventListener("click",e=>{if(e.target===bg)closeVirtEditor()});
   document.body.appendChild(bg);
+  setVirtSchedule(v.scheduleType||"daily");
+  setupVirtTimeWheels();
 }
 async function saveVirtFromEditor(id=""){
   const title=document.getElementById("virtTitle").value.trim();
@@ -26387,26 +26564,63 @@ async function saveVirtFromEditor(id=""){
   }
   v.title=title;
   v.note=document.getElementById("virtNote").value.trim();
+  v.arabic=document.getElementById("virtArabic").value.trim();
   v.mode=virtEditorMode;
+  v.scheduleType=document.getElementById("virtScheduleType").value||"daily";
+  v.weekDays=[...document.querySelectorAll(".virtWeekDay:checked")].map(x=>Number(x.value));
+  v.gregorianDate=document.getElementById("virtGregorianDate").value||"";
+  v.hijriDay=Number(document.getElementById("virtHijriDay").value||1);
+  v.hijriMonth=Number(document.getElementById("virtHijriMonth").value||1);
+  v.hijriYear=Number(document.getElementById("virtHijriYear").value||currentHijriYear());
+  if(v.scheduleType==="days" && !v.weekDays.length){alert("Lütfen en az bir gün seçiniz.");return}
   if(virtEditorMode==="free"){
-    v.time=document.getElementById("virtTime").value||"09:00";
+    v.time=["virtTimeHour","virtTimeMinute","virtTimeSecond"].map(id=>document.getElementById(id).value).join(":");
   }else{
-    v.prayer=document.getElementById("virtPrayer").value;
-    v.direction=document.getElementById("virtDirection").value;
-    v.offset=Number(document.getElementById("virtOffset").value||0);
+    v.prayers=[...document.querySelectorAll(".virtPrayerChoice:checked")].map(x=>x.value);
+    if(!v.prayers.length){alert("Lütfen en az bir namaz vakti seçiniz.");return}
+    v.prayer=v.prayers[0];
+    v.prayerSettings={};
+    document.querySelectorAll(".virt-prayer-setting-row").forEach(row=>{
+      const check=row.querySelector(".virtPrayerChoice");
+      if(!check?.checked)return;
+      v.prayerSettings[check.value]={
+        direction:row.querySelector(".virtPrayerDirection").value,
+        offset:Number(row.querySelector(".virtPrayerOffset").value||0)
+      };
+    });
+    v.direction=v.prayerSettings[v.prayer]?.direction||"before";
+    v.offset=Number(v.prayerSettings[v.prayer]?.offset||0);
   }
 
   const img=document.getElementById("virtImage").files[0];
   const pdf=document.getElementById("virtPdf").files[0];
-  if(img){
-    v.imageData=await fileToDataUrl(img);
-    v.imageName=img.name;
+  const sound=document.getElementById("virtSound").files[0];
+  v.soundType=document.getElementById("virtSoundType").value||"ezan";
+  v.soundId=document.getElementById("virtSoundId")?.value||v.soundId||"fav1";
+  try{
+    if(img){
+      await putVirtMedia(virtMediaKey(v.id,"image"),img);
+      delete v.imageData;
+      v.hasImage=true;
+      v.imageName=img.name;
+    }
+    if(pdf){
+      await putVirtMedia(virtMediaKey(v.id,"pdf"),pdf);
+      delete v.pdfData;
+      v.hasPdf=true;
+      v.pdfName=pdf.name;
+    }
+    if(sound){
+      await putVirtMedia(virtMediaKey(v.id,"sound"),sound);
+      v.hasSound=true;
+      v.soundName=sound.name;
+    }
+    saveVirts(arr);
+  }catch(err){
+    console.error("Vird dosyası kaydedilemedi",err);
+    alert("Dosya kaydedilemedi. Lütfen daha küçük bir görsel veya PDF ile tekrar deneyiniz.");
+    return;
   }
-  if(pdf){
-    v.pdfData=await fileToDataUrl(pdf);
-    v.pdfName=pdf.name;
-  }
-  saveVirts(arr);
   closeVirtEditor();
   renderVirtList();
 }
@@ -26425,6 +26639,9 @@ function deleteVirt(id){
         okLabel:"✓ Evet, Virdi Kaldır",
         cancelLabel:"Vazgeç",
         onYes:function(){
+          deleteVirtMedia(virtMediaKey(id,"image"));
+          deleteVirtMedia(virtMediaKey(id,"pdf"));
+          deleteVirtMedia(virtMediaKey(id,"sound"));
           saveVirts(loadVirts().filter(x=>x.id!==id));
           closeVirtReader();
           renderVirtList();
@@ -26443,6 +26660,9 @@ function deleteVirt(id){
 
   /* Eski tarayıcılarda yedek davranış */
   if(!confirm("Bu virdi kaldırmak istediğinizden emin misiniz?"))return;
+  deleteVirtMedia(virtMediaKey(id,"image"));
+  deleteVirtMedia(virtMediaKey(id,"pdf"));
+  deleteVirtMedia(virtMediaKey(id,"sound"));
   saveVirts(loadVirts().filter(x=>x.id!==id));
   closeVirtReader();
   renderVirtList();
@@ -26452,35 +26672,58 @@ function deleteVirt(id){
 let virtLastMinute="";
 function getPrayerClockByName(name){
   const map=window.__hilalLivePrayerMap||{};
+  if(name==="Sabah")return map["İmsak"]||map["Sabah"]||null;
   return map[name]||null;
 }
-function fireVirtReminder(v){
-  try{playEzanNotificationTone?.()}catch(e){}
-  try{navigator.vibrate?.([180,80,180])}catch(e){}
+async function fireVirtReminder(v){
+  let played=false;
+  if(v.soundType==="custom" && v.hasSound){
+    try{
+      const blob=await getVirtMedia(virtMediaKey(v.id,"sound"));
+      if(blob){const url=URL.createObjectURL(blob),audio=new Audio(url);audio.onended=()=>URL.revokeObjectURL(url);await audio.play();played=true}
+    }catch(e){console.error("Özel vird sesi çalınamadı",e)}
+  }
+  if(!played){try{playEzanNotificationTone?.(v.soundId||"fav1")}catch(e){}}
+  let lowOrSilent=true;
+  try{
+    if(window.HilalAndroid?.getNotificationVolumeRatio)lowOrSilent=Number(window.HilalAndroid.getNotificationVolumeRatio())<0.5;
+  }catch(e){}
+  if(lowOrSilent){try{navigator.vibrate?.([260,120,260,120,360])}catch(e){}}
   if("Notification" in window && Notification.permission==="granted"){
     try{new Notification("Günlük Vird Hatırlatıcısı",{body:v.title||"Vird zamanı"})}catch(e){}
   }
 }
 function checkVirtReminders(){
   const d=new Date();
-  const now=d.getHours()*60+d.getMinutes();
+  const now=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
   const key=d.toDateString()+"-"+now;
   if(key===virtLastMinute)return;
   for(const v of loadVirts()){
+    const schedule=v.scheduleType||"daily";
+    if(schedule==="days" && !(v.weekDays||[]).map(Number).includes(d.getDay()))continue;
+    if(schedule==="gregorian" && v.gregorianDate!==formatDateInputLocal(d))continue;
+    if(schedule==="hijri"){
+      const hp=hijriPartsForDate(d);
+      if(!hp || hp.day!==Number(v.hijriDay) || hp.month!==Number(v.hijriMonth) || hp.year!==Number(v.hijriYear))continue;
+    }
     let target=null;
     if(v.mode==="free" && v.time){
-      const [h,m]=v.time.split(":").map(Number); target=h*60+m;
+      const [h,m,s=0]=v.time.split(":").map(Number); target=h*3600+m*60+s;
     }else if(v.mode==="prayer"){
-      const tm=getPrayerClockByName(v.prayer); if(!tm)continue;
-      const [h,m]=tm.split(":").map(Number);
-      const base=h*60+m, off=Number(v.offset||0);
-      target=v.direction==="after"?base+off:base-off;
-      target=(target+1440)%1440;
+      const selected=(Array.isArray(v.prayers)&&v.prayers.length?v.prayers:[v.prayer||"İmsak"]).map(x=>x==="Sabah"?"İmsak":x);
+      const targets=selected.map(prayer=>{
+        const tm=getPrayerClockByName(prayer);if(!tm)return null;
+        const [h,m]=tm.split(":").map(Number);
+        const cfg=v.prayerSettings?.[prayer]||{direction:v.direction||"before",offset:Number(v.offset||0)};
+        const base=h*3600+m*60,off=Number(cfg.offset||0)*60;
+        return ((cfg.direction==="after"?base+off:base-off)+86400)%86400;
+      }).filter(x=>x!==null);
+      if(targets.includes(now))target=now;
     }
     if(target===now){virtLastMinute=key;fireVirtReminder(v);break}
   }
 }
-setInterval(checkVirtReminders,15000);
+setInterval(checkVirtReminders,1000);
 document.addEventListener("DOMContentLoaded",()=>setTimeout(renderVirtList,400));
 
 
@@ -26489,20 +26732,29 @@ document.addEventListener("DOMContentLoaded",()=>setTimeout(renderVirtList,400))
 
 
 let virtReaderScale=1;
+let virtReaderObjectUrls=[];
 
 function closeVirtReader(){
   document.getElementById("virtReaderBg")?.remove();
+  virtReaderObjectUrls.forEach(u=>URL.revokeObjectURL(u));
+  virtReaderObjectUrls=[];
 }
 function setVirtReaderScale(delta){
   virtReaderScale=Math.max(.75,Math.min(1.8,virtReaderScale+delta));
   const paper=document.getElementById("virtReaderPaper");
   if(paper)paper.style.fontSize=(virtReaderScale*100)+"%";
 }
-function openVirtReader(id){
+async function openVirtReader(id){
   const v=loadVirts().find(x=>x.id===id);
   if(!v)return;
   closeVirtReader();
   virtReaderScale=1;
+
+  let imageSrc=v.imageData||"",pdfSrc=v.pdfData||"";
+  try{
+    if(v.hasImage){const blob=await getVirtMedia(virtMediaKey(id,"image"));if(blob){imageSrc=URL.createObjectURL(blob);virtReaderObjectUrls.push(imageSrc)}}
+    if(v.hasPdf){const blob=await getVirtMedia(virtMediaKey(id,"pdf"));if(blob){pdfSrc=URL.createObjectURL(blob);virtReaderObjectUrls.push(pdfSrc)}}
+  }catch(e){console.error("Vird dosyası açılamadı",e)}
 
   const bg=document.createElement("div");
   bg.id="virtReaderBg";
@@ -26518,9 +26770,10 @@ function openVirtReader(id){
       </div>
 
       <div id="virtReaderPaper" class="virt-reader-paper">
+        ${v.arabic?`<div class="virt-reader-arabic" lang="ar" dir="rtl">${escapeHtml(v.arabic)}</div>`:""}
         ${v.note?`<div class="virt-reader-text">${escapeHtml(v.note)}</div>`:""}
-        ${v.imageData?`<img class="virt-reader-image" src="${v.imageData}" alt="Vird görseli">`:""}
-        ${v.pdfData?`<a class="virt-reader-pdf" href="${v.pdfData}" target="_blank" rel="noopener">📄 ${escapeHtml(v.pdfName||"Vird PDF")}</a>`:""}
+        ${imageSrc?`<img class="virt-reader-image" src="${imageSrc}" alt="Vird görseli">`:""}
+        ${pdfSrc?`<a class="virt-reader-pdf" href="${pdfSrc}" target="_blank" rel="noopener">📄 ${escapeHtml(v.pdfName||"Vird PDF")}</a>`:""}
       </div>
     </div>`;
 
@@ -31608,7 +31861,10 @@ function install(){
    <div class="q1431-center-readout"><strong id="q1431Delta">—°</strong><span>KIBLE</span></div>
  </div>
  <div class="q1431-alignment" id="q1431Alignment"><span class="q1431-dot"></span><span id="q1431AlignmentText">Pusulaya dokunarak başlatın</span></div>`;
- page.appendChild(q);
+ /* Açılışta namaz vakitleri tam ekran kalır; aşağı kaydırınca pusula hemen gelir. */
+ const prayerScreen=document.getElementById("hilalReferenceImageCalendarV1");
+ if(prayerScreen)prayerScreen.insertAdjacentElement("afterend",q);
+ else page.appendChild(q);
 
  const startCompass=async()=>{ locate(); await enableCompass(); };
  const tap=document.getElementById("q1428CompassTap");
@@ -33593,6 +33849,26 @@ body .topbar .guest-menu-trigger{
   box-shadow:none !important;
 }
 
+#dailyVirtPage .virt-item-pro .virt-remove-row{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+#dailyVirtPage .virt-item-pro .virt-edit-btn{
+  width:100%!important;
+  min-height:38px!important;
+  border:1px solid rgba(229,191,94,.42)!important;
+  border-radius:11px!important;
+  background:rgba(230,191,93,.12)!important;
+  color:#efd083!important;
+  font-size:13.5px!important;
+  font-weight:900!important;
+}
+#dailyVirtPage .virt-item-pro .virt-edit-btn:active{
+  transform:scale(.985)!important;
+  background:rgba(230,191,93,.22)!important;
+}
+
 /* küçük ekran */
 @media(max-width:390px){
   #dailyVirtPage #virtList > .virt-item-pro{
@@ -33962,10 +34238,21 @@ body .topbar .guest-menu-trigger{
 <style id="hilal-hamburger-fixed-transparent-v2">
 /* YALNIZCA sol üst hamburger alanı */
 
+/* Android'de kamera, saat ve pil satırının altında güvenli başlangıç. */
+:root{
+  --hilal-system-top:max(env(safe-area-inset-top,0px),48px);
+}
+#mainApp{
+  padding-top:var(--hilal-system-top)!important;
+}
+.start-screen{
+  padding-top:calc(24px + var(--hilal-system-top))!important;
+}
+
 /* Üst bar: ekranın üstünde 0'dan başlar, fazladan boşluk oluşturmaz */
 #mainApp > .topbar{
   position:fixed!important;
-  top:0!important;
+  top:var(--hilal-system-top)!important;
   left:0!important;
   right:0!important;
   height:48px!important;
