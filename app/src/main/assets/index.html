@@ -18029,6 +18029,7 @@ function hilalCloudRefreshKey(key){
       if(typeof syncStateFromStorage==="function")syncStateFromStorage();
       if(typeof renderTeacherParticipations==="function")renderTeacherParticipations();
       if(typeof renderGuestFollowingPage==="function")renderGuestFollowingPage();
+      if(typeof window.hilalRenderRealHatim==="function")window.hilalRenderRealHatim();
     }
     if(typeof forceLiveRefresh==="function")forceLiveRefresh();
   }catch(e){console.warn("Hilal cloud refresh",key,e)}
@@ -18142,6 +18143,81 @@ function hilalCloudStart(){
   window.addEventListener("online",()=>hilalCloudSyncAll(false));
   window.addEventListener("focus",()=>hilalCloudSyncAll(false));
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)hilalCloudSyncAll(false)});
+}
+
+/* Hatim cüz hareketlerini tek tek ve çakışma korumalı olarak kaydeder.
+   Böylece hızlı yapılan "aldım → okudum" dokunuşları ve farklı telefonlardan
+   aynı anda gelen seçimler birbirinin güncel kaydını ezmez. */
+let __hilalHatimMutationQueue=Promise.resolve();
+function hilalCloudMutateHatimJuz(change){
+  __hilalHatimMutationQueue=__hilalHatimMutationQueue.then(async()=>{
+    const key="hilal_follower_participations_v1";
+    const path=hilalCloudPath(key);
+    for(let attempt=0;attempt<6;attempt++){
+      const getRes=await fetch(path+"?t="+Date.now(),{
+        method:"GET",mode:"cors",credentials:"omit",cache:"no-store",
+        headers:{"Accept":"application/json","X-Firebase-ETag":"true"}
+      });
+      if(!getRes.ok)throw new Error("HTTP "+getRes.status);
+      const etag=getRes.headers.get("ETag")||"*";
+      const remote=await getRes.json();
+      const data=Array.isArray(remote?.data)?remote.data:loadJSON(key,[]);
+      const p=data.find(x=>String(x?.id)===String(change.pid));
+      if(!p)return false;
+
+      if(!Array.isArray(p.rounds)||!p.rounds.length){
+        const old=Array.isArray(p.juz)?p.juz:[];
+        p.rounds=[{no:1,juz:Array.from({length:30},(_,i)=>{
+          const found=old.find(x=>Number(x?.no)===i+1);
+          return found?{no:i+1,userKey:"",userName:"",done:false,takenAt:null,doneAt:null,...found}
+            :{no:i+1,userKey:"",userName:"",done:false,takenAt:null,doneAt:null};
+        }),locked:false,createdAt:new Date().toISOString()}];
+      }
+      const r=p.rounds.find(x=>Number(x?.no)===Number(change.round));
+      const j=r?.juz?.find(x=>Number(x?.no)===Number(change.juz));
+      if(!r||!j)return false;
+
+      if(change.action==="take"){
+        if(j.userKey&&String(j.userKey)!==String(change.userKey))return false;
+        j.userKey=String(change.userKey);
+        j.userName=String(change.userName||"Misafir");
+        j.takenAt=j.takenAt||change.at;
+        j.done=false;j.doneAt=null;
+      }else if(change.action==="done"){
+        if(String(j.userKey)!==String(change.userKey))return false;
+        j.done=true;j.doneAt=change.at;
+        if(r.juz.every(x=>x.done===true)){
+          r.locked=true;
+          const nextNo=Math.max(...p.rounds.map(x=>Number(x.no)||0))+1;
+          if(!p.rounds.some(x=>Number(x.no)===nextNo)){
+            p.rounds.push({no:nextNo,juz:Array.from({length:30},(_,i)=>({
+              no:i+1,userKey:"",userName:"",done:false,takenAt:null,doneAt:null
+            })),locked:false,createdAt:change.at});
+          }
+        }
+      }
+
+      const stamp=Date.now();
+      const putRes=await fetch(path,{
+        method:"PUT",mode:"cors",credentials:"omit",cache:"no-store",
+        headers:{"Content-Type":"application/json","If-Match":etag},
+        body:JSON.stringify({updatedAt:stamp,data})
+      });
+      if(putRes.status===412)continue;
+      if(!putRes.ok)throw new Error("HTTP "+putRes.status);
+      __hilalCloudApplying=true;
+      try{localStorage.setItem(key,JSON.stringify(data));}finally{__hilalCloudApplying=false;}
+      hilalCloudSetMeta(key,{updatedAt:stamp,lastPushAt:stamp,status:"online",dirty:false,error:""});
+      hilalCloudRefreshKey(key);
+      return true;
+    }
+    throw new Error("Hatim kaydı eşzamanlı güncellemeler nedeniyle tamamlanamadı");
+  }).catch(e=>{
+    console.warn("Hilal hatim anlık kayıt",e);
+    setTimeout(()=>hilalCloudPullKey("hilal_follower_participations_v1",{force:true}),400);
+    return false;
+  });
+  return __hilalHatimMutationQueue;
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hilalCloudStart,{once:true});
 else hilalCloudStart();
@@ -35428,8 +35504,9 @@ body.hilal-participation-clean-active #guestFollowingList{
           // Yalnız 30 cüzün tamamı alındığı anda kart otomatik kapanır.
           if(allTaken(r))setOpen(roundKey(p,r),false);
 
-          saveJSON(PARTICIPATIONS_KEY,items);
+          localStorage.setItem(PARTICIPATIONS_KEY,JSON.stringify(items));
           render();
+          hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"take",userKey:u,userName:j.userName,at:j.takenAt});
           return;
         }
 
@@ -35447,8 +35524,9 @@ body.hilal-participation-clean-active #guestFollowingList{
             if(next)setOpen(roundKey(p,next),true);
           }
 
-          saveJSON(PARTICIPATIONS_KEY,items);
+          localStorage.setItem(PARTICIPATIONS_KEY,JSON.stringify(items));
           render();
+          hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"done",userKey:u,userName:j.userName,at:j.doneAt});
         }
       });
     });
@@ -35479,6 +35557,7 @@ body.hilal-participation-clean-active #guestFollowingList{
     const obs=new MutationObserver(bindCategory);
     obs.observe(document.body,{childList:true,subtree:true});
   }
+  window.hilalRenderRealHatim=render;
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);
   else boot();
 })();
