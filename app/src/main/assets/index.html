@@ -25003,8 +25003,9 @@ function saveCurrentReminder(){
     };
   }
 
-  saveJSON(REMINDERS_KEY,reminders); try{syncAllRemindersToNative()}catch(e){}
+  saveJSON(REMINDERS_KEY,reminders);
   closeReminderModal();
+  requestAnimationFrame(()=>setTimeout(()=>{try{syncAllRemindersToNative()}catch(e){}},0));
   try{renderTodayShared()}catch(e){}
   try{renderFavoritesPage()}catch(e){}
 }
@@ -25012,10 +25013,13 @@ function removeCurrentReminder(){
   const kind=document.getElementById("reminderItemKind").value;
   const id=document.getElementById("reminderItemId").value;
   reminders=loadJSON(REMINDERS_KEY,{});
-  try{window.HilalNative?.cancel(reminderKey(kind,id))}catch(e){}
   delete reminders[reminderKey(kind,id)];
-  saveJSON(REMINDERS_KEY,reminders); try{syncAllRemindersToNative()}catch(e){}
+  saveJSON(REMINDERS_KEY,reminders);
   closeReminderModal();
+  requestAnimationFrame(()=>setTimeout(()=>{
+    try{window.HilalNative?.cancel(reminderKey(kind,id))}catch(e){}
+    try{syncAllRemindersToNative()}catch(e){}
+  },0));
   try{renderTodayShared()}catch(e){}
   try{renderFavoritesPage()}catch(e){}
 }
@@ -26379,13 +26383,20 @@ document.addEventListener("click",function(ev){
   });
 
   const HILAL_PENDING_NOTIFICATION_TARGET="hilal_pending_notification_target_v1";
+  function hilalClearReminderBlockingLayers(){
+    try{closeReminderModal?.()}catch(e){}
+    try{closeHilalIslamicAlert?.()}catch(e){}
+    const reminder=document.getElementById("reminderModal");
+    if(reminder){reminder.classList.add("hidden");reminder.setAttribute("aria-hidden","true")}
+    const alertBack=document.getElementById("hilalIslamicAlertBackdrop");
+    if(alertBack){alertBack.classList.remove("show");alertBack.setAttribute("aria-hidden","true")}
+    document.body.style.overflow="";document.documentElement.style.overflow="";
+  }
   window.hilalOpenReminderTarget=function(rawId){
     const id=String(rawId||"");
     if(!id)return false;
     /* Bildirim yönlendirmesi hiçbir eski modal/perdeyi açık bırakmaz. */
-    try{closeHilalIslamicAlert?.()}catch(e){}
-    try{closeReminderModal?.()}catch(e){}
-    document.body.style.overflow="";document.documentElement.style.overflow="";
+    hilalClearReminderBlockingLayers();
     localStorage.setItem(HILAL_PENDING_NOTIFICATION_TARGET,id);
     if(!currentUser)return false;
 
@@ -26431,6 +26442,7 @@ document.addEventListener("click",function(ev){
     return true;
   };
   window.hilalShowForegroundReminder=function(id,title,body){
+    hilalClearReminderBlockingLayers();
     document.getElementById("hilalForegroundReminder")?.remove();
     const banner=document.createElement("div");
     banner.id="hilalForegroundReminder";banner.className="hilal-foreground-reminder";
