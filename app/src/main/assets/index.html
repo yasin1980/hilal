@@ -20385,6 +20385,18 @@ function resetDailyForm(){
   document.querySelectorAll("#dailyTypeTabs button").forEach((b,i)=>b.classList.toggle("active",i===0));
 }
 
+function showDailySaveNotice(message){
+  document.getElementById("hilalDailySaveNotice")?.remove();
+  const notice=document.createElement("div");
+  notice.id="hilalDailySaveNotice";
+  notice.setAttribute("role","status");
+  notice.textContent=message;
+  Object.assign(notice.style,{position:"fixed",zIndex:"100060",left:"50%",bottom:"calc(env(safe-area-inset-bottom, 0px) + 24px)",transform:"translate(-50%,18px)",opacity:"0",maxWidth:"min(90vw,440px)",padding:"11px 16px",borderRadius:"16px",background:"rgba(5,62,45,.97)",border:"1px solid rgba(235,200,105,.62)",color:"#fff",boxShadow:"0 12px 32px rgba(0,0,0,.34)",fontSize:"13px",textAlign:"center",transition:".22s ease",pointerEvents:"none"});
+  document.body.appendChild(notice);
+  requestAnimationFrame(()=>{notice.style.opacity="1";notice.style.transform="translate(-50%,0)"});
+  setTimeout(()=>{notice.style.opacity="0";notice.style.transform="translate(-50%,12px)";setTimeout(()=>notice.remove(),250)},3600);
+}
+
 function saveDailyEntry(){
   if(currentUser?.role!=="admin")return;
 
@@ -20414,7 +20426,7 @@ function saveDailyEntry(){
     meaning,
     body,
     source,
-    status:existing?.status||"passive",
+    status:existing?.status||"active",
     edited:!!existing,
     createdAt:existing?.createdAt||new Date().toISOString(),
     updatedAt:new Date().toISOString()
@@ -20430,11 +20442,13 @@ function saveDailyEntry(){
   }
 
   saveJSON(HIJRI_DAILY_KEY,hijriDailyEntries);
+  const verified=loadJSON(HIJRI_DAILY_KEY,[]).find(x=>String(x.id)===String(item.id));
+  if(!verified)return alert("Günlük içerik kaydedilemedi. Bilgileriniz korunuyor; tekrar deneyiniz.");
   resetDailyForm();
   refreshHijriDailyEverywhere();
-  alert(existing
-    ? "Günlük içerik güncellendi. Yeniden yayınladığınızda Bugün sayfasında anında görünecek."
-    : "Günlük içerik kaydedildi. Yayınla dediğinizde eşleşen Hicrî günde Bugün sayfasında görünecek."
+  showDailySaveNotice(existing
+    ? "Günlük içerik güncellendi."
+    : "Günlük içerik kaydedildi. Hicrî gün bugünse Bugün bölümünde gösteriliyor."
   );
 }
 
@@ -26461,6 +26475,10 @@ document.addEventListener("click",function(ev){
     setTimeout(()=>{banner.classList.remove("show");setTimeout(()=>banner.remove(),250)},7500);
   };
   setInterval(()=>{
+    try{
+      const nativePending=window.AndroidHilal?.consumePendingReminderId?.();
+      if(nativePending)window.hilalOpenReminderTarget(String(nativePending));
+    }catch(e){}
     const pending=localStorage.getItem(HILAL_PENDING_NOTIFICATION_TARGET);
     if(pending&&currentUser)window.hilalOpenReminderTarget(pending);
   },700);
@@ -38824,7 +38842,7 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
   let saving=false;
 
   document.addEventListener("click",function(e){
-    const button=e.target.closest?.("#hijriFloatingOverlay .hilal-daily-live-save");
+    const button=e.target.closest?.(".hilal-daily-live-save");
     if(!button)return;
     e.preventDefault();
     e.stopPropagation();
@@ -38875,16 +38893,12 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
       const next=all.map(x=>String(x.id)===String(id)?{...x,...item}:x);
       if(!existing)next.push(item);
 
-      localStorage.setItem(HIJRI_DAILY_KEY,JSON.stringify(next));
+      saveJSON(HIJRI_DAILY_KEY,next);
       const verified=loadJSON(HIJRI_DAILY_KEY,[]).find(x=>
         String(x.id)===String(id)&&x.status==="active"&&x.hijriMonth===month&&Number(x.hijriDay)===day
       );
       if(!verified)throw new Error("Kayıt doğrulanamadı");
       hijriDailyEntries=next;
-      try{
-        hilalCloudSetMeta(HIJRI_DAILY_KEY,{...hilalCloudMeta(HIJRI_DAILY_KEY),dirty:true,localChangedAt:Date.now()});
-        hilalCloudPush(HIJRI_DAILY_KEY,next);
-      }catch(e){}
       document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:HIJRI_DAILY_KEY}}));
       saved=true;
     }catch(err){
@@ -38899,7 +38913,7 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
       try{renderTodayAdminDailyCards()}catch(e){}
       try{forceLiveRefresh()}catch(e){}
       try{closeHijriFloatingPanel()}catch(e){document.getElementById("hijriFloatingOverlay")?.classList.add("hidden")}
-      alert("Günlük içerik kaydedildi. Seçilen Hicrî gün bugünse Bugün bölümünde gösteriliyor; değilse günü geldiğinde görünecek.");
+      showDailySaveNotice("Günlük içerik kaydedildi. Seçilen Hicrî gün bugünse Bugün bölümünde gösteriliyor; değilse günü geldiğinde görünecek.");
     }else if(document.body.contains(button)){
       button.disabled=false;
       button.textContent=oldText||"Kaydet";
