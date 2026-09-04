@@ -25744,6 +25744,7 @@ function findReminderItemTitle(kind,id){
   syncStateFromStorage();
   announcements=loadJSON("hilal_teacher_announcements_v1",[]);
   if(kind==="publication")return publications.find(x=>String(x.id)===String(id))?.title||"İçerik";
+  if(kind==="daily")return (loadJSON(HIJRI_DAILY_KEY,[])||[]).find(x=>String(x.id)===String(id))?.title||"Günün duası, zikri ve ibadeti";
   return announcements.find(x=>String(x.id)===String(id))?.title||"Duyuru";
 }
 
@@ -25832,6 +25833,7 @@ function fireReminderNow(kind,id,r,fireKey){
 }
 
 function checkMissedReminders(){
+  if(window.AndroidHilal && typeof window.AndroidHilal.scheduleReminder==="function")return;
   reminders=loadJSON(REMINDERS_KEY,{});
   const now=new Date();
 
@@ -25857,7 +25859,9 @@ function checkMissedReminders(){
         fireReminderNow(kind,id,r,fireKey);
       }
     }else{
-      const g=hijriToGregorian(Number(r.hijriYear),Number(r.hijriMonth),Number(r.hijriDay));
+      const g=r.calendarBasis==="gregorian" && r.gregorianDate
+        ? parseDateInputLocal(r.gregorianDate)
+        : hijriToGregorian(Number(r.hijriYear),Number(r.hijriMonth),Number(r.hijriDay));
       if(g){
         const [hh,mm]=String(r.time||"09:00").split(":").map(Number);
         const target=new Date(g);
@@ -25873,6 +25877,7 @@ function checkMissedReminders(){
 }
 
 function maybeFireReminder(){
+  if(window.AndroidHilal && typeof window.AndroidHilal.scheduleReminder==="function")return;
   reminders=loadJSON(REMINDERS_KEY,{});
   const now=new Date();
 
@@ -25895,7 +25900,9 @@ function maybeFireReminder(){
         fireReminderNow(kind,id,r,fireKey);
       }
     }else{
-      const g=hijriToGregorian(Number(r.hijriYear),Number(r.hijriMonth),Number(r.hijriDay));
+      const g=r.calendarBasis==="gregorian" && r.gregorianDate
+        ? parseDateInputLocal(r.gregorianDate)
+        : hijriToGregorian(Number(r.hijriYear),Number(r.hijriMonth),Number(r.hijriDay));
       if(!g)return;
 
       const [hh,mm]=String(r.time||"09:00").split(":").map(Number);
@@ -26195,6 +26202,11 @@ document.addEventListener("click",function(ev){
         window.AndroidHilal.cancelReminder(String(id));
         return true;
       }catch(e){ return false; }
+    },
+    cancelPrefix: function(prefix){
+      if(!this.isAvailable() || typeof window.AndroidHilal.cancelReminderPrefix!=="function") return false;
+      try{ window.AndroidHilal.cancelReminderPrefix(String(prefix)); return true; }
+      catch(e){ return false; }
     }
   };
 
@@ -26209,9 +26221,11 @@ document.addEventListener("click",function(ev){
         let whenMs = null;
 
         if(r.mode === "free"){
-          const g = typeof hijriToGregorian === "function"
-            ? hijriToGregorian(Number(r.hijriYear), Number(r.hijriMonth), Number(r.hijriDay))
-            : null;
+          const g = r.calendarBasis === "gregorian" && r.gregorianDate && typeof parseDateInputLocal === "function"
+            ? parseDateInputLocal(r.gregorianDate)
+            : (typeof hijriToGregorian === "function"
+              ? hijriToGregorian(Number(r.hijriYear), Number(r.hijriMonth), Number(r.hijriDay))
+              : null);
           if(g){
             const hm = String(r.time || "09:00").split(":").map(Number);
             g.setHours(hm[0]||0, hm[1]||0, 0, 0);
@@ -26296,7 +26310,15 @@ document.addEventListener("click",function(ev){
     try{
       if(!window.HilalNative.isAvailable() || typeof loadVirts!=="function")return;
       window.__hilalNativeVirtSounds=window.__hilalNativeVirtSounds||{};
-      loadVirts().forEach(v=>{
+      const virts=loadVirts();
+      const currentIds=new Set(virts.map(v=>String(v.id)));
+      const registryKey="hilal_native_vird_ids_v1";
+      let oldIds=[];try{oldIds=JSON.parse(localStorage.getItem(registryKey)||"[]")}catch(e){}
+      (Array.isArray(oldIds)?oldIds:[]).filter(id=>!currentIds.has(String(id))).forEach(id=>window.HilalNative.cancelPrefix(`vird::${id}::`));
+      localStorage.setItem(registryKey,JSON.stringify([...currentIds]));
+      virts.forEach(v=>{
+        // Düzenlemede kaldırılan namaz vakitlerinden eski yerel alarm kalmasın.
+        window.HilalNative.cancelPrefix(`vird::${v.id}::`);
         let soundData="";
         if(v.soundType!=="custom" && typeof hilalSoundById==="function")soundData=hilalSoundById(v.soundId||"fav1")?.src||"";
         if(v.soundType==="custom" && v.hasSound && typeof getVirtMedia==="function" && !window.__hilalNativeVirtSounds[v.id]){
@@ -26353,8 +26375,58 @@ document.addEventListener("click",function(ev){
       }, 6000);
     }catch(e){}
   });
+
+  const HILAL_PENDING_NOTIFICATION_TARGET="hilal_pending_notification_target_v1";
+  window.hilalOpenReminderTarget=function(rawId){
+    const id=String(rawId||"");
+    if(!id)return false;
+    localStorage.setItem(HILAL_PENDING_NOTIFICATION_TARGET,id);
+    if(!currentUser)return false;
+
+    localStorage.removeItem(HILAL_PENDING_NOTIFICATION_TARGET);
+    if(id.startsWith("ezan::")){
+      const key=id.split("::")[1]||"";
+      showPage("calendarPage");
+      setTimeout(()=>{
+        renderEzanReminderRows?.();
+        const el=document.querySelector(`[data-ezan-bell="${CSS.escape(key)}"]`)?.closest(".ezan-reminder-config-row");
+        el?.scrollIntoView({behavior:"smooth",block:"center"});
+        el?.classList.add("hilal-notification-target");
+        setTimeout(()=>el?.classList.remove("hilal-notification-target"),4000);
+      },350);
+      return true;
+    }
+    if(id.startsWith("vird::")){
+      const virtId=id.split("::")[1]||"";
+      showPage("dailyVirtPage");
+      setTimeout(()=>{renderVirtList?.();openVirtReader?.(virtId)},250);
+      return true;
+    }
+
+    const parts=id.split("::"),kind=parts[1]||"",itemId=parts.slice(2).join("::");
+    if(kind==="daily"){
+      showPage("todayPage");
+      setTimeout(()=>openDailyReader?.(itemId),250);
+      return true;
+    }
+    if(kind==="publication"||kind==="announcement"){
+      showPage(kind==="announcement"?"announcementsPage":"guestFollowingPage");
+      setTimeout(()=>openSharedItemReader?.(kind,itemId),300);
+      return true;
+    }
+    showPage("todayPage");
+    return true;
+  };
+  setInterval(()=>{
+    const pending=localStorage.getItem(HILAL_PENDING_NOTIFICATION_TARGET);
+    if(pending&&currentUser)window.hilalOpenReminderTarget(pending);
+  },700);
 })();
 </script>
+
+<style>
+.hilal-notification-target{outline:2px solid rgba(89,214,146,.72)!important;box-shadow:0 0 0 5px rgba(89,214,146,.14),0 10px 26px rgba(0,0,0,.18)!important;transition:.25s ease}
+</style>
 
 <script>
 
@@ -26610,6 +26682,7 @@ function fireEzanReminder(name,time){
   }
 }
 function checkEzanReminders(){
+  if(window.AndroidHilal && typeof window.AndroidHilal.scheduleReminder==="function")return;
   const s=loadEzanSettings();
   if(!s.master)return;
 
@@ -27267,6 +27340,7 @@ async function fireVirtReminder(v){
   }
 }
 function checkVirtReminders(){
+  if(window.AndroidHilal && typeof window.AndroidHilal.scheduleReminder==="function")return;
   const d=new Date();
   const now=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
   for(const v of loadVirts()){
@@ -38576,7 +38650,33 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
   }
   function ensureFrame(){
     const frame=document.getElementById("hilalZikirmatikFrameV13");
-    if(frame && !frame.dataset.loaded){frame.srcdoc=decodeUtf8Base64(embeddedZikirmatik);frame.dataset.loaded="1"}
+    if(frame && !frame.dataset.loaded){
+      frame.addEventListener("load",function(){
+        try{
+          const nav=frame.contentWindow.navigator;
+          const nativeHaptic=pattern=>{
+            const bridge=window.AndroidHilal||window.HilalAndroid;
+            if(bridge&&typeof bridge.performHaptic==="function"){
+              bridge.performHaptic(Array.isArray(pattern)&&pattern.length>1?1:0);
+              return true;
+            }
+            return false;
+          };
+          /* srcdoc içindeki mevcut navigator.vibrate çağrılarını Android'in
+             sistem dokunma geri bildirimine yönlendir; çift titreşimi önler. */
+          Object.defineProperty(nav,"vibrate",{configurable:true,value:nativeHaptic});
+        }catch(e){
+          try{
+            frame.contentDocument.addEventListener("click",ev=>{
+              if(!ev.target.closest?.("#ring,.tap"))return;
+              const bridge=window.AndroidHilal||window.HilalAndroid;
+              bridge?.performHaptic?.(0);
+            },true);
+          }catch(_){}
+        }
+      });
+      frame.srcdoc=decodeUtf8Base64(embeddedZikirmatik);frame.dataset.loaded="1";
+    }
   }
   function zikirPage(){return document.getElementById("hilalZikirmatikPageV13")}
   function zikirOpen(){return !!zikirPage()?.classList.contains("is-open")}
@@ -38673,7 +38773,7 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
 }
 #hijriFloatingOverlay .hilal-daily-live-save:disabled{opacity:.72!important;cursor:wait!important}
 </style>
-<script id="hilal-admin-daily-save-active-v1">
+<script id="hilal-admin-daily-save-active-script-v1">
 (function(){
   "use strict";
   let saving=false;
