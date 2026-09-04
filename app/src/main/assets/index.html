@@ -20785,7 +20785,7 @@ function renderTodayAdminDailyCards(){
     }
 
     return list.map(x=>`
-      <article class="today-daily-card"
+      <article class="today-daily-card" data-daily-id="${esc(x.id)}"
         onclick="if(!event.target.closest('button'))openDailyReader('${x.id}')">
         <div class="today-daily-head">
           <div>
@@ -25815,6 +25815,8 @@ function reminderDueWithinWindow(targetDate,now,windowMinutes=2){
 }
 
 function fireReminderNow(kind,id,r,fireKey){
+  /* Android'de tek kaynak yerel AlarmManager'dır. Web modalı/ikinci ses açılmaz. */
+  if(window.AndroidHilal && typeof window.AndroidHilal.scheduleReminder==="function")return false;
   if(r.lastFired===fireKey)return false;
 
   r.lastFired=fireKey;
@@ -26380,6 +26382,10 @@ document.addEventListener("click",function(ev){
   window.hilalOpenReminderTarget=function(rawId){
     const id=String(rawId||"");
     if(!id)return false;
+    /* Bildirim yönlendirmesi hiçbir eski modal/perdeyi açık bırakmaz. */
+    try{closeHilalIslamicAlert?.()}catch(e){}
+    try{closeReminderModal?.()}catch(e){}
+    document.body.style.overflow="";document.documentElement.style.overflow="";
     localStorage.setItem(HILAL_PENDING_NOTIFICATION_TARGET,id);
     if(!currentUser)return false;
 
@@ -26406,7 +26412,14 @@ document.addEventListener("click",function(ev){
     const parts=id.split("::"),kind=parts[1]||"",itemId=parts.slice(2).join("::");
     if(kind==="daily"){
       showPage("todayPage");
-      setTimeout(()=>openDailyReader?.(itemId),250);
+      setTimeout(()=>{
+        renderTodayAdminDailyCards?.();
+        const safe=window.CSS?.escape?CSS.escape(itemId):itemId.replace(/["\\]/g,"\\$&");
+        const card=document.querySelector(`[data-daily-id="${safe}"]`);
+        card?.scrollIntoView({behavior:"smooth",block:"center"});
+        card?.classList.add("hilal-notification-target");
+        setTimeout(()=>card?.classList.remove("hilal-notification-target"),5000);
+      },300);
       return true;
     }
     if(kind==="publication"||kind==="announcement"){
@@ -26417,6 +26430,24 @@ document.addEventListener("click",function(ev){
     showPage("todayPage");
     return true;
   };
+  window.hilalShowForegroundReminder=function(id,title,body){
+    document.getElementById("hilalForegroundReminder")?.remove();
+    const banner=document.createElement("div");
+    banner.id="hilalForegroundReminder";banner.className="hilal-foreground-reminder";
+    banner.setAttribute("role","status");banner.setAttribute("aria-live","polite");
+    const icon=document.createElement("span");icon.className="hilal-foreground-reminder-icon";icon.textContent="☾";
+    const text=document.createElement("span");text.className="hilal-foreground-reminder-text";
+    const strong=document.createElement("strong");strong.textContent=title||"Hilâl Hatırlatıcı";
+    const small=document.createElement("small");small.textContent=body||"Hatırlatma zamanı";
+    text.append(strong,small);
+    const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Bildirimi kapat");
+    close.addEventListener("click",e=>{e.stopPropagation();banner.remove()});
+    banner.append(icon,text,close);
+    banner.addEventListener("click",()=>{banner.remove();window.hilalOpenReminderTarget(id)});
+    document.body.appendChild(banner);
+    requestAnimationFrame(()=>banner.classList.add("show"));
+    setTimeout(()=>{banner.classList.remove("show");setTimeout(()=>banner.remove(),250)},7500);
+  };
   setInterval(()=>{
     const pending=localStorage.getItem(HILAL_PENDING_NOTIFICATION_TARGET);
     if(pending&&currentUser)window.hilalOpenReminderTarget(pending);
@@ -26426,6 +26457,8 @@ document.addEventListener("click",function(ev){
 
 <style>
 .hilal-notification-target{outline:2px solid rgba(89,214,146,.72)!important;box-shadow:0 0 0 5px rgba(89,214,146,.14),0 10px 26px rgba(0,0,0,.18)!important;transition:.25s ease}
+.hilal-foreground-reminder{position:fixed;z-index:100050;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;right:12px;max-width:520px;margin:auto;display:grid;grid-template-columns:42px minmax(0,1fr) 34px;align-items:center;gap:10px;padding:11px 10px;border:1px solid rgba(235,200,105,.66);border-radius:18px;background:linear-gradient(145deg,rgba(8,67,49,.98),rgba(4,43,33,.98));color:#fff;box-shadow:0 14px 38px rgba(0,0,0,.38);transform:translateY(-130%);opacity:0;transition:.24s ease;cursor:pointer}
+.hilal-foreground-reminder.show{transform:translateY(0);opacity:1}.hilal-foreground-reminder-icon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(230,193,91,.15);color:#f0cf73;font-size:25px}.hilal-foreground-reminder-text{min-width:0;display:grid;gap:2px}.hilal-foreground-reminder-text strong,.hilal-foreground-reminder-text small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hilal-foreground-reminder-text strong{font-size:13px;color:#f3d77f}.hilal-foreground-reminder-text small{font-size:12px;color:rgba(255,255,255,.84)}.hilal-foreground-reminder button{width:32px;height:32px;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;font-size:21px}
 </style>
 
 <script>
