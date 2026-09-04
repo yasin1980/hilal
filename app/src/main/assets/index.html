@@ -3427,6 +3427,16 @@ body.teacher-mode .teacher-publication-fab{display:block}
 .virt-sound-picker-row{display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:8px;align-items:center}
 .virt-sound-preview{width:48px;height:44px;border:1px solid rgba(191,151,55,.55);border-radius:12px;background:rgba(191,151,55,.10);color:var(--gold);font-size:21px;display:grid;place-items:center}
 .virt-sound-preview.playing{background:var(--gold);color:#fff;box-shadow:0 0 0 3px rgba(191,151,55,.16)}
+.virt-file-picker{display:grid;gap:7px;margin-top:6px}
+.virt-file-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important}
+.virt-file-button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:43px;padding:10px 12px;border:1px solid rgba(191,151,55,.52);border-radius:12px;background:rgba(191,151,55,.09);color:var(--text);font-size:12px;font-weight:900;cursor:pointer;user-select:none}
+.virt-file-button:active{transform:scale(.985);background:rgba(191,151,55,.16)}
+.virt-media-preview{display:none;align-items:center;gap:9px;min-height:58px;padding:7px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.virt-media-preview.show{display:flex}
+.virt-media-preview img{width:64px;height:54px;object-fit:cover;border-radius:9px;border:1px solid rgba(191,151,55,.42)}
+.virt-media-preview-info{min-width:0;display:grid;gap:3px;font-size:11px;font-weight:850}
+.virt-media-preview-info span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:10px;font-weight:650}
+.virt-pdf-mini-icon{flex:0 0 48px;height:54px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,#b83a36,#7b1f23);color:#fff;font-size:13px;font-weight:950;box-shadow:inset 0 1px rgba(255,255,255,.18)}
 
 
 /* ===== VİRTLERİM — NAVİGASYON KARTLARIYLA AYNI GÖRSEL DİL ===== */
@@ -14082,6 +14092,17 @@ main.page,
 #calendarPage .q1431-center-readout strong{font-size:19px!important;color:#eaf6ff!important}.q1431-center-readout span{display:none!important}
 #calendarPage .q1431-alignment{font-size:12px!important;color:#b9cbd8!important;margin-top:0!important}.q1431-alignment.on{color:#aef2cb!important}
 #calendarPage .q1432-aligned{box-shadow:0 23px 48px rgba(0,0,0,.48),0 0 0 2px #101d28,0 0 0 5px #9aa8b3,0 0 0 8px #173042,0 0 28px rgba(57,218,142,.28),inset 0 0 0 2px #98a9b5,inset 0 0 0 7px #08131d,inset 0 0 0 9px rgba(75,221,153,.35),inset 0 0 55px rgba(0,0,0,.72)!important}
+#calendarPage .q1428-compass,#calendarPage .q1428-ring,#calendarPage .q1428-compass::after,#calendarPage .q1428-needle,#calendarPage .q1428-center{transition:border-color .24s ease,box-shadow .24s ease,background .24s ease,filter .24s ease!important}
+#calendarPage .q1428-compass.q1432-aligned{
+ border-color:#42df91!important;
+ box-shadow:0 23px 48px rgba(0,0,0,.48),0 0 0 2px #123528,0 0 0 5px #42df91,0 0 0 8px #123a2c,0 0 30px rgba(66,223,145,.48),inset 0 0 0 2px #8cf0bd,inset 0 0 0 7px #071b13,inset 0 0 0 9px rgba(66,223,145,.48),inset 0 0 55px rgba(0,0,0,.72)!important;
+}
+#calendarPage .q1428-compass.q1432-aligned .q1428-ring{border-color:#42df91!important;box-shadow:0 0 0 1px rgba(66,223,145,.42),0 0 15px rgba(66,223,145,.38)!important}
+#calendarPage .q1428-compass.q1432-aligned::before{background:repeating-conic-gradient(from -1deg,rgba(118,240,176,.96) 0 .75deg,transparent .75deg 3deg)!important}
+#calendarPage .q1428-compass.q1432-aligned::after{border-color:rgba(66,223,145,.80)!important;box-shadow:inset 0 0 35px rgba(0,0,0,.62),0 0 18px rgba(66,223,145,.35)!important}
+#calendarPage .q1428-compass.q1432-aligned .q1428-needle{background:linear-gradient(90deg,#087440 0%,#21c976 38%,#a8ffd0 52%,#2de18a 66%,#075c34 100%)!important;filter:drop-shadow(0 0 9px rgba(66,223,145,.92))!important}
+#calendarPage .q1428-compass.q1432-aligned .q1428-needle-wrap{filter:drop-shadow(0 0 10px rgba(66,223,145,.66))!important}
+#calendarPage .q1428-compass.q1432-aligned .q1428-center{border-color:#42df91!important;box-shadow:0 3px 12px rgba(0,0,0,.7),0 0 0 5px rgba(7,35,24,.95),0 0 20px rgba(66,223,145,.68)!important}
 @media(max-width:380px){#calendarPage .q1428-compass{width:min(87vw,320px)!important}#calendarPage .q1428-cardinal{font-size:23px!important}}
 </style>
 
@@ -18024,6 +18045,7 @@ let __hilalCloudApplying=false;
 let __hilalCloudStarted=false;
 let __hilalCloudStreams=[];
 let __hilalCloudSyncBusy=false;
+let __hilalHatimPendingCount=0;
 
 function hilalCloudPath(key){
   return HILAL_FIREBASE_DATABASE_URL+"/shared/"+encodeURIComponent(key)+".json";
@@ -18088,6 +18110,8 @@ async function hilalCloudPush(key,value){
 }
 async function hilalCloudPullKey(key,{initial=false,force=false}={}){
   if(!HILAL_CLOUD_KEYS.has(key))return false;
+  /* Cüz seçimi buluta yazılırken eski uzaktaki kayıt ekrana geri basılmasın. */
+  if(key==="hilal_follower_participations_v1" && __hilalHatimPendingCount>0)return false;
   if(typeof navigator!=="undefined" && navigator.onLine===false)return false;
   try{
     const res=await fetch(hilalCloudPath(key)+"?t="+Date.now(),{
@@ -18176,6 +18200,7 @@ function hilalCloudStart(){
    aynı anda gelen seçimler birbirinin güncel kaydını ezmez. */
 let __hilalHatimMutationQueue=Promise.resolve();
 function hilalCloudMutateHatimJuz(change){
+  __hilalHatimPendingCount++;
   __hilalHatimMutationQueue=__hilalHatimMutationQueue.then(async()=>{
     const key="hilal_follower_participations_v1";
     const path=hilalCloudPath(key);
@@ -18231,10 +18256,14 @@ function hilalCloudMutateHatimJuz(change){
       });
       if(putRes.status===412)continue;
       if(!putRes.ok)throw new Error("HTTP "+putRes.status);
-      __hilalCloudApplying=true;
-      try{localStorage.setItem(key,JSON.stringify(data));}finally{__hilalCloudApplying=false;}
       hilalCloudSetMeta(key,{updatedAt:stamp,lastPushAt:stamp,status:"online",dirty:false,error:""});
-      hilalCloudRefreshKey(key);
+      /* Kuyrukta ikinci dokunuş varsa ilk yanıt, ekrandaki daha yeni "Okundu"
+         durumunu tekrar "Alındı"ya çevirmesin. Son işlem kesin sonucu uygular. */
+      if(__hilalHatimPendingCount<=1){
+        __hilalCloudApplying=true;
+        try{localStorage.setItem(key,JSON.stringify(data));}finally{__hilalCloudApplying=false;}
+        hilalCloudRefreshKey(key);
+      }
       return true;
     }
     throw new Error("Hatim kaydı eşzamanlı güncellemeler nedeniyle tamamlanamadı");
@@ -18242,6 +18271,11 @@ function hilalCloudMutateHatimJuz(change){
     console.warn("Hilal hatim anlık kayıt",e);
     setTimeout(()=>hilalCloudPullKey("hilal_follower_participations_v1",{force:true}),400);
     return false;
+  }).finally(()=>{
+    __hilalHatimPendingCount=Math.max(0,__hilalHatimPendingCount-1);
+    if(__hilalHatimPendingCount===0){
+      setTimeout(()=>hilalCloudPullKey("hilal_follower_participations_v1",{force:false}),250);
+    }
   });
   return __hilalHatimMutationQueue;
 }
@@ -24711,6 +24745,7 @@ function removeCurrentReminder(){
   const kind=document.getElementById("reminderItemKind").value;
   const id=document.getElementById("reminderItemId").value;
   reminders=loadJSON(REMINDERS_KEY,{});
+  try{window.HilalNative?.cancel(reminderKey(kind,id))}catch(e){}
   delete reminders[reminderKey(kind,id)];
   saveJSON(REMINDERS_KEY,reminders); try{syncAllRemindersToNative()}catch(e){}
   closeReminderModal();
@@ -25823,9 +25858,83 @@ document.addEventListener("click",function(ev){
             whenMs,
             title: "Hilâl Hatırlatıcı",
             body: (typeof findReminderItemTitle === "function" ? findReminderItemTitle(parts[1], parts.slice(2).join("::")) : "Hatırlatıcı"),
-            sound: r.sound || "default"
+            sound: r.sound || "default",
+            soundData: r.sound === "custom" ? (r.customSoundData||"") : "",
+            soundUrl: (typeof REAL_REMINDER_SOUNDS==="object" ? (REAL_REMINDER_SOUNDS[r.sound]||"") : ""),
+            repeatMs: r.mode === "prayer" ? 86400000 : 0
           });
         }
+      });
+    }catch(e){}
+  };
+
+  function nextClockMs(clock, dayOffset){
+    const hm=String(clock||"").split(":").map(Number);
+    if(hm.length<2 || !Number.isFinite(hm[0]) || !Number.isFinite(hm[1]))return null;
+    const d=new Date();
+    d.setHours(hm[0],hm[1],Number(hm[2]||0),0);
+    d.setDate(d.getDate()+Number(dayOffset||0));
+    if(d.getTime()<=Date.now()+1000)d.setDate(d.getDate()+1);
+    return d.getTime();
+  }
+
+  window.syncEzanRemindersToNative=function(){
+    try{
+      if(!window.HilalNative.isAvailable() || typeof loadEzanSettings!=="function")return;
+      const s=loadEzanSettings();
+      ezanPrayerDefinitions().forEach(p=>{
+        const id=`ezan::${p.key}`;
+        if(!s.master || !s[p.key]){window.HilalNative.cancel(id);return;}
+        const base=findPrayerTimeFromPage(p);if(!base)return;
+        const target=addMinutesToClock(base,-Number(s.before?.[p.key]??10));
+        const whenMs=nextClockMs(target,0);if(!whenMs)return;
+        const sid=s.sound?.[p.key]||"fav1";
+        const soundData=typeof hilalSoundById==="function"?(hilalSoundById(sid)?.src||""):"";
+        window.HilalNative.schedule({id,whenMs,repeatMs:86400000,title:`${p.name} Namazı Hatırlatıcısı`,body:Number(s.before?.[p.key]||0)===0?`${base} — Vakit geldi`:`${Number(s.before[p.key])} dakika sonra vakit (${base})`,sound:sid,soundData});
+      });
+    }catch(e){}
+  };
+
+  window.syncVirtRemindersToNative=async function(){
+    try{
+      if(!window.HilalNative.isAvailable() || typeof loadVirts!=="function")return;
+      window.__hilalNativeVirtSounds=window.__hilalNativeVirtSounds||{};
+      loadVirts().forEach(v=>{
+        let soundData="";
+        if(v.soundType!=="custom" && typeof hilalSoundById==="function")soundData=hilalSoundById(v.soundId||"fav1")?.src||"";
+        if(v.soundType==="custom" && v.hasSound && typeof getVirtMedia==="function" && !window.__hilalNativeVirtSounds[v.id]){
+          getVirtMedia(virtMediaKey(v.id,"sound")).then(blob=>{
+            if(!blob)return;
+            const reader=new FileReader();
+            reader.onload=()=>{window.__hilalNativeVirtSounds[v.id]=String(reader.result||"");window.syncVirtRemindersToNative?.()};
+            reader.readAsDataURL(blob);
+          }).catch(()=>{});
+        }
+        if(v.soundType==="custom")soundData=window.__hilalNativeVirtSounds[v.id]||"";
+        const clocks=[];
+        if(v.mode==="free" && v.time)clocks.push({key:"free",clock:v.time});
+        if(v.mode==="prayer"){
+          const prayers=(Array.isArray(v.prayers)&&v.prayers.length?v.prayers:[v.prayer||"İmsak"]);
+          prayers.forEach(prayer=>{
+            const name=prayer==="Sabah"?"İmsak":prayer,base=getPrayerClockByName(name);if(!base)return;
+            const cfg=v.prayerSettings?.[name]||v.prayerSettings?.[prayer]||{direction:v.direction||"before",offset:Number(v.offset||0)};
+            clocks.push({key:name,clock:addMinutesToClock(base,(cfg.direction==="after"?1:-1)*Number(cfg.offset||0))});
+          });
+        }
+        clocks.forEach(item=>{
+          let dayOffset=0,repeatMs=86400000;
+          if((v.scheduleType||"daily")==="days"){
+            const days=(v.weekDays||[]).map(Number);if(!days.length)return;
+            const today=new Date().getDay();dayOffset=Math.min(...days.map(x=>(x-today+7)%7));repeatMs=604800000;
+          }else if(v.scheduleType==="gregorian" && v.gregorianDate){
+            const d=parseDateInputLocal(v.gregorianDate);if(!d)return;dayOffset=Math.round((d.setHours(12,0,0,0)-new Date().setHours(12,0,0,0))/86400000);repeatMs=0;
+          }else if(v.scheduleType==="hijri"){
+            const d=hijriToGregorian(Number(v.hijriYear),Number(v.hijriMonth),Number(v.hijriDay));if(!d)return;dayOffset=Math.round((d.setHours(12,0,0,0)-new Date().setHours(12,0,0,0))/86400000);repeatMs=0;
+          }
+          if(dayOffset<0)return;
+          const whenMs=nextClockMs(item.clock,dayOffset);if(!whenMs)return;
+          window.HilalNative.schedule({id:`vird::${v.id}::${item.key}`,whenMs,repeatMs,title:"Günlük Vird Hatırlatıcısı",body:v.title||"Vird zamanı",sound:v.soundId||v.soundType||"fav1",soundData});
+        });
       });
     }catch(e){}
   };
@@ -25835,7 +25944,15 @@ document.addEventListener("click",function(ev){
       if("serviceWorker" in navigator){
         navigator.serviceWorker.register("sw.js").catch(()=>{});
       }
-      setTimeout(()=>window.syncAllRemindersToNative && window.syncAllRemindersToNative(), 1200);
+      setTimeout(()=>{
+        window.syncAllRemindersToNative?.();
+        window.syncEzanRemindersToNative?.();
+        window.syncVirtRemindersToNative?.();
+      }, 1200);
+      setTimeout(()=>{
+        window.syncEzanRemindersToNative?.();
+        window.syncVirtRemindersToNative?.();
+      }, 6000);
     }catch(e){}
   });
 })();
@@ -25863,6 +25980,7 @@ function loadEzanSettings(){
 }
 function saveEzanSettings(v){
   localStorage.setItem(EZAN_SETTINGS_KEY,JSON.stringify(v));
+  setTimeout(()=>{try{window.syncEzanRemindersToNative?.()}catch(e){}},0);
 }
 function ezanPrayerDefinitions(){
   return [
@@ -26099,8 +26217,6 @@ function checkEzanReminders(){
 
   const d=new Date();
   const nowMinutes=d.getHours()*60+d.getMinutes();
-  const minuteKey=d.toDateString()+"-"+nowMinutes;
-  if(ezanLastMinute===minuteKey)return;
 
   for(const p of ezanPrayerDefinitions()){
     if(!s[p.key])continue;
@@ -26114,8 +26230,10 @@ function checkEzanReminders(){
     let notifyMinutes=(prayerMinutes-before)%(24*60);
     if(notifyMinutes<0)notifyMinutes+=24*60;
 
-    if(nowMinutes===notifyMinutes){
-      ezanLastMinute=minuteKey;
+    const elapsed=(nowMinutes-notifyMinutes+1440)%1440;
+    const fireKey=d.toDateString()+"-"+p.key+"-"+notifyMinutes;
+    if(elapsed<=10 && ezanLastMinute!==fireKey){
+      ezanLastMinute=fireKey;
       fireEzanReminder(p.name, before===0 ? tm : `${before} dk sonra • ${tm}`);
       break;
     }
@@ -26278,6 +26396,7 @@ function saveVirts(v){
     privateOnly:true
   }));
   localStorage.setItem(virtPrivateStorageKey(),JSON.stringify(safe));
+  setTimeout(()=>{try{window.syncVirtRemindersToNative?.()}catch(e){}},0);
 }
 function renderVirtList(){
   const root=document.getElementById("virtList");
@@ -26396,11 +26515,30 @@ function toggleVirtSoundPreview(btn){
   const id=document.getElementById("virtSoundId")?.value||"fav1";
   if(typeof hilalPreviewReminderSound==="function")hilalPreviewReminderSound(id,btn);
 }
-function closeVirtEditor(){try{hilalStopReminderPreview?.()}catch(e){}document.getElementById("virtModalBg")?.remove()}
+function closeVirtEditor(){try{hilalStopReminderPreview?.()}catch(e){}clearVirtEditorPreviewUrls();document.getElementById("virtModalBg")?.remove()}
 function fileToDataUrl(file){
   return new Promise((resolve,reject)=>{
     const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file);
   });
+}
+let virtEditorPreviewUrls=[];
+function clearVirtEditorPreviewUrls(){virtEditorPreviewUrls.forEach(url=>{try{URL.revokeObjectURL(url)}catch(e){}});virtEditorPreviewUrls=[]}
+function showVirtImagePreview(source,name){
+  const box=document.getElementById("virtImagePreview");if(!box)return;
+  box.innerHTML=`<img src="${source}" alt="Seçilen vird görseli"><div class="virt-media-preview-info"><b>✓ Fotoğraf hazır</b><span>${escapeHtml(name||"Vird görseli")}</span></div>`;
+  box.classList.add("show");
+}
+function showVirtPdfPreview(name){
+  const box=document.getElementById("virtPdfPreview");if(!box)return;
+  box.innerHTML=`<div class="virt-pdf-mini-icon">PDF</div><div class="virt-media-preview-info"><b>✓ PDF hazır</b><span>${escapeHtml(name||"Vird PDF")}</span></div>`;
+  box.classList.add("show");
+}
+async function loadExistingVirtMediaPreview(v){
+  if(!v?.id)return;
+  try{
+    if(v.hasImage){const blob=await getVirtMedia(virtMediaKey(v.id,"image"));if(blob){const url=URL.createObjectURL(blob);virtEditorPreviewUrls.push(url);showVirtImagePreview(url,v.imageName)}}
+    if(v.hasPdf)showVirtPdfPreview(v.pdfName);
+  }catch(e){console.warn("Vird önizlemesi açılamadı",e)}
 }
 function updateVirtFileStatus(inputId,statusId,kind){
   const input=document.getElementById(inputId);
@@ -26413,6 +26551,9 @@ function updateVirtFileStatus(inputId,statusId,kind){
   const isAudio=kind==="audio" && (file.type.startsWith("audio/") || /\.(mp3|m4a|wav|ogg)$/i.test(file.name));
   if(!isImage && !isPdf && !isAudio){input.value="";status.textContent="Bu dosya türü desteklenmiyor.";alert(kind==="pdf"?"Lütfen bir PDF dosyası seçiniz.":kind==="audio"?"Lütfen desteklenen bir ses dosyası seçiniz.":"Lütfen JPG, PNG, WEBP veya GIF görseli seçiniz.");return}
   status.textContent=`✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) seçildi`;
+  if(kind==="image"){
+    const url=URL.createObjectURL(file);virtEditorPreviewUrls.push(url);showVirtImagePreview(url,file.name);
+  }else if(kind==="pdf")showVirtPdfPreview(file.name);
 }
 function openVirtMediaDb(){
   return new Promise((resolve,reject)=>{
@@ -26423,7 +26564,8 @@ function openVirtMediaDb(){
 }
 async function putVirtMedia(key,file){
   const db=await openVirtMediaDb();
-  return new Promise((resolve,reject)=>{const tx=db.transaction("files","readwrite");tx.objectStore("files").put(file,key);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}});
+  const blob=file instanceof Blob?new Blob([await file.arrayBuffer()],{type:file.type||"application/octet-stream"}):file;
+  return new Promise((resolve,reject)=>{const tx=db.transaction("files","readwrite");tx.objectStore("files").put(blob,key);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)};tx.onabort=()=>{db.close();reject(tx.error||new Error("Dosya kaydı tamamlanamadı"))}});
 }
 async function getVirtMedia(key){
   const db=await openVirtMediaDb();
@@ -26528,16 +26670,20 @@ async function openVirtEditor(id=""){
           <div class="virt-file-note">Telefon sesi yarı seviyenin altındaysa veya sessizdeyse titreşim kullanılır.</div>
         </div>
 
-        <div>
+        <div class="virt-file-picker">
           <b style="font-size:12px">🖼 Görsel ekle</b>
-          <input id="virtImage" type="file" accept="image/*,.jpg,.jpeg,.png,.webp,.gif" onchange="updateVirtFileStatus('virtImage','virtImageStatus','image')">
-          <div id="virtImageStatus" class="virt-file-note">JPG, PNG, WEBP veya GIF seçebilirsiniz.</div>
+          <input id="virtImage" class="virt-file-input" type="file" accept="image/*" onchange="updateVirtFileStatus('virtImage','virtImageStatus','image')">
+          <label class="virt-file-button" for="virtImage">🖼 Fotoğraf Seç</label>
+          <div id="virtImagePreview" class="virt-media-preview"></div>
+          <div id="virtImageStatus" class="virt-file-note">${v.imageName?`✓ Kayıtlı görsel: ${escapeHtml(v.imageName)}`:"JPG, PNG, WEBP veya GIF seçebilirsiniz."}</div>
         </div>
 
-        <div>
+        <div class="virt-file-picker">
           <b style="font-size:12px">📄 PDF ekle</b>
-          <input id="virtPdf" type="file" accept="application/pdf,.pdf" onchange="updateVirtFileStatus('virtPdf','virtPdfStatus','pdf')">
-          <div id="virtPdfStatus" class="virt-file-note">Vird metni, ders notu veya dua PDF'si seçebilirsiniz.</div>
+          <input id="virtPdf" class="virt-file-input" type="file" accept="application/pdf" onchange="updateVirtFileStatus('virtPdf','virtPdfStatus','pdf')">
+          <label class="virt-file-button" for="virtPdf">📄 PDF Seç</label>
+          <div id="virtPdfPreview" class="virt-media-preview"></div>
+          <div id="virtPdfStatus" class="virt-file-note">${v.pdfName?`✓ Kayıtlı PDF: ${escapeHtml(v.pdfName)}`:"Vird metni, ders notu veya dua PDF'si seçebilirsiniz."}</div>
         </div>
 
         <button class="virt-save" onclick="saveVirtFromEditor('${id}')">Kaydet</button>
@@ -26547,6 +26693,7 @@ async function openVirtEditor(id=""){
   document.body.appendChild(bg);
   setVirtSchedule(v.scheduleType||"daily");
   setupVirtTimeWheels();
+  loadExistingVirtMediaPreview(v);
 }
 async function saveVirtFromEditor(id=""){
   const title=document.getElementById("virtTitle").value.trim();
@@ -26599,13 +26746,19 @@ async function saveVirtFromEditor(id=""){
   v.soundId=document.getElementById("virtSoundId")?.value||v.soundId||"fav1";
   try{
     if(img){
-      await putVirtMedia(virtMediaKey(v.id,"image"),img);
+      const imageKey=virtMediaKey(v.id,"image");
+      await putVirtMedia(imageKey,img);
+      const storedImage=await getVirtMedia(imageKey);
+      if(!storedImage||!storedImage.size)throw new Error("Görsel kaydı doğrulanamadı");
       delete v.imageData;
       v.hasImage=true;
       v.imageName=img.name;
     }
     if(pdf){
-      await putVirtMedia(virtMediaKey(v.id,"pdf"),pdf);
+      const pdfKey=virtMediaKey(v.id,"pdf");
+      await putVirtMedia(pdfKey,pdf);
+      const storedPdf=await getVirtMedia(pdfKey);
+      if(!storedPdf||!storedPdf.size)throw new Error("PDF kaydı doğrulanamadı");
       delete v.pdfData;
       v.hasPdf=true;
       v.pdfName=pdf.name;
@@ -26696,8 +26849,6 @@ async function fireVirtReminder(v){
 function checkVirtReminders(){
   const d=new Date();
   const now=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
-  const key=d.toDateString()+"-"+now;
-  if(key===virtLastMinute)return;
   for(const v of loadVirts()){
     const schedule=v.scheduleType||"daily";
     if(schedule==="days" && !(v.weekDays||[]).map(Number).includes(d.getDay()))continue;
@@ -26720,7 +26871,11 @@ function checkVirtReminders(){
       }).filter(x=>x!==null);
       if(targets.includes(now))target=now;
     }
-    if(target===now){virtLastMinute=key;fireVirtReminder(v);break}
+    if(target!==null){
+      const elapsed=(now-target+86400)%86400;
+      const fireKey=d.toDateString()+"-"+v.id+"-"+target;
+      if(elapsed<=600 && virtLastMinute!==fireKey){virtLastMinute=fireKey;fireVirtReminder(v);break}
+    }
   }
 }
 setInterval(checkVirtReminders,1000);
@@ -35573,6 +35728,7 @@ body.hilal-participation-clean-active #guestFollowingList{
 .hilal-real-hatim-juz.done{background:rgba(99,161,84,.24)}
 .hilal-real-hatim-juz.other{opacity:.43}
 .hilal-real-hatim-juz:disabled{cursor:default}
+.hilal-real-hatim-juz.saving{opacity:.78;pointer-events:none}
 .hilal-real-hatim-note{
   margin-top:12px;padding:11px 12px;border-radius:13px;border:1px solid rgba(222,189,83,.28);
   color:#f1d679;font-size:13px;line-height:1.3;font-weight:800;text-align:center
@@ -35590,6 +35746,7 @@ body.hilal-participation-clean-active #guestFollowingList{
 <script id="hilal-real-hatim-round-flow-runtime-v2">
 (function(){
   const OPEN_KEY="hilal_real_hatim_round_open_v2";
+  const pendingJuz=new Set();
 
   function me(){
     try{return String(typeof userKey==="function"?userKey():"guest")}
@@ -35696,15 +35853,17 @@ body.hilal-participation-clean-active #guestFollowingList{
       const mine=String(j.userKey)===u;
       const other=!!j.userKey&&!mine;
       const doneJ=j.done===true;
+      const pendingKey=String(p.id)+"::"+String(r.no)+"::"+String(j.no);
+      const saving=pendingJuz.has(pendingKey);
       let state="AL";
       if(other)state="ALINDI";
       else if(mine&&!doneJ)state="ALINDI";
       else if(doneJ)state="OKUNDU";
 
       return `<button type="button"
-        class="hilal-real-hatim-juz ${mine?"mine":""} ${doneJ?"done":""} ${other?"other":""}"
+        class="hilal-real-hatim-juz ${mine?"mine":""} ${doneJ?"done":""} ${other?"other":""} ${saving?"saving":""}"
         data-pid="${p.id}" data-round="${r.no}" data-juz="${j.no}"
-        ${locked||other||doneJ?"disabled":""}>
+        ${locked||other||doneJ||saving?"disabled":""}>
         <span class="no">${j.no}</span>
         <span class="state">${state}</span>
       </button>`;
@@ -35769,6 +35928,8 @@ body.hilal-participation-clean-active #guestFollowingList{
         const pid=this.dataset.pid;
         const rn=Number(this.dataset.round);
         const no=Number(this.dataset.juz);
+        const pendingKey=String(pid)+"::"+String(rn)+"::"+String(no);
+        if(pendingJuz.has(pendingKey))return;
         const items=allParticipations();
         const p=items.find(x=>String(x.id)===String(pid));
         if(!p || p.type!=="hatim" || !currentUserFollowsTeacherOwner(p.ownerId))return;
@@ -35782,6 +35943,7 @@ body.hilal-participation-clean-active #guestFollowingList{
 
         // 1. tık: Aldım. KART KAPANMAZ.
         if(!j.userKey){
+          pendingJuz.add(pendingKey);
           j.userKey=u;
           j.userName=myName();
           j.takenAt=new Date().toISOString();
@@ -35793,12 +35955,18 @@ body.hilal-participation-clean-active #guestFollowingList{
 
           localStorage.setItem(PARTICIPATIONS_KEY,JSON.stringify(items));
           render();
-          hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"take",userKey:u,userName:j.userName,at:j.takenAt});
+          // Yalnız yanlışlıkla oluşan çift dokunuşu engelle; ağ yanıtını bekletme.
+          // Böylece kullanıcı ikinci normal dokunuşta hemen "Okundu" yapabilir.
+          setTimeout(()=>{pendingJuz.delete(pendingKey);render()},420);
+          Promise.resolve(hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"take",userKey:u,userName:j.userName,at:j.takenAt}))
+            .then(ok=>{if(ok===false)return hilalCloudPullKey(PARTICIPATIONS_KEY,{force:true})})
+            .catch(()=>{});
           return;
         }
 
         // 2. tık: yalnız alan kişi Tamamladı. KART KAPANMAZ.
         if(String(j.userKey)===u && !j.done){
+          pendingJuz.add(pendingKey);
           j.done=true;
           j.doneAt=new Date().toISOString();
 
@@ -35813,7 +35981,10 @@ body.hilal-participation-clean-active #guestFollowingList{
 
           localStorage.setItem(PARTICIPATIONS_KEY,JSON.stringify(items));
           render();
-          hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"done",userKey:u,userName:j.userName,at:j.doneAt});
+          setTimeout(()=>{pendingJuz.delete(pendingKey);render()},420);
+          Promise.resolve(hilalCloudMutateHatimJuz({pid,rn,round:rn,juz:no,action:"done",userKey:u,userName:j.userName,at:j.doneAt}))
+            .then(ok=>{if(ok===false)return hilalCloudPullKey(PARTICIPATIONS_KEY,{force:true})})
+            .catch(()=>{});
         }
       });
     });
