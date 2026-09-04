@@ -4599,6 +4599,77 @@ body.__kart_tema_kapali .page{background:transparent!important;}
 body:not(.dark) .page{background:transparent!important;}
 </style>
 
+<style id="hilal-next-prayer-premium-green-v1">
+/* Yalnız sıradaki vakit: sakin zümrüt vurgu ve küçük profesyonel rozet. */
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1{
+  border-color:rgba(64,222,145,.88)!important;
+  background:
+    radial-gradient(circle at 14% 50%,rgba(48,211,126,.20),transparent 34%),
+    linear-gradient(100deg,rgba(8,106,74,.995),rgba(5,75,58,.995) 54%,rgba(4,59,48,.998))!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(238,205,112,.08),
+    0 4px 12px rgba(0,0,0,.14),
+    0 0 0 1px rgba(54,211,132,.10)!important;
+  animation:hilalNextPrayerEmeraldBreath 2.25s ease-in-out infinite!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1::before{
+  background:linear-gradient(180deg,#efd077 0%,#43dc91 48%,#dcb454 100%)!important;
+  box-shadow:0 0 9px rgba(63,220,143,.42)!important;
+  animation:none!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-icon-v1{
+  border-color:rgba(79,226,153,.90)!important;
+  color:#f0c96b!important;
+  box-shadow:inset 0 0 0 3px rgba(2,55,40,.54),0 0 10px rgba(55,215,136,.24)!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-name-v1{
+  display:flex!important;
+  align-items:center!important;
+  gap:clamp(4px,1.15vw,9px)!important;
+  color:#fffdf5!important;
+  white-space:nowrap!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-name-v1::after{
+  content:""!important;
+  flex:0 0 9px!important;
+  width:9px!important;
+  height:9px!important;
+  padding:0!important;
+  border:1px solid rgba(174,255,211,.76)!important;
+  border-radius:50%!important;
+  background:#3ddd8d!important;
+  box-shadow:0 0 0 3px rgba(61,221,141,.12),0 0 9px rgba(61,221,141,.54)!important;
+  animation:hilalNextPrayerDotBreath 2.25s ease-in-out infinite!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-time-v1{
+  color:#f5d47e!important;
+  text-shadow:0 0 8px rgba(66,218,142,.18),0 2px 4px rgba(0,0,0,.28)!important;
+}
+@keyframes hilalNextPrayerEmeraldBreath{
+  0%,100%{
+    border-color:rgba(72,192,132,.38);
+    box-shadow:inset 0 0 0 1px rgba(238,205,112,.025),0 3px 9px rgba(0,0,0,.10),0 0 2px rgba(55,211,135,.04);
+  }
+  50%{
+    border-color:rgba(105,224,163,.66);
+    box-shadow:inset 0 0 0 1px rgba(115,240,178,.055),0 4px 10px rgba(0,0,0,.11),0 0 7px rgba(55,215,136,.16);
+  }
+}
+@keyframes hilalNextPrayerDotBreath{
+  0%,100%{opacity:.68;transform:scale(.90)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+@media(max-width:360px){
+  #calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-name-v1::after{
+    flex-basis:8px!important;width:8px!important;height:8px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1,
+  #calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-name-v1::after{animation:none!important}
+}
+</style>
+
 
 <style>
 body.guest-mode .nav{display:none!important}
@@ -25677,6 +25748,112 @@ document.addEventListener("click",function(ev){
 });
 </script>
 
+<style id="hilal-next-prayer-elegant-focus-v3">
+/* Yalnız o an sırada bulunan namaz vakti: belirgin, sakin ve uygulama tonlarıyla uyumlu. */
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1{
+  border:1.5px solid rgba(238,202,112,.88)!important;
+  background:
+    radial-gradient(circle at 9% 50%,rgba(73,218,150,.16),transparent 31%),
+    linear-gradient(100deg,rgba(8,103,76,.995),rgba(5,78,61,.998) 57%,rgba(4,62,51,.998))!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,239,182,.09),
+    inset 0 8px 22px rgba(75,213,149,.035),
+    0 0 0 2px rgba(4,48,39,.76),
+    0 0 0 3px rgba(224,187,93,.20),
+    0 6px 15px rgba(0,0,0,.15),
+    0 0 13px rgba(68,205,140,.13)!important;
+  animation:hilalElegantPrayerFocus 3.2s ease-in-out infinite!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1::before{
+  top:16%!important;
+  bottom:16%!important;
+  width:4px!important;
+  border-radius:0 5px 5px 0!important;
+  background:linear-gradient(180deg,#f3d98c 0%,#60dba4 50%,#dfb85c 100%)!important;
+  box-shadow:0 0 8px rgba(85,218,158,.30)!important;
+  opacity:1!important;
+  animation:none!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1::after{
+  left:18%!important;
+  right:18%!important;
+  bottom:6%!important;
+  height:1px!important;
+  background:linear-gradient(90deg,transparent,rgba(239,204,114,.58),rgba(94,218,162,.44),transparent)!important;
+  box-shadow:0 0 5px rgba(77,211,151,.16)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-icon-v1{
+  border-color:rgba(239,205,116,.82)!important;
+  background:linear-gradient(145deg,rgba(12,116,83,.98),rgba(5,71,55,.98))!important;
+  color:#f0ca6c!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(4,65,49,.66),
+    0 0 0 2px rgba(231,195,103,.13),
+    0 0 9px rgba(72,213,149,.20)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-name-v1{
+  color:#fffdf5!important;
+  text-shadow:0 2px 5px rgba(0,0,0,.23),0 0 8px rgba(255,235,171,.08)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-time-v1{
+  color:#f5d47e!important;
+  text-shadow:0 2px 5px rgba(0,0,0,.25),0 0 8px rgba(242,204,105,.13)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-bell-v1{
+  border-color:rgba(239,204,112,.80)!important;
+  background:linear-gradient(145deg,rgba(10,105,76,.98),rgba(4,65,51,.98))!important;
+  box-shadow:inset 0 0 0 1px rgba(255,239,181,.07),0 0 7px rgba(75,211,150,.13)!important;
+}
+@keyframes hilalElegantPrayerFocus{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.045)}
+}
+@media(prefers-reduced-motion:reduce){
+  #calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1{animation:none!important}
+}
+</style>
+
+<style id="hilal-android-calendar-viewport-fill-v1">
+/* Yalnız dik telefon görünümünde Takvim & Ezan sahnesini kullanılabilir
+   ekran yüksekliğine yayar; alt sistem alanının üzerinde dengeli pay bırakır. */
+@media (max-width:600px) and (orientation:portrait){
+  #calendarPage.hilal-prayer-pro-page{
+    padding-bottom:14px!important;
+  }
+  #calendarPage .hilal-ref-image-calendar-v1{
+    width:100%!important;
+    height:calc(100dvh - var(--hilal-system-top,48px) - 44px - env(safe-area-inset-bottom,0px))!important;
+    min-height:calc(100vw * 1.7415)!important;
+    aspect-ratio:auto!important;
+    margin:0 auto 12px!important;
+  }
+}
+</style>
+
+<style id="hilal-next-prayer-premium-green-final-v1">
+/* Önceki aktif-vakit görünümü arşivlendi; yeni zarif odak katmanı kullanılıyor. */
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style{
+  border-width:1px!important;
+  border-color:rgba(83,207,147,.52)!important;
+  background:radial-gradient(circle at 14% 50%,rgba(48,211,126,.10),transparent 36%),linear-gradient(100deg,rgba(7,91,66,.992),rgba(5,72,57,.995) 54%,rgba(4,59,48,.998))!important;
+  animation:hilalNextPrayerEmeraldBreath 2.8s ease-in-out infinite!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style::before{
+  background:linear-gradient(180deg,rgba(239,208,119,.84) 0%,rgba(67,220,145,.72) 48%,rgba(220,180,84,.82) 100%)!important;
+  box-shadow:0 0 5px rgba(63,220,143,.18)!important;
+  animation:none!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style .hilal-ref-prayer-icon-v1{
+  border-color:rgba(89,209,151,.56)!important;
+  box-shadow:inset 0 0 0 3px rgba(2,55,40,.46),0 0 5px rgba(55,215,136,.11)!important;
+}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style .hilal-ref-prayer-name-v1{color:#fffdf5!important}
+#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style .hilal-ref-prayer-time-v1{color:#f5d47e!important}
+@media(prefers-reduced-motion:reduce){
+  #calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1.hilal-old-active-style{animation:none!important}
+}
+</style>
+
 <style id="hilal-all-inner-pages-back-v14-css">
 /* YALNIZ menü kartlarıyla açılan ve kendi geri düğmesi bulunmayan iç sayfalar. */
 .page > .hilal-universal-back-v14{
@@ -26337,6 +26514,7 @@ const HILAL_VIRT_KEY="hilal_daily_virts_v3_private";
 const HILAL_VIRT_LEGACY_KEY="hilal_daily_virts_v2";
 const HILAL_VIRT_LEGACY_CLAIM_KEY="hilal_daily_virts_v2_claimed_by";
 let virtEditorMode="free";
+let virtSaveInProgress=false;
 
 function virtPrivateOwnerKey(){
   if(currentUser?.key)return String(currentUser.key);
@@ -26431,6 +26609,9 @@ function renderVirtList(){
       </div>
 
       <div class="virt-remove-row">
+        <button type="button"
+          class="virt-share-btn"
+          onclick="event.stopPropagation();hilalShareVirt('${v.id}')">↗️ Paylaş</button>
         <button type="button"
           class="virt-edit-btn"
           onclick="event.stopPropagation();openVirtEditor('${v.id}')">✏️ Düzenle</button>
@@ -26546,7 +26727,9 @@ function updateVirtFileStatus(inputId,statusId,kind){
   const file=input?.files?.[0];
   if(!status)return;
   if(!file){status.textContent="Henüz dosya seçilmedi.";return}
-  const isImage=kind==="image" && (file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif)$/i.test(file.name));
+  const maxBytes=kind==="image"?15*1024*1024:kind==="pdf"?25*1024*1024:20*1024*1024;
+  if(file.size>maxBytes){input.value="";status.textContent=`Dosya çok büyük. En fazla ${Math.round(maxBytes/1024/1024)} MB seçebilirsiniz.`;alert(status.textContent);return}
+  const isImage=kind==="image" && (/^image\/(jpeg|png|webp|gif)$/i.test(file.type) || /\.(jpe?g|png|webp|gif)$/i.test(file.name));
   const isPdf=kind==="pdf" && (file.type==="application/pdf" || /\.pdf$/i.test(file.name));
   const isAudio=kind==="audio" && (file.type.startsWith("audio/") || /\.(mp3|m4a|wav|ogg)$/i.test(file.name));
   if(!isImage && !isPdf && !isAudio){input.value="";status.textContent="Bu dosya türü desteklenmiyor.";alert(kind==="pdf"?"Lütfen bir PDF dosyası seçiniz.":kind==="audio"?"Lütfen desteklenen bir ses dosyası seçiniz.":"Lütfen JPG, PNG, WEBP veya GIF görseli seçiniz.");return}
@@ -26554,6 +26737,14 @@ function updateVirtFileStatus(inputId,statusId,kind){
   if(kind==="image"){
     const url=URL.createObjectURL(file);virtEditorPreviewUrls.push(url);showVirtImagePreview(url,file.name);
   }else if(kind==="pdf")showVirtPdfPreview(file.name);
+}
+function verifyVirtImageFile(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(true)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Görsel dosyası açılamadı"))};
+    img.src=url;
+  });
 }
 function openVirtMediaDb(){
   return new Promise((resolve,reject)=>{
@@ -26696,6 +26887,7 @@ async function openVirtEditor(id=""){
   loadExistingVirtMediaPreview(v);
 }
 async function saveVirtFromEditor(id=""){
+  if(virtSaveInProgress)return;
   const title=document.getElementById("virtTitle").value.trim();
   if(!title){alert("Vird adını yazınız.");return}
   const arr=loadVirts();
@@ -26739,6 +26931,9 @@ async function saveVirtFromEditor(id=""){
     v.offset=Number(v.prayerSettings[v.prayer]?.offset||0);
   }
 
+  virtSaveInProgress=true;
+  const saveButton=document.querySelector("#virtModalBg .virt-save");
+  if(saveButton){saveButton.disabled=true;saveButton.textContent="Kaydediliyor…"}
   const img=document.getElementById("virtImage").files[0];
   const pdf=document.getElementById("virtPdf").files[0];
   const sound=document.getElementById("virtSound").files[0];
@@ -26746,6 +26941,7 @@ async function saveVirtFromEditor(id=""){
   v.soundId=document.getElementById("virtSoundId")?.value||v.soundId||"fav1";
   try{
     if(img){
+      await verifyVirtImageFile(img);
       const imageKey=virtMediaKey(v.id,"image");
       await putVirtMedia(imageKey,img);
       const storedImage=await getVirtMedia(imageKey);
@@ -26773,6 +26969,9 @@ async function saveVirtFromEditor(id=""){
     console.error("Vird dosyası kaydedilemedi",err);
     alert("Dosya kaydedilemedi. Lütfen daha küçük bir görsel veya PDF ile tekrar deneyiniz.");
     return;
+  }finally{
+    virtSaveInProgress=false;
+    if(saveButton){saveButton.disabled=false;saveButton.textContent="Kaydet"}
   }
   closeVirtEditor();
   renderVirtList();
@@ -29173,7 +29372,7 @@ function showInactiveAccountNotice(account){
   if(msg)msg.textContent=base;
   const cfg=getAdminContactSettings();
   if(contact){
-    if(cfg.published){contact.classList.remove("hidden");contact.innerHTML=`<strong>${String(cfg.name||"Hilâl Yönetimi").replace(/</g,"&lt;")}</strong>${cfg.message?`<div>${String(cfg.message).replace(/</g,"&lt;")}</div>`:""}${cfg.whatsapp?`<div style="margin-top:6px;font-weight:800">WhatsApp: +${cfg.whatsapp}</div>`:""}`;}
+    if(cfg.published){contact.classList.remove("hidden");contact.innerHTML=`<strong>${esc(cfg.name||"Hilâl Yönetimi")}</strong>${cfg.message?`<div>${esc(cfg.message)}</div>`:""}${cfg.whatsapp?`<div style="margin-top:6px;font-weight:800">WhatsApp: +${esc(cfg.whatsapp)}</div>`:""}`;}
     else{contact.classList.add("hidden");contact.innerHTML="";}
   }
   if(wa){
@@ -29254,7 +29453,7 @@ window.setAccountState=function(id,state){
   renderAccountManagement(u.role);try{renderApprovedPage(u.role)}catch(e){}
 }
 </script>
-\n<script id="hilal-v11336-suspended-teacher-flow">\n(function(){\n  function db(){ try{return loadJSON(ADMIN_USERS_KEY,[])||[]}catch(e){return []} }\n  function msgdb(){ try{return passiveMessages()||[]}catch(e){return []} }\n  function saveMsgs(v){ try{savePassiveMessages(v)}catch(e){} }\n  function key(a){return passiveAccountKey(a)}\n  function thread(a){return msgdb().filter(m=>m.accountKey===key(a)).sort((x,y)=>new Date(x.createdAt)-new Date(y.createdAt))}\n  function unreadAdminCount(a){return thread(a).filter(m=>m.from==='admin'&&!m.readByUser).length}\n  function unreadUserCount(a){return thread(a).filter(m=>m.from==='user'&&!m.readByAdmin).length}\n  function esc2(v){return typeof esc==='function'?esc(v):String(v||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}\n  function updateMenuCount(){\n    const n=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='suspended').length;\n    const el=document.getElementById('suspendedTeacherMenuCount'); if(el)el.textContent=n?`(${n})`:'';\n  }\n  window.openSuspendedTeachersPage=function(){\n    if(currentUser?.role!=='admin')return;\n    try{showPage('adminSuspendedTeachersPage')}catch(e){}\n    try{document.getElementById('adminMenu')?.classList.add('hidden')}catch(e){}\n    renderSuspendedTeachersPage();\n  };\n  window.renderSuspendedTeachersPage=function(){\n    if(currentUser?.role!=='admin')return;\n    const root=document.getElementById('adminSuspendedTeachersList'); if(!root)return;\n    const list=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='suspended').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'tr',{sensitivity:'base'}));\n    root.innerHTML=list.length?list.map(a=>{\n      const msgs=thread(a), unread=unreadUserCount(a), has=msgs.length>0;\n      return `<article class="suspended-teacher-card">\n        <div class="suspended-teacher-head"><div><div class="suspended-teacher-name">${esc2(a.name||'Hoca')}</div><div class="admin-user-meta">${esc2(a.email||'')}</div><span class="suspended-teacher-badge">⏸ Pasife Alındı</span></div></div>\n        ${a.accountMessage?`<div class="account-note" style="margin-top:9px">${esc2(a.accountMessage)}</div>`:''}\n        <button class="passive-message-card" type="button" onclick="toggleSuspendedTeacherThread('${a.id}')"><span>💬 ${has?'Mesaj Geldi':'Mesajlar'}${unread?` • ${unread} yeni`:''}</span>${unread?'<span class="dot"></span>':'<span>›</span>'}</button>\n        <div id="suspendedTeacherThread-${a.id}" class="suspended-thread-panel hidden">\n          ${msgs.length?msgs.map(m=>`<div class="suspended-thread-msg ${m.from}"><div class="suspended-thread-meta">${m.from==='admin'?'Yönetici':'Hoca'} • ${new Date(m.createdAt).toLocaleString('tr-TR')}</div><div>${esc2(m.message)}</div></div>`).join(''):'<div class="muted">Henüz mesaj bulunmuyor.</div>'}\n          <textarea id="suspendedTeacherReply-${a.id}" class="suspended-reply" placeholder="Hocaya cevabınızı yazın. Örn. Hesabınız şu sebeple pasife alınmıştır..."></textarea>\n          <div class="suspended-actions"><button class="btn secondary" type="button" onclick="sendSuspendedTeacherReply('${a.id}')">📨 Cevabı Gönder</button><button class="btn" type="button" onclick="activateSuspendedTeacher('${a.id}')">✓ Tatmin Oldum • Aktif Et</button></div>\n        </div>\n      </article>`\n    }).join(''):'<div class="admin-empty">Pasife alınan hoca bulunmuyor.</div>';\n    updateMenuCount();\n  };\n  window.toggleSuspendedTeacherThread=function(id){\n    const a=db().find(x=>String(x.id)===String(id)); if(!a)return;\n    const p=document.getElementById(`suspendedTeacherThread-${id}`); if(!p)return;\n    const opening=p.classList.contains('hidden'); p.classList.toggle('hidden',!opening);\n    if(opening){const all=msgdb();all.forEach(m=>{if(m.accountKey===key(a)&&m.from==='user')m.readByAdmin=true});saveMsgs(all);renderSuspendedTeachersPage();setTimeout(()=>document.getElementById(`suspendedTeacherThread-${id}`)?.classList.remove('hidden'),0)}\n  };\n  window.sendSuspendedTeacherReply=function(id){\n    const a=db().find(x=>String(x.id)===String(id)); if(!a)return;\n    const ta=document.getElementById(`suspendedTeacherReply-${id}`), text=String(ta?.value||'').trim();\n    if(!text){alert('Hocaya gönderilecek mesajı yazın.');return}\n    const all=msgdb();all.push({id:(typeof uid==='function'?uid():`pm-${Date.now()}`),accountKey:key(a),accountId:a.id||'',role:'teacher',name:a.name||'',from:'admin',message:text,createdAt:new Date().toISOString(),readByUser:false,readByAdmin:true});saveMsgs(all);\n    if(ta)ta.value='';\n    try{hilalIslamicAlert('Mesaj hocaya gönderildi. Mesaj kartı kapatıldı.','Mesaj Gönderildi')}catch(e){alert('Mesaj hocaya gönderildi.')}\n    renderSuspendedTeachersPage();\n  };\n  window.activateSuspendedTeacher=function(id){\n    try{setAccountState(id,'active')}catch(e){}\n    renderSuspendedTeachersPage();\n    try{renderApprovedPage('teacher')}catch(e){}\n  };\n  // Hoca pasifteyken gönderilen mesajlar yöneticide "yeni" olarak işaretlensin.\n  const oldSend=window.sendPassiveAccountMessage;\n  window.sendPassiveAccountMessage=function(){\n    const a=window.hilalPassiveAccountContext||hilalPassiveAccountContext;\n    const ta=document.getElementById('inactiveAccountMessageText'); const text=String(ta?.value||'').trim();\n    if(!a||!text){return oldSend?oldSend():undefined}\n    const all=msgdb(); all.push({id:(typeof uid==='function'?uid():`pm-${Date.now()}`),accountKey:key(a),accountId:a.id||'',role:a.role||'teacher',name:a.name||'',from:'user',message:text,createdAt:new Date().toISOString(),readByAdmin:false,readByUser:true}); saveMsgs(all);\n    const st=document.getElementById('inactiveAccountSendStatus');if(st)st.textContent='Mesajınız yöneticiye gönderildi.';\n    setTimeout(()=>{try{closeInactiveAccountNotice()}catch(e){}},350);\n  };\n  // Pasif hoca uygulamaya/girişe geldiğinde okunmamış yönetici mesajını belirgin bildir.\n  const oldShow=window.showInactiveAccountNotice;\n  window.showInactiveAccountNotice=function(account){\n    if(oldShow)oldShow(account);\n    const unread=thread(account).filter(m=>m.from==='admin'&&!m.readByUser);\n    if(unread.length){\n      const reply=document.getElementById('inactiveAdminReply');\n      if(reply){reply.classList.remove('hidden');reply.innerHTML=`<div class="new-admin-reply-alert">🔔 Yöneticiden yeni mesajınız var</div><strong>📩 Yöneticiden Mesaj</strong><div>${esc2(unread[unread.length-1].message)}</div>`}\n      const all=msgdb();all.forEach(m=>{if(m.accountKey===key(account)&&m.from==='admin')m.readByUser=true});saveMsgs(all);\n      try{setTimeout(()=>hilalIslamicAlert('Yöneticiden yeni bir mesajınız var. Pasif hesap ekranından mesajı okuyup cevap verebilirsiniz.','🔔 Yeni Mesaj'),120)}catch(e){}\n    }\n  };\n  // Onaylanan Hocalar sayfasında pasifleri göstermeyip ayrı Pasife Alınan Hocalar sayfasına taşı.\n  const oldRenderApproved=window.renderApprovedPage;\n  window.renderApprovedPage=function(role){\n    if(role!=='teacher')return oldRenderApproved?oldRenderApproved(role):undefined;\n    if(currentUser?.role!=='admin')return;\n    const root=document.getElementById('adminApprovedTeachersList'); if(!root)return;\n    const list=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='active').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'tr',{sensitivity:'base'}));\n    root.innerHTML=list.length?list.map(u=>`<article class="admin-user-card"><div class="admin-user-main" style="width:100%"><div class="admin-user-name">${esc2(u.name)}</div><div class="admin-user-meta">${esc2(u.email||'')}</div><span class="account-badge active">Aktif</span><div class="account-status-actions"><button class="warn" onclick="setApprovedAccountState('${u.id}','suspended','teacher');setTimeout(()=>{renderApprovedPage('teacher');renderSuspendedTeachersPage()},0)">Hesabı Durdur</button></div></div></article>`).join(''):'<div class="admin-empty">Onaylanan aktif hoca kaydı yok.</div>';\n    updateMenuCount();\n  };\n  // mevcut state setter sonrası listeleri senkron tut\n  const oldSet=window.setAccountState;\n  if(oldSet)window.setAccountState=function(id,state){const r=oldSet(id,state);try{renderSuspendedTeachersPage()}catch(e){}try{renderApprovedPage('teacher')}catch(e){}updateMenuCount();return r};\n  document.addEventListener('click',()=>setTimeout(updateMenuCount,0));\n  setTimeout(updateMenuCount,300);\n})();\n</script>\n<script id="hilal-v11341-guest-approval-removed">window.HILAL_VERSION="1.13.41";</script>
+<script type="text/plain" id="hilal-v11336-suspended-teacher-flow-legacy-disabled">\n(function(){\n  function db(){ try{return loadJSON(ADMIN_USERS_KEY,[])||[]}catch(e){return []} }\n  function msgdb(){ try{return passiveMessages()||[]}catch(e){return []} }\n  function saveMsgs(v){ try{savePassiveMessages(v)}catch(e){} }\n  function key(a){return passiveAccountKey(a)}\n  function thread(a){return msgdb().filter(m=>m.accountKey===key(a)).sort((x,y)=>new Date(x.createdAt)-new Date(y.createdAt))}\n  function unreadAdminCount(a){return thread(a).filter(m=>m.from==='admin'&&!m.readByUser).length}\n  function unreadUserCount(a){return thread(a).filter(m=>m.from==='user'&&!m.readByAdmin).length}\n  function esc2(v){return typeof esc==='function'?esc(v):String(v||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}\n  function updateMenuCount(){\n    const n=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='suspended').length;\n    const el=document.getElementById('suspendedTeacherMenuCount'); if(el)el.textContent=n?`(${n})`:'';\n  }\n  window.openSuspendedTeachersPage=function(){\n    if(currentUser?.role!=='admin')return;\n    try{showPage('adminSuspendedTeachersPage')}catch(e){}\n    try{document.getElementById('adminMenu')?.classList.add('hidden')}catch(e){}\n    renderSuspendedTeachersPage();\n  };\n  window.renderSuspendedTeachersPage=function(){\n    if(currentUser?.role!=='admin')return;\n    const root=document.getElementById('adminSuspendedTeachersList'); if(!root)return;\n    const list=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='suspended').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'tr',{sensitivity:'base'}));\n    root.innerHTML=list.length?list.map(a=>{\n      const msgs=thread(a), unread=unreadUserCount(a), has=msgs.length>0;\n      return `<article class="suspended-teacher-card">\n        <div class="suspended-teacher-head"><div><div class="suspended-teacher-name">${esc2(a.name||'Hoca')}</div><div class="admin-user-meta">${esc2(a.email||'')}</div><span class="suspended-teacher-badge">⏸ Pasife Alındı</span></div></div>\n        ${a.accountMessage?`<div class="account-note" style="margin-top:9px">${esc2(a.accountMessage)}</div>`:''}\n        <button class="passive-message-card" type="button" onclick="toggleSuspendedTeacherThread('${a.id}')"><span>💬 ${has?'Mesaj Geldi':'Mesajlar'}${unread?` • ${unread} yeni`:''}</span>${unread?'<span class="dot"></span>':'<span>›</span>'}</button>\n        <div id="suspendedTeacherThread-${a.id}" class="suspended-thread-panel hidden">\n          ${msgs.length?msgs.map(m=>`<div class="suspended-thread-msg ${m.from}"><div class="suspended-thread-meta">${m.from==='admin'?'Yönetici':'Hoca'} • ${new Date(m.createdAt).toLocaleString('tr-TR')}</div><div>${esc2(m.message)}</div></div>`).join(''):'<div class="muted">Henüz mesaj bulunmuyor.</div>'}\n          <textarea id="suspendedTeacherReply-${a.id}" class="suspended-reply" placeholder="Hocaya cevabınızı yazın. Örn. Hesabınız şu sebeple pasife alınmıştır..."></textarea>\n          <div class="suspended-actions"><button class="btn secondary" type="button" onclick="sendSuspendedTeacherReply('${a.id}')">📨 Cevabı Gönder</button><button class="btn" type="button" onclick="activateSuspendedTeacher('${a.id}')">✓ Tatmin Oldum • Aktif Et</button></div>\n        </div>\n      </article>`\n    }).join(''):'<div class="admin-empty">Pasife alınan hoca bulunmuyor.</div>';\n    updateMenuCount();\n  };\n  window.toggleSuspendedTeacherThread=function(id){\n    const a=db().find(x=>String(x.id)===String(id)); if(!a)return;\n    const p=document.getElementById(`suspendedTeacherThread-${id}`); if(!p)return;\n    const opening=p.classList.contains('hidden'); p.classList.toggle('hidden',!opening);\n    if(opening){const all=msgdb();all.forEach(m=>{if(m.accountKey===key(a)&&m.from==='user')m.readByAdmin=true});saveMsgs(all);renderSuspendedTeachersPage();setTimeout(()=>document.getElementById(`suspendedTeacherThread-${id}`)?.classList.remove('hidden'),0)}\n  };\n  window.sendSuspendedTeacherReply=function(id){\n    const a=db().find(x=>String(x.id)===String(id)); if(!a)return;\n    const ta=document.getElementById(`suspendedTeacherReply-${id}`), text=String(ta?.value||'').trim();\n    if(!text){alert('Hocaya gönderilecek mesajı yazın.');return}\n    const all=msgdb();all.push({id:(typeof uid==='function'?uid():`pm-${Date.now()}`),accountKey:key(a),accountId:a.id||'',role:'teacher',name:a.name||'',from:'admin',message:text,createdAt:new Date().toISOString(),readByUser:false,readByAdmin:true});saveMsgs(all);\n    if(ta)ta.value='';\n    try{hilalIslamicAlert('Mesaj hocaya gönderildi. Mesaj kartı kapatıldı.','Mesaj Gönderildi')}catch(e){alert('Mesaj hocaya gönderildi.')}\n    renderSuspendedTeachersPage();\n  };\n  window.activateSuspendedTeacher=function(id){\n    try{setAccountState(id,'active')}catch(e){}\n    renderSuspendedTeachersPage();\n    try{renderApprovedPage('teacher')}catch(e){}\n  };\n  // Hoca pasifteyken gönderilen mesajlar yöneticide "yeni" olarak işaretlensin.\n  const oldSend=window.sendPassiveAccountMessage;\n  window.sendPassiveAccountMessage=function(){\n    const a=window.hilalPassiveAccountContext||hilalPassiveAccountContext;\n    const ta=document.getElementById('inactiveAccountMessageText'); const text=String(ta?.value||'').trim();\n    if(!a||!text){return oldSend?oldSend():undefined}\n    const all=msgdb(); all.push({id:(typeof uid==='function'?uid():`pm-${Date.now()}`),accountKey:key(a),accountId:a.id||'',role:a.role||'teacher',name:a.name||'',from:'user',message:text,createdAt:new Date().toISOString(),readByAdmin:false,readByUser:true}); saveMsgs(all);\n    const st=document.getElementById('inactiveAccountSendStatus');if(st)st.textContent='Mesajınız yöneticiye gönderildi.';\n    setTimeout(()=>{try{closeInactiveAccountNotice()}catch(e){}},350);\n  };\n  // Pasif hoca uygulamaya/girişe geldiğinde okunmamış yönetici mesajını belirgin bildir.\n  const oldShow=window.showInactiveAccountNotice;\n  window.showInactiveAccountNotice=function(account){\n    if(oldShow)oldShow(account);\n    const unread=thread(account).filter(m=>m.from==='admin'&&!m.readByUser);\n    if(unread.length){\n      const reply=document.getElementById('inactiveAdminReply');\n      if(reply){reply.classList.remove('hidden');reply.innerHTML=`<div class="new-admin-reply-alert">🔔 Yöneticiden yeni mesajınız var</div><strong>📩 Yöneticiden Mesaj</strong><div>${esc2(unread[unread.length-1].message)}</div>`}\n      const all=msgdb();all.forEach(m=>{if(m.accountKey===key(account)&&m.from==='admin')m.readByUser=true});saveMsgs(all);\n      try{setTimeout(()=>hilalIslamicAlert('Yöneticiden yeni bir mesajınız var. Pasif hesap ekranından mesajı okuyup cevap verebilirsiniz.','🔔 Yeni Mesaj'),120)}catch(e){}\n    }\n  };\n  // Onaylanan Hocalar sayfasında pasifleri göstermeyip ayrı Pasife Alınan Hocalar sayfasına taşı.\n  const oldRenderApproved=window.renderApprovedPage;\n  window.renderApprovedPage=function(role){\n    if(role!=='teacher')return oldRenderApproved?oldRenderApproved(role):undefined;\n    if(currentUser?.role!=='admin')return;\n    const root=document.getElementById('adminApprovedTeachersList'); if(!root)return;\n    const list=db().filter(u=>u.role==='teacher'&&u.status==='approved'&&normalizeAccountState(u)==='active').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'tr',{sensitivity:'base'}));\n    root.innerHTML=list.length?list.map(u=>`<article class="admin-user-card"><div class="admin-user-main" style="width:100%"><div class="admin-user-name">${esc2(u.name)}</div><div class="admin-user-meta">${esc2(u.email||'')}</div><span class="account-badge active">Aktif</span><div class="account-status-actions"><button class="warn" onclick="setApprovedAccountState('${u.id}','suspended','teacher');setTimeout(()=>{renderApprovedPage('teacher');renderSuspendedTeachersPage()},0)">Hesabı Durdur</button></div></div></article>`).join(''):'<div class="admin-empty">Onaylanan aktif hoca kaydı yok.</div>';\n    updateMenuCount();\n  };\n  // mevcut state setter sonrası listeleri senkron tut\n  const oldSet=window.setAccountState;\n  if(oldSet)window.setAccountState=function(id,state){const r=oldSet(id,state);try{renderSuspendedTeachersPage()}catch(e){}try{renderApprovedPage('teacher')}catch(e){}updateMenuCount();return r};\n  document.addEventListener('click',()=>setTimeout(updateMenuCount,0));\n  setTimeout(updateMenuCount,300);\n})();\n</script>\n<script id="hilal-v11341-guest-approval-removed">window.HILAL_VERSION="1.13.41";</script>
 
 <script id="hilal-v11344-feedback-system">
 (function(){
@@ -30633,6 +30832,23 @@ async function hilalRefreshPrayerLocationPro(btn){
 
   const FOLLOWING_PAGE_SIZE = 10;
   let followingPage = 1;
+  const FOLLOWING_OPEN_KEY = "hilal_following_accordion_open_v1";
+
+  function followingOpenMapV1400(){
+    try{return JSON.parse(sessionStorage.getItem(FOLLOWING_OPEN_KEY)||"{}")||{}}
+    catch(e){return {}}
+  }
+  function saveFollowingOpenV1400(key,isOpen){
+    const map=followingOpenMapV1400();
+    if(isOpen)map[key]=true;else delete map[key];
+    try{sessionStorage.setItem(FOLLOWING_OPEN_KEY,JSON.stringify(map))}catch(e){}
+  }
+  function bindFollowingAccordionsV1400(root){
+    root.querySelectorAll("details.following-accordion[data-following-open-key]").forEach(card=>{
+      card.addEventListener("toggle",()=>saveFollowingOpenV1400(card.dataset.followingOpenKey,card.open));
+      card.querySelector(".following-accordion-body")?.addEventListener("click",e=>e.stopPropagation());
+    });
+  }
 
   function safeDateV1400(item){
     const raw=item?.updatedAt||item?.publishedAt||item?.createdAt||"";
@@ -30663,8 +30879,10 @@ async function hilalRefreshPrayerLocationPro(btn){
       body=guestFollowingAnnouncementCard(item);
     }
 
+    const openKey=String(kind)+"::"+String(item?.id||"");
+    const keptOpen=followingOpenMapV1400()[openKey]===true;
     return `
-      <details class="following-accordion">
+      <details class="following-accordion" data-following-open-key="${esc(openKey)}" ${keptOpen?"open":""}>
         <summary class="following-accordion-summary">
           <div class="following-summary-main">
             <span class="following-summary-kind">${icon} ${label}</span>
@@ -30773,6 +30991,7 @@ async function hilalRefreshPrayerLocationPro(btn){
         return accordionWrapV1400(item,guestFollowingActiveTab);
       }).join("")
       + paginationV1400(total,totalPages);
+    bindFollowingAccordionsV1400(root);
   };
 })();
 </script>
@@ -31751,7 +31970,7 @@ window.v1422TogglePermission=function(btn){
 </script>
 
 
-<script id="hilal-v1424-global-page-scroll-fix">
+<script id="hilal-v1424-global-page-scroll-fix-runtime">
 (function(){
 "use strict";
 
@@ -31796,7 +32015,7 @@ window.addEventListener("pageshow",normalizeActivePageV1424);
 </script>
 
 
-<script id="hilal-v1427-mirac-net-pro">
+<script id="hilal-v1427-mirac-net-pro-runtime">
 (function(){
 "use strict";
 function installMiracV1427(){
@@ -32041,7 +32260,7 @@ document.addEventListener("click",()=>setTimeout(install,50),true);
 #calendarPage .q1428-compass:active{transform:scale(.992)}
 #calendarPage .q1431-center-readout span{letter-spacing:.16em!important}
 </style>
-<script id="hilal-v1430-qibla-permission-calibration">
+<script id="hilal-v1430-qibla-permission-calibration-runtime">
 (function(){
 "use strict";
 let calTimer=null, calStart=0, CAL_MS=8000;
@@ -32569,7 +32788,7 @@ function startTracker(){const y=+document.getElementById('years').value||0,m=+do
 function showTracker(){document.getElementById('setup').style.display='none';document.getElementById('logoutScreen').style.display='none';document.getElementById('tracker').style.display='flex'}
 function exitApp(){save(); try{ if(window.Android &amp;&amp; typeof window.Android.exitApp==='function'){window.Android.exitApp();return;} }catch(e){} try{ if(window.webkit &amp;&amp; window.webkit.messageHandlers &amp;&amp; window.webkit.messageHandlers.exitApp){window.webkit.messageHandlers.exitApp.postMessage({});return;} }catch(e){} try{window.close();}catch(e){} document.getElementById('tracker').style.display='none';document.getElementById('setup').style.display='none';document.getElementById('logoutScreen').style.display='block';toast('Kapat: HTML önizlemede sayfa kapatılamaz; Android APK içinde uygulama tamamen kapanır.');}
 function resumeApp(){document.getElementById('logoutScreen').style.display='none';showTracker();render();toast('Kayıtlarınız açıldı.')}
-function change(name,delta){const current=state.counts[name]||0;if(delta&lt;0&amp;&amp;current&lt;=0){toast('Geri alınacak kayıt yok.');return}if(delta&gt;0&amp;&amp;current&gt;=state.baseDays){toast(name+' kazası tamamlandı.');return}state.counts[name]=Math.min(state.baseDays,Math.max(0,current+delta));save();render();if(state.counts[name]===state.baseDays)toast(name+' kazası tamamlandı.');else toast(delta&gt;0?name+' +1 işlendi.':name+' kaydı 1 azaltıldı.')}
+function change(name,delta){const current=state.counts[name]||0;if(delta&lt;0&amp;&amp;current&lt;=0){return}if(delta&gt;0&amp;&amp;current&gt;=state.baseDays){return}state.counts[name]=Math.min(state.baseDays,Math.max(0,current+delta));save();render()}
 function render(){document.getElementById('baseDays').textContent=state.baseDays.toLocaleString('tr-TR');updateSavedLabel();const wrap=document.getElementById('prayers');wrap.innerHTML='';names.forEach(([n,ic])=&gt;{const done=state.counts[n]||0;const remaining=Math.max(0,state.baseDays-done);const completed=remaining===0;const el=document.createElement('div');el.className='prayer-card'+(completed?' complete':'');el.innerHTML=`&lt;div class=&quot;prayer-head&quot;&gt;&lt;div class=&quot;icon&quot;&gt;${ic}&lt;/div&gt;&lt;div class=&quot;name&quot;&gt;${n}&lt;/div&gt;&lt;div class=&quot;status ${completed?'done':''}&quot;&gt;${completed?'✓ Kaza tamamlandı':'Devam ediyor'}&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;numbers&quot;&gt;&lt;div class=&quot;num&quot;&gt;&lt;span&gt;KILINAN&lt;/span&gt;&lt;b&gt;${done.toLocaleString('tr-TR')}&lt;/b&gt;&lt;/div&gt;&lt;div class=&quot;num remaining&quot;&gt;&lt;span&gt;KALAN&lt;/span&gt;&lt;b&gt;${remaining.toLocaleString('tr-TR')}&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;controls&quot;&gt;&lt;button class=&quot;ctrl&quot; onclick=&quot;change('${n}',-1)&quot;&gt;−&lt;/button&gt;&lt;div class=&quot;middle&quot;&gt;&lt;/div&gt;&lt;button class=&quot;ctrl&quot; onclick=&quot;change('${n}',1)&quot;&gt;+&lt;/button&gt;&lt;/div&gt;`;wrap.appendChild(el)})}
 let timer;function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(timer);timer=setTimeout(()=&gt;t.classList.remove('show'),1600)}
 load();
@@ -34006,9 +34225,10 @@ body .topbar .guest-menu-trigger{
 
 #dailyVirtPage .virt-item-pro .virt-remove-row{
   display:grid!important;
-  grid-template-columns:1fr 1fr!important;
+  grid-template-columns:1fr 1fr 1.15fr!important;
   gap:8px!important;
 }
+#dailyVirtPage .virt-item-pro .virt-share-btn,
 #dailyVirtPage .virt-item-pro .virt-edit-btn{
   width:100%!important;
   min-height:38px!important;
@@ -34019,6 +34239,12 @@ body .topbar .guest-menu-trigger{
   font-size:13.5px!important;
   font-weight:900!important;
 }
+#dailyVirtPage .virt-item-pro .virt-share-btn{
+  border-color:rgba(71,218,145,.54)!important;
+  background:linear-gradient(180deg,rgba(25,151,94,.34),rgba(10,105,70,.27))!important;
+  color:#bdf5d7!important;
+}
+#dailyVirtPage .virt-item-pro .virt-share-btn:active,
 #dailyVirtPage .virt-item-pro .virt-edit-btn:active{
   transform:scale(.985)!important;
   background:rgba(230,191,93,.22)!important;
@@ -34051,6 +34277,12 @@ body .topbar .guest-menu-trigger{
     width:40px !important;
     height:40px !important;
     min-width:40px !important;
+  }
+  #dailyVirtPage .virt-item-pro .virt-share-btn,
+  #dailyVirtPage .virt-item-pro .virt-edit-btn,
+  #dailyVirtPage .virt-item-pro .virt-remove-btn{
+    padding:7px 4px!important;
+    font-size:11.5px!important;
   }
 }
 </style>
@@ -36454,7 +36686,8 @@ body.hilal-participation-clean-active #guestFollowingList{
     if(!rows.length)return;
 
     target.innerHTML=rows.map((r,i)=>{
-      const name=txt(r.querySelector(".prayer-name")) || ["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"][i];
+      const rawName=txt(r.querySelector(".prayer-name > span:first-child")) || txt(r.querySelector(".prayer-name"));
+      const name=rawName.replace(/\s*S[İI]RADAK[İI]\s*$/i,"").trim() || ["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"][i];
       const time=txt(r.querySelector(".prayer-time")) || "--:--";
       const key=name.toLocaleLowerCase("tr-TR");
       const icon=icons[key]||"•";
@@ -36656,8 +36889,6 @@ body.hilal-participation-clean-active #guestFollowingList{
 })();
 </script>
 
-</body></html>
-
 <div id="teacherForgotPasswordModal" class="teacher-forgot-modal hidden"
   onclick="if(event.target===this)closeTeacherForgotPassword()">
   <section class="teacher-forgot-sheet">
@@ -36672,13 +36903,6 @@ body.hilal-participation-clean-active #guestFollowingList{
     <div id="teacherForgotStepVerify">
       
 
-<script>
-(function(){
-  function normText(v){
-    return String(v||"").trim().toLocaleLowerCase("tr");
-  }
-  function normPhone(v){
-    let x=String(v||"").
 <script id="hilal-v11342-removed-deleted-guests">
 (function(){
   window.HILAL_VERSION="1.13.42";
@@ -36693,7 +36917,6 @@ body.hilal-participation-clean-active #guestFollowingList{
   }catch(e){}
 })();
 </script>
-rep
 <style id="hilal-v11339-restore-thread-style">
 .restore-request-card{overflow:hidden}
 .restore-thread-toggle{width:100%;margin-top:10px;min-height:44px;border:1px solid rgba(201,162,39,.45);border-radius:13px;background:rgba(201,162,39,.08);color:var(--text);font-weight:900;text-align:left;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -37330,8 +37553,45 @@ function fields(i){
  if(i.date||i.time||i.place)a.push(['',[i.date,i.time,i.place].filter(Boolean).join(' • '),'']);
  if(i.source)a.push(['Kaynak',txt(i.source),'src']); return a;
 }
+function loadShareImage(src){
+ return new Promise(resolve=>{if(!src)return resolve(null);const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=src});
+}
+async function visualVirtReaderFile(i){
+ const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+ const photo=await loadShareImage(i.shareImageUrl),x=46,y0=42,w=W-92,h=H-84;
+ c.fillStyle='#062f26';c.fillRect(0,0,W,H);
+ const paper=c.createLinearGradient(0,y0,0,H-y0);paper.addColorStop(0,'#fffbd2');paper.addColorStop(1,'#fff0a4');
+ c.fillStyle=paper;rr(c,x,y0,w,h,42);c.fill();
+ c.strokeStyle='rgba(121,91,19,.34)';c.lineWidth=3;rr(c,x,y0,w,h,42);c.stroke();
+ c.fillStyle='#33290d';c.font='900 52px system-ui,Arial';
+ let y=128;y=draw(c,txt(i.title)||'Vird',84,y,W-168,62,2)+8;
+ c.fillStyle='#76652e';c.font='600 23px system-ui,Arial';
+ const reminder=txt(i.reminder)||'Vird hatırlatıcısı';c.fillText('🔔  '+reminder,84,y);y+=38;
+ c.strokeStyle='rgba(115,88,15,.19)';c.lineWidth=2;c.beginPath();c.moveTo(84,y);c.lineTo(W-84,y);c.stroke();y+=48;
+ if(txt(i.arabic)){
+   c.save();c.direction='rtl';c.textAlign='right';c.fillStyle='#392f12';c.font='600 43px "Noto Naskh Arabic","Noto Sans Arabic",Arial';
+   const ar=lines(c,txt(i.arabic),W-168).slice(0,4);ar.forEach(line=>{c.fillText(line,W-84,y);y+=61});c.restore();y+=8;
+ }
+ if(txt(i.body)){
+   c.fillStyle='#413616';c.font='500 32px Georgia,"Times New Roman",serif';y=draw(c,txt(i.body),84,y,W-168,48,5)+22;
+ }
+ if(photo){
+   const ix=84,iy=y,iw=W-168,ih=Math.max(250,H-y-142);
+   c.fillStyle='rgba(255,255,255,.30)';rr(c,ix,iy,iw,ih,25);c.fill();
+   c.save();rr(c,ix,iy,iw,ih,25);c.clip();
+   const scale=Math.min(iw/photo.naturalWidth,ih/photo.naturalHeight),dw=photo.naturalWidth*scale,dh=photo.naturalHeight*scale;
+   c.drawImage(photo,ix+(iw-dw)/2,iy+(ih-dh)/2,dw,dh);c.restore();
+   c.strokeStyle='rgba(115,88,15,.25)';c.lineWidth=2;rr(c,ix,iy,iw,ih,25);c.stroke();
+ }
+ c.fillStyle='rgba(70,55,15,.72)';c.font='700 20px system-ui,Arial';c.textAlign='center';c.fillText('Hilâl • Hicrî İbadet Asistanı',W/2,H-68);c.textAlign='left';
+ const blob=await new Promise(resolve=>cv.toBlob(resolve,'image/png',.98));if(!blob)throw Error('Vird paylaşım görseli oluşturulamadı');
+ const safe=(txt(i.title)||'vird').replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-+|-+$/g,'').slice(0,45)||'vird';
+ return new File([blob],safe+'.png',{type:'image/png'});
+}
 async function visualFile(i,kind){
+ if(kind==='Vird'||txt(i.type)==='Vird')return visualVirtReaderFile(i);
  const W=1080,H=1350,p=78,mw=W-p*2,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+ const embeddedImage=await loadShareImage(i.shareImageUrl);
 
  // Premium zümrüt arka plan
  const g=c.createLinearGradient(0,0,W,H);
@@ -37394,6 +37654,18 @@ async function visualFile(i,kind){
  c.strokeStyle='rgba(255,255,255,.09)';c.lineWidth=1;rr(c,64,panelTop-14,W-128,H-panelTop-190,32);c.stroke();
  y+=32;
 
+ if(embeddedImage){
+   const ix=p+20,iy=y-7,iw=mw-40,ih=300;
+   c.fillStyle='rgba(1,28,22,.72)';rr(c,ix,iy,iw,ih,24);c.fill();
+   c.save();rr(c,ix,iy,iw,ih,24);c.clip();
+   const scale=Math.min(iw/embeddedImage.naturalWidth,ih/embeddedImage.naturalHeight);
+   const dw=embeddedImage.naturalWidth*scale,dh=embeddedImage.naturalHeight*scale;
+   const dx=ix+(iw-dw)/2,dy=iy+(ih-dh)/2;
+   c.drawImage(embeddedImage,dx,dy,dw,dh);c.restore();
+   c.strokeStyle='rgba(225,196,106,.62)';c.lineWidth=2;rr(c,ix,iy,iw,ih,24);c.stroke();
+   y=iy+ih+34;
+ }
+
  for(const f of fields(i)){
    if(y>H-235)break;
    if(f[0]){
@@ -37418,18 +37690,75 @@ async function visualFile(i,kind){
 }
 async function shareItem(i,kind){
  if(!i)return;const title=txt(i.title)||txt(i.type)||'Hilâl',text=shareText(i,kind);
- try{const f=await visualFile(i,kind);if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[f]}))){try{await navigator.share({title,text:'Hilâl paylaşım kartı',files:[f]});return}catch(e){if(e&&e.name==='AbortError')return}}}catch(e){console.warn(e)}
+ try{
+   const f=await visualFile(i,kind);
+   if(window.AndroidHilal&&typeof window.AndroidHilal.shareContent==='function'){
+     const dataUrl=await new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(String(rd.result||''));rd.onerror=reject;rd.readAsDataURL(f)});
+     window.AndroidHilal.shareContent(title,text,dataUrl);return;
+   }
+   if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[f]}))){try{await navigator.share({title,text:'Hilâl paylaşım kartı',files:[f]});return}catch(e){if(e&&e.name==='AbortError')return}}
+ }catch(e){console.warn(e)}
  if(navigator.share){try{await navigator.share({title,text});return}catch(e){if(e&&e.name==='AbortError')return}}
+ if(window.AndroidHilal&&typeof window.AndroidHilal.shareContent==='function'){try{window.AndroidHilal.shareContent(title,text,'');return}catch(e){}}
  const enc=encodeURIComponent(text),ch=prompt('Bu cihaz görsel dosya paylaşımını desteklemiyor.\n1 - WhatsApp\n2 - SMS / Mesaj\n3 - E-posta\n4 - Metni kopyala','1');
  if(ch==='1')location.href='https://wa.me/?text='+enc;else if(ch==='2')location.href='sms:?body='+enc;else if(ch==='3')location.href='mailto:?subject='+encodeURIComponent(title)+'&body='+enc;else if(ch==='4'){try{await navigator.clipboard.writeText(text);alert('Kart metni kopyalandı.')}catch(e){alert(text)}}
+}
+function safeMediaName(title,suffix,ext){
+ const base=(txt(title)||'vird').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42)||'vird';
+ return base+'-'+suffix+'.'+ext;
+}
+function extensionFor(blob,original,fallback){
+ const fromName=txt(original).match(/\.([a-zA-Z0-9]{2,5})$/);if(fromName)return fromName[1].toLowerCase();
+ const byMime={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','application/pdf':'pdf'};
+ return byMime[blob&&blob.type]||fallback;
+}
+function asDataUrl(file){return new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(String(rd.result||''));rd.onerror=reject;rd.readAsDataURL(file)})}
+async function shareVirtFiles(v,item){
+ const title=txt(v.title)||'Vird',text=shareText(item,'Vird'),files=[];
+ let imageUrl='';
+ try{
+   if(v.hasImage||v.imageName){
+     const blob=await getVirtMedia(virtMediaKey(v.id,'image'));
+     if(blob){imageUrl=URL.createObjectURL(blob);item.shareImageUrl=imageUrl}
+   }
+   files.push(await visualFile(item,'Vird'));
+   if(v.hasPdf||v.pdfName){
+     const blob=await getVirtMedia(virtMediaKey(v.id,'pdf'));
+     if(blob)files.push(new File([blob],safeMediaName(title,'belge','pdf'),{type:'application/pdf'}));
+   }
+ }catch(e){console.warn('Vird dosyaları okunamadı',e)}finally{if(imageUrl)URL.revokeObjectURL(imageUrl);delete item.shareImageUrl}
+ if(window.AndroidHilal&&typeof window.AndroidHilal.shareFiles==='function'){
+   try{
+     const payload=[];for(const file of files)payload.push({name:file.name,type:file.type||'application/octet-stream',dataUrl:await asDataUrl(file)});
+     window.AndroidHilal.shareFiles(title,text,JSON.stringify(payload));return;
+   }catch(e){console.warn(e)}
+ }
+ if(files.length&&navigator.share&&(!navigator.canShare||navigator.canShare({files}))){
+   try{await navigator.share({title,text,files});return}catch(e){if(e&&e.name==='AbortError')return;console.warn(e)}
+ }
+ return shareItem(item,'Vird');
 }
 window.hilalSharePublication=id=>shareItem(loadArray('hilal_publications_v1').find(v=>String(v.id)===String(id)),'Yayın');
 window.hilalShareAnnouncement=function(id){for(const k of ['hilal_announcements_v1','hilal_teacher_announcements_v1']){const x=loadArray(k).find(v=>String(v.id)===String(id));if(x)return shareItem(x,'Duyuru')}};
 window.hilalShareDaily=id=>{const x=loadArray('hilal_hijri_daily_content_v1').find(v=>String(v.id)===String(id));return shareItem(x,x&&x.type||'Günlük İçerik')};
+window.hilalShareVirt=async id=>{
+ const v=(typeof loadVirts==='function'?loadVirts():[]).find(x=>String(x.id)===String(id));
+ if(!v)return;
+ const item={
+   type:'Vird',
+   title:txt(v.title)||'Vird',
+   arabic:txt(v.arabic),
+   body:txt(v.note),
+   reminder:typeof virtReminderText==='function'?virtReminderText(v):'',
+   source:'Hilâl • Virdlerim'
+ };
+ return shareVirtFiles(v,item);
+};
 function button(fn){const b=document.createElement('button');b.type='button';b.className='hilal-card-share-icon';b.title='Paylaş';b.setAttribute('aria-label','Paylaş');b.innerHTML=SHARE_SVG;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();fn()});return b}
 function add(){
  document.querySelectorAll('article.shared-feed-card').forEach(card=>{if(card.querySelector(':scope > .hilal-card-share-icon'))return;const o=card.getAttribute('onclick')||'';let m=o.match(/openSharedItemReader\('publication','([^']+)'\)/);if(m){const id=m[1];card.appendChild(button(()=>hilalSharePublication(id)));return}m=o.match(/openSharedItemReader\('announcement','([^']+)'\)/);if(m){const id=m[1];card.appendChild(button(()=>hilalShareAnnouncement(id)))}}); 
  document.querySelectorAll('article.today-daily-card').forEach(card=>{if(card.querySelector(':scope > .hilal-card-share-icon'))return;const m=(card.getAttribute('onclick')||'').match(/openDailyReader\('([^']+)'\)/);if(m){const id=m[1];card.appendChild(button(()=>hilalShareDaily(id)))}})
+ document.querySelectorAll('article.today-share-card,article.favorite-card').forEach(card=>{if(card.querySelector(':scope > .hilal-card-share-icon'))return;const o=card.getAttribute('onclick')||'';let m=o.match(/openSharedItemReader\('publication','([^']+)'\)/);if(m){const id=m[1];card.appendChild(button(()=>hilalSharePublication(id)));return}m=o.match(/openSharedItemReader\('announcement','([^']+)'\)/);if(m){const id=m[1];card.appendChild(button(()=>hilalShareAnnouncement(id)))}})
 }
 let q=false;function sched(){if(q)return;q=true;requestAnimationFrame(()=>{q=false;add()})}
 function boot(){add();new MutationObserver(sched).observe(document.body,{childList:true,subtree:true});setTimeout(add,250);setTimeout(add,900)}
@@ -37684,7 +38013,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   right:auto!important;
   bottom:max(14px,calc(env(safe-area-inset-bottom,0px) + 10px))!important;
   left:max(12px,calc(env(safe-area-inset-left,0px) + 8px))!important;
-  z-index:10070!important;
+  z-index:2147483646!important;
   width:48px!important;
   height:48px!important;
   min-width:48px!important;
@@ -37721,7 +38050,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 #kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18.hilal-menu-dragging{z-index:2147483000!important;opacity:1!important}
 #kazaNamazlarimPage .guest-menu,
 #kazaNamazlarimPage .teacher-menu,
-#kazaNamazlarimPage .admin-menu{z-index:10050!important}
+#kazaNamazlarimPage .admin-menu{z-index:2147483645!important}
 #kazaUniversalBackV15{
   position:absolute!important;
   top:max(10px,env(safe-area-inset-top))!important;
@@ -37735,6 +38064,40 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   background:linear-gradient(145deg,rgba(7,70,53,.98),rgba(4,48,38,.99))!important;
   color:#f0cd76!important;
   box-shadow:0 5px 14px rgba(0,0,0,.13)!important;
+}
+</style>
+
+<style id="hilal-kaza-menu-never-clipped-v1">
+/* Yalnız Kaza Namazlarım: iframe altta, gerçek menü daima ekran içinde ve üstte. */
+#kazaNamazlarimPage{overflow:hidden!important;isolation:isolate!important}
+#kazaNamazlarimPage > iframe{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:1!important;
+}
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18{
+  position:fixed!important;
+  left:max(12px,env(safe-area-inset-left,0px))!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:max(14px,env(safe-area-inset-bottom,0px))!important;
+  transform:none!important;
+  clip:auto!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  z-index:2147483646!important;
+}
+#kazaNamazlarimPage #guestMenu,
+#kazaNamazlarimPage #teacherMenu,
+#kazaNamazlarimPage #adminMenu{
+  position:fixed!important;
+  max-width:calc(100vw - 20px)!important;
+  max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 20px)!important;
+  overflow:auto!important;
+  z-index:2147483645!important;
 }
 </style>
 
@@ -37823,7 +38186,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   document.addEventListener("click",function(e){
     if(e.target.closest && e.target.closest("#kazaNamazlarimMenuItem")){
       closeRoleMenus();
-      setTimeout(function(){moveIntoKaza();closeRoleMenus()},120);
+      moveIntoKaza();
+      setTimeout(function(){moveIntoKaza();closeRoleMenus()},40);
     }
   },true);
   document.addEventListener("click",function(e){
@@ -37979,3 +38343,5 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
 </script>
+</body>
+</html>
