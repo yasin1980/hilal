@@ -26414,7 +26414,11 @@ document.addEventListener("click",function(ev){
     localStorage.setItem(HILAL_PENDING_NOTIFICATION_TARGET,id);
     if(!currentUser)return false;
 
-    localStorage.removeItem(HILAL_PENDING_NOTIFICATION_TARGET);
+    const complete=()=>{
+      localStorage.removeItem(HILAL_PENDING_NOTIFICATION_TARGET);
+      try{window.AndroidHilal?.acknowledgePendingReminderId?.(id)}catch(e){}
+      return true;
+    };
     if(id.startsWith("ezan::")){
       const key=id.split("::")[1]||"";
       showPage("calendarPage");
@@ -26425,35 +26429,50 @@ document.addEventListener("click",function(ev){
         el?.classList.add("hilal-notification-target");
         setTimeout(()=>el?.classList.remove("hilal-notification-target"),4000);
       },350);
-      return true;
+      return complete();
     }
     if(id.startsWith("vird::")){
       const virtId=id.split("::")[1]||"";
       showPage("dailyVirtPage");
       setTimeout(()=>{renderVirtList?.();openVirtReader?.(virtId)},250);
-      return true;
+      return complete();
     }
 
     const parts=id.split("::"),kind=parts[1]||"",itemId=parts.slice(2).join("::");
     if(kind==="daily"){
+      if(window.__hilalRouteInFlight===id)return false;
+      window.__hilalRouteInFlight=id;
       showPage("todayPage");
-      setTimeout(()=>{
+      let attempts=0;
+      const openDaily=()=>{
         renderTodayAdminDailyCards?.();
         const safe=window.CSS?.escape?CSS.escape(itemId):itemId.replace(/["\\]/g,"\\$&");
         const card=document.querySelector(`[data-daily-id="${safe}"]`);
-        card?.scrollIntoView({behavior:"smooth",block:"center"});
-        card?.classList.add("hilal-notification-target");
-        setTimeout(()=>card?.classList.remove("hilal-notification-target"),5000);
-      },300);
-      return true;
+        if(!card && ++attempts<8){setTimeout(openDaily,450);return}
+        if(card){card.scrollIntoView({behavior:"smooth",block:"center"});card.classList.add("hilal-notification-target");setTimeout(()=>card.classList.remove("hilal-notification-target"),5000);complete()}
+        window.__hilalRouteInFlight="";
+      };
+      setTimeout(openDaily,250);
+      return false;
     }
     if(kind==="publication"||kind==="announcement"){
+      if(window.__hilalRouteInFlight===id)return false;
+      window.__hilalRouteInFlight=id;
       showPage(kind==="announcement"?"announcementsPage":"guestFollowingPage");
-      setTimeout(()=>openSharedItemReader?.(kind,itemId),300);
-      return true;
+      let attempts=0;
+      const openShared=()=>{
+        syncStateFromStorage?.();
+        const list=kind==="announcement"?loadJSON("hilal_teacher_announcements_v1",[]):publications;
+        const found=(list||[]).some(x=>String(x.id)===String(itemId));
+        if(!found && ++attempts<8){setTimeout(openShared,450);return}
+        if(found){openSharedItemReader?.(kind,itemId);complete()}
+        window.__hilalRouteInFlight="";
+      };
+      setTimeout(openShared,250);
+      return false;
     }
     showPage("todayPage");
-    return true;
+    return complete();
   };
   window.hilalShowForegroundReminder=function(id,title,body){
     hilalClearReminderBlockingLayers();
