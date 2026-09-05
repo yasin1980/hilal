@@ -275,10 +275,143 @@ public class ReminderReceiver extends BroadcastReceiver {
     }
 
     private void playSelectedSound(
-            Context context,
-            String soundPath,
-            PendingResult pendingResult
-    ) {
+        Context context,
+        String soundPath,
+        PendingResult pendingResult
+) {
+    MediaPlayer player = null;
+
+    try {
+        player = new MediaPlayer();
+
+        player.setAudioAttributes(
+                new AudioAttributes.Builder()
+                        .setUsage(
+                                AudioAttributes.USAGE_NOTIFICATION
+                        )
+                        .setContentType(
+                                AudioAttributes.CONTENT_TYPE_SONIFICATION
+                        )
+                        .build()
+        );
+
+        /*
+         * Bildirim sesini tam cihaz ses seviyesinde oynat.
+         * Telefonun kendi ses seviyesi yine geçerli olur.
+         */
+        player.setVolume(1.0f, 1.0f);
+
+        final MediaPlayer finalPlayer = player;
+
+        AtomicBoolean finished =
+                new AtomicBoolean(false);
+
+        Handler handler =
+                new Handler(
+                        Looper.getMainLooper()
+                );
+
+        Runnable finish = () -> {
+
+            if (!finished.compareAndSet(
+                    false,
+                    true
+            )) {
+                return;
+            }
+
+            try {
+                if (finalPlayer.isPlaying()) {
+                    finalPlayer.stop();
+                }
+            } catch (Exception ignored) {
+            }
+
+            try {
+                finalPlayer.release();
+            } catch (Exception ignored) {
+            }
+
+            pendingResult.finish();
+        };
+
+        /*
+         * Kullanıcının seçtiği özel ses varsa onu kullan.
+         */
+        if (soundPath != null
+                && !soundPath.trim().isEmpty()
+                && new File(soundPath).isFile()) {
+
+            finalPlayer.setDataSource(
+                    soundPath
+            );
+
+        } else {
+
+            /*
+             * Özel ses yoksa telefonun varsayılan
+             * bildirim zil sesini kullan.
+             */
+            Uri defaultSound =
+                    RingtoneManager.getDefaultUri(
+                            RingtoneManager.TYPE_NOTIFICATION
+                    );
+
+            if (defaultSound == null) {
+                finish.run();
+                return;
+            }
+
+            finalPlayer.setDataSource(
+                    context,
+                    defaultSound
+            );
+        }
+
+        finalPlayer.setOnCompletionListener(
+                mp -> {
+                    handler.removeCallbacks(
+                            finish
+                    );
+                    finish.run();
+                }
+        );
+
+        finalPlayer.setOnErrorListener(
+                (mp, what, extra) -> {
+                    handler.removeCallbacks(
+                            finish
+                    );
+                    finish.run();
+                    return true;
+                }
+        );
+
+        finalPlayer.prepare();
+
+        finalPlayer.start();
+
+        /*
+         * Çok uzun seslerde BroadcastReceiver'ın
+         * açık kalmasını engelle.
+         */
+        handler.postDelayed(
+                finish,
+                15000L
+        );
+
+    } catch (Exception ignored) {
+
+        try {
+            if (player != null) {
+                player.release();
+            }
+        } catch (Exception ignored2) {
+        }
+
+        pendingResult.finish();
+    }
+    }
 
         try {
 
