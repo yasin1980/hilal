@@ -292,6 +292,13 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public void updatePrayerStatus(String json) {
+            try {
+                PrayerStatusScheduler.update(MainActivity.this, json);
+            } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
         public void cancelReminder(String id) {
             ReminderScheduler.cancel(MainActivity.this, id);
         }
@@ -383,151 +390,4 @@ public class MainActivity extends Activity {
                 if (oldFiles != null) for (File oldFile : oldFiles) oldFile.delete();
 
                 for (int i = 0; i < files.length(); i++) {
-                    JSONObject entry = files.optJSONObject(i);
-                    if (entry == null) continue;
-                    String dataUrl = entry.optString("dataUrl", "");
-                    int comma = dataUrl.indexOf(',');
-                    if (comma < 0) continue;
-                    if (dataUrl.length() > 42_000_000) throw new IllegalArgumentException("Dosya çok büyük");
-                    String mime = entry.optString("type", "application/octet-stream");
-                    String name = entry.optString("name", "hilal-dosya").replaceAll("[^a-zA-Z0-9._-]", "-");
-                    if (name.isEmpty()) name = "hilal-dosya-" + i;
-                    byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);
-                    totalBytes += bytes.length;
-                    if (totalBytes > 32L * 1024L * 1024L) throw new IllegalArgumentException("Paylaşım boyutu çok büyük");
-                    File outputFile = new File(shareDir, i + "-" + name);
-                    try (FileOutputStream output = new FileOutputStream(outputFile)) { output.write(bytes); }
-                    uris.add(HilalShareProvider.uriFor(MainActivity.this, outputFile));
-                    mimeTypes.add(mime);
-                }
-
-                Intent share = new Intent(uris.size() > 1 ? Intent.ACTION_SEND_MULTIPLE : Intent.ACTION_SEND);
-                share.putExtra(Intent.EXTRA_SUBJECT, title == null ? "Hilâl" : title);
-                share.putExtra(Intent.EXTRA_TEXT, text == null ? "" : text);
-                if (uris.size() > 1) share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                else if (uris.size() == 1) share.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-                if (!uris.isEmpty()) {
-                    ClipData clip = ClipData.newRawUri("Hilâl paylaşım dosyaları", uris.get(0));
-                    for (int i = 1; i < uris.size(); i++) clip.addItem(new ClipData.Item(uris.get(i)));
-                    share.setClipData(clip);
-                }
-                String commonType = mimeTypes.isEmpty() ? "text/plain" : mimeTypes.get(0);
-                for (String mime : mimeTypes) if (!mime.equals(commonType)) { commonType = "*/*"; break; }
-                share.setType(commonType);
-                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                runOnUiThread(() -> startActivity(Intent.createChooser(share, "Hilâl paylaşımını gönder")));
-            } catch (Exception error) {
-                shareContent(title, text, "");
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != FILE_PICKER_REQUEST || fileCallback == null) return;
-        Uri[] files = null;
-        if (resultCode == RESULT_OK && data != null) {
-            if (data.getClipData() != null) {
-                int count = data.getClipData().getItemCount();
-                files = new Uri[count];
-                for (int i = 0; i < count; i++) files[i] = data.getClipData().getItemAt(i).getUri();
-            } else if (data.getData() != null) {
-                Uri uri = data.getData();
-                try {
-                    getContentResolver().takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } catch (Exception ignored) { }
-                files = new Uri[]{uri};
-            }
-        }
-        fileCallback.onReceiveValue(files);
-        fileCallback = null;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        webView.saveState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        foregroundActivity = new WeakReference<>(this);
-        ReminderScheduler.restoreAll(this);
-        if (webView != null) {
-            webView.postDelayed(() -> webView.evaluateJavascript(
-                    "try{syncAllRemindersToNative();syncEzanRemindersToNative();syncVirtRemindersToNative()}catch(e){}",
-                    null), 800L);
-            webView.postDelayed(() -> dispatchReminderTarget(getIntent()), 1200L);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        MainActivity active = foregroundActivity.get();
-        if (active == this) foregroundActivity.clear();
-        super.onPause();
-    }
-
-    static boolean deliverForegroundReminder(String id, String title, String body) {
-        MainActivity activity = foregroundActivity.get();
-        if (activity == null || activity.webView == null || activity.isFinishing()) return false;
-        PowerManager power = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-        KeyguardManager keyguard = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
-        if ((power != null && !power.isInteractive()) ||
-                (keyguard != null && keyguard.isKeyguardLocked())) return false;
-        activity.runOnUiThread(() -> activity.webView.evaluateJavascript(
-                "try{window.hilalShowForegroundReminder&&window.hilalShowForegroundReminder(" +
-                        JSONObject.quote(id == null ? "" : id) + "," +
-                        JSONObject.quote(title == null ? "Hilâl Hatırlatıcı" : title) + "," +
-                        JSONObject.quote(body == null ? "Hatırlatma zamanı" : body) + ")}catch(e){}", null));
-
-        // Uygulama ekranda gerçekten açıksa,
-// Hilâl kendi uygulama içi bildirimini gösterdi.
-// Böylece ReminderReceiver Android sistem bildirimini ayrıca oluşturmaz.
-return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        String incoming = intent == null ? null : intent.getStringExtra("hilalReminderId");
-        if (incoming != null && !incoming.isEmpty()) pendingReminderId = incoming;
-        if (webView != null) webView.postDelayed(() -> dispatchReminderTarget(intent), 250L);
-    }
-
-    private void dispatchReminderTarget(Intent intent) {
-        if (webView == null || intent == null) return;
-        String id = intent.getStringExtra("hilalReminderId");
-        if ((id == null || id.isEmpty()) && pendingReminderId != null) id = pendingReminderId;
-        if (id == null || id.isEmpty()) return;
-        final String targetId = id;
-        webView.evaluateJavascript(
-                "(function(){try{if(typeof window.hilalOpenReminderTarget==='function'){" +
-                        "return window.hilalOpenReminderTarget(" + JSONObject.quote(targetId) + ")===true}" +
-                        "return false}catch(e){return false}})()", handled -> {
-                    if ("true".equals(handled)) {
-                        if (targetId.equals(pendingReminderId)) pendingReminderId = "";
-                        intent.removeExtra("hilalReminderId");
-                    }
-                });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView == null) {
-            super.onBackPressed();
-            return;
-        }
-        webView.evaluateJavascript(
-                "(function(){try{return !!(window.hilalHandleAndroidBack&&window.hilalHandleAndroidBack())}catch(e){return false}})()",
-                handled -> {
-                    if ("true".equals(handled)) return;
-                    if (webView.canGoBack()) webView.goBack();
-                    else MainActivity.super.onBackPressed();
-                });
-    }
-}
+ 
