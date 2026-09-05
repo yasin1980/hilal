@@ -19,8 +19,8 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    private static final String SOUND_CHANNEL_ID = "hilal_reminders_v6_sound";
-    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v6_vibrate";
+    private static final String SOUND_CHANNEL_ID = "hilal_reminders_v7_sound";
+    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v7_vibrate";
 
     @Override public void onReceive(Context context, Intent source) {
         final PendingResult pendingResult = goAsync();
@@ -58,11 +58,11 @@ public class ReminderReceiver extends BroadcastReceiver {
         String safeTitle = title == null ? "Hilâl Hatırlatıcı" : title;
         String safeBody = body == null ? "Hatırlatma zamanı" : body;
         android.widget.RemoteViews compact = new android.widget.RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-        compact.setTextViewText(R.id.notification_title, safeTitle);
-        compact.setTextViewText(R.id.notification_body, safeBody);
+        compact.setTextViewText(android.R.id.title, safeTitle);
+        compact.setTextViewText(android.R.id.text1, safeBody);
         android.widget.RemoteViews expanded = new android.widget.RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-        expanded.setTextViewText(R.id.notification_title, safeTitle);
-        expanded.setTextViewText(R.id.notification_body, safeBody);
+        expanded.setTextViewText(android.R.id.title, safeTitle);
+        expanded.setTextViewText(android.R.id.text1, safeBody);
         Notification.Builder note = new Notification.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(safeTitle)
