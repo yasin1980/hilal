@@ -1,18 +1,14 @@
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.hilal.ibadet'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.hilal.ibadet'
+        minSdk 26
+        targetSdk 35
+        versionCode 50
+        versionName '5.9-notification-routing'
     }
 }
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "HilalAndroid"
-include ':app'
