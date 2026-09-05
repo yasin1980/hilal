@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,6 +38,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         String title = source.getStringExtra("title");
         String body = source.getStringExtra("body");
         String soundPath = source.getStringExtra("soundPath");
+        String sound = source.getStringExtra("sound");
 
         String safeId = id == null ? "" : id;
         boolean isEzan = safeId.startsWith("ezan::");
@@ -131,62 +133,75 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         // Normal hatırlatıcılarda ve ezan bildirimlerinde seçilen ses dosyasını
         // doğrudan çalıyoruz. Bildirim sesi seviyesi %50 altında diye sesi kesmiyoruz.
-        playSelectedSound(context, soundPath, pendingResult);
+        playSelectedSound(context, sound, soundPath, pendingResult);
     }
 
     private void playSelectedSound(
             Context context,
+            String sound,
             String soundPath,
             PendingResult pendingResult) {
 
         MediaPlayer player = null;
+        PowerManager.WakeLock wakeLock = null;
 
         try {
-            player = new MediaPlayer();
+            PowerManager power = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (power != null) {
+                wakeLock = power.newWakeLock(
+                        PowerManager.PARTIAL_WAKE_LOCK,
+                        context.getPackageName() + ":hilal_reminder_sound");
+                wakeLock.acquire(20_000L);
+            }
 
+            player = new MediaPlayer();
             player.setAudioAttributes(new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
 
             AtomicBoolean finished = new AtomicBoolean(false);
             Handler handler = new Handler(Looper.getMainLooper());
             MediaPlayer finalPlayer = player;
+            PowerManager.WakeLock finalWakeLock = wakeLock;
 
             Runnable finish = () -> {
                 if (!finished.compareAndSet(false, true)) return;
+                handler.removeCallbacksAndMessages(null);
                 try {
                     if (finalPlayer.isPlaying()) finalPlayer.stop();
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) { }
                 try {
                     finalPlayer.release();
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) { }
+                try {
+                    if (finalWakeLock != null && finalWakeLock.isHeld()) finalWakeLock.release();
+                } catch (Exception ignored) { }
                 pendingResult.finish();
             };
 
-            if (soundPath != null
+            boolean hasFile = soundPath != null
                     && !soundPath.trim().isEmpty()
-                    && new File(soundPath).isFile()) {
+                    && new File(soundPath).isFile();
+
+            if (hasFile) {
                 player.setDataSource(soundPath);
+            } else if ("classic".equals(sound)) {
+                Uri classic = Uri.parse("android.resource://" + context.getPackageName()
+                        + "/" + R.raw.hilal_classic_notification);
+                player.setDataSource(context, classic);
             } else {
                 Uri defaultSound = RingtoneManager.getDefaultUri(
                         RingtoneManager.TYPE_NOTIFICATION);
                 if (defaultSound == null) {
-                    pendingResult.finish();
+                    finish.run();
                     return;
                 }
                 player.setDataSource(context, defaultSound);
             }
 
-            player.setOnCompletionListener(mp -> {
-                handler.removeCallbacks(finish);
-                finish.run();
-            });
-
+            player.setOnCompletionListener(mp -> finish.run());
             player.setOnErrorListener((mp, what, extra) -> {
-                handler.removeCallbacks(finish);
                 finish.run();
                 return true;
             });
@@ -195,15 +210,18 @@ public class ReminderReceiver extends BroadcastReceiver {
             player.setVolume(1.0f, 1.0f);
             player.start();
 
-            // Uzun özel seslerde BroadcastReceiver sonsuza kadar açık kalmasın.
-            handler.postDelayed(finish, 15000L);
+            // Ses uzun sürerse bile receiver sonsuza kadar açık kalmasın.
+            handler.postDelayed(finish, 20_000L);
 
         } catch (Exception ignored) {
             try {
                 if (player != null) player.release();
-            } catch (Exception ignoredAgain) {
-            }
+            } catch (Exception ignoredAgain) { }
+            try {
+                if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
+            } catch (Exception ignoredAgain) { }
             pendingResult.finish();
         }
     }
+
 }
