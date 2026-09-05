@@ -1,15 +1,13 @@
 name: Hilal Android APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Kodu al
         uses: actions/checkout@v4
@@ -20,4 +18,16 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-     
+      - name: Gradle 8.9 kur
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: APK derle
+        run: gradle :app:assembleDebug
+
+      - name: APK dosyasını yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: HILAL-ANDROID-TEST
+          path: app/build/outputs/apk/debug/app-debug.apk
