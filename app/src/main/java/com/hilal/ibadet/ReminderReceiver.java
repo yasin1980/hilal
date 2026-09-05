@@ -20,7 +20,7 @@ import java.io.File;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    private static final String CHANNEL_ID = "hilal_reminders_v10";
+    private static final String CHANNEL_ID = "hilal_reminders_v11";
 
     private static final long[] VIBRATION_PATTERN =
             new long[]{0, 300, 150, 300, 150, 500};
@@ -41,7 +41,6 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
 
         String id = source.getStringExtra("id");
-
         String title = source.getStringExtra("title");
         String body = source.getStringExtra("body");
         String soundPath = source.getStringExtra("soundPath");
@@ -55,7 +54,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
 
         /*
-         * Bildirime tıklanınca uygulamayı aç.
+         * Bildirime basınca uygulamayı aç.
          */
         Intent open = new Intent(context, MainActivity.class);
 
@@ -84,7 +83,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 );
 
         /*
-         * Android 8 ve üzeri bildirim kanalı.
+         * Bildirim kanalı.
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -110,8 +109,7 @@ public class ReminderReceiver extends BroadcastReceiver {
             );
 
             /*
-             * Ses MediaPlayer tarafından çalınacak.
-             * Böylece çift ses oluşmaz.
+             * Sesi MediaPlayer çalacak.
              */
             channel.setSound(null, null);
 
@@ -132,4 +130,246 @@ public class ReminderReceiver extends BroadcastReceiver {
                 title
         );
 
-        compact.setTextView
+        compact.setTextViewText(
+                android.R.id.text1,
+                body
+        );
+
+        RemoteViews expanded =
+                new RemoteViews(
+                        context.getPackageName(),
+                        R.layout.notification_hilal
+                );
+
+        expanded.setTextViewText(
+                android.R.id.title,
+                title
+        );
+
+        expanded.setTextViewText(
+                android.R.id.text1,
+                body
+        );
+
+        /*
+         * Sistem bildirimi.
+         */
+        Notification.Builder builder =
+                new Notification.Builder(
+                        context,
+                        CHANNEL_ID
+                );
+
+        builder.setSmallIcon(
+                R.drawable.ic_notification
+        );
+
+        builder.setContentTitle(title);
+        builder.setContentText(body);
+
+        builder.setCustomContentView(compact);
+        builder.setCustomBigContentView(expanded);
+        builder.setCustomHeadsUpContentView(compact);
+
+        builder.setContentIntent(contentIntent);
+        builder.setAutoCancel(true);
+
+        builder.setPriority(
+                Notification.PRIORITY_HIGH
+        );
+
+        builder.setCategory(
+                Notification.CATEGORY_REMINDER
+        );
+
+        builder.setVisibility(
+                Notification.VISIBILITY_PUBLIC
+        );
+
+        builder.setVibrate(
+                VIBRATION_PATTERN
+        );
+
+        /*
+         * Sistem sesi ikinci kez çalmasın.
+         */
+        builder.setSound(null);
+
+        /*
+         * Uygulama açıkken mevcut Hilâl bildirim sistemi.
+         */
+        boolean shownInsideApp =
+                MainActivity.deliverForegroundReminder(
+                        id,
+                        title,
+                        body
+                );
+
+        /*
+         * Uygulama kapalıysa sistem bildirimini göster.
+         */
+        if (!shownInsideApp) {
+
+            try {
+
+                manager.notify(
+                        id == null ? 1 : id.hashCode(),
+                        builder.build()
+                );
+
+            } catch (SecurityException ignored) {
+            }
+        }
+
+        /*
+         * Sonraki hatırlatıcıyı planla.
+         */
+        ReminderScheduler.afterFire(
+                context,
+                source
+        );
+
+        /*
+         * Uygulama açık veya kapalı fark etmeksizin
+         * bildirim sesini çal.
+         */
+        playNotificationSound(
+                context,
+                soundPath,
+                result
+        );
+    }
+
+    private void playNotificationSound(
+            Context context,
+            String soundPath,
+            PendingResult result
+    ) {
+
+        final MediaPlayer player =
+                new MediaPlayer();
+
+        final Handler handler =
+                new Handler(
+                        Looper.getMainLooper()
+                );
+
+        final boolean[] finished =
+                new boolean[]{false};
+
+        final Runnable finish =
+                new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        if (finished[0]) {
+                            return;
+                        }
+
+                        finished[0] = true;
+
+                        try {
+                            if (player.isPlaying()) {
+                                player.stop();
+                            }
+                        } catch (Exception ignored) {
+                        }
+
+                        try {
+                            player.release();
+                        } catch (Exception ignored) {
+                        }
+
+                        result.finish();
+                    }
+                };
+
+        try {
+
+            player.setAudioAttributes(
+                    new AudioAttributes.Builder()
+                            .setUsage(
+                                    AudioAttributes.USAGE_NOTIFICATION
+                            )
+                            .setContentType(
+                                    AudioAttributes.CONTENT_TYPE_SONIFICATION
+                            )
+                            .build()
+            );
+
+            /*
+             * Özel ses seçilmişse onu kullan.
+             */
+            if (soundPath != null
+                    && !soundPath.isEmpty()
+                    && new File(soundPath).isFile()) {
+
+                player.setDataSource(soundPath);
+
+            } else {
+
+                /*
+                 * Özel ses yoksa telefonun varsayılan
+                 * bildirim sesini kullan.
+                 */
+                Uri notificationSound =
+                        RingtoneManager.getDefaultUri(
+                                RingtoneManager.TYPE_NOTIFICATION
+                        );
+
+                if (notificationSound == null) {
+                    result.finish();
+                    return;
+                }
+
+                player.setDataSource(
+                        context,
+                        notificationSound
+                );
+            }
+
+            player.setOnCompletionListener(
+                    mp -> {
+
+                        handler.removeCallbacks(finish);
+                        finish.run();
+                    }
+            );
+
+            player.setOnErrorListener(
+                    (mp, what, extra) -> {
+
+                        handler.removeCallbacks(finish);
+                        finish.run();
+
+                        return true;
+                    }
+            );
+
+            player.prepare();
+
+            /*
+             * SESİ BAŞLAT.
+             */
+            player.start();
+
+            /*
+             * Maksimum 8 saniye.
+             */
+            handler.postDelayed(
+                    finish,
+                    8000L
+            );
+
+        } catch (Exception ignored) {
+
+            try {
+                player.release();
+            } catch (Exception ignored2) {
+            }
+
+            result.finish();
+        }
+    }
+}
