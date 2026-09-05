@@ -14,7 +14,7 @@ import android.os.Build;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    private static final String CHANNEL_ID = "hilal_reminders_v12";
+    private static final String CHANNEL_ID = "hilal_reminders_v13";
 
     private static final long[] VIBRATION_PATTERN =
             new long[]{0, 300, 150, 300, 150, 500};
