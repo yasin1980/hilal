@@ -1,6 +1,4 @@
-plugins {
-    id 'com.android.application'
-}
+plugins { id 'com.android.application' }
 
 android {
     namespace 'com.hilal.ibadet'
@@ -10,7 +8,7 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 50
-        versionName '5.9-notification-routing'
+        versionCode 52
+        versionName '5.10-notification-routing-fix'
     }
 }
