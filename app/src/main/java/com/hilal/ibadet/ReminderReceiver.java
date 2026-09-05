@@ -8,138 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
-
-public class ReminderReceiver extends BroadcastReceiver {
-
-    private static final String CHANNEL_ID = "hilal_reminders_v13";
-
-    private static final long[] VIBRATION_PATTERN =
-            new long[]{0, 300, 150, 300, 150, 500};
-
-    @Override
-    public void onReceive(Context context, Intent source) {
-
-        NotificationManager manager =
-                (NotificationManager) context.getSystemService(
-                        Context.NOTIFICATION_SERVICE
-                );
-
-        if (manager == null) {
-            return;
-        }
-
-        String id = source.getStringExtra("id");
-
-        String title = source.getStringExtra("title");
-        String body = source.getStringExtra("body");
-
-        if (title == null) {
-            title = "Hilâl Hatırlatıcı";
-        }
-
-        if (body == null) {
-            body = "Hatırlatma zamanı";
-        }
-
-        /*
-         * Bildirime basınca Hilâl uygulamasını aç.
-         */
-        Intent open =
-                new Intent(context, MainActivity.class);
-
-        open.setFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP
-        );
-
-        open.putExtra(
-                "hilalReminderId",
-                id
-        );
-
-        open.setData(
-                Uri.parse(
-                        "hilal://reminder/"
-                                + Uri.encode(
-                                id == null ? "" : id
-                        )
-                )
-        );
-
-        PendingIntent contentIntent =
-                PendingIntent.getActivity(
-                        context,
-                        id == null ? 0 : id.hashCode(),
-                        open,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                                | PendingIntent.FLAG_IMMUTABLE
-                );
-
-        /*
-         * Android 8+
-         *
-         * YENİ kanal oluşturuyoruz.
-         * Ses + titreşim Android tarafından yönetilecek.
-         */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            Uri notificationSound =
-                    RingtoneManager.getDefaultUri(
-                            RingtoneManager.TYPE_NOTIFICATION
-                    );
-
-            AudioAttributes audioAttributes =
-                    new AudioAttributes.Builder()
-                            .setUsage(
-                                    AudioAttributes.USAGE_NOTIFICATION
-                            )
-                            .setContentType(
-                                    AudioAttributes.CONTENT_TYPE_SONIFICATION
-                            )
-                            .build();
-
-            NotificationChannel channel =
-                    new NotificationChannel(
-                            CHANNEL_ID,
-                            "Hilâl Hatırlatıcıları",
-                            NotificationManager.IMPORTANCE_HIGH
-                    );
-
-            channel.setDescription(
-                    "Vird, dua, ibadet ve ezan hatırlatmaları"
-            );
-
-            /*
-             * GERÇEK BİLDİRİM SESİ
-             */
-            channel.setSound(
-                    notificationSound,
-                    audioAttributes
-            );
-
-            /*
-             * TİTREŞİM
-             */
-            channel.enableVibration(true);
-
-            channel.setVibrationPattern(
-                    VIBRATION_PATTERN
-            );
-
-package com.hilal.ibadet;
-
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -153,12 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    /*
-     * YENİ KANAL ID
-     *
-     * Önceki kanalın sessiz ayarlarını Android saklayabildiği için
-     * yeni bir kanal kullanıyoruz.
-     */
     private static final String CHANNEL_ID = "hilal_reminders_v8";
 
     @Override
@@ -167,21 +29,19 @@ public class ReminderReceiver extends BroadcastReceiver {
         final PendingResult pendingResult = goAsync();
 
         NotificationManager manager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(
+                        Context.NOTIFICATION_SERVICE
+                );
 
         if (manager == null) {
             pendingResult.finish();
             return;
         }
 
-        // ---------------------------------------------------------
-        // BİLDİRİME BASILDIĞINDA AÇILACAK EKRAN
-        // ---------------------------------------------------------
-
-        Intent open = new Intent(context, MainActivity.class);
-
         String id = source.getStringExtra("id");
 
+        // Bildirime basıldığında MainActivity açılsın
+        Intent open = new Intent(context, MainActivity.class);
         open.setFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -205,10 +65,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                         | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // ---------------------------------------------------------
-        // BİLDİRİM KANALI
-        // ---------------------------------------------------------
-
+        // Bildirim kanalı
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel channel =
@@ -218,17 +75,10 @@ public class ReminderReceiver extends BroadcastReceiver {
                             NotificationManager.IMPORTANCE_HIGH
                     );
 
-            /*
-             * Sesi MediaPlayer ile kendimiz çalıyoruz.
-             *
-             * Böylece:
-             * - Android kanal sesi + MediaPlayer sesi üst üste binmez.
-             * - Seçilen özel ses dosyası kullanılabilir.
-             * - Eski sessiz kanal ayarından etkilenmeyiz.
-             */
+            // Sesi MediaPlayer ile çalacağız.
             channel.setSound(null, null);
 
-            // Titreşim kesin olarak açık.
+            // Titreşim açık
             channel.enableVibration(true);
 
             channel.setVibrationPattern(
@@ -253,10 +103,6 @@ public class ReminderReceiver extends BroadcastReceiver {
             manager.createNotificationChannel(channel);
         }
 
-        // ---------------------------------------------------------
-        // BAŞLIK VE MESAJ
-        // ---------------------------------------------------------
-
         String title = source.getStringExtra("title");
         String body = source.getStringExtra("body");
 
@@ -270,10 +116,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                         ? "Hatırlatma zamanı"
                         : body;
 
-        // ---------------------------------------------------------
-        // ÖZEL BİLDİRİM GÖRÜNÜMÜ
-        // ---------------------------------------------------------
-
+        // Özel bildirim görünümü
         android.widget.RemoteViews compact =
                 new android.widget.RemoteViews(
                         context.getPackageName(),
@@ -306,52 +149,29 @@ public class ReminderReceiver extends BroadcastReceiver {
                 safeBody
         );
 
-        // ---------------------------------------------------------
-        // BİLDİRİM
-        // ---------------------------------------------------------
-
+        // Notification oluştur
         Notification.Builder note;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             note = new Notification.Builder(
                     context,
                     CHANNEL_ID
             );
-
         } else {
-
             note = new Notification.Builder(context);
-
         }
 
         note.setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(safeTitle)
                 .setContentText(safeBody)
-
                 .setCustomContentView(compact)
                 .setCustomBigContentView(expanded)
                 .setCustomHeadsUpContentView(compact)
-
                 .setContentIntent(content)
-
                 .setAutoCancel(true)
-
                 .setPriority(Notification.PRIORITY_HIGH)
-
                 .setCategory(Notification.CATEGORY_REMINDER)
-
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-
-                /*
-                 * Android'in kendi bildirim sesi kullanılmıyor.
-                 * Ses aşağıdaki MediaPlayer tarafından çalınacak.
-                 */
-                .setSound(null)
-
-                /*
-                 * TİTREŞİM HER ZAMAN AÇIK.
-                 */
                 .setVibrate(
                         new long[]{
                                 0,
@@ -361,12 +181,10 @@ public class ReminderReceiver extends BroadcastReceiver {
                                 150,
                                 500
                         }
-                );
+                )
+                .setSound(null);
 
-        // ---------------------------------------------------------
-        // UYGULAMA İÇİ BİLDİRİM
-        // ---------------------------------------------------------
-
+        // Uygulama içi bildirim
         boolean shownInsideApp =
                 MainActivity.deliverForegroundReminder(
                         id,
@@ -374,18 +192,9 @@ public class ReminderReceiver extends BroadcastReceiver {
                         safeBody
                 );
 
-        // ---------------------------------------------------------
-        // SİSTEM BİLDİRİMİNİ GÖSTER
-        // ---------------------------------------------------------
-
+        // Sistem bildirimini göster
         try {
 
-            /*
-             * Mevcut MainActivity davranışını değiştirmiyoruz.
-             *
-             * deliverForegroundReminder() false döndürüyorsa
-             * Android sistem bildirimi gösterilir.
-             */
             if (!shownInsideApp) {
 
                 manager.notify(
@@ -394,28 +203,17 @@ public class ReminderReceiver extends BroadcastReceiver {
                 );
             }
 
-        } catch (SecurityException denied) {
-
-            /*
-             * Android 13+ bildirim izni verilmemişse
-             * uygulama çökmeyecek.
-             */
-
+        } catch (SecurityException ignored) {
+            // Bildirim izni yoksa uygulama çökmeyecek.
         }
 
-        // ---------------------------------------------------------
-        // HATIRLATMAYI YENİDEN PLANLA
-        // ---------------------------------------------------------
-
+        // Hatırlatıcıyı yeniden planla
         ReminderScheduler.afterFire(
                 context,
                 source
         );
 
-        // ---------------------------------------------------------
-        // SES
-        // ---------------------------------------------------------
-
+        // Ses kontrolü
         AudioManager audio =
                 (AudioManager) context.getSystemService(
                         Context.AUDIO_SERVICE
@@ -426,31 +224,19 @@ public class ReminderReceiver extends BroadcastReceiver {
                         && audio.getRingerMode()
                         == AudioManager.RINGER_MODE_NORMAL;
 
-        boolean notificationVolumeAvailable =
+        boolean notificationVolumeOn =
                 audio != null
                         && audio.getStreamVolume(
                         AudioManager.STREAM_NOTIFICATION
                 ) > 0;
 
         /*
-         * ÖNEMLİ:
+         * Önceki hatadaki %50 kontrolü kaldırıldı.
          *
-         * Önceki kodda bildirim sesi,
-         * ses seviyesi %50'nin altındaysa tamamen kapatılıyordu.
-         *
-         * Bu yanlıştı.
-         *
-         * Artık:
-         * - Ses %100 ise çalar
-         * - Ses %50 ise çalar
-         * - Ses %20 ise çalar
-         * - Ses %1 ise çalar
-         *
-         * Sadece telefon gerçekten sessizdeyse veya
-         * bildirim ses seviyesi 0 ise ses zorlanmaz.
+         * Normal modda ve bildirim sesi açık olduğu sürece
+         * ses çalacak.
          */
-
-        if (normalMode && notificationVolumeAvailable) {
+        if (normalMode && notificationVolumeOn) {
 
             playSelectedSound(
                     context,
@@ -460,19 +246,9 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         } else {
 
-            /*
-             * Telefon sessizdeyse Android'in sessiz moduna
-             * saygı gösteriyoruz.
-             *
-             * Bildirim/titreşim kısmı yine çalışır.
-             */
             pendingResult.finish();
         }
     }
-
-    // =============================================================
-    // SESİ ÇAL
-    // =============================================================
 
     private void playSelectedSound(
             Context context,
@@ -486,13 +262,6 @@ public class ReminderReceiver extends BroadcastReceiver {
 
             player = new MediaPlayer();
 
-            /*
-             * Bildirim sesi olarak çalıştır.
-             *
-             * USAGE_NOTIFICATION kullanıyoruz.
-             * Önceki USAGE_NOTIFICATION_EVENT yerine bu,
-             * bildirim sesleri için daha doğru seçimdir.
-             */
             AudioAttributes attributes =
                     new AudioAttributes.Builder()
                             .setUsage(
@@ -523,28 +292,21 @@ public class ReminderReceiver extends BroadcastReceiver {
                 }
 
                 try {
-
                     if (finalPlayer.isPlaying()) {
                         finalPlayer.stop();
                     }
-
                 } catch (Exception ignored) {
                 }
 
                 try {
-
                     finalPlayer.release();
-
                 } catch (Exception ignored) {
                 }
 
                 pendingResult.finish();
             };
 
-            // -----------------------------------------------------
-            // ÖZEL SES DOSYASI VARSA ONU KULLAN
-            // -----------------------------------------------------
-
+            // Özel ses dosyası varsa onu kullan
             if (soundPath != null
                     && !soundPath.trim().isEmpty()
                     && new File(soundPath).isFile()) {
@@ -553,18 +315,13 @@ public class ReminderReceiver extends BroadcastReceiver {
 
             } else {
 
-                // -------------------------------------------------
-                // ÖZEL SES YOKSA TELEFONUN VARSAYILAN
-                // BİLDİRİM SESİNİ KULLAN
-                // -------------------------------------------------
-
+                // Özel ses yoksa telefonun varsayılan bildirim sesi
                 Uri defaultSound =
                         RingtoneManager.getDefaultUri(
                                 RingtoneManager.TYPE_NOTIFICATION
                         );
 
                 if (defaultSound == null) {
-
                     finish.run();
                     return;
                 }
@@ -574,10 +331,6 @@ public class ReminderReceiver extends BroadcastReceiver {
                         defaultSound
                 );
             }
-
-            // -----------------------------------------------------
-            // SESİ HAZIRLA
-            // -----------------------------------------------------
 
             player.setOnCompletionListener(
                     mp -> {
@@ -598,24 +351,11 @@ public class ReminderReceiver extends BroadcastReceiver {
 
             player.prepare();
 
-            /*
-             * Ses seviyesini MediaPlayer tarafından kısmıyoruz.
-             * Telefonun bildirim ses seviyesi kullanılacak.
-             */
             player.setVolume(1.0f, 1.0f);
-
-            // -----------------------------------------------------
-            // SESİ ÇAL
-            // -----------------------------------------------------
 
             player.start();
 
-            /*
-             * Çok uzun özel ses dosyalarında Receiver'ın
-             * sonsuza kadar açık kalmasını önle.
-             *
-             * Maksimum 8 saniye.
-             */
+            // En fazla 8 saniye açık kalsın
             handler.postDelayed(
                     finish,
                     8000L
@@ -623,18 +363,10 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         } catch (Exception ignored) {
 
-            /*
-             * Özel ses dosyası bozuksa uygulama çökmeyecek.
-             *
-             * Bildirim yine gösterilmiş olacak.
-             */
-
             try {
-
                 if (player != null) {
                     player.release();
                 }
-
             } catch (Exception ignoredAgain) {
             }
 
