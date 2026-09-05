@@ -10,7 +10,6 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:background="#082D22">
-
     <ImageView
         android:id="@+id/notification_icon"
         android:layout_width="40dp"
@@ -18,14 +17,12 @@
         android:padding="8dp"
         android:src="@drawable/ic_notification"
         android:background="#1F493B" />
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
         android:orientation="vertical">
-
         <TextView
             android:id="@android:id/title"
             android:layout_width="match_parent"
@@ -36,7 +33,6 @@
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
-
         <TextView
             android:id="@android:id/text1"
             android:layout_width="match_parent"
@@ -47,6 +43,5 @@
             android:textSize="12sp"
             android:maxLines="2"
             android:ellipsize="end" />
-
     </LinearLayout>
 </LinearLayout>
