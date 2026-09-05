@@ -95,18 +95,15 @@ public class ReminderReceiver extends BroadcastReceiver {
                 );
 
         boolean lowOrSilent =
-                audio == null
-                        || audio.getRingerMode()
-                        != AudioManager.RINGER_MODE_NORMAL
-                        || audio.getStreamMaxVolume(
+        audio == null
+                || audio.getRingerMode()
+                != AudioManager.RINGER_MODE_NORMAL
+                || audio.getStreamMaxVolume(
                         AudioManager.STREAM_NOTIFICATION
                 ) == 0
-                        || audio.getStreamVolume(
+                || audio.getStreamVolume(
                         AudioManager.STREAM_NOTIFICATION
-                ) * 2
-                        < audio.getStreamMaxVolume(
-                        AudioManager.STREAM_NOTIFICATION
-                );
+                ) == 0;
 
         String channelId =
                 lowOrSilent
