@@ -484,9 +484,10 @@ public class MainActivity extends Activity {
                         JSONObject.quote(title == null ? "Hilâl Hatırlatıcı" : title) + "," +
                         JSONObject.quote(body == null ? "Hatırlatma zamanı" : body) + ")}catch(e){}", null));
 
-        // Uygulama açık olsa bile Android sistem bildirimi yayınlansın.
-        // Böylece bildirim kanalı üzerinden ses ve titreşim çalışabilir.
-        return false;
+        // Uygulama ekranda gerçekten açıksa,
+// Hilâl kendi uygulama içi bildirimini gösterdi.
+// Böylece ReminderReceiver Android sistem bildirimini ayrıca oluşturmaz.
+return true;
     }
 
     @Override
