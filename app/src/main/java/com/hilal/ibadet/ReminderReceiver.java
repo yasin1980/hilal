@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReminderReceiver extends BroadcastReceiver {
 
     private static final String SOUND_CHANNEL_ID =
-            "hilal_reminders_v7_sound";
+            "hilal_reminders_v6_sound";
 
     private static final String VIBRATE_CHANNEL_ID =
-            "hilal_reminders_v7_vibrate";
+            "hilal_reminders_v6_vibrate";
 
     @Override
     public void onReceive(Context context, Intent source) {
@@ -42,23 +42,39 @@ public class ReminderReceiver extends BroadcastReceiver {
             return;
         }
 
-        String id = source.getStringExtra("id");
+        /*
+         * Hatırlatıcı ID
+         */
+        String id =
+                source.getStringExtra("id");
 
-        String title = source.getStringExtra("title");
-        String body = source.getStringExtra("body");
+        /*
+         * Bildirim başlığı ve mesajı
+         */
+        String title =
+                source.getStringExtra("title");
 
-        String safeTitle =
+        String body =
+                source.getStringExtra("body");
+
+        final String safeTitle =
                 title == null
                         ? "Hilâl Hatırlatıcı"
                         : title;
 
-        String safeBody =
+        final String safeBody =
                 body == null
                         ? "Hatırlatma zamanı"
                         : body;
 
+        /*
+         * Bildirime basıldığında MainActivity açılır.
+         */
         Intent open =
-                new Intent(context, MainActivity.class);
+                new Intent(
+                        context,
+                        MainActivity.class
+                );
 
         open.setFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
@@ -89,29 +105,43 @@ public class ReminderReceiver extends BroadcastReceiver {
                                 | PendingIntent.FLAG_IMMUTABLE
                 );
 
+        /*
+         * Telefonun ses durumunu kontrol et.
+         */
         AudioManager audio =
                 (AudioManager) context.getSystemService(
                         Context.AUDIO_SERVICE
                 );
 
-        boolean lowOrSilent =
-        audio == null
-                || audio.getRingerMode()
-                != AudioManager.RINGER_MODE_NORMAL
-                || audio.getStreamMaxVolume(
+        boolean silentOrVibrate =
+                audio == null
+                        || audio.getRingerMode()
+                        != AudioManager.RINGER_MODE_NORMAL;
+
+        boolean notificationVolumeOff =
+                audio != null
+                        && audio.getStreamMaxVolume(
                         AudioManager.STREAM_NOTIFICATION
-                ) == 0
-                || audio.getStreamVolume(
+                ) > 0
+                        && audio.getStreamVolume(
                         AudioManager.STREAM_NOTIFICATION
                 ) == 0;
 
+        boolean lowOrSilent =
+                silentOrVibrate
+                        || notificationVolumeOff;
+
+        /*
+         * Ses açık ise ses kanalı,
+         * sessiz/titreşim ise titreşim kanalı.
+         */
         String channelId =
                 lowOrSilent
                         ? VIBRATE_CHANNEL_ID
                         : SOUND_CHANNEL_ID;
 
         /*
-         * Android 8 ve üzeri bildirim kanalı
+         * Android 8.0 ve üzeri bildirim kanalı.
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -132,7 +162,17 @@ public class ReminderReceiver extends BroadcastReceiver {
                     Notification.VISIBILITY_PUBLIC
             );
 
-            channel.setSound(null, null);
+            /*
+             * Android'in kendi bildirim sesini kapatıyoruz.
+             *
+             * Sesi aşağıda MediaPlayer ile kendimiz
+             * çalıyoruz. Böylece bildirim iki kere
+             * ses çıkarmaz.
+             */
+            channel.setSound(
+                    null,
+                    null
+            );
 
             channel.enableVibration(
                     lowOrSilent
@@ -158,10 +198,9 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
 
         /*
-         * Normal Android sistem bildirimi.
+         * Android sistem bildirimi.
          *
-         * Özel RemoteViews kullanılmıyor.
-         * Böylece R.layout / variable layout hatası oluşmaz.
+         * RemoteViews / R.layout kullanılmıyor.
          */
         Notification.Builder note =
                 new Notification.Builder(
@@ -198,8 +237,13 @@ public class ReminderReceiver extends BroadcastReceiver {
                         .setVisibility(
                                 Notification.VISIBILITY_PUBLIC
                         )
-                        .setSound(null);
+                        .setSound(
+                                null
+                        );
 
+        /*
+         * Sessiz/titreşim modunda titreşim.
+         */
         if (lowOrSilent) {
 
             note.setVibrate(
@@ -215,8 +259,10 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
 
         /*
-         * Uygulama açıksa Hilâl'in kendi uygulama içi
-         * bildirimini göstermeyi deniyoruz.
+         * Uygulama açıksa Hilâl'in uygulama içindeki
+         * bildirimini göster.
+         *
+         * true dönerse sistem bildirimini göstermiyoruz.
          */
         boolean shownInsideApp =
                 MainActivity.deliverForegroundReminder(
@@ -226,7 +272,8 @@ public class ReminderReceiver extends BroadcastReceiver {
                 );
 
         /*
-         * Uygulama açık değilse Android sistem bildirimi.
+         * Uygulama açık değilse Android sistem
+         * bildirimi gösterilir.
          */
         try {
 
@@ -241,8 +288,9 @@ public class ReminderReceiver extends BroadcastReceiver {
             }
 
         } catch (SecurityException ignored) {
+
             /*
-             * Android 13+ bildirim izni yoksa
+             * Android 13+ bildirim izni verilmemişse
              * uygulama çökmeyecek.
              */
         }
@@ -256,7 +304,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         );
 
         /*
-         * Ses / titreşim
+         * Telefon sessiz/titreşimdeyse ses çalma.
          */
         if (lowOrSilent) {
 
@@ -264,6 +312,13 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         } else {
 
+            /*
+             * Ses açık.
+             *
+             * Önce kullanıcının seçtiği özel sesi,
+             * yoksa telefonun varsayılan bildirim
+             * sesini çal.
+             */
             playSelectedSound(
                     context,
                     source.getStringExtra(
@@ -274,85 +329,193 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
     }
 
+    /*
+     * Bildirim sesini çalar.
+     */
     private void playSelectedSound(
-        Context context,
-        String soundPath,
-        PendingResult pendingResult
-) {
-    MediaPlayer player = null;
+            Context context,
+            String soundPath,
+            PendingResult pendingResult
+    ) {
 
-    try {
-        player = new MediaPlayer();
+        MediaPlayer player = null;
 
-        player.setAudioAttributes(
-                new AudioAttributes.Builder()
-                        .setUsage(
-                                AudioAttributes.USAGE_NOTIFICATION
-                        )
-                        .setContentType(
-                                AudioAttributes.CONTENT_TYPE_SONIFICATION
-                        )
-                        .build()
-        );
+        try {
 
-        /*
-         * Bildirim sesini tam cihaz ses seviyesinde oynat.
-         * Telefonun kendi ses seviyesi yine geçerli olur.
-         */
-        player.setVolume(1.0f, 1.0f);
+            player =
+                    new MediaPlayer();
 
-        final MediaPlayer finalPlayer = player;
+            /*
+             * Android'e bunun bir BİLDİRİM sesi
+             * olduğunu açıkça bildiriyoruz.
+             */
+            player.setAudioAttributes(
+                    new AudioAttributes.Builder()
+                            .setUsage(
+                                    AudioAttributes.USAGE_NOTIFICATION
+                            )
+                            .setContentType(
+                                    AudioAttributes.CONTENT_TYPE_SONIFICATION
+                            )
+                            .build()
+            );
 
-        AtomicBoolean finished =
-                new AtomicBoolean(false);
+            /*
+             * MediaPlayer'ın kendi ses seviyesini
+             * kısmıyoruz.
+             *
+             * Telefonun bildirim ses seviyesi geçerli
+             * olmaya devam eder.
+             */
+            player.setVolume(
+                    1.0f,
+                    1.0f
+            );
 
-        Handler handler =
-                new Handler(
-                        Looper.getMainLooper()
+            final MediaPlayer finalPlayer =
+                    player;
+
+            AtomicBoolean finished =
+                    new AtomicBoolean(false);
+
+            Handler handler =
+                    new Handler(
+                            Looper.getMainLooper()
+                    );
+
+            Runnable finish =
+                    () -> {
+
+                        if (!finished.compareAndSet(
+                                false,
+                                true
+                        )) {
+                            return;
+                        }
+
+                        try {
+
+                            if (finalPlayer.isPlaying()) {
+                                finalPlayer.stop();
+                            }
+
+                        } catch (Exception ignored) {
+                        }
+
+                        try {
+
+                            finalPlayer.release();
+
+                        } catch (Exception ignored) {
+                        }
+
+                        pendingResult.finish();
+                    };
+
+            /*
+             * Kullanıcının seçtiği özel ses varsa
+             * onu kullan.
+             */
+            if (soundPath != null
+                    && !soundPath.trim().isEmpty()
+                    && new File(soundPath).isFile()) {
+
+                finalPlayer.setDataSource(
+                        soundPath
                 );
 
-        Runnable finish = () -> {
+            } else {
 
-            if (!finished.compareAndSet(
-                    false,
-                    true
-            )) {
-                return;
-            }
+                /*
+                 * Özel ses yoksa telefonun varsayılan
+                 * bildirim sesini kullan.
+                 */
+                Uri defaultSound =
+                        RingtoneManager.getDefaultUri(
+                                RingtoneManager.TYPE_NOTIFICATION
+                        );
 
-            try {
-                if (finalPlayer.isPlaying()) {
-                    finalPlayer.stop();
+                if (defaultSound == null) {
+
+                    finish.run();
+
+                    return;
                 }
-            } catch (Exception ignored) {
+
+                finalPlayer.setDataSource(
+                        context,
+                        defaultSound
+                );
             }
 
+            /*
+             * Ses normal şekilde tamamlanırsa
+             * receiver'ı kapat.
+             */
+            finalPlayer.setOnCompletionListener(
+                    mp -> {
+
+                        handler.removeCallbacks(
+                                finish
+                        );
+
+                        finish.run();
+                    }
+            );
+
+            /*
+             * Ses çalarken hata oluşursa
+             * receiver'ı kapat.
+             */
+            finalPlayer.setOnErrorListener(
+                    (mp, what, extra) -> {
+
+                        handler.removeCallbacks(
+                                finish
+                        );
+
+                        finish.run();
+
+                        return true;
+                    }
+            );
+
+            /*
+             * MediaPlayer hazırla.
+             */
+            finalPlayer.prepare();
+
+            /*
+             * Sesi çal.
+             */
+            finalPlayer.start();
+
+            /*
+             * Maksimum 15 saniye bekle.
+             *
+             * Uzun ses dosyaları BroadcastReceiver'ı
+             * sonsuza kadar açık bırakmasın.
+             */
+            handler.postDelayed(
+                    finish,
+                    15000L
+            );
+
+        } catch (Exception ignored) {
+
             try {
-                finalPlayer.release();
-            } catch (Exception ignored) {
+
+                if (player != null) {
+                    player.release();
+                }
+
+            } catch (Exception ignored2) {
             }
 
             pendingResult.finish();
-        };
-
-        /*
-         * Kullanıcının seçtiği özel ses varsa onu kullan.
-         */
-        if (soundPath != null
-                && !soundPath.trim().isEmpty()
-                && new File(soundPath).isFile()) {
-
-            finalPlayer.setDataSource(
-                    soundPath
-            );
-
-        } else {
-
-            /*
-             * Özel ses yoksa telefonun varsayılan
-             * bildirim zil sesini kullan.
-             */
-            Uri defaultSound =
+        }
+    }
+}Uri defaultSound =
                     RingtoneManager.getDefaultUri(
                             RingtoneManager.TYPE_NOTIFICATION
                     );
