@@ -1,47 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="64dp"
+    android:minHeight="72dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:paddingStart="14dp"
     android:paddingEnd="14dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:background="#082D22">
+    android:paddingTop="11dp"
+    android:paddingBottom="11dp"
+    android:background="#061F17">
+
+    <LinearLayout
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:minHeight="48dp"
+        android:background="#D9B44A"
+        android:orientation="vertical" />
+
     <ImageView
         android:id="@+id/notification_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="10dp"
+        android:padding="9dp"
         android:src="@drawable/ic_notification"
-        android:background="#1F493B" />
+        android:background="#123D30"
+        android:contentDescription="Hilâl" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
         android:orientation="vertical">
+
         <TextView
             android:id="@android:id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hilâl Hatırlatıcı"
-            android:textColor="#F0CF73"
+            android:text="Hilâl"
+            android:textColor="#E8C765"
             android:textSize="14sp"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
+
         <TextView
             android:id="@android:id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Hatırlatma zamanı"
-            android:textColor="#EAF4F0"
+            android:layout_marginTop="3dp"
+            android:text="Bildirim"
+            android:textColor="#EEF6F2"
             android:textSize="12sp"
             android:maxLines="2"
             android:ellipsize="end" />
+
     </LinearLayout>
+
 </LinearLayout>
