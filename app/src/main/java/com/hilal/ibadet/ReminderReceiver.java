@@ -8,20 +8,27 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    private static final String CHANNEL_ID = "hilal_reminders_v8";
+    /*
+     * Yeni kanal isimleri kullanıyoruz.
+     * Android 8+ eski kanal ayarlarını hafızada tuttuğu için
+     * eski sessiz kanalları kullanmaya devam etmiyoruz.
+     */
+    private static final String REMINDER_CHANNEL_ID =
+            "hilal_reminders_v9_sound";
+
+    private static final String EZAN_CHANNEL_ID =
+            "hilal_ezan_v9_sound";
 
     @Override
     public void onReceive(Context context, Intent source) {
@@ -30,8 +37,7 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(
-                        Context.NOTIFICATION_SERVICE
-                );
+                        Context.NOTIFICATION_SERVICE);
 
         if (manager == null) {
             pendingResult.finish();
@@ -39,84 +45,140 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
 
         String id = source.getStringExtra("id");
+        String title = source.getStringExtra("title");
+        String body = source.getStringExtra("body");
+        String soundPath = source.getStringExtra("soundPath");
 
-        // Bildirime basıldığında MainActivity açılsın
+        String safeId = id == null ? "" : id;
+
+        boolean isEzan = safeId.startsWith("ezan::");
+
+        String safeTitle;
+        String safeBody;
+
+        if (isEzan) {
+            safeTitle = title == null
+                    ? "🕌 Hilâl • Namaz Vakti"
+                    : title;
+
+            safeBody = body == null
+                    ? "Namaz vakti yaklaşıyor"
+                    : body;
+        } else {
+            safeTitle = title == null
+                    ? "Hilâl Hatırlatıcı"
+                    : title;
+
+            safeBody = body == null
+                    ? "Hatırlatma zamanı"
+                    : body;
+        }
+
+        /*
+         * Bildirime tıklayınca uygulamayı aç.
+         */
         Intent open = new Intent(context, MainActivity.class);
+
         open.setFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP
         );
 
-        open.putExtra("hilalReminderId", id);
+        open.putExtra("hilalReminderId", safeId);
 
-        open.setData(
-                Uri.parse(
-                        "hilal://reminder/"
-                                + Uri.encode(id == null ? "" : id)
-                )
-        );
+        open.setData(Uri.parse(
+                "hilal://reminder/" +
+                Uri.encode(safeId)
+        ));
 
         PendingIntent content = PendingIntent.getActivity(
                 context,
-                id == null ? 0 : id.hashCode(),
+                safeId.hashCode(),
                 open,
-                PendingIntent.FLAG_UPDATE_CURRENT
-                        | PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT |
+                PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Bildirim kanalı
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        /*
+         * Bildirim kanalları.
+         *
+         * Ezanın mevcut çalışan ses mantığını bozmamak için
+         * sistem kanalından ayrıca ses üretmiyoruz.
+         * Gerçek ses MediaPlayer ile aşağıda çalıyor.
+         *
+         * Böylece çift ses de oluşmaz.
+         */
+        if (Build.VERSION.SDK_INT >= 26) {
 
-            NotificationChannel channel =
-                    new NotificationChannel(
-                            CHANNEL_ID,
-                            "Hilâl Hatırlatıcıları",
-                            NotificationManager.IMPORTANCE_HIGH
-                    );
+            if (!isEzan) {
 
-            // Sesi MediaPlayer ile çalacağız.
-            channel.setSound(null, null);
+                NotificationChannel channel =
+                        new NotificationChannel(
+                                REMINDER_CHANNEL_ID,
+                                "Hilâl Hatırlatıcıları",
+                                NotificationManager.IMPORTANCE_HIGH
+                        );
 
-            // Titreşim açık
-            channel.enableVibration(true);
+                channel.setDescription(
+                        "Vird, dua ve ibadet hatırlatmaları"
+                );
 
-            channel.setVibrationPattern(
-                    new long[]{
-                            0,
-                            300,
-                            150,
-                            300,
-                            150,
-                            500
-                    }
-            );
+                channel.setSound(null, null);
 
-            channel.setDescription(
-                    "Vird, dua, ibadet ve ezan hatırlatmaları"
-            );
+                channel.enableVibration(true);
 
-            channel.setLockscreenVisibility(
-                    Notification.VISIBILITY_PUBLIC
-            );
+                channel.setVibrationPattern(
+                        new long[]{0, 300, 120, 300}
+                );
 
-            manager.createNotificationChannel(channel);
+                channel.setLockscreenVisibility(
+                        Notification.VISIBILITY_PUBLIC
+                );
+
+                manager.createNotificationChannel(channel);
+
+            } else {
+
+                /*
+                 * Ezan bildiriminde sistem kanal sesi kapalı.
+                 * Mevcut ezan sesi MediaPlayer ile çalacak.
+                 */
+                NotificationChannel channel =
+                        new NotificationChannel(
+                                EZAN_CHANNEL_ID,
+                                "Hilâl Ezan Bildirimleri",
+                                NotificationManager.IMPORTANCE_HIGH
+                        );
+
+                channel.setDescription(
+                        "Namaz vakti bildirimleri"
+                );
+
+                channel.setSound(null, null);
+
+                channel.enableVibration(true);
+
+                channel.setVibrationPattern(
+                        new long[]{0, 180, 100, 180}
+                );
+
+                channel.setLockscreenVisibility(
+                        Notification.VISIBILITY_PUBLIC
+                );
+
+                manager.createNotificationChannel(channel);
+            }
         }
 
-        String title = source.getStringExtra("title");
-        String body = source.getStringExtra("body");
+        String channelId =
+                isEzan
+                        ? EZAN_CHANNEL_ID
+                        : REMINDER_CHANNEL_ID;
 
-        String safeTitle =
-                title == null
-                        ? "Hilâl Hatırlatıcı"
-                        : title;
-
-        String safeBody =
-                body == null
-                        ? "Hatırlatma zamanı"
-                        : body;
-
-        // Özel bildirim görünümü
+        /*
+         * Hilâl premium bildirim görünümü.
+         */
         android.widget.RemoteViews compact =
                 new android.widget.RemoteViews(
                         context.getPackageName(),
@@ -149,19 +211,23 @@ public class ReminderReceiver extends BroadcastReceiver {
                 safeBody
         );
 
-        // Notification oluştur
         Notification.Builder note;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= 26) {
+
             note = new Notification.Builder(
                     context,
-                    CHANNEL_ID
+                    channelId
             );
+
         } else {
+
             note = new Notification.Builder(context);
+
         }
 
-        note.setSmallIcon(R.drawable.ic_notification)
+        note
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(safeTitle)
                 .setContentText(safeBody)
                 .setCustomContentView(compact)
@@ -170,84 +236,77 @@ public class ReminderReceiver extends BroadcastReceiver {
                 .setContentIntent(content)
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_HIGH)
-                .setCategory(Notification.CATEGORY_REMINDER)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setVibrate(
-                        new long[]{
-                                0,
-                                300,
-                                150,
-                                300,
-                                150,
-                                500
-                        }
+                .setCategory(
+                        isEzan
+                                ? Notification.CATEGORY_ALARM
+                                : Notification.CATEGORY_REMINDER
                 )
-                .setSound(null);
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setOngoing(false)
+                .setVibrate(
+                        new long[]{0, 300, 120, 300}
+                );
 
-        // Uygulama içi bildirim
+        /*
+         * Android sistem bildiriminin kendi sesini kapalı tutuyoruz.
+         *
+         * Asıl ses aşağıdaki MediaPlayer'dan geliyor.
+         */
+        note.setSound(null);
+
         boolean shownInsideApp =
                 MainActivity.deliverForegroundReminder(
-                        id,
+                        safeId,
                         safeTitle,
                         safeBody
                 );
 
-        // Sistem bildirimini göster
         try {
 
+            /*
+             * Uygulama açık ve aktif:
+             * sadece Hilâl'in uygulama içi bildirimi.
+             *
+             * Uygulama arka planda / kapalı / ekran kilitli:
+             * Android sistem bildirimi.
+             */
             if (!shownInsideApp) {
 
                 manager.notify(
-                        id == null ? 1 : id.hashCode(),
+                        safeId.hashCode(),
                         note.build()
                 );
             }
 
         } catch (SecurityException ignored) {
-            // Bildirim izni yoksa uygulama çökmeyecek.
+            // Bildirim izni yoksa uygulama çökmesin.
         }
 
-        // Hatırlatıcıyı yeniden planla
+        /*
+         * Bir sonraki tekrarı planla.
+         */
         ReminderScheduler.afterFire(
                 context,
                 source
         );
 
-        // Ses kontrolü
-        AudioManager audio =
-                (AudioManager) context.getSystemService(
-                        Context.AUDIO_SERVICE
-                );
-
-        boolean normalMode =
-                audio != null
-                        && audio.getRingerMode()
-                        == AudioManager.RINGER_MODE_NORMAL;
-
-        boolean notificationVolumeOn =
-                audio != null
-                        && audio.getStreamVolume(
-                        AudioManager.STREAM_NOTIFICATION
-                ) > 0;
-
         /*
-         * Önceki hatadaki %50 kontrolü kaldırıldı.
+         * ÖNEMLİ:
          *
-         * Normal modda ve bildirim sesi açık olduğu sürece
-         * ses çalacak.
+         * Önceki kodda bildirim sesi seviyesi %50'nin altındaysa
+         * ses tamamen kesiliyordu.
+         *
+         * BUNU KALDIRDIK.
+         *
+         * Telefon sessizdeyse Android'in sessiz davranışına saygı
+         * gösteriyoruz; fakat normal durumda Hilâl sesi artık
+         * %50 şartına takılmayacak.
          */
-        if (normalMode && notificationVolumeOn) {
-
-            playSelectedSound(
-                    context,
-                    source.getStringExtra("soundPath"),
-                    pendingResult
-            );
-
-        } else {
-
-            pendingResult.finish();
-        }
+        playSelectedSound(
+                context,
+                soundPath,
+                pendingResult
+        );
     }
 
     private void playSelectedSound(
@@ -262,7 +321,10 @@ public class ReminderReceiver extends BroadcastReceiver {
 
             player = new MediaPlayer();
 
-            AudioAttributes attributes =
+            /*
+             * Bildirim sesi olarak çalıştır.
+             */
+            player.setAudioAttributes(
                     new AudioAttributes.Builder()
                             .setUsage(
                                     AudioAttributes.USAGE_NOTIFICATION
@@ -270,17 +332,16 @@ public class ReminderReceiver extends BroadcastReceiver {
                             .setContentType(
                                     AudioAttributes.CONTENT_TYPE_SONIFICATION
                             )
-                            .build();
-
-            player.setAudioAttributes(attributes);
-
-            final MediaPlayer finalPlayer = player;
+                            .build()
+            );
 
             AtomicBoolean finished =
                     new AtomicBoolean(false);
 
             Handler handler =
                     new Handler(Looper.getMainLooper());
+
+            MediaPlayer finalPlayer = player;
 
             Runnable finish = () -> {
 
@@ -306,23 +367,28 @@ public class ReminderReceiver extends BroadcastReceiver {
                 pendingResult.finish();
             };
 
-            // Özel ses dosyası varsa onu kullan
-            if (soundPath != null
-                    && !soundPath.trim().isEmpty()
-                    && new File(soundPath).isFile()) {
+            /*
+             * Öncelik:
+             *
+             * 1. Kullanıcının seçtiği özel ses
+             * 2. Uygulamadaki ses URL'sinden indirilmiş dosya
+             * 3. Telefonun varsayılan bildirim sesi
+             */
+            if (soundPath != null &&
+                    !soundPath.trim().isEmpty() &&
+                    new File(soundPath).isFile()) {
 
                 player.setDataSource(soundPath);
 
             } else {
 
-                // Özel ses yoksa telefonun varsayılan bildirim sesi
                 Uri defaultSound =
                         RingtoneManager.getDefaultUri(
                                 RingtoneManager.TYPE_NOTIFICATION
                         );
 
                 if (defaultSound == null) {
-                    finish.run();
+                    pendingResult.finish();
                     return;
                 }
 
@@ -341,8 +407,38 @@ public class ReminderReceiver extends BroadcastReceiver {
 
             player.setOnErrorListener(
                     (mp, what, extra) -> {
-
                         handler.removeCallbacks(finish);
+                        finish.run();
+                        return true;
+                    }
+            );
+
+            player.prepare();
+
+            player.start();
+
+            /*
+             * Uzun ses dosyalarında BroadcastReceiver'ın sonsuza
+             * kadar açık kalmasını engelle.
+             */
+            handler.postDelayed(
+                    finish,
+                    15000L
+            );
+
+        } catch (Exception error) {
+
+            try {
+                if (player != null) {
+                    player.release();
+                }
+            } catch (Exception ignored) {
+            }
+
+            pendingResult.finish();
+        }
+    }
+}             handler.removeCallbacks(finish);
                         finish.run();
 
                         return true;
