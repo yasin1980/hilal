@@ -21,10 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReminderReceiver extends BroadcastReceiver {
 
     /*
-     * Yeni kanal kullanıyoruz.
-     * Eski Android bildirim kanallarında ses ayarı kapalı kalmış olabilir.
+     * Yeni bildirim kanalı.
+     * Eski kanaldaki kapalı ses/titreşim ayarlarından etkilenmemesi için
+     * yeni bir kanal kullanıyoruz.
      */
-    private static final String CHANNEL_ID = "hilal_reminders_v8";
+    private static final String CHANNEL_ID = "hilal_reminders_v9";
 
     private static final long[] VIBRATION_PATTERN =
             new long[]{0, 300, 150, 300, 150, 500};
@@ -35,7 +36,9 @@ public class ReminderReceiver extends BroadcastReceiver {
         final PendingResult pendingResult = goAsync();
 
         NotificationManager manager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(
+                        Context.NOTIFICATION_SERVICE
+                );
 
         if (manager == null) {
             pendingResult.finish();
@@ -44,7 +47,9 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         String id = source.getStringExtra("id");
 
-        // Bildirime tıklanınca Hilâl uygulamasını aç
+        /*
+         * Bildirime basılınca uygulamayı aç.
+         */
         Intent open = new Intent(context, MainActivity.class);
 
         open.setFlags(
@@ -71,13 +76,12 @@ public class ReminderReceiver extends BroadcastReceiver {
         );
 
         /*
-         * Android 8 ve üzeri:
-         * Bildirim kanalı yüksek önem seviyesinde.
-         * Titreşim DAİMA açık.
+         * Android 8+
          *
-         * Sesi MediaPlayer ile ayrıca çalıyoruz.
-         * Böylece kullanıcının seçtiği soundPath varsa o ses,
-         * yoksa telefonun varsayılan bildirim sesi kullanılır.
+         * Titreşim açık.
+         *
+         * Bildirim kanalının kendi sesini kullanmıyoruz.
+         * Sesi aşağıda MediaPlayer ile ayrıca çalıyoruz.
          */
         if (Build.VERSION.SDK_INT >= 26) {
 
@@ -93,33 +97,42 @@ public class ReminderReceiver extends BroadcastReceiver {
             );
 
             channel.enableVibration(true);
-            channel.setVibrationPattern(VIBRATION_PATTERN);
+
+            channel.setVibrationPattern(
+                    VIBRATION_PATTERN
+            );
 
             channel.setLockscreenVisibility(
                     Notification.VISIBILITY_PUBLIC
             );
 
             /*
-             * Sesi burada vermiyoruz.
-             * Çünkü MediaPlayer aşağıda seçilen sesi çalıyor.
-             * Böylece aynı sesin iki kere çalmasını önlüyoruz.
+             * Sistem kanal sesi kapalı.
+             * Ses MediaPlayer tarafından bir kez çalınacak.
              */
             channel.setSound(null, null);
 
             manager.createNotificationChannel(channel);
         }
 
-        String title = source.getStringExtra("title");
-        String body = source.getStringExtra("body");
+        String title =
+                source.getStringExtra("title");
+
+        String body =
+                source.getStringExtra("body");
 
         String safeTitle =
-                title == null ? "Hilâl Hatırlatıcı" : title;
+                title == null
+                        ? "Hilâl Hatırlatıcı"
+                        : title;
 
         String safeBody =
-                body == null ? "Hatırlatma zamanı" : body;
+                body == null
+                        ? "Hatırlatma zamanı"
+                        : body;
 
         /*
-         * Hilâl'in özel bildirim görünümü
+         * Hilâl özel bildirim görünümü.
          */
         android.widget.RemoteViews compact =
                 new android.widget.RemoteViews(
@@ -158,27 +171,45 @@ public class ReminderReceiver extends BroadcastReceiver {
                         context,
                         CHANNEL_ID
                 )
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle(safeTitle)
-                        .setContentText(safeBody)
-                        .setCustomContentView(compact)
-                        .setCustomBigContentView(expanded)
-                        .setCustomHeadsUpContentView(compact)
-                        .setContentIntent(content)
+                        .setSmallIcon(
+                                R.drawable.ic_notification
+                        )
+                        .setContentTitle(
+                                safeTitle
+                        )
+                        .setContentText(
+                                safeBody
+                        )
+                        .setCustomContentView(
+                                compact
+                        )
+                        .setCustomBigContentView(
+                                expanded
+                        )
+                        .setCustomHeadsUpContentView(
+                                compact
+                        )
+                        .setContentIntent(
+                                content
+                        )
                         .setAutoCancel(true)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setCategory(Notification.CATEGORY_REMINDER)
-                        .setVisibility(Notification.VISIBILITY_PUBLIC)
-
-                        // Titreşim DAİMA açık
-                        .setVibrate(VIBRATION_PATTERN)
-
-                        // Sistem tarafından ikinci kez ses çalınmasın
+                        .setPriority(
+                                Notification.PRIORITY_HIGH
+                        )
+                        .setCategory(
+                                Notification.CATEGORY_REMINDER
+                        )
+                        .setVisibility(
+                                Notification.VISIBILITY_PUBLIC
+                        )
+                        .setVibrate(
+                                VIBRATION_PATTERN
+                        )
                         .setSound(null);
 
         /*
-         * Uygulama açıkken Hilâl'in kendi bildirimini göster.
-         * Kapalıyken Android sistem bildirimini göster.
+         * Uygulama açıksa Hilâl'in mevcut uygulama içi bildirim sistemi
+         * çalışmaya devam ediyor.
          */
         boolean shownInsideApp =
                 MainActivity.deliverForegroundReminder(
@@ -189,151 +220,19 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         try {
 
+            /*
+             * Uygulama kapalıysa Android sistem bildirimi gösterilir.
+             */
             if (!shownInsideApp) {
+
                 manager.notify(
-                        id == null ? 1 : id.hashCode(),
+                        id == null
+                                ? 1
+                                : id.hashCode(),
                         note.build()
                 );
             }
 
-        } catch (SecurityException denied) {
-            // Bildirim izni yoksa uygulama çökmeyecek.
-        }
-
-        /*
-         * Bir sonraki hatırlatmayı planla.
-         */
-        ReminderScheduler.afterFire(
-                context,
-                source
-        );
-
-        /*
-         * SES
-         *
-         * soundPath varsa kullanıcının seçtiği ses.
-         * Yoksa telefonun varsayılan bildirim sesi.
-         */
-        playSelectedSound(
-                context,
-                source.getStringExtra("soundPath"),
-                pendingResult
-        );
-    }
-
-    private void playSelectedSound(
-            Context context,
-            String soundPath,
-            PendingResult pendingResult
-    ) {
-
-        MediaPlayer player = null;
-
-        try {
-
-            player = new MediaPlayer();
-
-            player.setAudioAttributes(
-                    new AudioAttributes.Builder()
-                            .setUsage(
-                                    AudioAttributes.USAGE_NOTIFICATION
-                            )
-                            .setContentType(
-                                    AudioAttributes.CONTENT_TYPE_SONIFICATION
-                            )
-                            .build()
-            );
-
-            final MediaPlayer finalPlayer = player;
-
-            AtomicBoolean finished =
-                    new AtomicBoolean(false);
-
-            Handler handler =
-                    new Handler(Looper.getMainLooper());
-
-            Runnable finish = () -> {
-
-                if (!finished.compareAndSet(false, true)) {
-                    return;
-                }
-
-                try {
-                    if (finalPlayer.isPlaying()) {
-                        finalPlayer.stop();
-                    }
-                } catch (Exception ignored) {
-                }
-
-                try {
-                    finalPlayer.release();
-                } catch (Exception ignored) {
-                }
-
-                pendingResult.finish();
-            };
-
+        } catch (SecurityException ignored) {
             /*
-             * Kullanıcının seçtiği özel ses varsa onu kullan.
-             */
-            if (soundPath != null
-                    && new File(soundPath).isFile()) {
-
-                player.setDataSource(soundPath);
-
-            } else {
-
-                /*
-                 * Özel ses yoksa telefonun varsayılan
-                 * bildirim sesini kullan.
-                 */
-                Uri defaultSound =
-                        RingtoneManager.getDefaultUri(
-                                RingtoneManager.TYPE_NOTIFICATION
-                        );
-
-                player.setDataSource(
-                        context,
-                        defaultSound
-                );
-            }
-
-            player.setOnCompletionListener(
-                    mp -> {
-                        handler.removeCallbacks(finish);
-                        finish.run();
-                    }
-            );
-
-            player.setOnErrorListener(
-                    (mp, what, extra) -> {
-                        handler.removeCallbacks(finish);
-                        finish.run();
-                        return true;
-                    }
-            );
-
-            player.prepare();
-            player.start();
-
-            /*
-             * Çok uzun bir ses BroadcastReceiver'ı açık bırakmasın.
-             */
-            handler.postDelayed(
-                    finish,
-                    8000L
-            );
-
-        } catch (Exception ignored) {
-
-            if (player != null) {
-                try {
-                    player.release();
-                } catch (Exception ignored2) {
-                }
-            }
-
-            pendingResult.finish();
-        }
-    }
-}
+             * Bildirim izni yoksa uygulama çö
