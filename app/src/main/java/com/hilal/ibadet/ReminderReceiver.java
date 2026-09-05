@@ -1,8 +1,8 @@
 package com.hilal.ibadet;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,22 +10,17 @@ import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.net.Uri;
+import android.widget.RemoteViews;
 
 import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReminderReceiver extends BroadcastReceiver {
 
-    /*
-     * Yeni bildirim kanalı.
-     * Eski kanaldaki kapalı ses/titreşim ayarlarından etkilenmemesi için
-     * yeni bir kanal kullanıyoruz.
-     */
-    private static final String CHANNEL_ID = "hilal_reminders_v9";
+    private static final String CHANNEL_ID = "hilal_reminders_v10";
 
     private static final long[] VIBRATION_PATTERN =
             new long[]{0, 300, 150, 300, 150, 500};
@@ -33,7 +28,7 @@ public class ReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent source) {
 
-        final PendingResult pendingResult = goAsync();
+        final PendingResult result = goAsync();
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(
@@ -41,14 +36,26 @@ public class ReminderReceiver extends BroadcastReceiver {
                 );
 
         if (manager == null) {
-            pendingResult.finish();
+            result.finish();
             return;
         }
 
         String id = source.getStringExtra("id");
 
+        String title = source.getStringExtra("title");
+        String body = source.getStringExtra("body");
+        String soundPath = source.getStringExtra("soundPath");
+
+        if (title == null) {
+            title = "Hilâl Hatırlatıcı";
+        }
+
+        if (body == null) {
+            body = "Hatırlatma zamanı";
+        }
+
         /*
-         * Bildirime basılınca uygulamayı aç.
+         * Bildirime tıklanınca uygulamayı aç.
          */
         Intent open = new Intent(context, MainActivity.class);
 
@@ -67,23 +74,19 @@ public class ReminderReceiver extends BroadcastReceiver {
                 )
         );
 
-        PendingIntent content = PendingIntent.getActivity(
-                context,
-                id == null ? 0 : id.hashCode(),
-                open,
-                PendingIntent.FLAG_UPDATE_CURRENT
-                        | PendingIntent.FLAG_IMMUTABLE
-        );
+        PendingIntent contentIntent =
+                PendingIntent.getActivity(
+                        context,
+                        id == null ? 0 : id.hashCode(),
+                        open,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                                | PendingIntent.FLAG_IMMUTABLE
+                );
 
         /*
-         * Android 8+
-         *
-         * Titreşim açık.
-         *
-         * Bildirim kanalının kendi sesini kullanmıyoruz.
-         * Sesi aşağıda MediaPlayer ile ayrıca çalıyoruz.
+         * Android 8 ve üzeri bildirim kanalı.
          */
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel channel =
                     new NotificationChannel(
@@ -107,132 +110,26 @@ public class ReminderReceiver extends BroadcastReceiver {
             );
 
             /*
-             * Sistem kanal sesi kapalı.
-             * Ses MediaPlayer tarafından bir kez çalınacak.
+             * Ses MediaPlayer tarafından çalınacak.
+             * Böylece çift ses oluşmaz.
              */
             channel.setSound(null, null);
 
             manager.createNotificationChannel(channel);
         }
 
-        String title =
-                source.getStringExtra("title");
-
-        String body =
-                source.getStringExtra("body");
-
-        String safeTitle =
-                title == null
-                        ? "Hilâl Hatırlatıcı"
-                        : title;
-
-        String safeBody =
-                body == null
-                        ? "Hatırlatma zamanı"
-                        : body;
-
         /*
          * Hilâl özel bildirim görünümü.
          */
-        android.widget.RemoteViews compact =
-                new android.widget.RemoteViews(
+        RemoteViews compact =
+                new RemoteViews(
                         context.getPackageName(),
                         R.layout.notification_hilal
                 );
 
         compact.setTextViewText(
                 android.R.id.title,
-                safeTitle
+                title
         );
 
-        compact.setTextViewText(
-                android.R.id.text1,
-                safeBody
-        );
-
-        android.widget.RemoteViews expanded =
-                new android.widget.RemoteViews(
-                        context.getPackageName(),
-                        R.layout.notification_hilal
-                );
-
-        expanded.setTextViewText(
-                android.R.id.title,
-                safeTitle
-        );
-
-        expanded.setTextViewText(
-                android.R.id.text1,
-                safeBody
-        );
-
-        Notification.Builder note =
-                new Notification.Builder(
-                        context,
-                        CHANNEL_ID
-                )
-                        .setSmallIcon(
-                                R.drawable.ic_notification
-                        )
-                        .setContentTitle(
-                                safeTitle
-                        )
-                        .setContentText(
-                                safeBody
-                        )
-                        .setCustomContentView(
-                                compact
-                        )
-                        .setCustomBigContentView(
-                                expanded
-                        )
-                        .setCustomHeadsUpContentView(
-                                compact
-                        )
-                        .setContentIntent(
-                                content
-                        )
-                        .setAutoCancel(true)
-                        .setPriority(
-                                Notification.PRIORITY_HIGH
-                        )
-                        .setCategory(
-                                Notification.CATEGORY_REMINDER
-                        )
-                        .setVisibility(
-                                Notification.VISIBILITY_PUBLIC
-                        )
-                        .setVibrate(
-                                VIBRATION_PATTERN
-                        )
-                        .setSound(null);
-
-        /*
-         * Uygulama açıksa Hilâl'in mevcut uygulama içi bildirim sistemi
-         * çalışmaya devam ediyor.
-         */
-        boolean shownInsideApp =
-                MainActivity.deliverForegroundReminder(
-                        id,
-                        safeTitle,
-                        safeBody
-                );
-
-        try {
-
-            /*
-             * Uygulama kapalıysa Android sistem bildirimi gösterilir.
-             */
-            if (!shownInsideApp) {
-
-                manager.notify(
-                        id == null
-                                ? 1
-                                : id.hashCode(),
-                        note.build()
-                );
-            }
-
-        } catch (SecurityException ignored) {
-            /*
-             * Bildirim izni yoksa uygulama çö
+        compact.setTextView
