@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.RemoteViews;
 import android.os.Build;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
@@ -91,8 +92,21 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             Notification.Builder builder = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
+            long remaining = Math.max(0L, best - now);
+            long totalMinutes = remaining / 60000L;
+            long remHours = totalMinutes / 60L;
+            long remMinutes = totalMinutes % 60L;
+            String countdown = String.format(Locale.US, "%02d:%02d kaldı", remHours, remMinutes);
+            RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
+            statusView.setTextViewText(android.R.id.title, bestName + " • " + bestClock + "   •   " + countdown);
+            statusView.setTextViewText(android.R.id.text1, "Namaz vakti");
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
+            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 11f);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(bestName + " • " + bestClock)
+                    .setContentText(countdown)
+                    .setCustomContentView(statusView)
+                    .setCustomHeadsUpContentView(statusView)
                     .setContentIntent(content)
                     .setOngoing(true)
                     .setAutoCancel(false)

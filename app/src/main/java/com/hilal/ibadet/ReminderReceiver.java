@@ -85,33 +85,90 @@ public class ReminderReceiver extends BroadcastReceiver {
             // sesi zorlamadan yalnızca belirgin titreşim kullan.
             pendingResult.finish();
         } else {
-            playSelectedSound(context, source.getStringExtra("soundPath"), pendingResult);
+            playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
         }
     }
 
-    private void playSelectedSound(Context context, String soundPath, PendingResult pendingResult) {
+    private void playSelectedSound(Context context, String soundId, String soundPath, PendingResult pendingResult) {
+        MediaPlayer player = null;
+        AudioManager audioManager = null;
         try {
-            MediaPlayer player = new MediaPlayer();
+            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            final AudioManager am = audioManager;
+            final AudioManager.OnAudioFocusChangeListener focusListener = change -> { };
+            if (am != null && Build.VERSION.SDK_INT >= 26) {
+                try {
+                    am.requestAudioFocus(new android.media.AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                            .setAudioAttributes(new AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                    .build())
+                            .setOnAudioFocusChangeListener(focusListener)
+                            .build());
+                } catch (Exception ignored) { }
+            }
+            player = new MediaPlayer();
             player.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
-            AtomicBoolean finished = new AtomicBoolean(false);
-            Handler handler = new Handler(Looper.getMainLooper());
-            Runnable finish = () -> {
+            Uri sourceUri = null;
+            if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
+                sourceUri = Uri.fromFile(new File(soundPath));
+            } else {
+                String embeddedPath = extractEmbeddedFavoriteSound(context, soundId);
+                if (embeddedPath != null && new File(embeddedPath).isFile() && new File(embeddedPath).length() > 0) {
+                    sourceUri = Uri.fromFile(new File(embeddedPath));
+                }
+            }
+            if (sourceUri != null) player.setDataSource(context, sourceUri);
+            else player.setDataSource(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+            final MediaPlayer mp = player;
+            final AtomicBoolean finished = new AtomicBoolean(false);
+            final Handler handler = new Handler(Looper.getMainLooper());
+            final Runnable finish = () -> {
                 if (!finished.compareAndSet(false, true)) return;
-                try { if (player.isPlaying()) player.stop(); } catch (Exception ignored) { }
-                try { player.release(); } catch (Exception ignored) { }
+                try { if (mp.isPlaying()) mp.stop(); } catch (Exception ignored) { }
+                try { mp.release(); } catch (Exception ignored) { }
+                if (am != null) { try { am.abandonAudioFocus(focusListener); } catch (Exception ignored) { } }
                 pendingResult.finish();
             };
-            if (soundPath != null && new File(soundPath).isFile()) player.setDataSource(soundPath);
-            else player.setDataSource(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-            player.setOnCompletionListener(mp -> { handler.removeCallbacks(finish); finish.run(); });
-            player.setOnErrorListener((mp, what, extra) -> { handler.removeCallbacks(finish); finish.run(); return true; });
-            player.prepare();
-            player.start();
-            // BroadcastReceiver'ı uzun özel sesler yüzünden açık bırakıp ANR üretme.
-            handler.postDelayed(finish, 8000L);
-        } catch (Exception ignored) { pendingResult.finish(); }
+            mp.setOnCompletionListener(x -> finish.run());
+            mp.setOnErrorListener((x, what, extra) -> { finish.run(); return true; });
+            mp.prepare();
+            mp.start();
+            handler.postDelayed(finish, 12000L);
+        } catch (Exception ignored) {
+            try { if (player != null) player.release(); } catch (Exception ignored2) { }
+            pendingResult.finish();
+        }
     }
+    private String extractEmbeddedFavoriteSound(Context context, String soundId) {
+        if (soundId == null || !(soundId.equals("fav1") || soundId.equals("fav2") || soundId.equals("fav3") || soundId.equals("fav4"))) return null;
+        try {
+            java.io.InputStream in = context.getAssets().open("index.html");
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[8192]; int n;
+            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+            in.close();
+            String html = out.toString("UTF-8");
+            String marker = "\"id\": \"" + soundId + "\", \"name\": ";
+            int pos = html.indexOf(marker);
+            if (pos < 0) return null;
+            int srcPos = html.indexOf("\"src\": \"data:audio/", pos);
+            if (srcPos < 0) return null;
+            int valueStart = html.indexOf("data:audio/", srcPos);
+            int valueEnd = html.indexOf('\"', valueStart);
+            if (valueStart < 0 || valueEnd <= valueStart) return null;
+            String data = html.substring(valueStart, valueEnd);
+            int comma = data.indexOf(',');
+            if (comma < 0) return null;
+            byte[] audio = android.util.Base64.decode(data.substring(comma + 1), android.util.Base64.DEFAULT);
+            File file = new File(context.getFilesDir(), "favorite_" + soundId + ".mp3");
+            try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) { fos.write(audio); }
+            return file.getAbsolutePath();
+        } catch (Exception ignored) { return null; }
+    }
+
 }
