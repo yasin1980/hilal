@@ -83,9 +83,6 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             }
             if (bestName.isEmpty() || best == Long.MAX_VALUE) return;
 
-            long sec = Math.max(0L, best - now) / 1000L;
-            String countdown = String.format(Locale.US, "%02d:%02d:%02d", sec / 3600, (sec % 3600) / 60, sec % 60);
-
             Intent open = new Intent(context, MainActivity.class);
             open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent content = PendingIntent.getActivity(context, NOTIFICATION_ID, open,
@@ -96,24 +93,17 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
                     : new Notification.Builder(context);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(bestName + " • " + bestClock)
-                    .setContentText(countdown)
                     .setContentIntent(content)
                     .setOngoing(true)
                     .setAutoCancel(false)
                     .setOnlyAlertOnce(true)
                     .setShowWhen(false)
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .setCategory(Notification.CATEGORY_STATUS)
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setColor(0xFF084331)
                     .setSound(null, null)
                     .setVibrate(new long[]{0});
-            // Bildirim özel XML layout kullanmaz; böylece eksik resource nedeniyle
-            // derleme hatası oluşmaz. Android sistem kronometresi geri sayımı canlı tutar.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                builder.setUsesChronometer(true)
-                        .setChronometerCountDown(true)
-                        .setWhen(System.currentTimeMillis() + (best - now));
-            }
             manager.notify(NOTIFICATION_ID, builder.build());
             PrayerStatusScheduler.scheduleNext(context, 1000L);
         } catch (Exception ignored) {
