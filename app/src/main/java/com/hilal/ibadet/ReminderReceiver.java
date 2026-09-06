@@ -57,7 +57,12 @@ public class ReminderReceiver extends BroadcastReceiver {
         String safeTitle = title == null ? "Hilâl Hatırlatıcı" : title;
         String safeBody = body == null ? "Hatırlatma zamanı" : body;
         String currentDates = getCurrentDateLine();
-        if (!safeBody.contains(currentDates)) safeBody = safeBody + " • " + currentDates;
+        // Bildirim içindeki eski kayıt tarihlerini gösterme; tarih her bildirim
+        // tetiklendiğinde yeniden hesaplanıp en başta güncel olarak gösterilsin.
+        safeBody = safeBody.replaceAll("\\b\\d{1,2}[./-]\\d{1,2}[./-]\\d{4}\\b", " ");
+        safeBody = safeBody.replaceAll("\\b\\d{1,2}\\s+(?:Muharrem|Safer|Rebiülevvel|Rebiülahir|Cemaziyelevvel|Cemaziyelahir|Recep|Şaban|Ramazan|Şevval|Zilkade|Zilhicce)\\s+\\d{3,4}\\b", " ");
+        safeBody = safeBody.replaceAll("\\s{2,}", " ").trim();
+        safeBody = currentDates + " • " + safeBody;
         android.widget.RemoteViews compact = new android.widget.RemoteViews(context.getPackageName(), R.layout.notification_hilal);
         compact.setTextViewText(android.R.id.title, safeTitle);
         compact.setTextViewText(android.R.id.text1, safeBody);
@@ -116,6 +121,8 @@ public class ReminderReceiver extends BroadcastReceiver {
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
+            // Bildirim sesi olarak çal: telefonun bildirim ses seviyesini kullan.
+            try { player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); } catch (Exception ignored) { }
             player.setVolume(1.0f, 1.0f);
             Uri sourceUri = null;
             if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
@@ -126,7 +133,10 @@ public class ReminderReceiver extends BroadcastReceiver {
                     sourceUri = Uri.fromFile(new File(embeddedPath));
                 }
             }
-            if (sourceUri != null) {
+            if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
+                // Yerel seçilmiş ses dosyasını doğrudan dosya yolundan aç.
+                player.setDataSource(soundPath);
+            } else if (sourceUri != null) {
                 player.setDataSource(sourceUri.toString());
             } else {
                 String embedded = extractEmbeddedFavoriteSound(context, soundId);
