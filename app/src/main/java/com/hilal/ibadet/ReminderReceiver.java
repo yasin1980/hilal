@@ -162,7 +162,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         try {
             Calendar now = Calendar.getInstance();
             String miladi = new SimpleDateFormat("dd.MM.yyyy", java.util.Locale.US).format(now.getTime());
-            android.icu.util.IslamicCalendar hijri = new android.icu.util.IslamicCalendar(now.getTimeZone(), java.util.Locale.forLanguageTag("tr-TR"));
+            android.icu.util.IslamicCalendar hijri = new android.icu.util.IslamicCalendar(android.icu.util.TimeZone.getDefault(), java.util.Locale.forLanguageTag("tr-TR"));
             hijri.setTimeInMillis(now.getTimeInMillis());
             String[] months = {"Muharrem", "Safer", "Rebiülevvel", "Rebiülahir", "Cemaziyelevvel", "Cemaziyelahir", "Recep", "Şaban", "Ramazan", "Şevval", "Zilkade", "Zilhicce"};
             int day = hijri.get(android.icu.util.Calendar.DAY_OF_MONTH);
