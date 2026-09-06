@@ -24435,6 +24435,20 @@ function prayerClockMap(){
     "Yatsı":"22:00"
   };
 }
+
+window.syncPrayerStatusToNative=function(){
+  try{
+    if(!window.AndroidHilal || typeof window.AndroidHilal.updatePrayerStatus!=="function")return;
+    const map=typeof prayerClockMap==="function"?prayerClockMap():{};
+    const now=new Date();
+    const payload={date:now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0"),Imsak:map.Imsak||map.Sabah||"",Sunrise:map.Güneş||map.Sunrise||"",Dhuhr:map.Öğle||map.Dhuhr||"",Asr:map.İkindi||map.Asr||"",Maghrib:map.Akşam||map.Maghrib||"",Isha:map.Yatsı||map.Isha||""};
+    window.AndroidHilal.updatePrayerStatus(JSON.stringify(payload));
+  }catch(e){}
+};
+setTimeout(()=>{try{window.syncPrayerStatusToNative?.()}catch(e){}},1500);
+setTimeout(()=>{try{window.syncPrayerStatusToNative?.()}catch(e){}},6000);
+setInterval(()=>{try{window.syncPrayerStatusToNative?.()}catch(e){}},60000);
+
 function addMinutesToClock(clock,delta){
   const [h,m]=clock.split(":").map(Number);
   let total=h*60+m+delta;
@@ -26476,7 +26490,8 @@ document.addEventListener("click",function(ev){
   };
   window.hilalShowForegroundReminder=function(id,title,body){
     hilalClearReminderBlockingLayers();
-    document.getElementById("hilalForegroundReminder")?.remove();
+    let stack=document.getElementById("hilalForegroundReminderStack");
+    if(!stack){stack=document.createElement("div");stack.id="hilalForegroundReminderStack";stack.className="hilal-foreground-reminder-stack";document.body.appendChild(stack)}
     const banner=document.createElement("div");
     banner.id="hilalForegroundReminder";banner.className="hilal-foreground-reminder";
     banner.setAttribute("role","status");banner.setAttribute("aria-live","polite");
@@ -26486,12 +26501,11 @@ document.addEventListener("click",function(ev){
     const small=document.createElement("small");small.textContent=body||"Hatırlatma zamanı";
     text.append(strong,small);
     const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Bildirimi kapat");
-    close.addEventListener("click",e=>{e.stopPropagation();banner.remove()});
+    close.addEventListener("click",e=>{e.stopPropagation();banner.remove();if(!stack.children.length)stack.remove()});
     banner.append(icon,text,close);
-    banner.addEventListener("click",()=>{banner.remove();window.hilalOpenReminderTarget(id)});
-    document.body.appendChild(banner);
+    banner.addEventListener("click",()=>{banner.remove();if(!stack.children.length)stack.remove();window.hilalOpenReminderTarget(id)});
+    stack.appendChild(banner);
     requestAnimationFrame(()=>banner.classList.add("show"));
-    setTimeout(()=>{banner.classList.remove("show");setTimeout(()=>banner.remove(),250)},7500);
   };
   setInterval(()=>{
     try{
@@ -26506,7 +26520,7 @@ document.addEventListener("click",function(ev){
 
 <style>
 .hilal-notification-target{outline:2px solid rgba(89,214,146,.72)!important;box-shadow:0 0 0 5px rgba(89,214,146,.14),0 10px 26px rgba(0,0,0,.18)!important;transition:.25s ease}
-.hilal-foreground-reminder{position:fixed;z-index:100050;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;right:12px;max-width:520px;margin:auto;display:grid;grid-template-columns:42px minmax(0,1fr) 34px;align-items:center;gap:10px;padding:11px 10px;border:1px solid rgba(235,200,105,.66);border-radius:18px;background:linear-gradient(145deg,rgba(8,67,49,.98),rgba(4,43,33,.98));color:#fff;box-shadow:0 14px 38px rgba(0,0,0,.38);transform:translateY(-130%);opacity:0;transition:.24s ease;cursor:pointer}
+.hilal-foreground-reminder-stack{position:fixed;z-index:100050;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;right:12px;max-width:520px;margin:auto;display:flex;flex-direction:column;gap:9px;pointer-events:none}.hilal-foreground-reminder{width:100%;box-sizing:border-box;display:grid;grid-template-columns:42px minmax(0,1fr) 34px;align-items:center;gap:10px;padding:11px 10px;border:1px solid rgba(235,200,105,.66);border-radius:18px;background:linear-gradient(145deg,rgba(8,67,49,.98),rgba(4,43,33,.98));color:#fff;box-shadow:0 14px 38px rgba(0,0,0,.38);transform:translateY(-130%);opacity:0;transition:.24s ease;cursor:pointer;pointer-events:auto}
 .hilal-foreground-reminder.show{transform:translateY(0);opacity:1}.hilal-foreground-reminder-icon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(230,193,91,.15);color:#f0cf73;font-size:25px}.hilal-foreground-reminder-text{min-width:0;display:grid;gap:2px}.hilal-foreground-reminder-text strong,.hilal-foreground-reminder-text small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hilal-foreground-reminder-text strong{font-size:13px;color:#f3d77f}.hilal-foreground-reminder-text small{font-size:12px;color:rgba(255,255,255,.84)}.hilal-foreground-reminder button{width:32px;height:32px;border:0;border-radius:50%;background:rgba(255,255,255,.09);color:#fff;font-size:21px}
 </style>
 
