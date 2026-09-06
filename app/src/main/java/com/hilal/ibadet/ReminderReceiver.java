@@ -17,6 +17,8 @@ import android.os.Looper;
 import android.net.Uri;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ReminderReceiver extends BroadcastReceiver {
     private static final String SOUND_CHANNEL_ID = "hilal_reminders_v7_sound";
@@ -54,6 +56,8 @@ public class ReminderReceiver extends BroadcastReceiver {
         String body = source.getStringExtra("body");
         String safeTitle = title == null ? "Hilâl Hatırlatıcı" : title;
         String safeBody = body == null ? "Hatırlatma zamanı" : body;
+        String currentDates = getCurrentDateLine();
+        if (!safeBody.contains(currentDates)) safeBody = safeBody + " • " + currentDates;
         android.widget.RemoteViews compact = new android.widget.RemoteViews(context.getPackageName(), R.layout.notification_hilal);
         compact.setTextViewText(android.R.id.title, safeTitle);
         compact.setTextViewText(android.R.id.text1, safeBody);
@@ -100,7 +104,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 try {
                     am.requestAudioFocus(new android.media.AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
                             .setAudioAttributes(new AudioAttributes.Builder()
-                                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
                                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                                     .build())
                             .setOnAudioFocusChangeListener(focusListener)
@@ -109,9 +113,10 @@ public class ReminderReceiver extends BroadcastReceiver {
             }
             player = new MediaPlayer();
             player.setAudioAttributes(new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
+            player.setVolume(1.0f, 1.0f);
             Uri sourceUri = null;
             if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
                 sourceUri = Uri.fromFile(new File(soundPath));
@@ -122,7 +127,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 }
             }
             if (sourceUri != null) {
-                player.setDataSource(soundPath);
+                player.setDataSource(sourceUri.toString());
             } else {
                 String embedded = extractEmbeddedFavoriteSound(context, soundId);
                 if (embedded != null && new File(embedded).isFile() && new File(embedded).length() > 0) {
@@ -153,6 +158,23 @@ public class ReminderReceiver extends BroadcastReceiver {
             pendingResult.finish();
         }
     }
+    private String getCurrentDateLine() {
+        try {
+            Calendar now = Calendar.getInstance();
+            String miladi = new SimpleDateFormat("dd.MM.yyyy", java.util.Locale.US).format(now.getTime());
+            android.icu.util.IslamicCalendar hijri = new android.icu.util.IslamicCalendar(now.getTimeZone(), java.util.Locale.forLanguageTag("tr-TR"));
+            hijri.setTimeInMillis(now.getTimeInMillis());
+            String[] months = {"Muharrem", "Safer", "Rebiülevvel", "Rebiülahir", "Cemaziyelevvel", "Cemaziyelahir", "Recep", "Şaban", "Ramazan", "Şevval", "Zilkade", "Zilhicce"};
+            int day = hijri.get(android.icu.util.Calendar.DAY_OF_MONTH);
+            int month = hijri.get(android.icu.util.Calendar.MONTH);
+            int year = hijri.get(android.icu.util.Calendar.YEAR);
+            String monthName = (month >= 0 && month < months.length) ? months[month] : "";
+            return miladi + " • " + day + " " + monthName + " " + year;
+        } catch (Exception e) {
+            return new SimpleDateFormat("dd.MM.yyyy", java.util.Locale.US).format(new java.util.Date());
+        }
+    }
+
     private String extractEmbeddedFavoriteSound(Context context, String soundId) {
         if (soundId == null || !(soundId.equals("fav1") || soundId.equals("fav2") || soundId.equals("fav3") || soundId.equals("fav4"))) return null;
         try {

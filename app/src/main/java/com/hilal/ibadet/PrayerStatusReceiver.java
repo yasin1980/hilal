@@ -93,18 +93,21 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
             long remaining = Math.max(0L, best - now);
-            long totalMinutes = remaining / 60000L;
-            long remHours = totalMinutes / 60L;
-            long remMinutes = totalMinutes % 60L;
-            String countdown = String.format(Locale.US, "%02d:%02d kaldı", remHours, remMinutes);
+            long totalSeconds = remaining / 1000L;
+            long hours = totalSeconds / 3600L;
+            long minutes = (totalSeconds % 3600L) / 60L;
+            long seconds = totalSeconds % 60L;
+            String remainingText = hours > 0
+                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
+                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
+            String statusLine = bestName + " • " + bestClock + " • " + remainingText;
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-            statusView.setTextViewText(android.R.id.title, bestName + " • " + bestClock);
-            statusView.setTextViewText(android.R.id.text1, countdown);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 28f);
-            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 18f);
+            statusView.setTextViewText(android.R.id.title, statusLine);
+            statusView.setViewVisibility(android.R.id.text1, android.view.View.GONE);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 20f);
             builder.setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(bestName + " • " + bestClock)
-                    .setContentText(countdown)
+                    .setContentTitle(statusLine)
+                    .setContentText("")
                     .setCustomContentView(statusView)
                     .setCustomHeadsUpContentView(statusView)
                     .setContentIntent(content)
