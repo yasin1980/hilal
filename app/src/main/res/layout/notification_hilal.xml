@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:text="Öğle • 13:15"
             android:textColor="#111111"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="01:42 kaldı"
+            android:text=""
             android:textColor="#333333"
             android:textSize="18sp"
             android:maxLines="1"
