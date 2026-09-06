@@ -9,7 +9,7 @@
     android:paddingEnd="2dp"
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
-    android:background="#B3265E4F">
+    android:background="@drawable/notification_premium_bg">
     <ImageView
         android:id="@+id/notification_icon"
         android:layout_width="28dp"
