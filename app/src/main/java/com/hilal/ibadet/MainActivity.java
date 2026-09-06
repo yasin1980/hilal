@@ -490,10 +490,7 @@ public class MainActivity extends Activity {
                         JSONObject.quote(id == null ? "" : id) + "," +
                         JSONObject.quote(title == null ? "Hilâl Hatırlatıcı" : title) + "," +
                         JSONObject.quote(body == null ? "Hatırlatma zamanı" : body) + ")}catch(e){}", null));
-
-        // Uygulama açık olsa bile Android sistem bildirimi yayınlansın.
-        // Böylece bildirim kanalı üzerinden ses ve titreşim çalışabilir.
-        return false;
+        return true;
     }
 
     @Override
