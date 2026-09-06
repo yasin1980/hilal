@@ -232,13 +232,24 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void performHaptic(int kind) {
-            runOnUiThread(() -> {
-                if (webView == null) return;
-                int feedback = kind > 0
-                        ? HapticFeedbackConstants.LONG_PRESS
-                        : HapticFeedbackConstants.CLOCK_TICK;
-                webView.performHapticFeedback(feedback);
-            });
+            try {
+                android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (vibrator == null || !vibrator.hasVibrator()) return;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (kind > 0) {
+                        long[] pattern = new long[]{0L, 70L, 55L, 110L};
+                        vibrator.vibrate(android.os.VibrationEffect.createWaveform(pattern, -1));
+                    } else {
+                        vibrator.vibrate(android.os.VibrationEffect.createOneShot(22L, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+                    }
+                } else {
+                    if (kind > 0) {
+                        vibrator.vibrate(new long[]{0L, 70L, 55L, 110L}, -1);
+                    } else {
+                        vibrator.vibrate(22L);
+                    }
+                }
+            } catch (Exception ignored) { }
         }
 
         @JavascriptInterface
