@@ -104,7 +104,7 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
             statusView.setTextViewText(android.R.id.title, statusLine);
             statusView.setViewVisibility(android.R.id.text1, android.view.View.GONE);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 20f);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 15f);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(statusLine)
                     .setContentText("")
