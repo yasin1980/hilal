@@ -98,10 +98,10 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             long remMinutes = totalMinutes % 60L;
             String countdown = String.format(Locale.US, "%02d:%02d kaldı", remHours, remMinutes);
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-            statusView.setTextViewText(android.R.id.title, bestName + " • " + bestClock + "   •   " + countdown);
-            statusView.setTextViewText(android.R.id.text1, "Namaz vakti");
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
-            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 11f);
+            statusView.setTextViewText(android.R.id.title, bestName + " • " + bestClock);
+            statusView.setTextViewText(android.R.id.text1, countdown);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 28f);
+            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 18f);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(bestName + " • " + bestClock)
                     .setContentText(countdown)

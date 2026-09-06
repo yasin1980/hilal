@@ -267,7 +267,7 @@ public class MainActivity extends Activity {
                 long whenMs = data.optLong("whenMs", 0L);
                 if (whenMs <= System.currentTimeMillis()) return;
                 String soundData = data.optString("soundData", "");
-                File audioFile = new File(getFilesDir(), "reminder_" + id.hashCode() + ".audio");
+                File audioFile = new File(getFilesDir(), "reminder_" + id.hashCode() + ".mp3");
                 if (soundData.startsWith("data:audio/")) {
                     int comma = soundData.indexOf(',');
                     if (comma > 0) {

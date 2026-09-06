@@ -121,8 +121,17 @@ public class ReminderReceiver extends BroadcastReceiver {
                     sourceUri = Uri.fromFile(new File(embeddedPath));
                 }
             }
-            if (sourceUri != null) player.setDataSource(context, sourceUri);
-            else player.setDataSource(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            if (sourceUri != null) {
+                player.setDataSource(soundPath);
+            } else {
+                String embedded = extractEmbeddedFavoriteSound(context, soundId);
+                if (embedded != null && new File(embedded).isFile() && new File(embedded).length() > 0) {
+                    player.setDataSource(embedded);
+                } else {
+                    Uri fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    player.setDataSource(context, fallback);
+                }
+            }
 
             final MediaPlayer mp = player;
             final AtomicBoolean finished = new AtomicBoolean(false);
