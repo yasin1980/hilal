@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.PowerManager;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
@@ -233,21 +235,15 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void performHaptic(int kind) {
             try {
-                android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 if (vibrator == null || !vibrator.hasVibrator()) return;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (kind > 0) {
-                        long[] pattern = new long[]{0L, 70L, 55L, 110L};
-                        vibrator.vibrate(android.os.VibrationEffect.createWaveform(pattern, -1));
-                    } else {
-                        vibrator.vibrate(android.os.VibrationEffect.createOneShot(22L, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
-                    }
+                long[] pattern = kind > 0
+                        ? new long[]{0, 70, 55, 110}
+                        : new long[]{0, 22};
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
                 } else {
-                    if (kind > 0) {
-                        vibrator.vibrate(new long[]{0L, 70L, 55L, 110L}, -1);
-                    } else {
-                        vibrator.vibrate(22L);
-                    }
+                    vibrator.vibrate(pattern, -1);
                 }
             } catch (Exception ignored) { }
         }
@@ -305,7 +301,9 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void updatePrayerStatus(String json) {
             try {
-                PrayerStatusScheduler.update(MainActivity.this, json);
+                getSharedPreferences("hilal_prayer_status_v1", MODE_PRIVATE)
+                        .edit().putString("times", json == null ? "" : json).apply();
+                PrayerStatusScheduler.showNow(MainActivity.this);
             } catch (Exception ignored) { }
         }
 

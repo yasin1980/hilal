@@ -7,5 +7,6 @@ import android.content.Intent;
 public class ReminderRestoreReceiver extends BroadcastReceiver {
     @Override public void onReceive(Context context, Intent intent) {
         ReminderScheduler.restoreAll(context);
+        PrayerStatusScheduler.scheduleNext(context, 1000L);
     }
 }
