@@ -94,15 +94,9 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             Notification.Builder builder = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
-            android.widget.RemoteViews compact = new android.widget.RemoteViews(
-                    context.getPackageName(), R.layout.notification_prayer_status);
-            compact.setTextViewText(R.id.prayer_status_time, bestName + " • " + bestClock);
-            compact.setTextViewText(R.id.prayer_status_countdown, countdown);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(bestName + " • " + bestClock)
                     .setContentText(countdown)
-                    .setCustomContentView(compact)
-                    .setCustomHeadsUpContentView(compact)
                     .setContentIntent(content)
                     .setOngoing(true)
                     .setAutoCancel(false)
@@ -113,8 +107,8 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
                     .setColor(0xFF084331)
                     .setSound(null, null)
                     .setVibrate(new long[]{0});
-            // Tek satır ve büyük okunabilir yazı. Sistem kronometresi varsa sağdaki
-            // sayaç saniye saniye ilerler; custom görünüm ilk anda doğru değeri gösterir.
+            // Bildirim özel XML layout kullanmaz; böylece eksik resource nedeniyle
+            // derleme hatası oluşmaz. Android sistem kronometresi geri sayımı canlı tutar.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 builder.setUsesChronometer(true)
                         .setChronometerCountDown(true)
