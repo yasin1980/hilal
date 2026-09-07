@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    private static final String SOUND_CHANNEL_ID = "hilal_reminders_v7_sound";
-    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v7_vibrate";
+    private static final String SOUND_CHANNEL_PREFIX = "hilal_reminders_sound_v8_";
+    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v8_vibrate";
 
     @Override public void onReceive(Context context, Intent source) {
         final PendingResult pendingResult = goAsync();
@@ -40,17 +40,34 @@ public class ReminderReceiver extends BroadcastReceiver {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         boolean lowOrSilent = audio == null || audio.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
+        String selectedSound = source.getStringExtra("sound");
+        if (selectedSound == null || selectedSound.isEmpty()) selectedSound = "fav1";
+        boolean soundEnabled = source.getBooleanExtra("soundEnabled", true);
+        String channelId = lowOrSilent ? VIBRATE_CHANNEL_ID : getSoundChannelId(selectedSound);
 
-        String channelId = lowOrSilent ? VIBRATE_CHANNEL_ID : SOUND_CHANNEL_ID;
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    lowOrSilent ? "Hilâl Hatırlatıcıları (Titreşim)" : "Hilâl Hatırlatıcıları",
+                    lowOrSilent ? "Hilâl Hatırlatıcıları (Titreşim)" : getSoundChannelName(selectedSound),
                     NotificationManager.IMPORTANCE_HIGH);
-            channel.setSound(null, null);
-            channel.enableVibration(lowOrSilent);
-            channel.setDescription("Vird, dua, ibadet ve ezan hatırlatmaları");
+            channel.setDescription("Vird, dua, ibadet ve hatırlatıcı bildirimleri");
             channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-            if (lowOrSilent) channel.setVibrationPattern(new long[]{0, 260, 120, 260, 120, 360});
+            // Normal modda seçilen ses Android bildirim kanalının gerçek sesi olarak ayarlanır.
+            // Kanal ID'si ses bazında benzersiz olduğu için daha önce sessize alınmış v7 kanalına
+            // takılmaz.
+            if (!lowOrSilent && soundEnabled) {
+                Uri soundUri = getNotificationSoundUri(context, selectedSound);
+                if (soundUri != null) {
+                    AudioAttributes attrs = new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .build();
+                    channel.setSound(soundUri, attrs);
+                }
+                channel.enableVibration(false);
+            } else {
+                channel.setSound(null, null);
+                channel.enableVibration(false);
+            }
             manager.createNotificationChannel(channel);
         }
 
@@ -79,9 +96,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 .setCustomBigContentView(expanded)
                 .setCustomHeadsUpContentView(compact)
                 .setContentIntent(content).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH)
-                .setCategory(Notification.CATEGORY_REMINDER).setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setSound(null);
-        if (lowOrSilent) note.setVibrate(new long[]{0, 260, 120, 260, 120, 360});
+                .setCategory(Notification.CATEGORY_REMINDER).setVisibility(Notification.VISIBILITY_PUBLIC);
         boolean shownInsideApp = MainActivity.deliverForegroundReminder(id, safeTitle, safeBody);
         try {
             // Uygulama ekranda açık ve aktifse yalnızca Hilâl'in kendi uygulama içi
@@ -97,13 +112,45 @@ public class ReminderReceiver extends BroadcastReceiver {
         // hatırlatıcı zamanı geldiğinde titreşim kesin olarak çalışır.
         vibrateReminder(context);
 
-        // Normal hatırlatıcı zil sesi açık olarak zorlanır. Ezan zincirine dokunulmaz.
-        boolean soundEnabled = source.getBooleanExtra("soundEnabled", true);
-        if (soundEnabled) {
-            playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
+        // Normal hatırlatıcıda fav1-fav4 ve telefon sesi Android bildirim kanalı üzerinden
+        // çalar. Uygulama ön plandaysa sistem bildirimi gösterilmediği için aynı sesi doğrudan
+        // oynat; özel dosya seçilmişse kanal özel URI taşıyamadığından doğrudan oynat.
+        boolean customSound = "custom".equals(selectedSound);
+        if (soundEnabled && (shownInsideApp || customSound)) {
+            playSelectedSound(context, selectedSound, source.getStringExtra("soundPath"), pendingResult);
         } else {
             pendingResult.finish();
         }
+    }
+
+    private String getSoundChannelId(String soundId) {
+        if ("phone".equals(soundId)) return SOUND_CHANNEL_PREFIX + "phone";
+        if ("fav1".equals(soundId) || "fav2".equals(soundId) || "fav3".equals(soundId) || "fav4".equals(soundId)) {
+            return SOUND_CHANNEL_PREFIX + soundId;
+        }
+        return SOUND_CHANNEL_PREFIX + "default";
+    }
+
+    private String getSoundChannelName(String soundId) {
+        if ("phone".equals(soundId)) return "Hilâl • Telefonun Bildirim Sesi";
+        if ("fav1".equals(soundId)) return "Hilâl • Bildirim Zil 1";
+        if ("fav2".equals(soundId)) return "Hilâl • Bildirim Zil 2";
+        if ("fav3".equals(soundId)) return "Hilâl • Bildirim Zil 3";
+        if ("fav4".equals(soundId)) return "Hilâl • Bildirim Zil 4";
+        return "Hilâl • Hatırlatıcı";
+    }
+
+    private Uri getNotificationSoundUri(Context context, String soundId) {
+        try {
+            if ("phone".equals(soundId)) {
+                return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            }
+            int raw = getFavoriteRawSound(context, soundId);
+            if (raw != 0) {
+                return Uri.parse("android.resource://" + context.getPackageName() + "/" + raw);
+            }
+        } catch (Exception ignored) { }
+        return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     }
 
     private void vibrateReminder(Context context) {
