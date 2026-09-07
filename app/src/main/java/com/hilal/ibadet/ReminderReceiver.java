@@ -14,6 +14,8 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.net.Uri;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,13 +91,29 @@ public class ReminderReceiver extends BroadcastReceiver {
             // Android 13+ bildirim izni reddedilmişse alıcı çökmeden güvenle devam eder.
         }
         ReminderScheduler.afterFire(context, source);
-        if (lowOrSilent) {
-            // Kullanıcının isteği: bildirim sesi yarının altındaysa veya sessizdeyse
-            // sesi zorlamadan yalnızca belirgin titreşim kullan.
-            pendingResult.finish();
-        } else {
-            playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
-        }
+
+        // Normal hatırlatıcılar için titreşim doğrudan Vibrator ile verilir.
+        // Böylece bildirim kanalı daha önce sessiz oluşturulmuş olsa bile
+        // hatırlatıcı zamanı geldiğinde titreşim kesin olarak çalışır.
+        vibrateReminder(context);
+
+        // Seçilen hatırlatıcı sesini her durumda çal. Ezan bildirim zincirine
+        // dokunulmaz; bu yalnızca Duyuru/Yayın/Bugün/Favori/Takip/Vird
+        // hatırlatıcıları için kullanılan ReminderReceiver yoludur.
+        playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
+    }
+
+    private void vibrateReminder(Context context) {
+        try {
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator == null || !vibrator.hasVibrator()) return;
+            long[] pattern = new long[]{0L, 260L, 120L, 260L, 120L, 360L};
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
+            } else {
+                vibrator.vibrate(pattern, -1);
+            }
+        } catch (Exception ignored) { }
     }
 
     private void playSelectedSound(Context context, String soundId, String soundPath, PendingResult pendingResult) {
