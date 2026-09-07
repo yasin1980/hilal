@@ -140,7 +140,7 @@ public class ReminderReceiver extends BroadcastReceiver {
             // Favori bildirim seslerini APK içindeki gerçek MP3 kaynaklarından çal.
             // Böylece arka planda çalışan AlarmManager alıcısı HTML/Base64 ayrıştırmasına
             // veya geçici dosya erişimine bağlı kalmaz.
-            int rawSound = getFavoriteRawSound(soundId);
+            int rawSound = getFavoriteRawSound(context, soundId);
             boolean preparedFromResource = rawSound != 0;
             if (preparedFromResource) {
                 // Favori seslerde zamanlama sırasında oluşturulan kopyayı değil,
@@ -211,7 +211,7 @@ public class ReminderReceiver extends BroadcastReceiver {
             pendingResult.finish();
         }
     }
-    private int getFavoriteRawSound(String soundId) {
+    private int getFavoriteRawSound(Context context, String soundId) {
         // Kaynak ID'sini çalışma zamanında çöz: farklı Android/Gradle kaynak
         // üretim yapılandırmalarında R.raw sembolüne derleme bağımlılığı olmaz.
         if (soundId == null || soundId.isEmpty()) return 0;
