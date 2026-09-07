@@ -30640,7 +30640,8 @@ async function hilalRefreshPrayerLocationPro(btn){
   }
 
   function formatRemaining(ms){
-    let total=Math.max(0,Math.floor(ms/1000));
+    // Saniyeyi gerçek kalan zamana göre göster; bir sonraki saniyeye geçişte erken düşmesin.
+    let total=Math.max(0,Math.ceil(ms/1000));
     const h=Math.floor(total/3600);
     total%=3600;
     const min=Math.floor(total/60);
@@ -30693,13 +30694,13 @@ async function hilalRefreshPrayerLocationPro(btn){
 
     /* Sayaç, gün içindeki namaz ve kerâhet sınırlarına göre kendiliğinden ad değiştirir. */
     if(now>=sunrise && now<sunriseKerahatEnd){
-      text="Kerâhet Vaktinin Çıkmasına";
+      text="Kerâhat";
       end=sunriseKerahatEnd;
     }else if(now>=zawalKerahatStart && now<dhuhr){
-      text="Kerâhet Vaktinin Çıkmasına";
+      text="Kerâhat";
       end=dhuhr;
     }else if(now>=eveningKerahatStart && now<maghrib){
-      text="Kerâhet Vaktinin Çıkmasına";
+      text="Kerâhat";
       end=maghrib;
     }else if(now>=fajr && now<sunrise){
       text="Sabah Vaktinin Çıkmasına";
@@ -30708,7 +30709,7 @@ async function hilalRefreshPrayerLocationPro(btn){
       text="Öğle Vaktine Kalan";
       end=dhuhr;
     }else if(now>=zawalNoticeStart && now<zawalKerahatStart){
-      text="Kerâhet Vaktine Kalan";
+      text="Kerâhat";
       end=zawalKerahatStart;
     }else if(now>=dhuhr && now<asr){
       text="Öğle Vaktinin Çıkmasına";
@@ -30717,7 +30718,7 @@ async function hilalRefreshPrayerLocationPro(btn){
       text="Akşam Vaktine Kalan";
       end=maghrib;
     }else if(now>=eveningNoticeStart && now<eveningKerahatStart){
-      text="Kerâhet Vaktine Kalan";
+      text="Kerâhat";
       end=eveningKerahatStart;
     }else if(now>=maghrib && now<isha){
       text="Akşam Vaktinin Çıkmasına";
@@ -30737,9 +30738,14 @@ async function hilalRefreshPrayerLocationPro(btn){
     }
   }
 
+  function startPreciseCountdown(){
+    updateVakitCikis();
+    const delay=1000-(Date.now()%1000)+8;
+    setTimeout(startPreciseCountdown,delay);
+  }
+
   document.addEventListener("DOMContentLoaded",function(){
-    setTimeout(updateVakitCikis,500);
-    setInterval(updateVakitCikis,1000);
+    setTimeout(startPreciseCountdown,500);
   });
 })();
 </script>
@@ -39159,6 +39165,62 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
+}
+</style>
+
+<style id="hilal-vakit-cikis-zumrut-v12">
+/* V12 — Ezan/vakit çıkış kartı: orta ton, tatlı zümrüt ve beyaz büyük yazı */
+#calendarPage .hilal-vakit-card-v91{
+  margin-left:10px!important;
+  margin-right:10px!important;
+  min-height:82px!important;
+  padding:14px 16px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:14px!important;
+  border:2px solid rgba(58,194,145,.62)!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#0b7657 0%,#09664c 52%,#085b45 100%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 -1px 0 rgba(0,0,0,.08),
+    0 7px 20px rgba(0,0,0,.14)!important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{
+  color:#ffffff!important;
+  font-size:20px!important;
+  line-height:1.15!important;
+  font-weight:950!important;
+  letter-spacing:.01em!important;
+  text-align:left!important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{
+  color:#ffffff!important;
+  font-size:30px!important;
+  line-height:1!important;
+  font-weight:1000!important;
+  font-family:inherit!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.035em!important;
+  text-align:right!important;
+  white-space:nowrap!important;
+  text-shadow:0 1px 8px rgba(0,0,0,.12)!important;
+}
+@media(max-width:420px){
+  #calendarPage .hilal-vakit-card-v91{
+    min-height:76px!important;
+    padding:13px 14px!important;
+    gap:10px!important;
+    border-radius:18px!important;
+  }
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{
+    font-size:18px!important;
+  }
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{
+    font-size:27px!important;
+    letter-spacing:.025em!important;
+  }
 }
 </style>
 </body>
