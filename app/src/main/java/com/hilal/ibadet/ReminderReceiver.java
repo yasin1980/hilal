@@ -142,13 +142,12 @@ public class ReminderReceiver extends BroadcastReceiver {
             // veya geçici dosya erişimine bağlı kalmaz.
             int rawSound = getFavoriteRawSound(context, soundId);
             boolean preparedFromResource = rawSound != 0;
-            if (preparedFromResource) {
-                // Favori seslerde zamanlama sırasında oluşturulan kopyayı değil,
-                // APK içindeki doğrulanmış MP3 kaynağını kullan.
-                player = MediaPlayer.create(context, rawSound);
-            } else {
-                player = new MediaPlayer();
-            }
+            // MediaPlayer.create() sesi hemen prepare ettiği için ardından
+            // AudioAttributes/stream ayarlamak bazı Android sürümlerinde
+            // IllegalStateException oluşturup sesin hiç başlamamasına neden olur.
+            // Bu yüzden APK içindeki kaynağı setDataSource ile bağlayıp
+            // AudioAttributes ayarlarını önce yapıyoruz.
+            player = new MediaPlayer();
             if (player == null) {
                 pendingResult.finish();
                 return;
@@ -165,9 +164,12 @@ public class ReminderReceiver extends BroadcastReceiver {
                 try { player.setWakeMode(context, android.os.PowerManager.PARTIAL_WAKE_LOCK); } catch (Exception ignored) { }
             }
 
-            if (!preparedFromResource && playablePath != null) {
+            if (preparedFromResource) {
+                android.net.Uri resourceUri = android.net.Uri.parse("android.resource://" + context.getPackageName() + "/" + rawSound);
+                player.setDataSource(context, resourceUri);
+            } else if (playablePath != null) {
                 player.setDataSource(playablePath);
-            } else if (!preparedFromResource) {
+            } else {
                 // Seçilen dosya bulunamazsa sessiz kalmak yerine telefonun varsayılan
                 // bildirim sesini çal. Ezan ses zincirine dokunulmaz.
                 Uri fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
