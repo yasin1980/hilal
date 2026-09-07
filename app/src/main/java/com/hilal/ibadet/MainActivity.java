@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.ClipData;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
@@ -223,6 +224,16 @@ public class MainActivity extends Activity {
     }
 
     public class HilalAndroidBridge {
+        @JavascriptInterface
+        public void playSystemNotificationSound() {
+            try {
+                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                if (uri == null) return;
+                android.media.Ringtone ringtone = RingtoneManager.getRingtone(MainActivity.this, uri);
+                if (ringtone != null) ringtone.play();
+            } catch (Exception ignored) { }
+        }
+
         @JavascriptInterface
         public double getNotificationVolumeRatio() {
             AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
