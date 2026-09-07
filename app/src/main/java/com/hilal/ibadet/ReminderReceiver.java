@@ -137,23 +137,37 @@ public class ReminderReceiver extends BroadcastReceiver {
                 }
             }
 
-            player = new MediaPlayer();
+            // Favori bildirim seslerini APK içindeki gerçek MP3 kaynaklarından çal.
+            // Böylece arka planda çalışan AlarmManager alıcısı HTML/Base64 ayrıştırmasına
+            // veya geçici dosya erişimine bağlı kalmaz.
+            int rawSound = getFavoriteRawSound(soundId);
+            boolean preparedFromResource = rawSound != 0;
+            if (preparedFromResource) {
+                // Favori seslerde zamanlama sırasında oluşturulan kopyayı değil,
+                // APK içindeki doğrulanmış MP3 kaynağını kullan.
+                player = MediaPlayer.create(context, rawSound);
+            } else {
+                player = new MediaPlayer();
+            }
+            if (player == null) {
+                pendingResult.finish();
+                return;
+            }
             if (Build.VERSION.SDK_INT >= 21) {
                 player.setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build());
             }
-            // Eski Android sürümlerinde de bildirim ses kanalını kullan.
             try { player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); } catch (Exception ignored) { }
             player.setVolume(1.0f, 1.0f);
             if (Build.VERSION.SDK_INT >= 23) {
                 try { player.setWakeMode(context, android.os.PowerManager.PARTIAL_WAKE_LOCK); } catch (Exception ignored) { }
             }
 
-            if (playablePath != null) {
+            if (!preparedFromResource && playablePath != null) {
                 player.setDataSource(playablePath);
-            } else {
+            } else if (!preparedFromResource) {
                 // Seçilen dosya bulunamazsa sessiz kalmak yerine telefonun varsayılan
                 // bildirim sesini çal. Ezan ses zincirine dokunulmaz.
                 Uri fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -187,7 +201,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 finish.run();
                 return true;
             });
-            mp.prepare();
+            if (!preparedFromResource) mp.prepare();
             mp.start();
             // Receiver'ın yaşam süresini ses bitene kadar tut; çok uzun dosyalarda
             // AlarmManager alıcısının sonsuza kadar açık kalmasını önle.
@@ -197,6 +211,14 @@ public class ReminderReceiver extends BroadcastReceiver {
             pendingResult.finish();
         }
     }
+    private int getFavoriteRawSound(String soundId) {
+        if ("fav1".equals(soundId)) return R.raw.hilal_reminder_fav1;
+        if ("fav2".equals(soundId)) return R.raw.hilal_reminder_fav2;
+        if ("fav3".equals(soundId)) return R.raw.hilal_reminder_fav3;
+        if ("fav4".equals(soundId)) return R.raw.hilal_reminder_fav4;
+        return 0;
+    }
+
     private String getCurrentDateLine() {
         try {
             Calendar now = Calendar.getInstance();

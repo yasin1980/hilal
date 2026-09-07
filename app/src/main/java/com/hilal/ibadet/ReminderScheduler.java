@@ -28,6 +28,8 @@ final class ReminderScheduler {
             intent.putExtra("repeatMs", data.optLong("repeatMs", 0L));
             intent.putExtra("sound", data.optString("sound", "phone"));
             intent.putExtra("soundPath", data.optString("soundPath", ""));
+            // Normal hatırlatıcı zil sesi varsayılan olarak her zaman aktif.
+            intent.putExtra("soundEnabled", data.optBoolean("soundEnabled", true));
 
             PendingIntent pending = PendingIntent.getBroadcast(context, id.hashCode(), intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -86,6 +88,7 @@ final class ReminderScheduler {
             data.put("repeatMs", repeatMs);
             data.put("sound", source.getStringExtra("sound"));
             data.put("soundPath", source.getStringExtra("soundPath"));
+            data.put("soundEnabled", source.getBooleanExtra("soundEnabled", true));
             long previous = Math.max(data.optLong("whenMs", 0L), System.currentTimeMillis());
             long next = previous + repeatMs;
             while (next <= System.currentTimeMillis() + 1000L) next += repeatMs;
