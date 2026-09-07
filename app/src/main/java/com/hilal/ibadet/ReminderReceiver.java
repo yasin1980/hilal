@@ -55,18 +55,12 @@ public class ReminderReceiver extends BroadcastReceiver {
             // ayarıdır. Burada kanalı sessize alıp ayrıca Ringtone çaldırmak yerine, ezan tarafında
             // kullanılan aynı gömülü fav1-fav4 MP3'lerini doğrudan kanala bağlıyoruz. Her sesin
             // ayrı ve yeni bir kanal ID'si var; eski sessiz kanallar bu yüzden devre dışı kalır.
-            if (!lowOrSilent && soundEnabled) {
-                Uri channelSound = getNotificationSoundUri(context, selectedSound);
-                AudioAttributes attrs = new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build();
-                channel.setSound(channelSound, attrs);
-                channel.enableVibration(false);
-            } else {
-                channel.setSound(null, null);
-                channel.enableVibration(false);
-            }
+            // Android 8+ kanal sesine güvenmiyoruz. Kanalı sessiz tutup seçilen
+            // sesi aşağıda doğrudan uygulamanın ses kaynağından çalıyoruz. Böylece
+            // Xiaomi/Android'in daha önce oluşturulmuş kanal ayarları zil sesini
+            // değiştiremez veya susturamaz.
+            channel.setSound(null, null);
+            channel.enableVibration(false);
             manager.createNotificationChannel(channel);
         }
 
@@ -115,16 +109,17 @@ public class ReminderReceiver extends BroadcastReceiver {
         // hatırlatıcı zamanı geldiğinde titreşim kesin olarak çalışır.
         vibrateReminder(context);
 
-        // Arka planda fav1-fav4/telefon sesi artık Android NotificationChannel tarafından
-        // çalınır. Böylece BroadcastReceiver içinde Ringtone/MediaPlayer çalıştırmaya bağımlı
-        // kalmayız. Uygulama ön plandaysa sistem bildirimi bastırıldığı için sesi doğrudan çal.
-        // Özel dosya seçilmişse de kanal yerine doğrudan oynatma gerekir.
+        // Seçilen gömülü zil (fav1-fav4) ve özel dosya için sesi her Android sürümünde
+        // doğrudan uygulama dosyasından çal. Android 8+ NotificationChannel sesine
+        // güvenmiyoruz; kanal yukarıda bilerek sessiz oluşturuldu.
+        // Telefonun Bildirim Sesi ise sistem bildirimi/kanal üzerinden çalışmaya devam eder.
         if (soundEnabled) {
-            boolean custom = "custom".equals(selectedSound);
-            if (shownInsideApp || custom || Build.VERSION.SDK_INT < 26) {
+            boolean directSound = "fav1".equals(selectedSound) || "fav2".equals(selectedSound)
+                    || "fav3".equals(selectedSound) || "fav4".equals(selectedSound)
+                    || "custom".equals(selectedSound);
+            if (directSound || shownInsideApp || Build.VERSION.SDK_INT < 26) {
                 playSelectedSound(context, selectedSound, source.getStringExtra("soundPath"), pendingResult);
             } else {
-                // Kanal bildirimi sesi kendi başına çalacak. Receiver'ı bekletmeye gerek yok.
                 pendingResult.finish();
             }
         } else {
@@ -176,62 +171,83 @@ public class ReminderReceiver extends BroadcastReceiver {
     }
 
     private void playSelectedSound(Context context, String soundId, String soundPath, PendingResult pendingResult) {
-        // Normal hatırlatıcı sesi için MediaPlayer yerine Android'in kendi Ringtone
-        // motorunu kullanıyoruz. Ezan tarafındaki gömülü fav1-fav4 kaynakları aynen
-        // kullanılır. Böylece BroadcastReceiver arka plandayken de sistem bildirim
-        // ses yoluyla aynı zil güvenilir şekilde çalınır.
+        MediaPlayer player = null;
         try {
-            Uri soundUri = null;
+            player = new MediaPlayer();
+            final MediaPlayer mp = player;
 
-            if ("fav1".equals(soundId) || "fav2".equals(soundId)
-                    || "fav3".equals(soundId) || "fav4".equals(soundId)) {
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            if (Build.VERSION.SDK_INT >= 21) mp.setAudioAttributes(attrs);
+            else mp.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+
+            boolean isFavorite = "fav1".equals(soundId) || "fav2".equals(soundId)
+                    || "fav3".equals(soundId) || "fav4".equals(soundId);
+
+            // Öncelik: MainActivity'nin zaten hazırladığı gerçek dosya.
+            File file = null;
+            if (soundPath != null && !soundPath.isEmpty()) {
+                File candidate = new File(soundPath);
+                if (candidate.isFile() && candidate.length() > 0) file = candidate;
+            }
+
+            // fav1-fav4 için raw kaynak doğrudan açılır. Bu yol, WebView/asset
+            // Base64'ünden bağımsızdır ve APK'nın içine gömülü sesi kullanır.
+            if (file != null) {
+                mp.setDataSource(file.getAbsolutePath());
+            } else if (isFavorite) {
                 int rawSound = getFavoriteRawSound(context, soundId);
                 if (rawSound != 0) {
-                    soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + rawSound);
+                    Uri uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + rawSound);
+                    mp.setDataSource(context, uri);
+                } else {
+                    String extracted = extractEmbeddedFavoriteSound(context, soundId);
+                    if (extracted == null) {
+                        mp.release();
+                        pendingResult.finish();
+                        return;
+                    }
+                    mp.setDataSource(extracted);
                 }
             } else if ("phone".equals(soundId)) {
-                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            } else if ("custom".equals(soundId) && soundPath != null && !soundPath.isEmpty()) {
-                File f = new File(soundPath);
-                if (f.isFile() && f.length() > 0) {
-                    soundUri = Uri.fromFile(f);
-                }
-            }
-
-            if (soundUri == null) {
-                soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            }
-            if (soundUri == null) {
-                pendingResult.finish();
-                return;
-            }
-
-            final android.media.Ringtone ringtone = RingtoneManager.getRingtone(context, soundUri);
-            if (ringtone == null) {
-                pendingResult.finish();
-                return;
-            }
-
-            if (Build.VERSION.SDK_INT >= 21) {
-                try {
-                    ringtone.setAudioAttributes(new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                            .build());
-                } catch (Exception ignored) { }
+                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                if (uri == null) { mp.release(); pendingResult.finish(); return; }
+                mp.setDataSource(context, uri);
             } else {
-                try { ringtone.setStreamType(AudioManager.STREAM_NOTIFICATION); } catch (Exception ignored) { }
+                mp.release();
+                pendingResult.finish();
+                return;
             }
 
-            ringtone.play();
-
-            // Zil sesinin tamamlanmasına izin ver. Uzun/bozuk bir dosya Receiver'ı
-            // sonsuza kadar açık bırakmasın.
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                try { if (ringtone.isPlaying()) ringtone.stop(); } catch (Exception ignored) { }
+            mp.setOnCompletionListener(done -> {
+                try { done.release(); } catch (Exception ignored) { }
                 pendingResult.finish();
-            }, 15000L);
-        } catch (Exception ignored) {
+            });
+            mp.setOnErrorListener((failed, what, extra) -> {
+                try { failed.release(); } catch (Exception ignored) { }
+                pendingResult.finish();
+                return true;
+            });
+
+            mp.prepare();
+            mp.start();
+
+            // Çok uzun/bozuk bir dosyada BroadcastReceiver sonsuza kadar açık kalmasın.
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    if (mp.isPlaying()) {
+                        mp.stop();
+                    }
+                } catch (Exception ignored) { }
+                try { mp.release(); } catch (Exception ignored) { }
+                pendingResult.finish();
+            }, 20000L);
+        } catch (Exception error) {
+            if (player != null) {
+                try { player.release(); } catch (Exception ignored) { }
+            }
             pendingResult.finish();
         }
     }
