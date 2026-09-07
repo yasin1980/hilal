@@ -9,13 +9,10 @@ import android.content.Context;
 import android.content.ClipData;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.PowerManager;
-import android.os.Vibrator;
-import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
@@ -225,16 +222,6 @@ public class MainActivity extends Activity {
 
     public class HilalAndroidBridge {
         @JavascriptInterface
-        public void playSystemNotificationSound() {
-            try {
-                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                if (uri == null) return;
-                android.media.Ringtone ringtone = RingtoneManager.getRingtone(MainActivity.this, uri);
-                if (ringtone != null) ringtone.play();
-            } catch (Exception ignored) { }
-        }
-
-        @JavascriptInterface
         public double getNotificationVolumeRatio() {
             AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             if (audio == null) return 0.0;
@@ -245,18 +232,13 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public void performHaptic(int kind) {
-            try {
-                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (vibrator == null || !vibrator.hasVibrator()) return;
-                long[] pattern = kind > 0
-                        ? new long[]{0, 70, 55, 110}
-                        : new long[]{0, 22};
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
-                } else {
-                    vibrator.vibrate(pattern, -1);
-                }
-            } catch (Exception ignored) { }
+            runOnUiThread(() -> {
+                if (webView == null) return;
+                int feedback = kind > 0
+                        ? HapticFeedbackConstants.LONG_PRESS
+                        : HapticFeedbackConstants.CLOCK_TICK;
+                webView.performHapticFeedback(feedback);
+            });
         }
 
         @JavascriptInterface
@@ -278,7 +260,7 @@ public class MainActivity extends Activity {
                 long whenMs = data.optLong("whenMs", 0L);
                 if (whenMs <= System.currentTimeMillis()) return;
                 String soundData = data.optString("soundData", "");
-                File audioFile = new File(getFilesDir(), "reminder_" + id.hashCode() + ".mp3");
+                File audioFile = new File(getFilesDir(), "reminder_" + id.hashCode() + ".audio");
                 if (soundData.startsWith("data:audio/")) {
                     int comma = soundData.indexOf(',');
                     if (comma > 0) {
@@ -306,15 +288,6 @@ public class MainActivity extends Activity {
                 data.remove("soundData");
                 data.remove("soundUrl");
                 ReminderScheduler.schedule(MainActivity.this, data, true);
-            } catch (Exception ignored) { }
-        }
-
-        @JavascriptInterface
-        public void updatePrayerStatus(String json) {
-            try {
-                getSharedPreferences("hilal_prayer_status_v1", MODE_PRIVATE)
-                        .edit().putString("times", json == null ? "" : json).apply();
-                PrayerStatusScheduler.showNow(MainActivity.this);
             } catch (Exception ignored) { }
         }
 
