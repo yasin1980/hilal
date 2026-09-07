@@ -212,11 +212,19 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
     }
     private int getFavoriteRawSound(String soundId) {
-        if ("fav1".equals(soundId)) return R.raw.hilal_reminder_fav1;
-        if ("fav2".equals(soundId)) return R.raw.hilal_reminder_fav2;
-        if ("fav3".equals(soundId)) return R.raw.hilal_reminder_fav3;
-        if ("fav4".equals(soundId)) return R.raw.hilal_reminder_fav4;
-        return 0;
+        // Kaynak ID'sini çalışma zamanında çöz: farklı Android/Gradle kaynak
+        // üretim yapılandırmalarında R.raw sembolüne derleme bağımlılığı olmaz.
+        if (soundId == null || soundId.isEmpty()) return 0;
+        try {
+            return getResources(context).getIdentifier(
+                    "hilal_reminder_" + soundId, "raw", context.getPackageName());
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
+    private android.content.res.Resources getResources(Context context) {
+        return context.getResources();
     }
 
     private String getCurrentDateLine() {
