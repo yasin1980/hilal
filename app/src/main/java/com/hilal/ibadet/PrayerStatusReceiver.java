@@ -77,7 +77,6 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             String remainingText;
             long end;
 
-            // Sabit üst bildirimde uygulamadaki kerâhat zamanlamasıyla aynı sınırlar kullanılır.
             if (now >= sunrise && now < sunriseKerahatEnd) {
                 titleText = "Kerâhat";
                 end = sunriseKerahatEnd;
@@ -120,7 +119,6 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             }
 
             long remaining = Math.max(0L, end - now);
-            // Bir sonraki saniyeye yukarı yuvarla; böylece gösterilen saniye gerçek zamana daha iyi oturur.
             long totalSeconds = (remaining + 999L) / 1000L;
             long hours = totalSeconds / 3600L;
             long minutes = (totalSeconds % 3600L) / 60L;
@@ -163,7 +161,6 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
 
             manager.notify(NOTIFICATION_ID, builder.build());
 
-            // Her güncelleme bir sonraki tam saniyeye hizalanır; saniye göstergesi daha akıcı ve doğru ilerler.
             long untilNextSecond = 1000L - (System.currentTimeMillis() % 1000L);
             PrayerStatusScheduler.scheduleNext(context, Math.max(500L, untilNextSecond));
         } catch (Exception ignored) {
