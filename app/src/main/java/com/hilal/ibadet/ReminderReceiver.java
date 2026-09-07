@@ -100,69 +100,70 @@ public class ReminderReceiver extends BroadcastReceiver {
 
     private void playSelectedSound(Context context, String soundId, String soundPath, PendingResult pendingResult) {
         MediaPlayer player = null;
-        AudioManager audioManager = null;
         try {
-            audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            final AudioManager am = audioManager;
-            final AudioManager.OnAudioFocusChangeListener focusListener = change -> { };
-            if (am != null && Build.VERSION.SDK_INT >= 26) {
-                try {
-                    am.requestAudioFocus(new android.media.AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                            .setAudioAttributes(new AudioAttributes.Builder()
-                                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                    .build())
-                            .setOnAudioFocusChangeListener(focusListener)
-                            .build());
-                } catch (Exception ignored) { }
+            // Seçilen hatırlatıcı sesini doğrudan uygulamanın kaydettiği dosyadan çal.
+            // Bu yol, uygulama açık/kapalı olsa da aynı şekilde çalışır.
+            String playablePath = null;
+            if (soundPath != null && !soundPath.isEmpty()) {
+                File f = new File(soundPath);
+                if (f.isFile() && f.length() > 0) playablePath = f.getAbsolutePath();
             }
-            player = new MediaPlayer();
-            player.setAudioAttributes(new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build());
-            // Bildirim sesi olarak çal: telefonun bildirim ses seviyesini kullan.
-            try { player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); } catch (Exception ignored) { }
-            player.setVolume(1.0f, 1.0f);
-            Uri sourceUri = null;
-            if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
-                sourceUri = Uri.fromFile(new File(soundPath));
-            } else {
-                String embeddedPath = extractEmbeddedFavoriteSound(context, soundId);
-                if (embeddedPath != null && new File(embeddedPath).isFile() && new File(embeddedPath).length() > 0) {
-                    sourceUri = Uri.fromFile(new File(embeddedPath));
-                }
-            }
-            if (soundPath != null && new File(soundPath).isFile() && new File(soundPath).length() > 0) {
-                // Yerel seçilmiş ses dosyasını doğrudan dosya yolundan aç.
-                player.setDataSource(soundPath);
-            } else if (sourceUri != null) {
-                player.setDataSource(sourceUri.toString());
-            } else {
+            if (playablePath == null) {
                 String embedded = extractEmbeddedFavoriteSound(context, soundId);
-                if (embedded != null && new File(embedded).isFile() && new File(embedded).length() > 0) {
-                    player.setDataSource(embedded);
-                } else {
-                    Uri fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                    player.setDataSource(context, fallback);
+                if (embedded != null) {
+                    File f = new File(embedded);
+                    if (f.isFile() && f.length() > 0) playablePath = f.getAbsolutePath();
                 }
             }
 
+            player = new MediaPlayer();
+            if (Build.VERSION.SDK_INT >= 21) {
+                player.setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build());
+            }
+            // Eski Android sürümlerinde de bildirim ses kanalını kullan.
+            try { player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION); } catch (Exception ignored) { }
+            player.setVolume(1.0f, 1.0f);
+            if (Build.VERSION.SDK_INT >= 23) {
+                try { player.setWakeMode(context, android.os.PowerManager.PARTIAL_WAKE_LOCK); } catch (Exception ignored) { }
+            }
+
+            if (playablePath != null) {
+                player.setDataSource(playablePath);
+            } else {
+                // Seçilen dosya bulunamazsa sessiz kalmak yerine telefonun varsayılan
+                // bildirim sesini çal. Ezan ses zincirine dokunulmaz.
+                Uri fallback = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                if (fallback == null) {
+                    pendingResult.finish();
+                    return;
+                }
+                player.setDataSource(context, fallback);
+            }
+
             final MediaPlayer mp = player;
-            final AtomicBoolean finished = new AtomicBoolean(false);
             final Handler handler = new Handler(Looper.getMainLooper());
+            final AtomicBoolean finished = new AtomicBoolean(false);
             final Runnable finish = () -> {
                 if (!finished.compareAndSet(false, true)) return;
                 try { if (mp.isPlaying()) mp.stop(); } catch (Exception ignored) { }
+                try { mp.reset(); } catch (Exception ignored) { }
                 try { mp.release(); } catch (Exception ignored) { }
-                if (am != null) { try { am.abandonAudioFocus(focusListener); } catch (Exception ignored) { } }
                 pendingResult.finish();
             };
+
             mp.setOnCompletionListener(x -> finish.run());
-            mp.setOnErrorListener((x, what, extra) -> { finish.run(); return true; });
+            mp.setOnErrorListener((x, what, extra) -> {
+                finish.run();
+                return true;
+            });
             mp.prepare();
             mp.start();
-            handler.postDelayed(finish, 12000L);
+            // Receiver'ın yaşam süresini ses bitene kadar tut; çok uzun dosyalarda
+            // AlarmManager alıcısının sonsuza kadar açık kalmasını önle.
+            handler.postDelayed(finish, 15000L);
         } catch (Exception ignored) {
             try { if (player != null) player.release(); } catch (Exception ignored2) { }
             pendingResult.finish();
