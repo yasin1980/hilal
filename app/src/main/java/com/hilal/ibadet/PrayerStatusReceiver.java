@@ -48,41 +48,86 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             String[] keys = {"Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"};
             String[] names = {"İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"};
             long now = System.currentTimeMillis();
-            long best = Long.MAX_VALUE;
-            String bestName = "";
-            String bestClock = "";
             Calendar cal = Calendar.getInstance();
-
+            long[] times = new long[keys.length];
             for (int i = 0; i < keys.length; i++) {
                 String clock = d.optString(keys[i], "");
-                if (!clock.matches("\\d{1,2}:\\d{2}")) continue;
+                if (!clock.matches("\\d{1,2}:\\d{2}")) { times[i] = -1L; continue; }
                 String[] hm = clock.split(":");
                 cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
                 cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                long t = cal.getTimeInMillis();
-                if (t > now && t < best) {
-                    best = t;
-                    bestName = names[i];
-                    bestClock = String.format(Locale.US, "%02d:%02d", Integer.parseInt(hm[0]), Integer.parseInt(hm[1]));
-                }
+                times[i] = cal.getTimeInMillis();
             }
 
-            if (best == Long.MAX_VALUE) {
-                bestName = "İmsak";
-                bestClock = d.optString("Imsak", "");
-                if (bestClock.matches("\\d{1,2}:\\d{2}")) {
-                    String[] hm = bestClock.split(":");
-                    cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
-                    cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
-                    cal.set(Calendar.SECOND, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    cal.add(Calendar.DAY_OF_YEAR, 1);
-                    best = cal.getTimeInMillis();
-                }
+            long fajr = times[0], sunrise = times[1], dhuhr = times[2], asr = times[3], maghrib = times[4], isha = times[5];
+            if (fajr < 0 || sunrise < 0 || dhuhr < 0 || asr < 0 || maghrib < 0 || isha < 0) {
+                PrayerStatusScheduler.scheduleNext(context, 1000L);
+                return;
             }
-            if (bestName.isEmpty() || best == Long.MAX_VALUE) return;
+
+            long sunriseKerahatEnd = sunrise + 45L * 60L * 1000L;
+            long zawalKerahatStart = dhuhr - 10L * 60L * 1000L;
+            long eveningKerahatStart = maghrib - 45L * 60L * 1000L;
+            long zawalNoticeStart = zawalKerahatStart - 10L * 60L * 1000L;
+            long eveningNoticeStart = eveningKerahatStart - 10L * 60L * 1000L;
+
+            String titleText;
+            String remainingText;
+            long end;
+
+            // Sabit üst bildirimde uygulamadaki kerâhat zamanlamasıyla aynı sınırlar kullanılır.
+            if (now >= sunrise && now < sunriseKerahatEnd) {
+                titleText = "Kerâhat";
+                end = sunriseKerahatEnd;
+            } else if (now >= zawalKerahatStart && now < dhuhr) {
+                titleText = "Kerâhat";
+                end = dhuhr;
+            } else if (now >= eveningKerahatStart && now < maghrib) {
+                titleText = "Kerâhat";
+                end = maghrib;
+            } else if (now >= fajr && now < sunrise) {
+                titleText = "Sabah • " + formatClock(fajr);
+                end = sunrise;
+            } else if (now >= sunriseKerahatEnd && now < zawalNoticeStart) {
+                titleText = "Öğle • " + formatClock(dhuhr);
+                end = dhuhr;
+            } else if (now >= zawalNoticeStart && now < zawalKerahatStart) {
+                titleText = "Kerâhat";
+                end = zawalKerahatStart;
+            } else if (now >= dhuhr && now < asr) {
+                titleText = "Öğle • " + formatClock(dhuhr);
+                end = asr;
+            } else if (now >= asr && now < eveningNoticeStart) {
+                titleText = "Akşam • " + formatClock(maghrib);
+                end = maghrib;
+            } else if (now >= eveningNoticeStart && now < eveningKerahatStart) {
+                titleText = "Kerâhat";
+                end = eveningKerahatStart;
+            } else if (now >= maghrib && now < isha) {
+                titleText = "Akşam • " + formatClock(maghrib);
+                end = isha;
+            } else if (now >= isha) {
+                titleText = "Yatsı • " + formatClock(isha);
+                Calendar tomorrowFajr = Calendar.getInstance();
+                tomorrowFajr.setTimeInMillis(fajr);
+                tomorrowFajr.add(Calendar.DAY_OF_YEAR, 1);
+                end = tomorrowFajr.getTimeInMillis();
+            } else {
+                titleText = "İmsak • " + formatClock(fajr);
+                end = fajr;
+            }
+
+            long remaining = Math.max(0L, end - now);
+            // Bir sonraki saniyeye yukarı yuvarla; böylece gösterilen saniye gerçek zamana daha iyi oturur.
+            long totalSeconds = (remaining + 999L) / 1000L;
+            long hours = totalSeconds / 3600L;
+            long minutes = (totalSeconds % 3600L) / 60L;
+            long seconds = totalSeconds % 60L;
+            remainingText = hours > 0
+                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
+                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
 
             Intent open = new Intent(context, MainActivity.class);
             open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -92,22 +137,16 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             Notification.Builder builder = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
-            long remaining = Math.max(0L, best - now);
-            long totalSeconds = remaining / 1000L;
-            long hours = totalSeconds / 3600L;
-            long minutes = (totalSeconds % 3600L) / 60L;
-            long seconds = totalSeconds % 60L;
-            String remainingText = hours > 0
-                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
-                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
-            String statusLine = bestName + " • " + bestClock + " • " + remainingText;
-            RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-            statusView.setTextViewText(android.R.id.title, statusLine);
-            statusView.setViewVisibility(android.R.id.text1, android.view.View.GONE);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 15f);
+
+            RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_prayer_status);
+            statusView.setTextViewText(android.R.id.title, titleText);
+            statusView.setTextViewText(android.R.id.text1, remainingText);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 17f);
+            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 20f);
+
             builder.setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(statusLine)
-                    .setContentText("")
+                    .setContentTitle(titleText)
+                    .setContentText(remainingText)
                     .setCustomContentView(statusView)
                     .setCustomHeadsUpContentView(statusView)
                     .setContentIntent(content)
@@ -118,13 +157,21 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setCategory(Notification.CATEGORY_STATUS)
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setColor(0xFF084331)
+                    .setColor(0xFF2E7D5A)
                     .setSound(null, null)
                     .setVibrate(new long[]{0});
+
             manager.notify(NOTIFICATION_ID, builder.build());
-            PrayerStatusScheduler.scheduleNext(context, 1000L);
+
+            // Her güncelleme bir sonraki tam saniyeye hizalanır; saniye göstergesi daha akıcı ve doğru ilerler.
+            long untilNextSecond = 1000L - (System.currentTimeMillis() % 1000L);
+            PrayerStatusScheduler.scheduleNext(context, Math.max(500L, untilNextSecond));
         } catch (Exception ignored) {
             PrayerStatusScheduler.scheduleNext(context, 5000L);
         }
+    }
+
+    private static String formatClock(long millis) {
+        return new SimpleDateFormat("HH:mm", Locale.US).format(new Date(millis));
     }
 }
