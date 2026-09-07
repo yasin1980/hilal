@@ -48,75 +48,41 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             String[] keys = {"Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"};
             String[] names = {"İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"};
             long now = System.currentTimeMillis();
+            long best = Long.MAX_VALUE;
+            String bestName = "";
+            String bestClock = "";
             Calendar cal = Calendar.getInstance();
-            long[] times = new long[keys.length];
+
             for (int i = 0; i < keys.length; i++) {
                 String clock = d.optString(keys[i], "");
-                if (!clock.matches("\\d{1,2}:\\d{2}")) { times[i] = -1L; continue; }
+                if (!clock.matches("\\d{1,2}:\\d{2}")) continue;
                 String[] hm = clock.split(":");
                 cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
                 cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                times[i] = cal.getTimeInMillis();
+                long t = cal.getTimeInMillis();
+                if (t > now && t < best) {
+                    best = t;
+                    bestName = names[i];
+                    bestClock = String.format(Locale.US, "%02d:%02d", Integer.parseInt(hm[0]), Integer.parseInt(hm[1]));
+                }
             }
 
-            long fajr = times[0], sunrise = times[1], dhuhr = times[2], asr = times[3], maghrib = times[4], isha = times[5];
-            if (fajr < 0 || sunrise < 0 || dhuhr < 0 || asr < 0 || maghrib < 0 || isha < 0) {
-                PrayerStatusScheduler.scheduleNext(context, 1000L);
-                return;
+            if (best == Long.MAX_VALUE) {
+                bestName = "İmsak";
+                bestClock = d.optString("Imsak", "");
+                if (bestClock.matches("\\d{1,2}:\\d{2}")) {
+                    String[] hm = bestClock.split(":");
+                    cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
+                    cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
+                    cal.set(Calendar.SECOND, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    cal.add(Calendar.DAY_OF_YEAR, 1);
+                    best = cal.getTimeInMillis();
+                }
             }
-
-            long sunriseKerahatEnd = sunrise + 45L * 60L * 1000L;
-            long zawalKerahatStart = dhuhr - 10L * 60L * 1000L;
-            long eveningKerahatStart = maghrib - 45L * 60L * 1000L;
-
-            String titleText;
-            long end;
-
-            if (now >= sunrise && now < sunriseKerahatEnd) {
-                titleText = "Kerâhat";
-                end = sunriseKerahatEnd;
-            } else if (now >= zawalKerahatStart && now < dhuhr) {
-                titleText = "Kerâhat";
-                end = dhuhr;
-            } else if (now >= eveningKerahatStart && now < maghrib) {
-                titleText = "Kerâhat";
-                end = maghrib;
-            } else if (now >= fajr && now < sunrise) {
-                titleText = "Sabah • " + formatClock(fajr);
-                end = sunrise;
-            } else if (now >= sunriseKerahatEnd && now < dhuhr) {
-                titleText = "Öğle • " + formatClock(dhuhr);
-                end = dhuhr;
-            } else if (now >= dhuhr && now < asr) {
-                titleText = "Öğle • " + formatClock(dhuhr);
-                end = asr;
-            } else if (now >= asr && now < eveningKerahatStart) {
-                titleText = "Akşam • " + formatClock(maghrib);
-                end = maghrib;
-            } else if (now >= maghrib && now < isha) {
-                titleText = "Akşam • " + formatClock(maghrib);
-                end = isha;
-            } else if (now >= isha) {
-                titleText = "Yatsı • " + formatClock(isha);
-                Calendar tomorrowFajr = Calendar.getInstance();
-                tomorrowFajr.setTimeInMillis(fajr);
-                tomorrowFajr.add(Calendar.DAY_OF_YEAR, 1);
-                end = tomorrowFajr.getTimeInMillis();
-            } else {
-                titleText = "İmsak • " + formatClock(fajr);
-                end = fajr;
-            }
-
-            long remaining = Math.max(0L, end - now);
-            long totalSeconds = (remaining + 999L) / 1000L;
-            long hours = totalSeconds / 3600L;
-            long minutes = (totalSeconds % 3600L) / 60L;
-            long seconds = totalSeconds % 60L;
-            String remainingText = hours > 0
-                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
-                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
+            if (bestName.isEmpty() || best == Long.MAX_VALUE) return;
 
             Intent open = new Intent(context, MainActivity.class);
             open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -126,16 +92,22 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             Notification.Builder builder = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
-
-            RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_prayer_status);
-            statusView.setTextViewText(android.R.id.title, titleText);
-            statusView.setTextViewText(android.R.id.text1, remainingText);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 17f);
-            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 20f);
-
+            long remaining = Math.max(0L, best - now);
+            long totalSeconds = remaining / 1000L;
+            long hours = totalSeconds / 3600L;
+            long minutes = (totalSeconds % 3600L) / 60L;
+            long seconds = totalSeconds % 60L;
+            String remainingText = hours > 0
+                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
+                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
+            String statusLine = bestName + " • " + bestClock + " • " + remainingText;
+            RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
+            statusView.setTextViewText(android.R.id.title, statusLine);
+            statusView.setViewVisibility(android.R.id.text1, android.view.View.GONE);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 15f);
             builder.setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(titleText)
-                    .setContentText(remainingText)
+                    .setContentTitle(statusLine)
+                    .setContentText("")
                     .setCustomContentView(statusView)
                     .setCustomHeadsUpContentView(statusView)
                     .setContentIntent(content)
@@ -146,20 +118,13 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setCategory(Notification.CATEGORY_STATUS)
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setColor(0xFF2E7D5A)
+                    .setColor(0xFF084331)
                     .setSound(null, null)
                     .setVibrate(new long[]{0});
-
             manager.notify(NOTIFICATION_ID, builder.build());
-
-            long untilNextSecond = 1000L - (System.currentTimeMillis() % 1000L);
-            PrayerStatusScheduler.scheduleNext(context, Math.max(500L, untilNextSecond));
+            PrayerStatusScheduler.scheduleNext(context, 1000L);
         } catch (Exception ignored) {
             PrayerStatusScheduler.scheduleNext(context, 5000L);
         }
-    }
-
-    private static String formatClock(long millis) {
-        return new SimpleDateFormat("HH:mm", Locale.US).format(new Date(millis));
     }
 }
