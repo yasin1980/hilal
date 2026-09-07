@@ -97,10 +97,13 @@ public class ReminderReceiver extends BroadcastReceiver {
         // hatırlatıcı zamanı geldiğinde titreşim kesin olarak çalışır.
         vibrateReminder(context);
 
-        // Seçilen hatırlatıcı sesini her durumda çal. Ezan bildirim zincirine
-        // dokunulmaz; bu yalnızca Duyuru/Yayın/Bugün/Favori/Takip/Vird
-        // hatırlatıcıları için kullanılan ReminderReceiver yoludur.
-        playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
+        // Normal hatırlatıcı zil sesi açık olarak zorlanır. Ezan zincirine dokunulmaz.
+        boolean soundEnabled = source.getBooleanExtra("soundEnabled", true);
+        if (soundEnabled) {
+            playSelectedSound(context, source.getStringExtra("sound"), source.getStringExtra("soundPath"), pendingResult);
+        } else {
+            pendingResult.finish();
+        }
     }
 
     private void vibrateReminder(Context context) {
@@ -162,6 +165,12 @@ public class ReminderReceiver extends BroadcastReceiver {
             }
 
             final MediaPlayer mp = player;
+            final AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            try {
+                if (audioManager != null) {
+                    audioManager.requestAudioFocus(null, AudioManager.STREAM_NOTIFICATION, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+                }
+            } catch (Exception ignored) { }
             final Handler handler = new Handler(Looper.getMainLooper());
             final AtomicBoolean finished = new AtomicBoolean(false);
             final Runnable finish = () -> {
@@ -169,6 +178,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 try { if (mp.isPlaying()) mp.stop(); } catch (Exception ignored) { }
                 try { mp.reset(); } catch (Exception ignored) { }
                 try { mp.release(); } catch (Exception ignored) { }
+                try { if (audioManager != null) audioManager.abandonAudioFocus(null); } catch (Exception ignored) { }
                 pendingResult.finish();
             };
 
