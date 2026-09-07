@@ -9,7 +9,7 @@
     android:paddingEnd="8dp"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
-    android:background="@drawable/notification_prayer_status_emerald">
+    android:background="#D92E7A5A">
     <ImageView
         android:id="@+id/notification_icon"
         android:layout_width="32dp"
@@ -26,7 +26,6 @@
             android:id="@android:id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Öğle • 13:15"
             android:textColor="#FFFFFFFF"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -37,7 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="02:35:18 kaldı"
             android:textColor="#FFFFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
