@@ -17309,9 +17309,9 @@ html,body{
 
   <section class="hero">
     <div class="muted">YÖNETİCİ PANELİ</div>
-    <h2>📅 Miladî Günlük İçerikler</h2>
+    <h2>🌙 Hicrî Günlük İçerikler</h2>
     <div class="muted">
-      Miladî takvimde yılın 365 günü için Günün İbadeti, Günün Zikri, Günün Duası ve Günün Salavatı alanlarını düzenleyin. Her günün o tarihe denk gelen Hicrî karşılığı da gösterilir ve gerektiğinde yönetici tarafından elle değiştirilebilir.
+      Hicrî ay ve güne göre sabit günlük içerikler oluştur. Yıl seçilmez; örneğin 1 Muharrem kaydı her yıl 1 Muharrem'de kullanılır.
     </div>
   </section>
 
@@ -17377,8 +17377,8 @@ html,body{
     <article class="hijri-admin-card">
       <h3>📚 Kayıtlı Günlük İçerikler</h3>
       <div class="saved-daily-accordion-head">
-        <div>📅 12 Miladî Ay / 365 Gün</div>
-        <span>Ayı açın, ardından günü seçin; Hicrî karşılığı kartın içinde görünür</span>
+        <div>🌙 12 Hicrî Ay</div>
+        <span>Ayı açın, ardından günü seçin</span>
       </div>
       <div id="dailyEntriesList" class="hijri-month-accordion"></div>
     </article>
@@ -39185,181 +39185,6 @@ async function bootstrap(){
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(bootstrap,150));
 else setTimeout(bootstrap,150);
-})();
-</script>
-
-<style id="hilal-gregorian-daily-manager-v1">
-#adminHijriDailyPage .hijri-admin-page{max-width:980px;margin:0 auto}
-#dailyEntriesList.gregorian-daily-root{display:grid;gap:10px}
-.greg-month{border:1px solid var(--line);border-radius:17px;background:var(--card);overflow:hidden}
-.greg-month>summary{list-style:none;display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;padding:14px;cursor:pointer;font-weight:900}
-.greg-month>summary::-webkit-details-marker{display:none}
-.greg-month-no{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(23,107,72,.12);color:var(--green)}
-.greg-month-count{font-size:11px;opacity:.7}
-.greg-days{display:grid;gap:9px;padding:0 10px 12px}
-.greg-day{border:1px solid color-mix(in srgb,var(--line) 82%,transparent);border-radius:14px;overflow:hidden;background:color-mix(in srgb,var(--card) 94%,var(--bg) 6%)}
-.greg-day>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;cursor:pointer;font-weight:850}
-.greg-day>summary::-webkit-details-marker{display:none}
-.greg-day-date{display:flex;flex-direction:column;gap:2px}
-.greg-day-date small{font-size:10px;opacity:.68;font-weight:700}
-.greg-day-status{font-size:10px;opacity:.72}
-.greg-day-body{display:grid;gap:10px;padding:0 10px 12px}
-.greg-type-card{border:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-radius:13px;padding:11px;background:var(--card)}
-.greg-type-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.greg-type-title{font-weight:900;color:var(--green)}
-.greg-type-actions{display:flex;gap:7px;flex-wrap:wrap}
-.greg-mini-btn{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:transparent;color:var(--text);font-weight:800;font-size:11px}
-.greg-mini-btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
-.greg-entry-preview{font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.greg-entry-preview.arabic{font-size:18px;line-height:1.9;text-align:right}
-.greg-edit-form{display:none;gap:8px;margin-top:10px}.greg-edit-form.open{display:grid}
-.greg-edit-form label{display:grid;gap:5px;font-size:10px;font-weight:850;opacity:.86}
-.greg-edit-form input,.greg-edit-form textarea,.greg-edit-form select{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);color:var(--text)}
-.greg-edit-form textarea{min-height:74px;resize:vertical}
-.greg-hijri-row{display:grid;grid-template-columns:1fr 90px;gap:8px}
-.greg-hijri-badge{font-size:10px;font-weight:850;color:#8a6b17;background:rgba(202,169,85,.14);border:1px solid rgba(202,169,85,.28);border-radius:999px;padding:5px 8px;display:inline-flex}
-.greg-empty{font-size:11px;opacity:.7;font-style:italic}
-@media(max-width:560px){.greg-month>summary{grid-template-columns:36px 1fr}.greg-month-count{grid-column:2}.greg-hijri-row{grid-template-columns:1fr 76px}.greg-type-actions{width:100%}}
-</style>
-<script id="hilal-gregorian-daily-manager-v1">
-(function(){
-  "use strict";
-  const KEY="hilal_hijri_daily_content_v1";
-  const GREG_MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-  const HIJRI_MONTHS_LOCAL=["Muharrem","Safer","Rebiülevvel","Rebiülahir","Cemaziyelevvel","Cemaziyelahir","Recep","Şaban","Ramazan","Şevval","Zilkade","Zilhicce"];
-  const TYPES_LOCAL=["Günün İbadeti","Günün Zikri","Günün Duası","Günün Salavatı"];
-  const ICONS={"Günün İbadeti":"🕌","Günün Zikri":"📿","Günün Duası":"🤲","Günün Salavatı":"ﷺ"};
-
-  function read(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")||[]}catch(e){return[]}}
-  function write(a){
-    try{if(typeof saveJSON==="function")saveJSON(KEY,a);else localStorage.setItem(KEY,JSON.stringify(a))}catch(e){localStorage.setItem(KEY,JSON.stringify(a))}
-    try{hijriDailyEntries=a}catch(e){}
-    try{document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:KEY}}))}catch(e){}
-  }
-  function escg(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;","'":"&#39;"}[m]))}
-  function daysInMonth(month,year){return new Date(year,month,0).getDate()}
-  function currentYear(){return new Date().getFullYear()}
-  function gregKey(m,d){return `${Number(m)}-${Number(d)}`}
-  function typeKey(t){return ({"Günün İbadeti":"ibadet","Günün Zikri":"zikir","Günün Duası":"dua","Günün Salavatı":"salavat"})[t]||"icerik"}
-  function hijriForDate(y,m,d){
-    try{
-      const parts=new Intl.DateTimeFormat("en-u-ca-islamic",{day:"numeric",month:"numeric",year:"numeric"}).formatToParts(new Date(y,m-1,d,12));
-      const day=Number(parts.find(p=>p.type==="day")?.value||0), mon=Number(parts.find(p=>p.type==="month")?.value||0), year=Number(parts.find(p=>p.type==="year")?.value||0);
-      return {day,month:HIJRI_MONTHS_LOCAL[mon-1]||"",year};
-    }catch(e){return {day:0,month:"",year:0}}
-  }
-  function normalizeGregorianSlots(){
-    let all=read(), changed=false;
-    const y=currentYear();
-    // Eski Hicrî seed'i sıralı biçimde Miladî 365 güne taşır; kayıt içeriğini korur.
-    const legacy=all.filter(x=>!Number(x.gregorianMonth)||!Number(x.gregorianDay));
-    if(legacy.length){
-      const ordered=legacy.slice().sort((a,b)=>HIJRI_MONTHS_LOCAL.indexOf(a.hijriMonth)-HIJRI_MONTHS_LOCAL.indexOf(b.hijriMonth)||Number(a.hijriDay)-Number(b.hijriDay)||TYPES_LOCAL.indexOf(a.type)-TYPES_LOCAL.indexOf(b.type));
-      const byType={}; TYPES_LOCAL.forEach(t=>byType[t]=ordered.filter(x=>x.type===t));
-      let ord=0;
-      for(let m=1;m<=12;m++)for(let d=1;d<=daysInMonth(m,y);d++){
-        const h=hijriForDate(y,m,d);
-        TYPES_LOCAL.forEach(t=>{
-          const src=byType[t][ord]||byType[t][ord%Math.max(1,byType[t].length)]||null;
-          const existing=all.find(x=>Number(x.gregorianMonth)===m&&Number(x.gregorianDay)===d&&x.type===t);
-          if(existing)return;
-          const item=src?{...src}:{title:t,arabic:"",reading:"",meaning:"",body:"",source:"",status:"passive"};
-          item.id=`greg_${String(m).padStart(2,'0')}_${String(d).padStart(2,'0')}_${typeKey(t)}`;
-          item.gregorianMonth=m;item.gregorianDay=d;item.gregorianYearBasis=y;
-          item.hijriMonth=h.month;item.hijriDay=h.day;item.hijriYear=h.year;item.hijriManual=false;
-          item.type=t;item.title=item.title||t;item.status=item.status||"active";item.autoSeed=true;
-          item.createdAt=item.createdAt||new Date().toISOString();item.updatedAt=item.updatedAt||new Date().toISOString();
-          all.push(item);changed=true;
-        });
-        ord++;
-      }
-      // Eski, Miladî eşleşmesi olmayan kayıtları görünümden kaldırmadan arşivle.
-      legacy.forEach(x=>{x.legacyHijriOnly=true});
-    }
-    // Eksik Miladî gün/tür slotlarını tamamla.
-    for(let m=1;m<=12;m++)for(let d=1;d<=daysInMonth(m,y);d++){
-      const h=hijriForDate(y,m,d);
-      TYPES_LOCAL.forEach(t=>{
-        if(all.some(x=>!x.legacyHijriOnly&&Number(x.gregorianMonth)===m&&Number(x.gregorianDay)===d&&x.type===t))return;
-        all.push({id:`greg_${String(m).padStart(2,'0')}_${String(d).padStart(2,'0')}_${typeKey(t)}`,gregorianMonth:m,gregorianDay:d,gregorianYearBasis:y,hijriMonth:h.month,hijriDay:h.day,hijriYear:h.year,hijriManual:false,type:t,title:t,arabic:"",reading:"",meaning:"",body:"",source:"",status:"passive",edited:false,autoSeed:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});changed=true;
-      });
-    }
-    if(changed)write(all);
-    return all;
-  }
-  function effectiveHijri(x,m,d){
-    if(x?.hijriManual&&x.hijriMonth&&Number(x.hijriDay))return {month:x.hijriMonth,day:Number(x.hijriDay),year:Number(x.hijriYear)||0,manual:true};
-    return {...hijriForDate(currentYear(),m,d),manual:false};
-  }
-  function field(id){return document.getElementById(id)}
-  function openEditor(id){field("gregEdit_"+CSS.escape(id))?.classList.add("open")}
-  window.hilalGregorianDailyEdit=function(id){
-    const f=document.getElementById("gregEdit_"+id);if(f)f.classList.toggle("open");
-  };
-  window.hilalGregorianDailySave=function(id){
-    const all=read(),x=all.find(v=>String(v.id)===String(id));if(!x)return;
-    const q=n=>String(document.getElementById(`${n}_${id}`)?.value||"").trim();
-    x.title=q("gTitle")||x.type;x.arabic=q("gArabic");x.reading=q("gReading");x.meaning=q("gMeaning");x.source=q("gSource");x.body=q("gBody");
-    x.status=document.getElementById(`gStatus_${id}`)?.value||"active";
-    const hm=q("gHijriMonth"),hd=Number(q("gHijriDay")||0),hy=Number(q("gHijriYear")||0);
-    const auto=hijriForDate(currentYear(),Number(x.gregorianMonth),Number(x.gregorianDay));
-    x.hijriManual=!!(hm&&hd&&(hm!==auto.month||hd!==auto.day||(hy&&hy!==auto.year)));
-    x.hijriMonth=hm||auto.month;x.hijriDay=hd||auto.day;x.hijriYear=hy||auto.year;
-    x.edited=true;x.updatedAt=new Date().toISOString();write(all);
-    try{renderDailyEntries()}catch(e){};try{renderTodayAdminDailyCards()}catch(e){};
-    if(typeof showDailySaveNotice==="function")showDailySaveNotice("Günlük içerik kaydedildi.");else alert("Günlük içerik kaydedildi.");
-  };
-  window.hilalGregorianDailyAutoHijri=function(id){
-    const all=read(),x=all.find(v=>String(v.id)===String(id));if(!x)return;
-    const h=hijriForDate(currentYear(),Number(x.gregorianMonth),Number(x.gregorianDay));x.hijriMonth=h.month;x.hijriDay=h.day;x.hijriYear=h.year;x.hijriManual=false;x.updatedAt=new Date().toISOString();write(all);renderDailyEntries();
-  };
-  function entryCard(x,m,d){
-    const h=effectiveHijri(x,m,d), id=escg(x.id), has=!!(x.arabic||x.reading||x.meaning||x.body||x.source);
-    const hmOpts=HIJRI_MONTHS_LOCAL.map(v=>`<option ${v===h.month?'selected':''}>${escg(v)}</option>`).join('');
-    return `<div class="greg-type-card">
-      <div class="greg-type-head"><span class="greg-type-title">${ICONS[x.type]||'🌙'} ${escg(x.type)}</span><span class="greg-hijri-badge">${h.day||'-'} ${escg(h.month)} ${h.manual?'• Manuel':'• Otomatik'}</span></div>
-      ${has?`${x.arabic?`<div class="greg-entry-preview arabic" dir="rtl">${escg(x.arabic)}</div>`:''}<div class="greg-entry-preview"><b>${escg(x.title||x.type)}</b>${x.reading?`<br>${escg(x.reading)}`:''}${x.meaning?`<br>${escg(x.meaning)}`:''}</div>`:`<div class="greg-empty">Bu alan düzenlenmeye hazır.</div>`}
-      <div class="greg-type-actions"><button class="greg-mini-btn" type="button" onclick="hilalGregorianDailyEdit('${id}')">✏️ Düzenle</button><button class="greg-mini-btn primary" type="button" onclick="hilalGregorianDailySave('${id}')">💾 Kaydet</button></div>
-      <div class="greg-edit-form" id="gregEdit_${id}">
-        <label>Başlık<input id="gTitle_${id}" value="${escg(x.title||x.type)}"></label>
-        <label>Arapça Metin<textarea id="gArabic_${id}" dir="rtl">${escg(x.arabic||'')}</textarea></label>
-        <label>Türkçe Okunuşu<textarea id="gReading_${id}">${escg(x.reading||'')}</textarea></label>
-        <label>Türkçe Anlamı<textarea id="gMeaning_${id}">${escg(x.meaning||'')}</textarea></label>
-        <label>Kaynak<input id="gSource_${id}" value="${escg(x.source||'')}"></label>
-        <label>Kısa Açıklama / Not<textarea id="gBody_${id}">${escg(x.body||'')}</textarea></label>
-        <label>Yayın Durumu<select id="gStatus_${id}"><option value="active" ${x.status==='active'?'selected':''}>Aktif / Yayında</option><option value="passive" ${x.status!=='active'?'selected':''}>Pasif</option></select></label>
-        <div class="greg-hijri-row"><label>Hicrî Ay<select id="gHijriMonth_${id}">${hmOpts}</select></label><label>Hicrî Gün<input id="gHijriDay_${id}" type="number" min="1" max="30" value="${h.day||''}"></label></div>
-        <label>Hicrî Yıl<input id="gHijriYear_${id}" type="number" value="${h.year||''}"></label>
-        <div class="greg-type-actions"><button class="greg-mini-btn" type="button" onclick="hilalGregorianDailyAutoHijri('${id}')">↻ Hicrîyi Otomatik Eşleştir</button><button class="greg-mini-btn primary" type="button" onclick="hilalGregorianDailySave('${id}')">💾 Kaydet</button></div>
-      </div>
-    </div>`;
-  }
-  window.renderDailyEntries=function(){
-    const root=document.getElementById("dailyEntriesList");if(!root)return;
-    const all=normalizeGregorianSlots().filter(x=>!x.legacyHijriOnly), y=currentYear();
-    root.className="gregorian-daily-root";
-    root.innerHTML=GREG_MONTHS.map((mn,mi)=>{
-      const m=mi+1,dim=daysInMonth(m,y),me=all.filter(x=>Number(x.gregorianMonth)===m);
-      const days=Array.from({length:dim},(_,i)=>{const d=i+1,h=hijriForDate(y,m,d),de=TYPES_LOCAL.map(t=>me.find(x=>Number(x.gregorianDay)===d&&x.type===t)).filter(Boolean),active=de.filter(x=>x.status==='active').length;return `<details class="greg-day"><summary><span class="greg-day-date"><b>${d} ${mn}</b><small>${h.day} ${escg(h.month)} ${h.year}</small></span><span class="greg-day-status">${active}/4 yayında</span></summary><div class="greg-day-body">${de.map(x=>entryCard(x,m,d)).join('')}</div></details>`}).join('');
-      return `<details class="greg-month"><summary><span class="greg-month-no">${m}</span><span>${mn}</span><span class="greg-month-count">${dim} gün • ${me.length} alan</span></summary><div class="greg-days">${days}</div></details>`;
-    }).join('');
-  };
-  window.getActiveDailyEntriesForToday=function(){const n=new Date(),m=n.getMonth()+1,d=n.getDate();return read().filter(x=>!x.legacyHijriOnly&&x.status==='active'&&Number(x.gregorianMonth)===m&&Number(x.gregorianDay)===d)};
-  const oldToday=window.renderTodayAdminDailyCards;
-  window.renderTodayAdminDailyCards=function(){
-    const root=document.getElementById("todayAdminDailyCards");if(!root)return;
-    const now=new Date(),m=now.getMonth()+1,d=now.getDate(),h=hijriForDate(now.getFullYear(),m,d),info=document.getElementById("todayHijriMatchText");
-    if(info)info.textContent=`Bugün: ${d} ${GREG_MONTHS[m-1]} • Hicrî karşılığı: ${h.day} ${h.month}`;
-    const active=window.getActiveDailyEntriesForToday();
-    root.innerHTML=TYPES_LOCAL.map(type=>{
-      const x=active.find(v=>v.type===type);if(!x)return `<article class="today-daily-card"><div class="today-daily-head"><h3>${ICONS[type]||'🌙'} ${escg(type)}</h3><strong>Bugün için içerik yayında değil</strong></div></article>`;
-      const body=typeof dailyStructuredFieldsHtml==='function'?dailyStructuredFieldsHtml(x):`<div>${escg(x.body||x.reading||x.meaning||'')}</div>`;
-      return `<article class="today-daily-card" onclick="openDailyReader('${escg(x.id)}')"><div class="today-daily-head"><h3>${ICONS[type]||'🌙'} ${escg(type)}</h3><strong>${escg(x.title||type)}</strong><span class="today-daily-badge">${d} ${GREG_MONTHS[m-1]} • ${h.day} ${escg(h.month)}</span></div>${body}</article>`;
-    }).join('');
-  };
-  function init(){normalizeGregorianSlots();try{window.renderDailyEntries()}catch(e){};try{window.renderTodayAdminDailyCards()}catch(e){}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,500));else setTimeout(init,500);
-  document.addEventListener('hilal:hijri-daily-seeded',()=>setTimeout(init,80));
 })();
 </script>
 
