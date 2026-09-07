@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    private static final String SOUND_CHANNEL_PREFIX = "hilal_reminders_sound_v8_";
-    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v8_vibrate";
+    private static final String SOUND_CHANNEL_PREFIX = "hilal_reminders_sound_v10_";
+    private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v10_vibrate";
 
     @Override public void onReceive(Context context, Intent source) {
         final PendingResult pendingResult = goAsync();
@@ -51,13 +51,17 @@ public class ReminderReceiver extends BroadcastReceiver {
                     NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Vird, dua, ibadet ve hatırlatıcı bildirimleri");
             channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-            // Normal modda seçilen ses Android bildirim kanalının gerçek sesi olarak ayarlanır.
-            // Kanal ID'si ses bazında benzersiz olduğu için daha önce sessize alınmış v7 kanalına
-            // takılmaz.
+            // ÖNEMLİ: Android 8+ cihazlarda bildirim sesinin asıl kaynağı NotificationChannel
+            // ayarıdır. Burada kanalı sessize alıp ayrıca Ringtone çaldırmak yerine, ezan tarafında
+            // kullanılan aynı gömülü fav1-fav4 MP3'lerini doğrudan kanala bağlıyoruz. Her sesin
+            // ayrı ve yeni bir kanal ID'si var; eski sessiz kanallar bu yüzden devre dışı kalır.
             if (!lowOrSilent && soundEnabled) {
-                // Ses tek bir yerden, aşağıdaki RingtoneManager yolundan çalınır.
-                // Kanalı sessiz tutarak çift zil oluşmasını önlüyoruz.
-                channel.setSound(null, null);
+                Uri channelSound = getNotificationSoundUri(context, selectedSound);
+                AudioAttributes attrs = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                channel.setSound(channelSound, attrs);
                 channel.enableVibration(false);
             } else {
                 channel.setSound(null, null);
@@ -92,6 +96,10 @@ public class ReminderReceiver extends BroadcastReceiver {
                 .setCustomHeadsUpContentView(compact)
                 .setContentIntent(content).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH)
                 .setCategory(Notification.CATEGORY_REMINDER).setVisibility(Notification.VISIBILITY_PUBLIC);
+        // Android 7 ve altı için kanal olmadığı için sesi doğrudan bildirime ver.
+        if (Build.VERSION.SDK_INT < 26 && soundEnabled) {
+            try { note.setSound(getNotificationSoundUri(context, selectedSound)); } catch (Exception ignored) { }
+        }
         boolean shownInsideApp = MainActivity.deliverForegroundReminder(id, safeTitle, safeBody);
         try {
             // Uygulama ekranda açık ve aktifse yalnızca Hilâl'in kendi uygulama içi
@@ -107,11 +115,18 @@ public class ReminderReceiver extends BroadcastReceiver {
         // hatırlatıcı zamanı geldiğinde titreşim kesin olarak çalışır.
         vibrateReminder(context);
 
-        // Normal hatırlatıcıda fav1-fav4 ve telefon sesi Android bildirim kanalı üzerinden
-        // çalar. Uygulama ön plandaysa sistem bildirimi gösterilmediği için aynı sesi doğrudan
-        // oynat; özel dosya seçilmişse kanal özel URI taşıyamadığından doğrudan oynat.
+        // Arka planda fav1-fav4/telefon sesi artık Android NotificationChannel tarafından
+        // çalınır. Böylece BroadcastReceiver içinde Ringtone/MediaPlayer çalıştırmaya bağımlı
+        // kalmayız. Uygulama ön plandaysa sistem bildirimi bastırıldığı için sesi doğrudan çal.
+        // Özel dosya seçilmişse de kanal yerine doğrudan oynatma gerekir.
         if (soundEnabled) {
-            playSelectedSound(context, selectedSound, source.getStringExtra("soundPath"), pendingResult);
+            boolean custom = "custom".equals(selectedSound);
+            if (shownInsideApp || custom || Build.VERSION.SDK_INT < 26) {
+                playSelectedSound(context, selectedSound, source.getStringExtra("soundPath"), pendingResult);
+            } else {
+                // Kanal bildirimi sesi kendi başına çalacak. Receiver'ı bekletmeye gerek yok.
+                pendingResult.finish();
+            }
         } else {
             pendingResult.finish();
         }
