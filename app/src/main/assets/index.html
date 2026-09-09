@@ -40129,3 +40129,27 @@ setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contain
 })();
 </script>
 
+
+<style id="hilal-final-polish-v6">
+/* V6: Takvim & Ezan ekranındaki "Vaktin Çıkmasına" kartı kaldırıldı. */
+#calendarPage .hilal-vakit-card-v91{display:none !important;}
+
+/* Dua İstekleri: daha sakin, profesyonel ve görsel olarak dengeli dil. */
+#hilalDuaPageV2 .hdv2-hero strong{font-family:Georgia,"Times New Roman",serif;font-size:19px;letter-spacing:-.01em}
+#hilalDuaPageV2 .hdv2-hero span{font-size:12.5px;line-height:1.65}
+#hilalDuaComposeV2 .hdv2-sheet,#hilalDuaSupportV2 .hdv2-sheet{border:1px solid rgba(23,107,80,.12)}
+#hilalDuaComposeV2 h3,#hilalDuaSupportV2 h3{font-family:Georgia,"Times New Roman",serif;font-size:21px;letter-spacing:-.01em}
+#hilalDuaComposeV2 .hdv2-note,#hilalDuaSupportV2 .hdv2-note{font-size:12px;line-height:1.65}
+#hilalDuaComposeV2 .hdv2-type{font-size:12.5px;line-height:1.35;min-height:48px;display:flex;align-items:center}
+#hilalDuaComposeV2 label{font-size:12px;letter-spacing:.01em}
+#hilalDuaComposeV2 textarea{font-size:14px;line-height:1.6;min-height:118px}
+#hilalDuaComposeV2 textarea::placeholder{font-size:13px;color:#7b8982}
+#hilalDuaSupportV2 .hdv2-preset{font-size:12.5px;line-height:1.5;padding:13px 14px}
+#hilalDuaPageV2 .hdv2-card{box-shadow:0 8px 24px rgba(17,64,48,.06)}
+#hilalDuaPageV2 .hdv2-text{font-size:14px;line-height:1.65}
+@media(max-width:420px){
+  #hilalDuaPageV2 .hdv2-wrap{width:calc(100% - 20px);padding-top:12px}
+  #hilalDuaPageV2 .hdv2-hero{padding:15px;border-radius:18px}
+  #hilalDuaComposeV2 .hdv2-sheet,#hilalDuaSupportV2 .hdv2-sheet{padding:16px;border-radius:20px}
+}
+</style>
