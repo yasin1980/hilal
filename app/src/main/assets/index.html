@@ -39933,6 +39933,59 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
 }
 </style>
 
+<style id="hilal-ezan-saat-kart-profesyonel-v1">
+/* EZAN / SAAT KARTI: tek kart, taşma yok, küçük ekranlarda da içerik kartın içinde kalır. */
+#calendarPage .hilal-vakit-card-v91{
+  box-sizing:border-box !important;
+  width:calc(100% - 20px) !important;
+  max-width:760px !important;
+  min-height:62px !important;
+  margin:10px auto !important;
+  padding:10px 14px !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(108px,auto) !important;
+  align-items:center !important;
+  gap:10px !important;
+  border-radius:18px !important;
+  overflow:hidden !important;
+  background:linear-gradient(135deg,rgba(20,105,78,.97),rgba(15,83,64,.97)) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  box-shadow:0 8px 24px rgba(11,73,56,.16) !important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{
+  box-sizing:border-box !important;
+  min-width:0 !important;
+  width:100% !important;
+  color:#fff !important;
+  text-align:left !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  line-height:1.15 !important;
+  font-size:clamp(12px,3.5vw,15px) !important;
+  font-weight:850 !important;
+  letter-spacing:.01em !important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{
+  box-sizing:border-box !important;
+  width:auto !important;
+  min-width:108px !important;
+  max-width:140px !important;
+  color:#fff !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+  font-size:clamp(22px,6vw,30px) !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  font-variant-numeric:tabular-nums !important;
+  letter-spacing:.02em !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.18) !important;
+}
+@media(max-width:380px){
+  #calendarPage .hilal-vakit-card-v91{grid-template-columns:minmax(0,1fr) 104px !important;padding:9px 11px !important;gap:7px !important;min-height:58px !important}
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{min-width:104px !important;font-size:22px !important}
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{font-size:12px !important}
+}
+</style>
 <!-- HILÂL DUA İSTEKLERİ V2: yalnızca bu bölüm eklenmiştir. Mevcut uygulama koduna dokunulmaz. -->
 <style id="hilal-dua-requests-v2-css">
 #hilalDuaPageV2{display:none;position:fixed;inset:0;z-index:10090;background:var(--bg,#f5faf7);color:var(--text,#18362b);overflow:auto;-webkit-overflow-scrolling:touch}
@@ -40075,3 +40128,4 @@ document.addEventListener('click',e=>{if(e.target.closest?.('#hilalDuaPageV2'))r
 setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contains('hdv2-open'))refreshCloud()},20000);
 })();
 </script>
+
