@@ -35,6 +35,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.File;
@@ -53,6 +57,17 @@ public class MainActivity extends Activity {
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
     private static final String PERMISSION_PREFS = "hilal_permission_setup_v1";
+    private SensorManager sensorManager;
+    private Sensor rotationSensor;
+    private Sensor accelerometer;
+    private Sensor magnetometer;
+    private SensorEventListener compassListener;
+    private final float[] rotationMatrix = new float[9];
+    private final float[] orientationValues = new float[3];
+    private final float[] gravityValues = new float[3];
+    private final float[] magneticValues = new float[3];
+    private boolean haveGravity = false;
+    private boolean haveMagnetic = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,6 +340,16 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public boolean startNativeCompass() {
+            return MainActivity.this.startNativeCompassInternal();
+        }
+
+        @JavascriptInterface
+        public void stopNativeCompass() {
+            MainActivity.this.stopNativeCompassInternal();
+        }
+
+        @JavascriptInterface
         public void requestNativeLocation() {
             runOnUiThread(() -> {
                 try {
@@ -536,6 +561,63 @@ public class MainActivity extends Activity {
         fileCallback = null;
     }
 
+    private synchronized boolean startNativeCompassInternal() {
+        try {
+            if (sensorManager == null) sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            if (sensorManager == null) return false;
+            if (rotationSensor == null) rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            if (accelerometer == null) accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (magnetometer == null) magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            final Sensor useRotation = rotationSensor;
+            if (useRotation == null && (accelerometer == null || magnetometer == null)) return false;
+            if (compassListener != null) {
+                try { sensorManager.unregisterListener(compassListener); } catch (Exception ignored) {}
+            }
+            compassListener = new SensorEventListener() {
+                @Override public void onSensorChanged(SensorEvent event) {
+                    try {
+                        float azimuth;
+                        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+                            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+                        } else {
+                            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                                System.arraycopy(event.values, 0, gravityValues, 0, Math.min(3, event.values.length));
+                                haveGravity = true;
+                            } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                                System.arraycopy(event.values, 0, magneticValues, 0, Math.min(3, event.values.length));
+                                haveMagnetic = true;
+                            }
+                            if (!haveGravity || !haveMagnetic ||
+                                    !SensorManager.getRotationMatrix(rotationMatrix, null, gravityValues, magneticValues)) return;
+                        }
+                        SensorManager.getOrientation(rotationMatrix, orientationValues);
+                        azimuth = (float) Math.toDegrees(orientationValues[0]);
+                        if (azimuth < 0) azimuth += 360f;
+                        final float heading = azimuth;
+                        if (webView != null) webView.post(() -> webView.evaluateJavascript(
+                                "window.__hilalNativeCompass && window.__hilalNativeCompass(" + heading + ");", null));
+                    } catch (Exception ignored) {}
+                }
+                @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+            };
+            if (useRotation != null) {
+                return sensorManager.registerListener(compassListener, useRotation, SensorManager.SENSOR_DELAY_GAME);
+            }
+            boolean a = sensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+            boolean m = sensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_GAME);
+            return a && m;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private synchronized void stopNativeCompassInternal() {
+        try {
+            if (sensorManager != null && compassListener != null) sensorManager.unregisterListener(compassListener);
+        } catch (Exception ignored) {}
+        compassListener = null;
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         webView.saveState(outState);
@@ -553,6 +635,12 @@ public class MainActivity extends Activity {
                     null), 800L);
             webView.postDelayed(() -> dispatchReminderTarget(getIntent()), 1200L);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopNativeCompassInternal();
+        super.onDestroy();
     }
 
     @Override
