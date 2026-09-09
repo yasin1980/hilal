@@ -39718,3 +39718,65 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) #mainApp #mai
   window.addEventListener('resize',function(){setTimeout(placeCards,80);},{passive:true});
 })();
 </script>
+
+<!-- HILÂL MENÜ / NAVİGASYON SON GÖRSEL DÜZEN V3 -->
+<style id="hilal-menu-navigation-final-v3">
+/* Takvim & Ezan dahil ana hamburger: dış kare çerçeve tamamen yok. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger,
+body:has(#calendarPage.active) #mainApp #mainMenuTrigger.main-role-menu-trigger{
+  border:0 !important;
+  outline:0 !important;
+  border-radius:50% !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+#mainApp #mainMenuTrigger.main-role-menu-trigger::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Ana Takvim/Ezan ekranında üç çizgi sol üstte kalır. */
+body:has(#calendarPage.active) #mainApp #mainMenuTrigger.main-role-menu-trigger{
+  top:var(--hilal-system-top,48px) !important;
+  left:max(10px,env(safe-area-inset-left,0px)) !important;
+}
+
+/* İç navigasyonlarda: Geri butonu biraz sağda, üç çizgi onun hemen solunda. */
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) #mainApp #mainMenuTrigger.main-role-menu-trigger{
+  top:68px !important;
+  left:max(8px,env(safe-area-inset-left,0px)) !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  border-radius:50% !important;
+}
+
+.page > .hilal-universal-back-v14{
+  margin-left:52px !important;
+}
+
+/* Sayfanın kendi geri düğmeleri olan ekranlarda da hamburger solda, geri sağda. */
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > .admin-back,
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > #kazaNamazlarimBack,
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > [id*="Back"]{
+  margin-left:52px !important;
+}
+
+/* Kaza/Zikirmatik gibi tam ekran özel sayfalarda da aynı yan yana düzen. */
+#kazaNamazlarimPage #kazaFloatingMenuBtn,
+#hilalZikirmatikPageV13 .hilal-zikir-real-menu-v27{
+  border:0 !important;
+  outline:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:50% !important;
+}
+#kazaNamazlarimPage #kazaNamazlarimBack{
+  position:relative !important;
+  margin-left:52px !important;
+}
+</style>
