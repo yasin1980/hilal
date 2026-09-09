@@ -23052,12 +23052,15 @@ function applyReaderScale(scale,centerX=null,centerY=null){
   /* Tüm okuyucu metinleri tek kök em ölçeğine bağlıdır. */
   content.style.fontSize=readerScale+"em";
   content.style.transform="none";
+  content.style.height="auto";
+  content.style.minHeight="max-content";
   content.style.width="min(720px, 100%)";
   content.style.maxWidth="720px";
   content.style.margin="0 auto";
 
   requestAnimationFrame(()=>{
     const newHeight=Math.max(1,paper.scrollHeight);
+    try{window.hilalFixReaderScroll?.()}catch(e){}
     const target=anchor*newHeight-viewportY;
     const max=Math.max(0,newHeight-paper.clientHeight);
     paper.scrollTop=Math.max(0,Math.min(max,target));
@@ -23215,6 +23218,51 @@ document.addEventListener("keydown",(e)=>{
 });
 
 setTimeout(setupReaderPinch,0);
+
+/* HİLAL READER — V4: gerçek dikey kaydırma alanı */
+(function(){
+  const css=`#readerModal .reader-shell{display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#readerModal .reader-paper{flex:1 1 auto!important;min-height:0!important;height:auto!important;display:block!important;overflow-y:scroll!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;position:relative!important;box-sizing:border-box!important;}
+#readerModal .reader-stage{display:block!important;min-height:0!important;height:auto!important;overflow:visible!important;width:100%!important;}
+#readerModal #readerContent{display:block!important;position:relative!important;width:100%!important;max-width:650px!important;min-height:max-content!important;height:auto!important;margin:0 auto!important;overflow:visible!important;transform:none!important;}
+#readerModal .reader-body,#readerModal #readerBody{overflow:visible!important;height:auto!important;min-height:0!important;}`;
+  function install(){
+    if(document.getElementById("hilalReaderScrollV4"))return;
+    const st=document.createElement("style"); st.id="hilalReaderScrollV4"; st.textContent=css;
+    (document.head||document.documentElement).appendChild(st);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install,{once:true});else install();
+})();
+/* HİLAL READER — büyütmede tam dikey kaydırma dengesi */
+(function(){
+  function fixReaderScroll(){
+    const paper=document.getElementById("readerPaper");
+    const stage=document.getElementById("readerStage");
+    const content=document.getElementById("readerContent");
+    if(!paper||!stage||!content)return;
+    paper.style.display="block";
+    paper.style.height="100%";
+    paper.style.minHeight="0";
+    paper.style.boxSizing="border-box";
+    paper.style.overflowY="auto";
+    paper.style.overflowX="hidden";
+    paper.style.webkitOverflowScrolling="touch";
+    paper.style.touchAction="pan-y pinch-zoom";
+    stage.style.minHeight="0";
+    stage.style.overflow="hidden";
+    content.style.minHeight="max-content";
+    content.style.height="auto";
+    content.style.overflow="visible";
+    content.style.flex="none";
+  }
+  window.hilalFixReaderScroll=fixReaderScroll;
+  document.addEventListener("touchstart",()=>{
+    const m=document.getElementById("readerModal");
+    if(m&&!m.classList.contains("hidden"))fixReaderScroll();
+  },{passive:true});
+  window.addEventListener("resize",()=>setTimeout(fixReaderScroll,40));
+  setTimeout(fixReaderScroll,0);
+})();
 
 function openSharedItemReader(kind,id){
   syncStateFromStorage();
@@ -26454,6 +26502,8 @@ document.addEventListener("click",function(ev){
   window.hilalOpenReminderTarget=function(rawId){
     const id=String(rawId||"");
     if(!id)return false;
+    /* Bildirim açılır açılmaz aktif hatırlatıcı sesi kesin olarak kesilir. */
+    try{window.AndroidHilal?.stopReminderSound?.()}catch(e){}
     /* Bildirim yönlendirmesi hiçbir eski modal/perdeyi açık bırakmaz. */
     hilalClearReminderBlockingLayers();
     localStorage.setItem(HILAL_PENDING_NOTIFICATION_TARGET,id);
@@ -26510,11 +26560,24 @@ document.addEventListener("click",function(ev){
         const list=kind==="announcement"?loadJSON("hilal_teacher_announcements_v1",[]):publications;
         const found=(list||[]).some(x=>String(x.id)===String(itemId));
         if(!found && ++attempts<8){setTimeout(openShared,450);return}
-        if(found){openSharedItemReader?.(kind,itemId);complete()}
-        window.__hilalRouteInFlight="";
+        if(found){
+          try{window.AndroidHilal?.stopReminderSound?.()}catch(e){}
+          openSharedItemReader?.(kind,itemId);
+          complete();
+          window.__hilalRouteInFlight="";
+          return;
+        }
+        if(++attempts>=8){
+          window.__hilalRouteInFlight="";
+          return;
+        }
+        setTimeout(openShared,450);
       };
       setTimeout(openShared,250);
-      return false;
+      /* Hedefi native tarafa hemen teslim edilmiş say; JS tarafında da tekrar tekrar
+         yönlendirme yapılmasını engelliyoruz. */
+      try{window.AndroidHilal?.stopReminderSound?.()}catch(e){}
+      return true;
     }
     showPage("todayPage");
     return complete();
@@ -26533,7 +26596,7 @@ document.addEventListener("click",function(ev){
     const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Bildirimi kapat");
     close.addEventListener("click",e=>{e.stopPropagation();banner.remove()});
     banner.append(icon,text,close);
-    banner.addEventListener("click",()=>{banner.remove();window.hilalOpenReminderTarget(id)});
+    banner.addEventListener("click",()=>{try{window.AndroidHilal?.stopReminderSound?.()}catch(e){};banner.remove();window.hilalOpenReminderTarget(id)});
     document.body.appendChild(banner);
     requestAnimationFrame(()=>banner.classList.add("show"));
     setTimeout(()=>{banner.classList.remove("show");setTimeout(()=>banner.remove(),250)},7500);
@@ -39310,3 +39373,9 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
   },{once:true});
 })();
 </script>
+
+<style id="hilal-reader-scroll-final-fix-v3">
+#readerModal .reader-stage{min-height:0!important;overflow:hidden!important;display:block!important;}
+#readerModal .reader-paper{display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y pinch-zoom!important;overscroll-behavior-y:contain!important;box-sizing:border-box!important;}
+#readerModal #readerContent{height:auto!important;min-height:max-content!important;overflow:visible!important;flex:none!important;}
+</style>
