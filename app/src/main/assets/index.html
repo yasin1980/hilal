@@ -22475,71 +22475,7 @@ function isPin(id){
 }
 
 
-function cleanupExpiredSavedContent(){
-  try{
-    const today=getCurrentHijriMonthDay?.();
-    const pubs=loadJSON("hilal_publications_v1",[])||[];
-    const anns=loadJSON("hilal_teacher_announcements_v1",[])||[];
-    const pubById=new Map(pubs.map(x=>[String(x.id),x]));
-    const annById=new Map(anns.map(x=>[String(x.id),x]));
-    const u=userKey();
-
-    const isExpired=(item)=>{
-      if(!item)return false;
-      if(item.hijriStart){
-        if(!today?.month||!today?.day)return false;
-        const now=hijriMonthDayOrdinal(today.month,today.day);
-        const start=hijriMonthDayOrdinal(item.hijriStart.month,item.hijriStart.day||1);
-        if(item.dateMode==="today") return now>start;
-        const end=hijriMonthDayOrdinal(item.hijriEnd?.month,item.hijriEnd?.day||item.hijriStart?.day||1);
-        return start<=end ? now>end : !(now>=start || now<=end);
-      }
-      if(item.date){
-        const raw=String(item.date).trim();
-        let m=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        let y=0,mo=0,dn=0;
-        if(m){ y=Number(m[1]);mo=Number(m[2]);dn=Number(m[3]); }
-        else {
-          m=raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
-          if(m){ dn=Number(m[1]);mo=Number(m[2]);y=Number(m[3]); }
-        }
-        if(y&&mo&&dn){
-          const d=new Date(y,mo-1,dn,23,59,59,999);
-          return Date.now()>d.getTime();
-        }
-      }
-      return false;
-    };
-
-    const cleanMap=(key,map)=>{
-      map=map||{}; map[u]=map[u]||{};
-      let changed=false;
-      Object.keys(map[u]).forEach(id=>{
-        const item=pubById.get(String(id))||annById.get(String(id));
-        if(item && isExpired(item)){ delete map[u][id]; changed=true; }
-      });
-      if(changed)saveJSON(key,map);
-      return map;
-    };
-
-    cleanMap("hilal_favorites_v1",loadJSON("hilal_favorites_v1",{}));
-    cleanMap(ANN_FAVORITES_KEY,loadJSON(ANN_FAVORITES_KEY,{}));
-    cleanMap("hilal_today_pins_v1",loadJSON("hilal_today_pins_v1",{}));
-
-    const rs=loadJSON(REMINDERS_KEY,{}); let reminderChanged=false;
-    Object.keys(rs).forEach(k=>{
-      const parts=k.split("::");
-      const kind=parts.length>1?parts[parts.length-2]:"";
-      const id=parts.length?parts[parts.length-1]:"";
-      const item=(kind==="publication"?pubById.get(String(id)):kind==="announcement"?annById.get(String(id)):null);
-      if(item && isExpired(item)){delete rs[k]; reminderChanged=true; try{window.HilalNative?.cancel(k)}catch(e){} }
-    });
-    if(reminderChanged)saveJSON(REMINDERS_KEY,rs);
-  }catch(e){}
-}
-
 function syncStateFromStorage(){
-  cleanupExpiredSavedContent();
   publications=loadJSON("hilal_publications_v1",[]);
   favorites=loadJSON("hilal_favorites_v1",{});
   follows=loadJSON("hilal_follows_v1",{});
@@ -39225,6 +39161,52 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
   -webkit-backdrop-filter:none!important;
 }
 </style>
+
+<script id="hilal-expired-date-cleanup-v2">
+(function(){
+  'use strict';
+  const KEYS=['hilal_publications_v1','hilal_teacher_announcements_v1','hilal_follower_participations_v1'];
+  function today(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();}
+  function dateOnly(v){
+    if(!v || typeof v!=='string') return null;
+    const m=v.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!m) return null;
+    return new Date(+m[1],+m[2]-1,+m[3]).getTime();
+  }
+  function expired(o){
+    if(!o || typeof o!=='object') return false;
+    const candidates=[o.expiryDate,o.expiresOn,o.eventDate,o.scheduledDate,o.reminderDate,o.startDate,o.date];
+    for(const v of candidates){const t=dateOnly(v);if(t!==null && t<today()) return true;}
+    return false;
+  }
+  function clean(){
+    const removed={};
+    for(const key of KEYS){
+      try{
+        const arr=JSON.parse(localStorage.getItem(key)||'[]');
+        if(!Array.isArray(arr)) continue;
+        const keep=arr.filter(x=>!expired(x));
+        removed[key]=arr.filter(x=>expired(x)).map(x=>String(x?.id||''));
+        if(keep.length!==arr.length) localStorage.setItem(key,JSON.stringify(keep));
+      }catch(e){}
+    }
+    // Tarihi geçen içeriklerin favori/takip işaretlerini de temizle.
+    try{
+      const dead=new Set(Object.values(removed).flat().filter(Boolean));
+      for(const key of ['hilal_announcement_favorites_v1','hilal_favorites_v1']){
+        const obj=JSON.parse(localStorage.getItem(key)||'{}');
+        let changed=false;
+        for(const u of Object.keys(obj||{})){
+          if(obj[u]&&typeof obj[u]==='object') for(const id of [...dead]) if(Object.prototype.hasOwnProperty.call(obj[u],id)){delete obj[u][id];changed=true;}
+        }
+        if(changed) localStorage.setItem(key,JSON.stringify(obj));
+      }
+    }catch(e){}
+  }
+  try{clean();}catch(e){}
+  window.addEventListener('pageshow',()=>{try{clean();}catch(e){}});
+})();
+</script>
 </body>
 </html>
 
@@ -39262,22 +39244,4 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 <style id="hilal-vakit-cikis-final-compact-v93">
 #calendarPage .hilal-vakit-card-v91{margin-left:10px!important;margin-right:10px!important;padding-left:12px!important;padding-right:12px!important;gap:8px!important}
 #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{letter-spacing:.03em!important}
-</style>
-
-<style id="hilal-reader-scroll-fix-v2">
-#readerModal .reader-stage{
-  flex:0 0 auto!important;
-  min-height:max-content!important;
-  height:auto!important;
-  overflow:visible!important;
-  display:block!important;
-}
-#readerModal .reader-paper{
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  touch-action:pan-y pinch-zoom!important;
-}
-#readerModal #readerContent{
-  min-height:max-content!important;
-}
 </style>
