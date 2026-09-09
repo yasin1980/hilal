@@ -226,6 +226,11 @@ public class MainActivity extends Activity {
 
     public class HilalAndroidBridge {
         @JavascriptInterface
+        public void stopReminderSound() {
+            ReminderReceiver.stopActiveSound();
+        }
+
+        @JavascriptInterface
         public void playSystemNotificationSound() {
             try {
                 Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
