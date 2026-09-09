@@ -20,13 +20,35 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
     private static final int NOTIFICATION_ID = 74124;
     private static final String STORE = "hilal_prayer_status_v1";
 
+    private static long timeToday(String clock, Calendar base) {
+        if (clock == null || !clock.matches("\\d{1,2}:\\d{2}")) return Long.MAX_VALUE;
+        try {
+            String[] hm = clock.split(":");
+            Calendar c = (Calendar) base.clone();
+            c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
+            c.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            return c.getTimeInMillis();
+        } catch (Exception e) { return Long.MAX_VALUE; }
+    }
+
+    private static String countdown(long millis, String prefix) {
+        long totalSeconds = Math.max(0L, millis / 1000L);
+        long hours = totalSeconds / 3600L;
+        long minutes = (totalSeconds % 3600L) / 60L;
+        long seconds = totalSeconds % 60L;
+        if (hours > 0) return String.format(Locale.US, "%s %02d:%02d:%02d", prefix, hours, minutes, seconds);
+        return String.format(Locale.US, "%s %02d:%02d", prefix, minutes, seconds);
+    }
+
     @Override public void onReceive(Context context, Intent intent) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID, "Hilâl • Namaz Vakti", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Sıradaki namaz ve kalan süre");
+            channel.setDescription("Namaz vakti, kalan süre ve kerâhat durumu");
             channel.setSound(null, null);
             channel.enableVibration(false);
             channel.setShowBadge(false);
@@ -47,24 +69,19 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
 
             String[] keys = {"Imsak", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"};
             String[] names = {"İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"};
+            Calendar nowCal = Calendar.getInstance();
             long now = System.currentTimeMillis();
             long best = Long.MAX_VALUE;
             String bestName = "";
             String bestClock = "";
-            Calendar cal = Calendar.getInstance();
 
             for (int i = 0; i < keys.length; i++) {
                 String clock = d.optString(keys[i], "");
-                if (!clock.matches("\\d{1,2}:\\d{2}")) continue;
-                String[] hm = clock.split(":");
-                cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
-                cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
-                cal.set(Calendar.SECOND, 0);
-                cal.set(Calendar.MILLISECOND, 0);
-                long t = cal.getTimeInMillis();
+                long t = timeToday(clock, nowCal);
                 if (t > now && t < best) {
                     best = t;
                     bestName = names[i];
+                    String[] hm = clock.split(":");
                     bestClock = String.format(Locale.US, "%02d:%02d", Integer.parseInt(hm[0]), Integer.parseInt(hm[1]));
                 }
             }
@@ -72,17 +89,42 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             if (best == Long.MAX_VALUE) {
                 bestName = "İmsak";
                 bestClock = d.optString("Imsak", "");
-                if (bestClock.matches("\\d{1,2}:\\d{2}")) {
+                long t = timeToday(bestClock, nowCal);
+                if (t != Long.MAX_VALUE) {
+                    Calendar tomorrow = (Calendar) nowCal.clone();
+                    tomorrow.add(Calendar.DAY_OF_YEAR, 1);
                     String[] hm = bestClock.split(":");
-                    cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
-                    cal.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
-                    cal.set(Calendar.SECOND, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    cal.add(Calendar.DAY_OF_YEAR, 1);
-                    best = cal.getTimeInMillis();
+                    tomorrow.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hm[0]));
+                    tomorrow.set(Calendar.MINUTE, Integer.parseInt(hm[1]));
+                    tomorrow.set(Calendar.SECOND, 0);
+                    tomorrow.set(Calendar.MILLISECOND, 0);
+                    best = tomorrow.getTimeInMillis();
                 }
             }
             if (bestName.isEmpty() || best == Long.MAX_VALUE) return;
+
+            // Kerâhat: Güneş+45 dk, Öğle'den 10 dk önce başlayıp Öğle'ye kadar, Akşam'dan 45 dk önce başlayıp Akşam'a kadar.
+            String kerahatText = "";
+            boolean kerahat = false;
+            long sunrise = timeToday(d.optString("Sunrise", ""), nowCal);
+            long dhuhr = timeToday(d.optString("Dhuhr", ""), nowCal);
+            long maghrib = timeToday(d.optString("Maghrib", ""), nowCal);
+            long k1 = sunrise == Long.MAX_VALUE ? Long.MAX_VALUE : sunrise + 45L * 60L * 1000L;
+            long k2s = dhuhr == Long.MAX_VALUE ? Long.MAX_VALUE : dhuhr - 10L * 60L * 1000L;
+            long k2e = dhuhr;
+            long k3s = maghrib == Long.MAX_VALUE ? Long.MAX_VALUE : maghrib - 45L * 60L * 1000L;
+            long k3e = maghrib;
+            long remaining = best - now;
+            if (now >= sunrise && now < k1) {
+                kerahat = true;
+                kerahatText = countdown(k1 - now, "⚠️ Kerâhat • Bitmesine");
+            } else if (now >= k2s && now < k2e) {
+                kerahat = true;
+                kerahatText = countdown(k2e - now, "⚠️ Kerâhat • Bitmesine");
+            } else if (now >= k3s && now < k3e) {
+                kerahat = true;
+                kerahatText = countdown(k3e - now, "⚠️ Kerâhat • Bitmesine");
+            }
 
             Intent open = new Intent(context, MainActivity.class);
             open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -92,24 +134,21 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             Notification.Builder builder = Build.VERSION.SDK_INT >= 26
                     ? new Notification.Builder(context, CHANNEL_ID)
                     : new Notification.Builder(context);
-            long remaining = Math.max(0L, best - now);
-            long totalSeconds = remaining / 1000L;
-            long hours = totalSeconds / 3600L;
-            long minutes = (totalSeconds % 3600L) / 60L;
-            long seconds = totalSeconds % 60L;
-            String remainingText = hours > 0
-                    ? String.format(Locale.US, "Çıkmasına %02d:%02d:%02d", hours, minutes, seconds)
-                    : String.format(Locale.US, "Çıkmasına %02d:%02d", minutes, seconds);
+
+            String remainingText = countdown(remaining, "Vaktin Çıkmasına");
             String statusLine = bestName + " • " + bestClock + " • " + remainingText;
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
-            statusView.setTextViewText(android.R.id.title, bestName);
-            statusView.setTextViewText(android.R.id.text1, bestClock + "  •  " + remainingText);
-            statusView.setViewVisibility(android.R.id.text1, android.view.View.VISIBLE);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
-            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 15f);
+            statusView.setTextViewText(android.R.id.title, "🕌 " + bestName + "  " + bestClock);
+            statusView.setTextViewText(android.R.id.text1, remainingText);
+            statusView.setTextViewText(R.id.hilalNotificationKerahat, kerahatText);
+            statusView.setViewVisibility(R.id.hilalNotificationKerahat, kerahat ? android.view.View.VISIBLE : android.view.View.GONE);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 17f);
+            statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
+            statusView.setTextViewTextSize(R.id.hilalNotificationKerahat, android.util.TypedValue.COMPLEX_UNIT_SP, 14f);
+
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(statusLine)
-                    .setContentText("")
+                    .setContentText(remainingText)
                     .setCustomContentView(statusView)
                     .setCustomHeadsUpContentView(statusView)
                     .setContentIntent(content)
