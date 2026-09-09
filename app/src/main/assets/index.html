@@ -25435,27 +25435,50 @@ async function applyPrayerGpsPosition(position,force){
   return true;
 }
 
+window.__hilalNativeLocation=async function(lat,lon,accuracy){
+  try{
+    if(typeof bearingToKaaba==='function' && document.getElementById('q1428Location')){
+      qiblaBearing=bearingToKaaba(Number(lat),Number(lon));
+      const l=document.getElementById('q1428Location'); const a=document.getElementById('q1428Accuracy');
+      if(l)l.textContent=Number(lat).toFixed(4)+", "+Number(lon).toFixed(4);
+      if(a)a.textContent="±"+Math.round(Number(accuracy)||0)+" m";
+      try{render()}catch(e){}
+    }
+  }catch(e){}
+  if(!Number.isFinite(lat)||!Number.isFinite(lon))return;
+  try{
+    const pos={coords:{latitude:Number(lat),longitude:Number(lon),accuracy:Number(accuracy)||0}};
+    await applyPrayerGpsPosition(pos,false);
+    __hilalPrayerGeoRequestRunning=false;
+  }catch(e){}
+};
+
 function requestPrayerGps(force=false){
   if(__hilalPrayerGeoRequestRunning)return;
-  if(!navigator.geolocation){
-    updatePrayerLocationLabel("GPS desteklenmiyor");
-    return;
-  }
-
   __hilalPrayerGeoRequestRunning=true;
-  navigator.geolocation.getCurrentPosition(
-    async pos=>{
-      try{await applyPrayerGpsPosition(pos,force)}
-      finally{__hilalPrayerGeoRequestRunning=false}
-    },
-    err=>{
-      __hilalPrayerGeoRequestRunning=false;
-      const msg=err?.code===1?"konum izni kapalı":"konum alınamadı";
-      updatePrayerLocationLabel(msg);
-      try{renderPrayerTimesForDate(new Date())}catch(e){}
-    },
-    {enableHighAccuracy:true,timeout:12000,maximumAge:force?0:300000}
-  );
+  let finished=false;
+  const finish=()=>{if(finished)return;finished=true;__hilalPrayerGeoRequestRunning=false};
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      async pos=>{try{await applyPrayerGpsPosition(pos,force)}catch(e){}finally{finish()}},
+      err=>{
+        try{window.HilalAndroid?.requestNativeLocation?.()}catch(e){}
+        try{window.AndroidHilal?.requestNativeLocation?.()}catch(e){}
+        setTimeout(()=>{
+          if(finished)return;
+          finish();
+          const msg=err?.code===1?"konum izni kapalı":"konum alınamadı";
+          updatePrayerLocationLabel(msg);
+          try{renderPrayerTimesForDate(new Date())}catch(e){}
+        },3000);
+      },
+      {enableHighAccuracy:true,timeout:10000,maximumAge:force?0:300000}
+    );
+  }else{
+    try{window.HilalAndroid?.requestNativeLocation?.()}catch(e){}
+    try{window.AndroidHilal?.requestNativeLocation?.()}catch(e){}
+    setTimeout(()=>{finish();updatePrayerLocationLabel("Konum alınamadı")},12000);
+  }
 }
 
 function refreshPrayerLocation(force=false){
@@ -32714,6 +32737,8 @@ function locate(){
    if(a)a.textContent="±"+Math.round(accuracy)+" m";
    render();
  },err=>{
+   try{window.HilalAndroid?.requestNativeLocation?.()}catch(e){}
+   try{window.AndroidHilal?.requestNativeLocation?.()}catch(e){}
    if(err.code===1){
    statusText("Konum izni gerekli");
    alert("Kıble yönünü hesaplamak için konum izni gerekiyor. Açılan izin penceresinde Konum için 'İzin ver' seçeneğini seçin. Daha önce reddettiyseniz telefonunuzda uygulama/tarayıcı Ayarları > İzinler > Konum bölümünden izni açın.");
@@ -40044,7 +40069,7 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
 <div id="hilalDuaPageV2" aria-hidden="true">
   <div class="hdv2-top"><button class="hdv2-back" type="button" onclick="closeHilalDuaRequestsV2()">‹</button><div class="hdv2-title">🤲 Dua İstekleri</div><button class="hdv2-add" type="button" onclick="openHilalDuaComposeV2()">+</button></div>
   <div class="hdv2-wrap">
-    <div class="hdv2-hero"><strong>Birbirimize dua edelim.</strong><span>İsteklerinizi paylaşın, kardeşlerimiz de dua, zikir veya Yasin ile destek olsun. Destek mesajları yalnızca hazır manevi ifadelerden oluşur; özel sohbet yoktur.</span></div>
+    <div class="hdv2-hero hilal-dua-intro"><div class="hdi-mark" aria-hidden="true">☾</div><div class="hdi-copy"><strong>Dualarımızda Birbirimize Yer Var</strong><span>Dua isteğini paylaş; gönülden yapılan dua, zikir ve Yasin ile birbirimize destek olalım.</span></div><div class="hdi-line" aria-hidden="true"></div></div>
     <div class="hdv2-tabs"><button class="hdv2-tab active" data-hdv2-tab="all" type="button">Tüm İstekler</button><button class="hdv2-tab" data-hdv2-tab="mine" type="button">İsteklerim</button></div>
     <div id="hilalDuaListV2"></div>
   </div>
@@ -40187,4 +40212,17 @@ setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contain
  #hilalDuaPageV2 .hdv2-actions button{font-size:11.5px}
  #hilalDuaComposeV2 .hdv2-type{min-height:58px;font-size:12px}
 }
+</style>
+
+<style id="hilal-dua-intro-final">
+#hilalDuaPageV2 .hilal-dua-intro{position:relative;display:flex;align-items:center;gap:13px;margin-bottom:14px;padding:17px 16px;border:1px solid rgba(176,138,60,.28);border-radius:18px;background:linear-gradient(135deg,#0d4f3b 0%,#176b50 68%,#214f43 100%);box-shadow:0 12px 28px rgba(10,55,42,.18);overflow:hidden;color:#fff}
+#hilalDuaPageV2 .hilal-dua-intro:before{content:'';position:absolute;inset:auto -35px -45px auto;width:130px;height:130px;border:1px solid rgba(221,194,128,.18);border-radius:50%;box-shadow:0 0 0 18px rgba(221,194,128,.05),0 0 0 36px rgba(221,194,128,.035)}
+#hilalDuaPageV2 .hdi-mark{width:45px;height:45px;flex:0 0 45px;display:grid;place-items:center;border:1px solid rgba(221,194,128,.45);border-radius:50%;color:#e0c783;font:27px Georgia,serif;background:rgba(255,255,255,.045)}
+#hilalDuaPageV2 .hdi-copy{position:relative;z-index:1;flex:1}
+#hilalDuaPageV2 .hdi-copy strong{margin:0 0 4px;color:#f7e8b9;font:700 17px Georgia,"Times New Roman",serif;letter-spacing:-.01em}
+#hilalDuaPageV2 .hdi-copy span{color:rgba(255,255,255,.86);font-size:11.8px;line-height:1.55}
+#hilalDuaPageV2 .hdi-line{position:absolute;left:16px;right:16px;bottom:0;height:2px;background:linear-gradient(90deg,transparent,#d9bd70,transparent);opacity:.65}
+#hilalDuaPageV2 .hilal-dua-intro + .hdv2-tabs{margin-top:0}
+/* Eski beyaz kart görünümünü tamamen devre dışı bırak. */
+#hilalDuaPageV2 .hdv2-hero:not(.hilal-dua-intro){display:none!important}
 </style>
