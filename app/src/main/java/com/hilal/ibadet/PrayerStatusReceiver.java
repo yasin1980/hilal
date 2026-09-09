@@ -98,13 +98,13 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             long minutes = (totalSeconds % 3600L) / 60L;
             long seconds = totalSeconds % 60L;
             String remainingText = hours > 0
-                    ? String.format(Locale.US, "%02d:%02d:%02d kaldı", hours, minutes, seconds)
-                    : String.format(Locale.US, "%02d:%02d kaldı", minutes, seconds);
+                    ? String.format(Locale.US, "Çıkmasına %02d:%02d:%02d", hours, minutes, seconds)
+                    : String.format(Locale.US, "Çıkmasına %02d:%02d", minutes, seconds);
             String statusLine = bestName + " • " + bestClock + " • " + remainingText;
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
             statusView.setTextViewText(android.R.id.title, statusLine);
             statusView.setViewVisibility(android.R.id.text1, android.view.View.GONE);
-            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 15f);
+            statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 18f);
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(statusLine)
                     .setContentText("")

@@ -23,38 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    private static final String ACTION_STOP_AND_OPEN = "com.hilal.ibadet.STOP_AND_OPEN_REMINDER";
     private static volatile MediaPlayer activePlayer;
-    private static final Object PLAYER_LOCK = new Object();
-
-    private static void stopActiveSound() {
-        synchronized (PLAYER_LOCK) {
-            MediaPlayer mp = activePlayer;
-            activePlayer = null;
-            if (mp != null) {
-                try { if (mp.isPlaying()) mp.stop(); } catch (Exception ignored) {}
-                try { mp.release(); } catch (Exception ignored) {}
-            }
-        }
-    }
-
+    private static volatile Vibrator activeVibrator;
     private static final String SOUND_CHANNEL_PREFIX = "hilal_reminders_sound_v10_";
     private static final String VIBRATE_CHANNEL_ID = "hilal_reminders_v10_vibrate";
 
     @Override public void onReceive(Context context, Intent source) {
-        if (ACTION_STOP_AND_OPEN.equals(source.getAction())) {
-            stopActiveSound();
-            Intent openTapped = new Intent(context, MainActivity.class);
-            openTapped.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            String tappedId = source.getStringExtra("id");
-            if (tappedId != null) {
-                openTapped.putExtra("hilalReminderId", tappedId);
-                openTapped.setData(Uri.parse("hilal://reminder/" + Uri.encode(tappedId)));
-            }
-            try { context.startActivity(openTapped); } catch (Exception ignored) {}
-            return;
-        }
-
         final PendingResult pendingResult = goAsync();
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) { pendingResult.finish(); return; }
@@ -64,10 +38,7 @@ public class ReminderReceiver extends BroadcastReceiver {
                 Intent.FLAG_ACTIVITY_SINGLE_TOP);
         open.putExtra("hilalReminderId", id);
         open.setData(Uri.parse("hilal://reminder/" + Uri.encode(id == null ? "" : id)));
-        Intent tapIntent = new Intent(context, ReminderReceiver.class);
-        tapIntent.setAction(ACTION_STOP_AND_OPEN);
-        tapIntent.putExtra("id", id);
-        PendingIntent content = PendingIntent.getBroadcast(context, id == null ? 0 : id.hashCode(), tapIntent,
+        PendingIntent content = PendingIntent.getActivity(context, id == null ? 0 : id.hashCode(), open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         boolean lowOrSilent = audio == null || audio.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
@@ -158,6 +129,19 @@ public class ReminderReceiver extends BroadcastReceiver {
         }
     }
 
+    static void stopActiveSound() {
+        try {
+            MediaPlayer mp = activePlayer;
+            activePlayer = null;
+            if (mp != null) { try { if (mp.isPlaying()) mp.stop(); } catch (Exception ignored) {} try { mp.release(); } catch (Exception ignored) {} }
+        } catch (Exception ignored) {}
+        try {
+            Vibrator v = activeVibrator;
+            activeVibrator = null;
+            if (v != null) v.cancel();
+        } catch (Exception ignored) {}
+    }
+
     private String getSoundChannelId(String soundId) {
         if ("phone".equals(soundId)) return SOUND_CHANNEL_PREFIX + "phone";
         if ("fav1".equals(soundId) || "fav2".equals(soundId) || "fav3".equals(soundId) || "fav4".equals(soundId)) {
@@ -191,6 +175,7 @@ public class ReminderReceiver extends BroadcastReceiver {
     private void vibrateReminder(Context context) {
         try {
             Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            activeVibrator = vibrator;
             if (vibrator == null || !vibrator.hasVibrator()) return;
             long[] pattern = new long[]{0L, 260L, 120L, 260L, 120L, 360L};
             if (Build.VERSION.SDK_INT >= 26) {
@@ -206,6 +191,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         try {
             player = new MediaPlayer();
             final MediaPlayer mp = player;
+            activePlayer = mp;
 
             AudioAttributes attrs = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
@@ -253,22 +239,18 @@ public class ReminderReceiver extends BroadcastReceiver {
             }
 
             mp.setOnCompletionListener(done -> {
-                synchronized (PLAYER_LOCK) { if (activePlayer == done) activePlayer = null; }
                 try { done.release(); } catch (Exception ignored) { }
+                if (activePlayer == done) activePlayer = null;
                 pendingResult.finish();
             });
             mp.setOnErrorListener((failed, what, extra) -> {
-                synchronized (PLAYER_LOCK) { if (activePlayer == failed) activePlayer = null; }
                 try { failed.release(); } catch (Exception ignored) { }
+                if (activePlayer == failed) activePlayer = null;
                 pendingResult.finish();
                 return true;
             });
 
             mp.prepare();
-            synchronized (PLAYER_LOCK) {
-                stopActiveSound();
-                activePlayer = mp;
-            }
             mp.start();
 
             // Çok uzun/bozuk bir dosyada BroadcastReceiver sonsuza kadar açık kalmasın.
@@ -278,13 +260,14 @@ public class ReminderReceiver extends BroadcastReceiver {
                         mp.stop();
                     }
                 } catch (Exception ignored) { }
-                synchronized (PLAYER_LOCK) { if (activePlayer == mp) activePlayer = null; }
                 try { mp.release(); } catch (Exception ignored) { }
+                if (activePlayer == mp) activePlayer = null;
                 pendingResult.finish();
             }, 20000L);
         } catch (Exception error) {
             if (player != null) {
                 try { player.release(); } catch (Exception ignored) { }
+                if (activePlayer == player) activePlayer = null;
             }
             pendingResult.finish();
         }

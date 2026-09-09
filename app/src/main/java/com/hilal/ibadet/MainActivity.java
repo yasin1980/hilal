@@ -54,6 +54,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ReminderReceiver.stopActiveSound();
         pendingReminderId = getIntent() == null ? "" :
                 getIntent().getStringExtra("hilalReminderId");
         if (pendingReminderId == null) pendingReminderId = "";
@@ -516,6 +517,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        ReminderReceiver.stopActiveSound();
         setIntent(intent);
         String incoming = intent == null ? null : intent.getStringExtra("hilalReminderId");
         if (incoming != null && !incoming.isEmpty()) pendingReminderId = incoming;
