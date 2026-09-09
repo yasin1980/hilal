@@ -38,7 +38,10 @@ public class ReminderReceiver extends BroadcastReceiver {
                 Intent.FLAG_ACTIVITY_SINGLE_TOP);
         open.putExtra("hilalReminderId", id);
         open.setData(Uri.parse("hilal://reminder/" + Uri.encode(id == null ? "" : id)));
-        PendingIntent content = PendingIntent.getActivity(context, id == null ? 0 : id.hashCode(), open,
+        Intent click = new Intent(context, ReminderOpenReceiver.class);
+        click.putExtra("hilalReminderId", id);
+        click.setData(Uri.parse("hilal://open-reminder/" + Uri.encode(id == null ? "" : id)));
+        PendingIntent content = PendingIntent.getBroadcast(context, id == null ? 0 : id.hashCode(), click,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         boolean lowOrSilent = audio == null || audio.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
