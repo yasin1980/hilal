@@ -139,10 +139,13 @@ public class PrayerStatusReceiver extends BroadcastReceiver {
             String statusLine = bestName + " • " + bestClock + " • " + remainingText;
             RemoteViews statusView = new RemoteViews(context.getPackageName(), R.layout.notification_hilal);
             statusView.setTextViewText(android.R.id.title, "🕌 " + bestName + "  " + bestClock);
-            statusView.setTextViewText(android.R.id.text1, kerahat ? (remainingText + "\n" + kerahatText) : remainingText);
+            statusView.setTextViewText(android.R.id.text1, remainingText);
+            statusView.setTextViewText(R.id.hilalNotificationKerahat, kerahatText);
+            statusView.setViewVisibility(R.id.hilalNotificationKerahat, kerahat ? android.view.View.VISIBLE : android.view.View.GONE);
             statusView.setTextViewTextSize(android.R.id.title, android.util.TypedValue.COMPLEX_UNIT_SP, 17f);
             statusView.setTextViewTextSize(android.R.id.text1, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
-            
+            statusView.setTextViewTextSize(R.id.hilalNotificationKerahat, android.util.TypedValue.COMPLEX_UNIT_SP, 14f);
+
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(statusLine)
                     .setContentText(remainingText)
