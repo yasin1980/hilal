@@ -18210,7 +18210,8 @@ const HILAL_CLOUD_KEYS=new Set([
   "hilal_hijri_daily_content_v1",
   "hilal_publications_v1",
   "hilal_teacher_announcements_v1",
-  "hilal_follower_participations_v1"
+  "hilal_follower_participations_v1",
+  "hilal_dua_requests_v1"
 ]);
 const HILAL_CLOUD_META_PREFIX="hilal_cloud_meta_v2::";
 let __hilalCloudApplying=false;
@@ -18251,6 +18252,9 @@ function hilalCloudRefreshKey(key){
       if(typeof renderTeacherParticipations==="function")renderTeacherParticipations();
       if(typeof renderGuestFollowingPage==="function")renderGuestFollowingPage();
       if(typeof window.hilalRenderRealHatim==="function")window.hilalRenderRealHatim();
+    }
+    else if(key==="hilal_dua_requests_v1"){
+      if(typeof window.hilalRenderDuaRequestsV1==="function")window.hilalRenderDuaRequestsV1();
     }
     if(typeof forceLiveRefresh==="function")forceLiveRefresh();
   }catch(e){console.warn("Hilal cloud refresh",key,e)}
@@ -39457,6 +39461,155 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 })();
 </script>
 
+
+
+<!-- HİLÂL MENÜ + VAKİT KARTI SON DÜZENLEME V4 -->
+<style id="hilal-menu-prayer-polish-v4">
+/* İç sayfalarda hamburger ve geri düğmesi: yan yana, yakın ve dengeli. */
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) #mainApp #mainMenuTrigger.main-role-menu-trigger{
+  top:10px !important;
+  left:max(8px,env(safe-area-inset-left,0px)) !important;
+  right:auto !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+}
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > .hilal-universal-back-v14,
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > .admin-back,
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active > [id*="Back"]{
+  margin-left:52px !important;
+  margin-top:0 !important;
+}
+
+/* Kaza: gerçek hamburger sol üstte, Geri hemen sağında. */
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18{
+  top:max(8px,env(safe-area-inset-top,0px)) !important;
+  left:max(8px,env(safe-area-inset-left,0px)) !important;
+  right:auto !important;
+  bottom:auto !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:50% !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+#kazaNamazlarimPage #kazaUniversalBackV15{
+  top:max(8px,env(safe-area-inset-top,0px)) !important;
+  left:max(58px,calc(env(safe-area-inset-left,0px) + 58px)) !important;
+  right:auto !important;
+  min-width:78px !important;
+  width:auto !important;
+  height:42px !important;
+  margin:0 !important;
+  border-radius:12px !important;
+}
+
+/* Zikirmatik: hamburger sol üstte, Geri hemen sağında. */
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27{
+  top:max(8px,env(safe-area-inset-top,0px)) !important;
+  left:max(8px,env(safe-area-inset-left,0px)) !important;
+  right:auto !important;
+  bottom:auto !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:50% !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+#hilalZikirmatikPageV13 .hilal-zikir-top-v13{
+  position:relative !important;
+  padding-left:58px !important;
+  padding-right:14px !important;
+}
+#hilalZikirmatikBackV13{
+  position:absolute !important;
+  top:max(8px,env(safe-area-inset-top,0px)) !important;
+  left:max(58px,calc(env(safe-area-inset-left,0px) + 58px)) !important;
+  width:78px !important;
+  min-width:78px !important;
+  height:42px !important;
+  border-radius:12px !important;
+}
+
+/* Takvim & Ezan: Vaktin Çıkmasına kartında uzun vakit adları sağa kayma yapmasın. */
+#calendarPage .hilal-vakit-card-v91{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 128px !important;
+  align-items:center !important;
+  column-gap:10px !important;
+  overflow:hidden !important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{
+  min-width:0 !important;
+  width:100% !important;
+  text-align:right !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  line-height:1.18 !important;
+}
+#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{
+  width:128px !important;
+  min-width:128px !important;
+  text-align:left !important;
+  white-space:nowrap !important;
+  font-variant-numeric:tabular-nums !important;
+  letter-spacing:.02em !important;
+}
+
+/* Kerâhet takibi tekrar görünür: Ezân/Vakit ekranında her durumda kart içinde yer alır. */
+#calendarPage #hilalKerahatCard{
+  display:block !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  margin:7px 0 0 !important;
+  border-radius:14px !important;
+  overflow:hidden !important;
+}
+#calendarPage #hilalKerahatCard .hilal-kerahat-inner{
+  min-height:44px !important;
+  padding:8px 10px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+}
+#calendarPage #hilalKerahatCard .hilal-kerahat-title{
+  width:100% !important;
+  min-width:0 !important;
+  text-align:center !important;
+  font-size:12px !important;
+  line-height:1.25 !important;
+  font-weight:900 !important;
+  overflow-wrap:anywhere !important;
+}
+@media(max-width:420px){
+  #calendarPage .hilal-vakit-card-v91{
+    grid-template-columns:minmax(0,1fr) 112px !important;
+    column-gap:7px !important;
+  }
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{
+    width:112px !important;
+    min-width:112px !important;
+    font-size:25px !important;
+  }
+  #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{
+    font-size:15.5px !important;
+  }
+}
+</style>
 </body>
 </html>
 
@@ -39780,3 +39933,92 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
   margin-left:52px !important;
 }
 </style>
+
+<!-- HILÂL DUA İSTEKLERİ V1 — Ortak manevi dayanışma alanı -->
+<style id="hilal-dua-requests-v1-css">
+#hilalDuaPageV1{display:none;position:fixed;inset:0;z-index:10080;background:linear-gradient(180deg,#f6fbf8 0%,#edf7f2 100%);color:#17372d;overflow:auto;padding-bottom:28px}
+#hilalDuaPageV1.is-open{display:block}
+.hilal-dua-top-v1{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));background:rgba(246,251,248,.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(22,101,78,.13)}
+.hilal-dua-back-v1{width:42px;height:42px;border:0;border-radius:13px;background:transparent;color:#176b50;font-size:31px;font-weight:800;line-height:1;padding:0}
+.hilal-dua-title-v1{font-weight:900;font-size:19px;color:#176b50;flex:1}
+.hilal-dua-add-v1{width:42px;height:42px;border:0;border-radius:50%;background:#176b50;color:#fff;font-size:28px;line-height:1;box-shadow:0 6px 18px rgba(23,107,80,.24)}
+.hilal-dua-shell-v1{width:min(720px,calc(100% - 24px));margin:0 auto;padding:16px 0}
+.hilal-dua-intro-v1{background:#fff;border:1px solid rgba(23,107,80,.12);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 8px 25px rgba(22,75,56,.07)}
+.hilal-dua-intro-v1 strong{display:block;color:#176b50;font-size:18px;margin-bottom:5px}.hilal-dua-intro-v1 span{font-size:13px;color:#61766e}
+.hilal-dua-tabs-v1{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.hilal-dua-tab-v1{border:1px solid rgba(23,107,80,.14);background:#fff;border-radius:13px;padding:11px;font-weight:850;color:#416056}.hilal-dua-tab-v1.active{background:#176b50;color:#fff}
+.hilal-dua-card-v1{background:#fff;border:1px solid rgba(23,107,80,.12);border-radius:20px;padding:15px;margin-bottom:10px;box-shadow:0 7px 20px rgba(22,75,56,.06)}
+.hilal-dua-card-head-v1{display:flex;justify-content:space-between;gap:10px;align-items:center}.hilal-dua-kind-v1{font-weight:900;color:#176b50}.hilal-dua-date-v1{font-size:11px;color:#81948d}.hilal-dua-message-v1{font-size:16px;line-height:1.55;font-weight:750;margin:12px 0;color:#29483e}.hilal-dua-stats-v1{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.hilal-dua-stat-v1{font-size:12px;background:#edf7f2;border-radius:999px;padding:7px 9px;color:#28634f;font-weight:800}.hilal-dua-support-v1{width:100%;border:1px solid rgba(23,107,80,.14);background:#f8fcfa;border-radius:13px;padding:11px;color:#176b50;font-weight:850;text-align:left}
+.hilal-dua-empty-v1{text-align:center;color:#789087;padding:35px 10px}.hilal-dua-modal-v1{display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,.38);align-items:flex-end;justify-content:center}.hilal-dua-modal-v1.is-open{display:flex}.hilal-dua-sheet-v1{width:min(720px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px 28px}.hilal-dua-sheet-v1 h3{margin:0 0 5px;color:#176b50}.hilal-dua-sheet-v1 .muted{margin-bottom:14px}.hilal-dua-types-v1{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hilal-dua-type-v1{border:1px solid rgba(23,107,80,.14);background:#f7fbf9;border-radius:15px;padding:13px;text-align:left;font-weight:850;color:#285548}.hilal-dua-type-v1.active{background:#e6f4ed;border-color:#176b50}.hilal-dua-compose-v1{margin-top:12px}.hilal-dua-compose-v1 label{display:block;font-size:12px;font-weight:850;color:#587169;margin-bottom:5px}.hilal-dua-compose-v1 select,.hilal-dua-compose-v1 input{width:100%;box-sizing:border-box;border:1px solid #d7e5df;border-radius:12px;padding:11px;background:#fbfdfc;color:#17372d}.hilal-dua-preview-v1{margin-top:10px;border-radius:14px;background:#f1f8f4;padding:12px;font-size:14px;line-height:1.45;color:#2b5547}.hilal-dua-actions-v1{display:flex;gap:8px;margin-top:14px}.hilal-dua-actions-v1 button{flex:1;padding:12px;border-radius:13px;border:1px solid #d7e5df;font-weight:850}.hilal-dua-primary-v1{background:#176b50!important;color:#fff;border-color:#176b50!important}
+@media(max-width:390px){.hilal-dua-type-v1{font-size:13px;padding:11px}.hilal-dua-shell-v1{width:min(100% - 18px,720px)}}
+</style>
+<div id="hilalDuaPageV1" aria-hidden="true">
+  <div class="hilal-dua-top-v1"><button id="hilalDuaBackV1" class="hilal-dua-back-v1" type="button">‹</button><div class="hilal-dua-title-v1">🤲 Dua İstekleri</div><button id="hilalDuaAddV1" class="hilal-dua-add-v1" type="button">+</button></div>
+  <div class="hilal-dua-shell-v1">
+    <div class="hilal-dua-intro-v1"><strong>Birbirimize dua edelim.</strong><span>Özel mesajlaşma yok; yalnızca seçilmiş güzel ifadelerle manevi destek.</span></div>
+    <div class="hilal-dua-tabs-v1"><button class="hilal-dua-tab-v1 active" data-dua-tab="all">Tüm İstekler</button><button class="hilal-dua-tab-v1" data-dua-tab="mine">İsteklerim</button></div>
+    <div id="hilalDuaListV1"></div>
+  </div>
+</div>
+<div id="hilalDuaComposeV1" class="hilal-dua-modal-v1" aria-hidden="true">
+  <div class="hilal-dua-sheet-v1">
+    <h3>Yeni Manevi Destek İsteği</h3><div class="muted">İsteğinizi seçin; özel metin yazılmaz.</div>
+    <div class="hilal-dua-types-v1">
+      <button class="hilal-dua-type-v1 active" data-dua-type="dua">🤲 Dua İstiyorum</button>
+      <button class="hilal-dua-type-v1" data-dua-type="zikir">📿 Zikir İstiyorum</button>
+      <button class="hilal-dua-type-v1" data-dua-type="yasin">📖 Yasin Okunmasını İstiyorum</button>
+      <button class="hilal-dua-type-v1" data-dua-type="vefat">🕊️ Vefat Eden Yakınım İçin</button>
+    </div>
+    <div class="hilal-dua-compose-v1"><label>Hazır istek</label><select id="hilalDuaPresetV1"></select><div id="hilalDuaPreviewV1" class="hilal-dua-preview-v1"></div></div>
+    <div class="hilal-dua-compose-v1" id="hilalDuaAmountWrapV1" style="display:none"><label>Zikir miktarı</label><input id="hilalDuaAmountV1" type="number" min="1" max="1000000" value="100" inputmode="numeric"></div>
+    <div class="hilal-dua-actions-v1"><button id="hilalDuaCancelV1">Vazgeç</button><button id="hilalDuaPublishV1" class="hilal-dua-primary-v1">İsteği Paylaş</button></div>
+  </div>
+</div>
+<script id="hilal-dua-requests-v1-js">
+(function(){
+'use strict';
+const KEY='hilal_dua_requests_v1';
+const PRESETS={
+ dua:['Sağlık sorunlarım var. Allah rızası için benim için dua eder misiniz?','Rabbim gönlüme ferahlık versin. Benim için dua eder misiniz?'],
+ zikir:['Benim için zikir çeker misiniz?','Benim için salavat getirir misiniz?'],
+ yasin:['Benim için bir Yasin-i Şerif okur musunuz?','Yakınım için bir Yasin-i Şerif okur musunuz?'],
+ vefat:['Rahmetli yakınım için dua eder misiniz?','Vefat eden yakınım için bir Yasin-i Şerif okur musunuz?']
+};
+const RESPONSES={dua:'Senin için dua ettim. Allah kabul etsin.',zikir:'Senin için zikir çektim. Allah kabul etsin.',yasin:'Senin için Yasin-i Şerif okudum. Allah kabul etsin.',vefat:'Allah rahmet eylesin. Dualarımız seninle.',support:'Seninle beraberiz, dualarımız seninle.'};
+let activeTab='all',selectedType='dua';
+function arr(){try{let x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}}
+function putLocal(a){try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
+function me(){return (typeof currentUser!=='undefined'&&currentUser)||{} }
+function name(){return me().name||me().displayName||'Bir kardeşimiz'}
+function key(){return me().key||me().id||'anonymous'}
+function esc2(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function open(){document.getElementById('hilalDuaPageV1').classList.add('is-open');document.getElementById('hilalDuaPageV1').setAttribute('aria-hidden','false');render();}
+function close(){document.getElementById('hilalDuaPageV1').classList.remove('is-open');document.getElementById('hilalDuaPageV1').setAttribute('aria-hidden','true');}
+function render(){const list=document.getElementById('hilalDuaListV1');if(!list)return;let data=arr().filter(x=>activeTab==='mine'?String(x.userKey)===String(key()):true).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!data.length){list.innerHTML='<div class="hilal-dua-empty-v1">Henüz bir dua isteği yok.<br>İlk manevi destek isteğini siz başlatabilirsiniz.</div>';return}list.innerHTML=data.map(card).join('')}
+function card(x){let supports=x.supports||{};let count=Object.keys(supports).length;let z=Number(x.zikirTotal||0);let y=Number(x.yasinCount||0);let text=x.text||'';return '<article class="hilal-dua-card-v1"><div class="hilal-dua-card-head-v1"><div class="hilal-dua-kind-v1">'+esc2(x.icon||'🤲')+' '+esc2(x.kindLabel||'Dua İsteği')+'</div><div class="hilal-dua-date-v1">'+new Date(x.createdAt||Date.now()).toLocaleString('tr-TR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</div></div><div class="hilal-dua-message-v1">'+esc2(text)+'</div><div class="hilal-dua-stats-v1"><span class="hilal-dua-stat-v1">🤲 '+count+' kişi destek verdi</span>'+(z?'<span class="hilal-dua-stat-v1">📿 '+z.toLocaleString('tr-TR')+' zikir</span>':'')+(y?'<span class="hilal-dua-stat-v1">📖 '+y+' Yasin</span>':'')+'</div><button class="hilal-dua-support-v1" data-dua-support="'+esc2(x.id)+'">'+(x.type==='zikir'?'📿 Zikir Çektim':x.type==='yasin'?'📖 Yasin Okudum':x.type==='vefat'?'🕊️ Dua Ettim':'🤲 Dua Ettim')+'</button></article>'}
+function openCompose(){document.getElementById('hilalDuaComposeV1').classList.add('is-open');refreshPreset()}
+function closeCompose(){document.getElementById('hilalDuaComposeV1').classList.remove('is-open')}
+function refreshPreset(){let sel=document.getElementById('hilalDuaPresetV1');sel.innerHTML=PRESETS[selectedType].map((x,i)=>'<option value="'+i+'">'+esc2(x)+'</option>').join('');document.getElementById('hilalDuaPreviewV1').textContent=PRESETS[selectedType][0];document.getElementById('hilalDuaAmountWrapV1').style.display=selectedType==='zikir'?'block':'none'}
+async function cloudMutate(mutator){
+ if(typeof hilalCloudPath!=='function')return false;
+ const path=hilalCloudPath(KEY);
+ for(let attempt=0;attempt<6;attempt++){
+  try{const g=await fetch(path+'?t='+Date.now(),{headers:{'X-Firebase-ETag':'true'},cache:'no-store'});if(!g.ok)throw new Error('GET '+g.status);const etag=g.headers.get('ETag')||'*';const remote=await g.json();let data=Array.isArray(remote?.data)?remote.data:arr();const changed=mutator(data)||data;const stamp=Date.now();const r=await fetch(path,{method:'PUT',headers:{'Content-Type':'application/json','If-Match':etag},body:JSON.stringify({updatedAt:stamp,data:changed})});if(r.status===412)continue;if(!r.ok)throw new Error('PUT '+r.status);putLocal(changed);if(typeof hilalCloudSetMeta==='function')hilalCloudSetMeta(KEY,{updatedAt:stamp,lastPushAt:stamp,status:'online',dirty:false,error:''});return true}catch(e){console.warn('Hilal dua cloud',e);break}
+ }return false;
+}
+async function publish(){let text=PRESETS[selectedType][Number(document.getElementById('hilalDuaPresetV1').value)||0];let x={id:'dua_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),type:selectedType,userKey:key(),userName:name(),text,kindLabel:selectedType==='zikir'?'Zikir İsteği':selectedType==='yasin'?'Yasin İsteği':selectedType==='vefat'?'Vefat Eden Yakınım İçin':'Dua İsteği',icon:selectedType==='zikir'?'📿':selectedType==='yasin'?'📖':selectedType==='vefat'?'🕊️':'🤲',createdAt:Date.now(),supports:{},zikirTotal:0,yasinCount:0};let ok=await cloudMutate(d=>{d.push(x);return d});if(!ok){let d=arr();d.push(x);putLocal(d)}closeCompose();render();}
+async function support(id){let d=arr(),x=d.find(a=>String(a.id)===String(id));if(!x)return;let uid=key();if(x.supports&&x.supports[uid]){return}let amount=0;if(x.type==='zikir'){let raw=prompt('Kaç zikir çektiniz?','100');amount=Math.max(1,Math.min(1000000,Number(raw)||0));if(!amount)return}
+ let now=Date.now();let ok=await cloudMutate(data=>{let y=data.find(a=>String(a.id)===String(id));if(!y)return data;y.supports=y.supports||{};if(y.supports[uid])return data;y.supports[uid]={name:name(),response:RESPONSES[y.type]||RESPONSES.support,at:now,amount};if(y.type==='zikir')y.zikirTotal=Number(y.zikirTotal||0)+amount;if(y.type==='yasin'||y.type==='vefat')y.yasinCount=Number(y.yasinCount||0)+1;return data});if(!ok){x.supports=x.supports||{};x.supports[uid]={name:name(),response:RESPONSES[x.type]||RESPONSES.support,at:now,amount};if(x.type==='zikir')x.zikirTotal=Number(x.zikirTotal||0)+amount;if(x.type==='yasin'||x.type==='vefat')x.yasinCount=Number(x.yasinCount||0)+1;putLocal(d)}render()}
+function bind(){document.getElementById('hilalDuaBackV1')?.addEventListener('click',close);document.getElementById('hilalDuaAddV1')?.addEventListener('click',openCompose);document.getElementById('hilalDuaCancelV1')?.addEventListener('click',closeCompose);document.getElementById('hilalDuaPublishV1')?.addEventListener('click',publish);document.getElementById('hilalDuaPresetV1')?.addEventListener('change',function(){document.getElementById('hilalDuaPreviewV1').textContent=PRESETS[selectedType][Number(this.value)||0]});document.querySelectorAll('[data-dua-type]').forEach(b=>b.addEventListener('click',function(){selectedType=this.dataset.duaType;document.querySelectorAll('[data-dua-type]').forEach(q=>q.classList.toggle('active',q===this));refreshPreset()}));document.querySelectorAll('[data-dua-tab]').forEach(b=>b.addEventListener('click',function(){activeTab=this.dataset.duaTab;document.querySelectorAll('[data-dua-tab]').forEach(q=>q.classList.toggle('active',q===this));render()}));document.getElementById('hilalDuaListV1')?.addEventListener('click',e=>{let b=e.target.closest('[data-dua-support]');if(b)support(b.dataset.duaSupport)});}
+bind();refreshPreset();window.openHilalDuaRequestsV1=open;window.closeHilalDuaRequestsV1=close;window.hilalRenderDuaRequestsV1=render;
+})();
+</script>
+<script id="hilal-dua-menu-integrate-v1">
+(function(){
+ function openD(){try{window.openHilalDuaRequestsV1?.()}catch(e){}}
+ function addCard(grid){if(!grid||grid.querySelector('[data-hilal-dua-card]'))return;let b=document.createElement('button');b.type='button';b.className='hilal-menu-extra-card-v1';b.dataset.hilalDuaCard='1';b.innerHTML='<span class="hilal-extra-icon-v1">🤲</span><span class="hilal-extra-label-v1">Dua İstekleri</span>';b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openD()});let z=grid.querySelector('.hilal-menu-extra-card-v1[data-hilal-extra="zikir"]');if(z)grid.insertBefore(b,z.nextSibling);else grid.appendChild(b)}
+ function addSettings(){let stack=document.querySelector('#settingsPage .settings-stack');if(!stack||stack.querySelector('[data-hilal-dua-settings]'))return;let b=document.createElement('button');b.type='button';b.dataset.hilalDuaSettings='1';b.className='hilal-settings-tool-card-v1';b.innerHTML='<span class="tool-icon">🤲</span><span class="tool-title">Dua İstekleri</span>';b.addEventListener('click',openD);let wrap=stack.querySelector('.hilal-settings-tools-v1');if(wrap)wrap.appendChild(b);}
+ function init(){['guestMenu','teacherMenu'].forEach(id=>addCard(document.getElementById(id)?.querySelector('.guest-menu-grid,.teacher-menu-grid')));addSettings()}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
+ document.addEventListener('click',e=>{if(e.target.closest?.('#mainMenuTrigger'))setTimeout(init,100)},true);setInterval(init,2500);
+})();
+</script>
