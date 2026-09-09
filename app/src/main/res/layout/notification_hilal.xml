@@ -33,23 +33,8 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:fontFamily="sans"
-        android:maxLines="1"
+        android:maxLines="2"
         android:ellipsize="end"
         android:includeFontPadding="false"
         android:layout_marginTop="3dp" />
-    <TextView
-        android:id="@+id/hilalNotificationKerahat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="⚠️ Kerâhat • Bitmesine 00:32:18"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:fontFamily="sans"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:includeFontPadding="false"
-        android:layout_marginTop="3dp"
-        android:visibility="gone" />
 </LinearLayout>
