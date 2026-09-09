@@ -40153,3 +40153,38 @@ setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contain
   #hilalDuaComposeV2 .hdv2-sheet,#hilalDuaSupportV2 .hdv2-sheet{padding:16px;border-radius:20px}
 }
 </style>
+
+
+<style id="hilal-dua-premium-v3">
+/* Dua İstekleri premium: ikon + başlık + açıklama düzeni, mevcut davranış korunur. */
+#hilalDuaPageV2 .hdv2-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#ffffff 0%,#f3faf6 58%,#fbf7ea 100%);border-color:rgba(23,107,80,.14)}
+#hilalDuaPageV2 .hdv2-hero:before{content:'✦';position:absolute;right:16px;top:10px;font-size:34px;color:rgba(168,126,46,.22);font-family:Georgia,serif}
+#hilalDuaPageV2 .hdv2-card{position:relative;overflow:hidden;border-radius:20px;padding:15px;background:linear-gradient(145deg,#fff,#f8fcfa);border-color:rgba(23,107,80,.13)}
+#hilalDuaPageV2 .hdv2-card:after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(#176b50,#b08a3c);opacity:.85}
+#hilalDuaPageV2 .hdv2-icon{border-radius:15px;background:linear-gradient(145deg,rgba(23,107,80,.12),rgba(176,138,60,.10));border:1px solid rgba(176,138,60,.12);font-size:23px}
+#hilalDuaPageV2 .hdv2-kind{font-family:Georgia,"Times New Roman",serif;font-size:14px;letter-spacing:.01em}
+#hilalDuaPageV2 .hdv2-who{font-size:10.5px}
+#hilalDuaPageV2 .hdv2-text{font-size:14.5px;font-weight:600;line-height:1.7;color:#244238}
+#hilalDuaPageV2 .hdv2-stat{font-size:11.5px;padding:7px 10px;background:rgba(23,107,80,.055);border:1px solid rgba(23,107,80,.08)}
+#hilalDuaPageV2 .hdv2-actions button{min-height:44px;font-size:12px;border-radius:13px}
+#hilalDuaPageV2 .hdv2-actions .primary{box-shadow:0 6px 14px rgba(23,107,80,.16)}
+#hilalDuaPageV2 .hdv2-supports{margin-top:10px;padding:0;border-top:0;border-radius:14px;background:#f6faf8;overflow:hidden}
+#hilalDuaPageV2 .hdv2-supports .hdv2-support-line{padding:9px 11px;border-bottom:1px solid rgba(23,107,80,.08);font-size:11.5px;color:#456257}
+#hilalDuaPageV2 .hdv2-supports .hdv2-support-line:last-child{border-bottom:0}
+#hilalDuaComposeV2 .hdv2-sheet,#hilalDuaSupportV2 .hdv2-sheet{background:linear-gradient(145deg,#fff,#f7fbf9);border-color:rgba(23,107,80,.14);box-shadow:0 20px 60px rgba(15,52,39,.24)}
+#hilalDuaComposeV2 h3,#hilalDuaSupportV2 h3{font-family:Georgia,"Times New Roman",serif;font-size:22px}
+#hilalDuaComposeV2 .hdv2-note,#hilalDuaSupportV2 .hdv2-note{background:rgba(23,107,80,.045);border:1px solid rgba(23,107,80,.08);border-radius:12px;padding:9px 10px}
+#hilalDuaComposeV2 .hdv2-types{gap:9px}
+#hilalDuaComposeV2 .hdv2-type{position:relative;min-height:62px;padding:10px 12px 10px 43px;border-radius:15px;background:#fff;line-height:1.3;box-shadow:0 3px 10px rgba(17,64,48,.035)}
+#hilalDuaComposeV2 .hdv2-type:before{content:'›';position:absolute;left:14px;top:50%;transform:translateY(-50%);width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:rgba(23,107,80,.08);color:#176b50;font-weight:900;font-size:17px}
+#hilalDuaComposeV2 .hdv2-type.active{background:linear-gradient(135deg,rgba(23,107,80,.10),rgba(176,138,60,.07));box-shadow:0 5px 14px rgba(23,107,80,.07)}
+#hilalDuaComposeV2 .hdv2-type.active:before{content:'✓';background:#176b50;color:#fff;font-size:13px}
+#hilalDuaComposeV2 textarea{background:#fff;border-color:rgba(23,107,80,.14);box-shadow:inset 0 1px 2px rgba(0,0,0,.02)}
+#hilalDuaSupportV2 .hdv2-preset{background:#fff;border-radius:14px;padding:12px 13px;font-size:12.5px;border-color:rgba(23,107,80,.12);box-shadow:0 3px 10px rgba(17,64,48,.035)}
+#hilalDuaSupportV2 .hdv2-preset.active{background:linear-gradient(135deg,rgba(23,107,80,.10),rgba(176,138,60,.07));box-shadow:0 5px 14px rgba(23,107,80,.07)}
+@media(max-width:380px){
+ #hilalDuaPageV2 .hdv2-text{font-size:14px}
+ #hilalDuaPageV2 .hdv2-actions button{font-size:11.5px}
+ #hilalDuaComposeV2 .hdv2-type{min-height:58px;font-size:12px}
+}
+</style>
