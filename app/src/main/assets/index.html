@@ -16566,6 +16566,7 @@ html,body{
   <div class="teacher-menu-grid">
     <button data-tpage="todayPage" onclick="teacherGoPage('todayPage',this)">☀️<br>Bugün</button>
     <button data-tpage="calendarPage" onclick="teacherGoPage('calendarPage',this)">🗓️<br>Takvim & Ezan</button>
+    <button type="button" data-hilal-dua-menu="1" onclick="openHilalDuaRequestsV2()">🤲<br>Dua İstekleri</button>
     <button data-tpage="announcementsPage" onclick="teacherGoPage('announcementsPage',this)">📣<br>Genel Duyurular</button>
     <button data-tpage="generalPublicationsPage" onclick="teacherGoPage('generalPublicationsPage',this)">📚<br>Genel Yayınlar</button>
     <button data-tpage="teacherMyAnnouncementsPage" onclick="teacherGoPage('teacherMyAnnouncementsPage',this)">🗂️<br>Duyurularım</button>
@@ -16590,6 +16591,7 @@ html,body{
 <div class="guest-menu-grid">
 <button data-gpage="todayPage" onclick="guestGoPage('todayPage',this)">☀️<br>Bugün</button>
 <button data-gpage="calendarPage" onclick="guestGoPage('calendarPage',this)">🗓️<br>Takvim & Ezan</button>
+<button type="button" data-hilal-dua-menu="1" onclick="openHilalDuaRequestsV2()">🤲<br>Dua İstekleri</button>
 <button data-gpage="announcementsPage" onclick="guestGoPage('announcementsPage',this)">📣<br>Genel Duyurular</button>
     <button data-gpage="generalPublicationsPage" onclick="guestGoPage('generalPublicationsPage',this)">📚<br>Genel Yayınlar</button>
     <button data-gpage="guestFollowingPage" onclick="guestGoPage('guestFollowingPage',this)">👥<br>Takip Ettiklerim</button>
@@ -16609,6 +16611,7 @@ html,body{
   <div class="admin-menu-grid">
     <button type="button" onclick="openAdminSettings()">⚙️ Ayarlar / Şifre</button>
     <button type="button" onclick="openAdminModerationPage()">📣 Duyuru Yönetimi</button>
+    <button type="button" data-hilal-dua-menu="1" onclick="openHilalDuaRequestsV2()">🤲 Dua İstekleri</button>
     <button type="button" onclick="openRestoreRequestsPage()">💬 Hesap Açma Mesajları <span id="restoreRequestCount"></span></button>
     <button type="button" onclick="openHijriDailyAdminPage()">🌙 Hicrî Günlük İçerikler</button>
     <button type="button" onclick="openAdminApprovedPage('teacher')">📚 Onaylanan Hocalar</button>
@@ -18210,8 +18213,7 @@ const HILAL_CLOUD_KEYS=new Set([
   "hilal_hijri_daily_content_v1",
   "hilal_publications_v1",
   "hilal_teacher_announcements_v1",
-  "hilal_follower_participations_v1",
-  "hilal_dua_requests_v1"
+  "hilal_follower_participations_v1"
 ]);
 const HILAL_CLOUD_META_PREFIX="hilal_cloud_meta_v2::";
 let __hilalCloudApplying=false;
@@ -18252,9 +18254,6 @@ function hilalCloudRefreshKey(key){
       if(typeof renderTeacherParticipations==="function")renderTeacherParticipations();
       if(typeof renderGuestFollowingPage==="function")renderGuestFollowingPage();
       if(typeof window.hilalRenderRealHatim==="function")window.hilalRenderRealHatim();
-    }
-    else if(key==="hilal_dua_requests_v1"){
-      if(typeof window.hilalRenderDuaRequestsV1==="function")window.hilalRenderDuaRequestsV1();
     }
     if(typeof forceLiveRefresh==="function")forceLiveRefresh();
   }catch(e){console.warn("Hilal cloud refresh",key,e)}
@@ -39934,91 +39933,145 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
 }
 </style>
 
-<!-- HILÂL DUA İSTEKLERİ V1 — Ortak manevi dayanışma alanı -->
-<style id="hilal-dua-requests-v1-css">
-#hilalDuaPageV1{display:none;position:fixed;inset:0;z-index:10080;background:linear-gradient(180deg,#f6fbf8 0%,#edf7f2 100%);color:#17372d;overflow:auto;padding-bottom:28px}
-#hilalDuaPageV1.is-open{display:block}
-.hilal-dua-top-v1{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));background:rgba(246,251,248,.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(22,101,78,.13)}
-.hilal-dua-back-v1{width:42px;height:42px;border:0;border-radius:13px;background:transparent;color:#176b50;font-size:31px;font-weight:800;line-height:1;padding:0}
-.hilal-dua-title-v1{font-weight:900;font-size:19px;color:#176b50;flex:1}
-.hilal-dua-add-v1{width:42px;height:42px;border:0;border-radius:50%;background:#176b50;color:#fff;font-size:28px;line-height:1;box-shadow:0 6px 18px rgba(23,107,80,.24)}
-.hilal-dua-shell-v1{width:min(720px,calc(100% - 24px));margin:0 auto;padding:16px 0}
-.hilal-dua-intro-v1{background:#fff;border:1px solid rgba(23,107,80,.12);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 8px 25px rgba(22,75,56,.07)}
-.hilal-dua-intro-v1 strong{display:block;color:#176b50;font-size:18px;margin-bottom:5px}.hilal-dua-intro-v1 span{font-size:13px;color:#61766e}
-.hilal-dua-tabs-v1{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.hilal-dua-tab-v1{border:1px solid rgba(23,107,80,.14);background:#fff;border-radius:13px;padding:11px;font-weight:850;color:#416056}.hilal-dua-tab-v1.active{background:#176b50;color:#fff}
-.hilal-dua-card-v1{background:#fff;border:1px solid rgba(23,107,80,.12);border-radius:20px;padding:15px;margin-bottom:10px;box-shadow:0 7px 20px rgba(22,75,56,.06)}
-.hilal-dua-card-head-v1{display:flex;justify-content:space-between;gap:10px;align-items:center}.hilal-dua-kind-v1{font-weight:900;color:#176b50}.hilal-dua-date-v1{font-size:11px;color:#81948d}.hilal-dua-message-v1{font-size:16px;line-height:1.55;font-weight:750;margin:12px 0;color:#29483e}.hilal-dua-stats-v1{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.hilal-dua-stat-v1{font-size:12px;background:#edf7f2;border-radius:999px;padding:7px 9px;color:#28634f;font-weight:800}.hilal-dua-support-v1{width:100%;border:1px solid rgba(23,107,80,.14);background:#f8fcfa;border-radius:13px;padding:11px;color:#176b50;font-weight:850;text-align:left}
-.hilal-dua-empty-v1{text-align:center;color:#789087;padding:35px 10px}.hilal-dua-modal-v1{display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,.38);align-items:flex-end;justify-content:center}.hilal-dua-modal-v1.is-open{display:flex}.hilal-dua-sheet-v1{width:min(720px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px 28px}.hilal-dua-sheet-v1 h3{margin:0 0 5px;color:#176b50}.hilal-dua-sheet-v1 .muted{margin-bottom:14px}.hilal-dua-types-v1{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hilal-dua-type-v1{border:1px solid rgba(23,107,80,.14);background:#f7fbf9;border-radius:15px;padding:13px;text-align:left;font-weight:850;color:#285548}.hilal-dua-type-v1.active{background:#e6f4ed;border-color:#176b50}.hilal-dua-compose-v1{margin-top:12px}.hilal-dua-compose-v1 label{display:block;font-size:12px;font-weight:850;color:#587169;margin-bottom:5px}.hilal-dua-compose-v1 select,.hilal-dua-compose-v1 input{width:100%;box-sizing:border-box;border:1px solid #d7e5df;border-radius:12px;padding:11px;background:#fbfdfc;color:#17372d}.hilal-dua-preview-v1{margin-top:10px;border-radius:14px;background:#f1f8f4;padding:12px;font-size:14px;line-height:1.45;color:#2b5547}.hilal-dua-actions-v1{display:flex;gap:8px;margin-top:14px}.hilal-dua-actions-v1 button{flex:1;padding:12px;border-radius:13px;border:1px solid #d7e5df;font-weight:850}.hilal-dua-primary-v1{background:#176b50!important;color:#fff;border-color:#176b50!important}
-@media(max-width:390px){.hilal-dua-type-v1{font-size:13px;padding:11px}.hilal-dua-shell-v1{width:min(100% - 18px,720px)}}
+<!-- HILÂL DUA İSTEKLERİ V2: yalnızca bu bölüm eklenmiştir. Mevcut uygulama koduna dokunulmaz. -->
+<style id="hilal-dua-requests-v2-css">
+#hilalDuaPageV2{display:none;position:fixed;inset:0;z-index:10090;background:var(--bg,#f5faf7);color:var(--text,#18362b);overflow:auto;-webkit-overflow-scrolling:touch}
+#hilalDuaPageV2.hdv2-open{display:block}
+#hilalDuaPageV2 .hdv2-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:max(10px,env(safe-area-inset-top));background:color-mix(in srgb,var(--card,#fff) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#dbe7e1)}
+#hilalDuaPageV2 .hdv2-back,#hilalDuaPageV2 .hdv2-add{width:42px;height:42px;border:0;display:grid;place-items:center;flex:0 0 42px}
+#hilalDuaPageV2 .hdv2-back{background:transparent;color:var(--green,#176b50);font-size:30px;font-weight:900}
+#hilalDuaPageV2 .hdv2-add{border-radius:50%;background:var(--green,#176b50);color:#fff;font-size:28px;box-shadow:0 8px 22px rgba(0,0,0,.15)}
+#hilalDuaPageV2 .hdv2-title{flex:1;text-align:center;font-weight:900;color:var(--green,#176b50);font-size:19px}
+#hilalDuaPageV2 .hdv2-wrap{width:min(760px,calc(100% - 24px));margin:0 auto;padding:15px 0 36px}
+#hilalDuaPageV2 .hdv2-hero{border:1px solid var(--line,#dbe7e1);border-radius:20px;padding:16px;background:linear-gradient(145deg,var(--card,#fff),var(--bg,#f5faf7));box-shadow:0 6px 18px rgba(0,0,0,.04);margin-bottom:12px}
+#hilalDuaPageV2 .hdv2-hero strong{display:block;color:var(--green,#176b50);font-size:17px;margin-bottom:4px}
+#hilalDuaPageV2 .hdv2-hero span{display:block;color:var(--muted,#66756e);font-size:12px;line-height:1.5}
+#hilalDuaPageV2 .hdv2-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#hilalDuaPageV2 .hdv2-tab{border:1px solid var(--line,#dbe7e1);border-radius:13px;padding:11px;background:var(--card,#fff);color:var(--text,#18362b);font-weight:850}
+#hilalDuaPageV2 .hdv2-tab.active{background:var(--green,#176b50);border-color:var(--green,#176b50);color:#fff}
+#hilalDuaListV2{display:grid;gap:11px}
+#hilalDuaPageV2 .hdv2-card{border:1px solid rgba(23,107,80,.15);border-radius:19px;padding:14px;background:var(--card,#fff);box-shadow:0 6px 18px rgba(0,0,0,.05)}
+#hilalDuaPageV2 .hdv2-card-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+#hilalDuaPageV2 .hdv2-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(23,107,80,.09);font-size:22px;flex:0 0 42px}
+#hilalDuaPageV2 .hdv2-kind{font-weight:900;color:var(--green,#176b50);font-size:13px}
+#hilalDuaPageV2 .hdv2-who{font-size:10px;color:var(--muted,#66756e);margin-top:2px}
+#hilalDuaPageV2 .hdv2-text{font-size:14px;line-height:1.55;margin:7px 0 11px}
+#hilalDuaPageV2 .hdv2-stats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+#hilalDuaPageV2 .hdv2-stat{border-radius:999px;padding:6px 9px;background:rgba(23,107,80,.07);color:var(--green,#176b50);font-size:11px;font-weight:850}
+#hilalDuaPageV2 .hdv2-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#hilalDuaPageV2 .hdv2-actions button,#hilalDuaPageV2 .hdv2-support-btn{min-height:42px;border:1px solid var(--line,#dbe7e1);border-radius:12px;background:var(--bg,#f5faf7);color:var(--text,#18362b);font-weight:850}
+#hilalDuaPageV2 .hdv2-actions .primary{background:var(--green,#176b50);color:#fff;border-color:var(--green,#176b50)}
+#hilalDuaPageV2 .hdv2-supports{margin-top:10px;border-top:1px dashed var(--line,#dbe7e1);padding-top:10px}
+#hilalDuaPageV2 .hdv2-support-line{font-size:11px;line-height:1.5;padding:5px 0;color:var(--muted,#66756e)}
+#hilalDuaPageV2 .hdv2-empty{text-align:center;padding:30px 14px;color:var(--muted,#66756e);border:1px dashed var(--line,#dbe7e1);border-radius:18px}
+#hilalDuaComposeV2,#hilalDuaSupportV2{display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,.45);align-items:flex-end;justify-content:center;padding:12px}
+#hilalDuaComposeV2.hdv2-modal-open,#hilalDuaSupportV2.hdv2-modal-open{display:flex}
+#hilalDuaComposeV2 .hdv2-sheet,#hilalDuaSupportV2 .hdv2-sheet{width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card,#fff);border-radius:22px;padding:17px;box-shadow:0 18px 55px rgba(0,0,0,.25)}
+#hilalDuaComposeV2 h3,#hilalDuaSupportV2 h3{margin:0 0 6px;color:var(--green,#176b50)}
+#hilalDuaComposeV2 .hdv2-note,#hilalDuaSupportV2 .hdv2-note{font-size:11px;color:var(--muted,#66756e);line-height:1.5;margin-bottom:12px}
+#hilalDuaComposeV2 .hdv2-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#hilalDuaComposeV2 .hdv2-type{padding:11px;border:1px solid var(--line,#dbe7e1);border-radius:13px;background:var(--bg,#f5faf7);font-weight:800;text-align:left}
+#hilalDuaComposeV2 .hdv2-type.active{border-color:var(--green,#176b50);background:rgba(23,107,80,.09);color:var(--green,#176b50)}
+#hilalDuaComposeV2 label{display:block;font-size:11px;font-weight:850;margin:8px 0 5px}
+#hilalDuaComposeV2 textarea,#hilalDuaComposeV2 input,#hilalDuaSupportV2 input{width:100%;box-sizing:border-box;border:1px solid var(--line,#dbe7e1);border-radius:12px;background:var(--bg,#f5faf7);color:var(--text,#18362b);padding:11px;font:inherit}
+#hilalDuaComposeV2 textarea{min-height:105px;resize:vertical}
+#hilalDuaComposeV2 .hdv2-row,#hilalDuaSupportV2 .hdv2-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#hilalDuaComposeV2 .hdv2-check{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted,#66756e);margin-top:9px}
+#hilalDuaComposeV2 .hdv2-check input{width:auto}
+#hilalDuaComposeV2 .hdv2-modal-actions,#hilalDuaSupportV2 .hdv2-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+#hilalDuaComposeV2 button,#hilalDuaSupportV2 button{cursor:pointer}
+#hilalDuaSupportV2 .hdv2-presets{display:grid;gap:8px}
+#hilalDuaSupportV2 .hdv2-preset{width:100%;text-align:left;padding:12px;border:1px solid var(--line,#dbe7e1);border-radius:13px;background:var(--bg,#f5faf7);font-weight:750;line-height:1.35}
+#hilalDuaSupportV2 .hdv2-preset.active{border-color:var(--green,#176b50);background:rgba(23,107,80,.09);color:var(--green,#176b50)}
+#hilalDuaSupportV2 .hdv2-amount{display:none;margin-top:10px}
+#hilalDuaSupportV2 .hdv2-amount.show{display:block}
+@media(max-width:420px){#hilalDuaComposeV2 .hdv2-types{grid-template-columns:1fr}#hilalDuaPageV2 .hdv2-actions{grid-template-columns:1fr 1fr}}
 </style>
-<div id="hilalDuaPageV1" aria-hidden="true">
-  <div class="hilal-dua-top-v1"><button id="hilalDuaBackV1" class="hilal-dua-back-v1" type="button">‹</button><div class="hilal-dua-title-v1">🤲 Dua İstekleri</div><button id="hilalDuaAddV1" class="hilal-dua-add-v1" type="button">+</button></div>
-  <div class="hilal-dua-shell-v1">
-    <div class="hilal-dua-intro-v1"><strong>Birbirimize dua edelim.</strong><span>Özel mesajlaşma yok; yalnızca seçilmiş güzel ifadelerle manevi destek.</span></div>
-    <div class="hilal-dua-tabs-v1"><button class="hilal-dua-tab-v1 active" data-dua-tab="all">Tüm İstekler</button><button class="hilal-dua-tab-v1" data-dua-tab="mine">İsteklerim</button></div>
-    <div id="hilalDuaListV1"></div>
+
+<div id="hilalDuaPageV2" aria-hidden="true">
+  <div class="hdv2-top"><button class="hdv2-back" type="button" onclick="closeHilalDuaRequestsV2()">‹</button><div class="hdv2-title">🤲 Dua İstekleri</div><button class="hdv2-add" type="button" onclick="openHilalDuaComposeV2()">+</button></div>
+  <div class="hdv2-wrap">
+    <div class="hdv2-hero"><strong>Birbirimize dua edelim.</strong><span>İsteklerinizi paylaşın, kardeşlerimiz de dua, zikir veya Yasin ile destek olsun. Destek mesajları yalnızca hazır manevi ifadelerden oluşur; özel sohbet yoktur.</span></div>
+    <div class="hdv2-tabs"><button class="hdv2-tab active" data-hdv2-tab="all" type="button">Tüm İstekler</button><button class="hdv2-tab" data-hdv2-tab="mine" type="button">İsteklerim</button></div>
+    <div id="hilalDuaListV2"></div>
   </div>
 </div>
-<div id="hilalDuaComposeV1" class="hilal-dua-modal-v1" aria-hidden="true">
-  <div class="hilal-dua-sheet-v1">
-    <h3>Yeni Manevi Destek İsteği</h3><div class="muted">İsteğinizi seçin; özel metin yazılmaz.</div>
-    <div class="hilal-dua-types-v1">
-      <button class="hilal-dua-type-v1 active" data-dua-type="dua">🤲 Dua İstiyorum</button>
-      <button class="hilal-dua-type-v1" data-dua-type="zikir">📿 Zikir İstiyorum</button>
-      <button class="hilal-dua-type-v1" data-dua-type="yasin">📖 Yasin Okunmasını İstiyorum</button>
-      <button class="hilal-dua-type-v1" data-dua-type="vefat">🕊️ Vefat Eden Yakınım İçin</button>
+
+<div id="hilalDuaComposeV2" aria-hidden="true">
+  <div class="hdv2-sheet">
+    <h3>Yeni Dua İsteği</h3><div class="hdv2-note">İsteğinizi kendiniz yazabilirsiniz. Telefon, adres, kimlik, sağlık raporu gibi özel bilgileri paylaşmayın.</div>
+    <div class="hdv2-types">
+      <button type="button" class="hdv2-type active" data-hdv2-type="dua">🤲 Dua İstiyorum</button>
+      <button type="button" class="hdv2-type" data-hdv2-type="zikir">📿 Zikir İstiyorum</button>
+      <button type="button" class="hdv2-type" data-hdv2-type="yasin">📖 Yasin Okunmasını İstiyorum</button>
+      <button type="button" class="hdv2-type" data-hdv2-type="vefat">🕊️ Vefat Eden Bir Yakınım İçin</button>
+      <button type="button" class="hdv2-type" data-hdv2-type="diger">❤️ Başka Bir Manevi İstek</button>
     </div>
-    <div class="hilal-dua-compose-v1"><label>Hazır istek</label><select id="hilalDuaPresetV1"></select><div id="hilalDuaPreviewV1" class="hilal-dua-preview-v1"></div></div>
-    <div class="hilal-dua-compose-v1" id="hilalDuaAmountWrapV1" style="display:none"><label>Zikir miktarı</label><input id="hilalDuaAmountV1" type="number" min="1" max="1000000" value="100" inputmode="numeric"></div>
-    <div class="hilal-dua-actions-v1"><button id="hilalDuaCancelV1">Vazgeç</button><button id="hilalDuaPublishV1" class="hilal-dua-primary-v1">İsteği Paylaş</button></div>
+    <label for="hilalDuaTextV2">Dua isteğiniz</label>
+    <textarea id="hilalDuaTextV2" maxlength="500" placeholder="Örn. Sağlık sorunlarım var. Allah rızası için dua eder misiniz?"></textarea>
+    <div class="hdv2-row"><label class="hdv2-check"><input id="hilalDuaAnonV2" type="checkbox"> İsmimi gizle</label><label class="hdv2-check"><input id="hilalDuaDemoV2" type="checkbox" checked> Yalnızca dua niyetimi paylaş</label></div>
+    <div class="hdv2-modal-actions"><button type="button" onclick="closeHilalDuaComposeV2()">Vazgeç</button><button type="button" class="primary" onclick="publishHilalDuaV2()">🤲 İsteği Paylaş</button></div>
   </div>
 </div>
-<script id="hilal-dua-requests-v1-js">
+
+<div id="hilalDuaSupportV2" aria-hidden="true">
+  <div class="hdv2-sheet">
+    <h3>🤲 Manevi Destek</h3><div class="hdv2-note">Özel mesaj yazılamaz. Aşağıdaki hazır ifadelerden birini seçebilirsiniz.</div>
+    <div id="hilalDuaPresetsV2" class="hdv2-presets"></div>
+    <div id="hilalDuaAmountWrapV2" class="hdv2-amount"><label for="hilalDuaAmountV2">📿 Zikir miktarı</label><input id="hilalDuaAmountV2" type="number" min="1" max="1000000" value="100" inputmode="numeric"></div>
+    <div class="hdv2-modal-actions"><button type="button" onclick="closeHilalDuaSupportV2()">Vazgeç</button><button type="button" class="primary" onclick="submitHilalDuaSupportV2()">Destek Ol</button></div>
+  </div>
+</div>
+
+<script id="hilal-dua-requests-v2-js">
 (function(){
 'use strict';
-const KEY='hilal_dua_requests_v1';
-const PRESETS={
- dua:['Sağlık sorunlarım var. Allah rızası için benim için dua eder misiniz?','Rabbim gönlüme ferahlık versin. Benim için dua eder misiniz?'],
- zikir:['Benim için zikir çeker misiniz?','Benim için salavat getirir misiniz?'],
- yasin:['Benim için bir Yasin-i Şerif okur musunuz?','Yakınım için bir Yasin-i Şerif okur musunuz?'],
- vefat:['Rahmetli yakınım için dua eder misiniz?','Vefat eden yakınım için bir Yasin-i Şerif okur musunuz?']
-};
-const RESPONSES={dua:'Senin için dua ettim. Allah kabul etsin.',zikir:'Senin için zikir çektim. Allah kabul etsin.',yasin:'Senin için Yasin-i Şerif okudum. Allah kabul etsin.',vefat:'Allah rahmet eylesin. Dualarımız seninle.',support:'Seninle beraberiz, dualarımız seninle.'};
-let activeTab='all',selectedType='dua';
-function arr(){try{let x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(e){return[]}}
-function putLocal(a){try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
-function me(){return (typeof currentUser!=='undefined'&&currentUser)||{} }
-function name(){return me().name||me().displayName||'Bir kardeşimiz'}
-function key(){return me().key||me().id||'anonymous'}
-function esc2(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function open(){document.getElementById('hilalDuaPageV1').classList.add('is-open');document.getElementById('hilalDuaPageV1').setAttribute('aria-hidden','false');render();}
-function close(){document.getElementById('hilalDuaPageV1').classList.remove('is-open');document.getElementById('hilalDuaPageV1').setAttribute('aria-hidden','true');}
-function render(){const list=document.getElementById('hilalDuaListV1');if(!list)return;let data=arr().filter(x=>activeTab==='mine'?String(x.userKey)===String(key()):true).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));if(!data.length){list.innerHTML='<div class="hilal-dua-empty-v1">Henüz bir dua isteği yok.<br>İlk manevi destek isteğini siz başlatabilirsiniz.</div>';return}list.innerHTML=data.map(card).join('')}
-function card(x){let supports=x.supports||{};let count=Object.keys(supports).length;let z=Number(x.zikirTotal||0);let y=Number(x.yasinCount||0);let text=x.text||'';return '<article class="hilal-dua-card-v1"><div class="hilal-dua-card-head-v1"><div class="hilal-dua-kind-v1">'+esc2(x.icon||'🤲')+' '+esc2(x.kindLabel||'Dua İsteği')+'</div><div class="hilal-dua-date-v1">'+new Date(x.createdAt||Date.now()).toLocaleString('tr-TR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</div></div><div class="hilal-dua-message-v1">'+esc2(text)+'</div><div class="hilal-dua-stats-v1"><span class="hilal-dua-stat-v1">🤲 '+count+' kişi destek verdi</span>'+(z?'<span class="hilal-dua-stat-v1">📿 '+z.toLocaleString('tr-TR')+' zikir</span>':'')+(y?'<span class="hilal-dua-stat-v1">📖 '+y+' Yasin</span>':'')+'</div><button class="hilal-dua-support-v1" data-dua-support="'+esc2(x.id)+'">'+(x.type==='zikir'?'📿 Zikir Çektim':x.type==='yasin'?'📖 Yasin Okudum':x.type==='vefat'?'🕊️ Dua Ettim':'🤲 Dua Ettim')+'</button></article>'}
-function openCompose(){document.getElementById('hilalDuaComposeV1').classList.add('is-open');refreshPreset()}
-function closeCompose(){document.getElementById('hilalDuaComposeV1').classList.remove('is-open')}
-function refreshPreset(){let sel=document.getElementById('hilalDuaPresetV1');sel.innerHTML=PRESETS[selectedType].map((x,i)=>'<option value="'+i+'">'+esc2(x)+'</option>').join('');document.getElementById('hilalDuaPreviewV1').textContent=PRESETS[selectedType][0];document.getElementById('hilalDuaAmountWrapV1').style.display=selectedType==='zikir'?'block':'none'}
-async function cloudMutate(mutator){
- if(typeof hilalCloudPath!=='function')return false;
- const path=hilalCloudPath(KEY);
- for(let attempt=0;attempt<6;attempt++){
-  try{const g=await fetch(path+'?t='+Date.now(),{headers:{'X-Firebase-ETag':'true'},cache:'no-store'});if(!g.ok)throw new Error('GET '+g.status);const etag=g.headers.get('ETag')||'*';const remote=await g.json();let data=Array.isArray(remote?.data)?remote.data:arr();const changed=mutator(data)||data;const stamp=Date.now();const r=await fetch(path,{method:'PUT',headers:{'Content-Type':'application/json','If-Match':etag},body:JSON.stringify({updatedAt:stamp,data:changed})});if(r.status===412)continue;if(!r.ok)throw new Error('PUT '+r.status);putLocal(changed);if(typeof hilalCloudSetMeta==='function')hilalCloudSetMeta(KEY,{updatedAt:stamp,lastPushAt:stamp,status:'online',dirty:false,error:''});return true}catch(e){console.warn('Hilal dua cloud',e);break}
- }return false;
-}
-async function publish(){let text=PRESETS[selectedType][Number(document.getElementById('hilalDuaPresetV1').value)||0];let x={id:'dua_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),type:selectedType,userKey:key(),userName:name(),text,kindLabel:selectedType==='zikir'?'Zikir İsteği':selectedType==='yasin'?'Yasin İsteği':selectedType==='vefat'?'Vefat Eden Yakınım İçin':'Dua İsteği',icon:selectedType==='zikir'?'📿':selectedType==='yasin'?'📖':selectedType==='vefat'?'🕊️':'🤲',createdAt:Date.now(),supports:{},zikirTotal:0,yasinCount:0};let ok=await cloudMutate(d=>{d.push(x);return d});if(!ok){let d=arr();d.push(x);putLocal(d)}closeCompose();render();}
-async function support(id){let d=arr(),x=d.find(a=>String(a.id)===String(id));if(!x)return;let uid=key();if(x.supports&&x.supports[uid]){return}let amount=0;if(x.type==='zikir'){let raw=prompt('Kaç zikir çektiniz?','100');amount=Math.max(1,Math.min(1000000,Number(raw)||0));if(!amount)return}
- let now=Date.now();let ok=await cloudMutate(data=>{let y=data.find(a=>String(a.id)===String(id));if(!y)return data;y.supports=y.supports||{};if(y.supports[uid])return data;y.supports[uid]={name:name(),response:RESPONSES[y.type]||RESPONSES.support,at:now,amount};if(y.type==='zikir')y.zikirTotal=Number(y.zikirTotal||0)+amount;if(y.type==='yasin'||y.type==='vefat')y.yasinCount=Number(y.yasinCount||0)+1;return data});if(!ok){x.supports=x.supports||{};x.supports[uid]={name:name(),response:RESPONSES[x.type]||RESPONSES.support,at:now,amount};if(x.type==='zikir')x.zikirTotal=Number(x.zikirTotal||0)+amount;if(x.type==='yasin'||x.type==='vefat')x.yasinCount=Number(x.yasinCount||0)+1;putLocal(d)}render()}
-function bind(){document.getElementById('hilalDuaBackV1')?.addEventListener('click',close);document.getElementById('hilalDuaAddV1')?.addEventListener('click',openCompose);document.getElementById('hilalDuaCancelV1')?.addEventListener('click',closeCompose);document.getElementById('hilalDuaPublishV1')?.addEventListener('click',publish);document.getElementById('hilalDuaPresetV1')?.addEventListener('change',function(){document.getElementById('hilalDuaPreviewV1').textContent=PRESETS[selectedType][Number(this.value)||0]});document.querySelectorAll('[data-dua-type]').forEach(b=>b.addEventListener('click',function(){selectedType=this.dataset.duaType;document.querySelectorAll('[data-dua-type]').forEach(q=>q.classList.toggle('active',q===this));refreshPreset()}));document.querySelectorAll('[data-dua-tab]').forEach(b=>b.addEventListener('click',function(){activeTab=this.dataset.duaTab;document.querySelectorAll('[data-dua-tab]').forEach(q=>q.classList.toggle('active',q===this));render()}));document.getElementById('hilalDuaListV1')?.addEventListener('click',e=>{let b=e.target.closest('[data-dua-support]');if(b)support(b.dataset.duaSupport)});}
-bind();refreshPreset();window.openHilalDuaRequestsV1=open;window.closeHilalDuaRequestsV1=close;window.hilalRenderDuaRequestsV1=render;
-})();
-</script>
-<script id="hilal-dua-menu-integrate-v1">
-(function(){
- function openD(){try{window.openHilalDuaRequestsV1?.()}catch(e){}}
- function addCard(grid){if(!grid||grid.querySelector('[data-hilal-dua-card]'))return;let b=document.createElement('button');b.type='button';b.className='hilal-menu-extra-card-v1';b.dataset.hilalDuaCard='1';b.innerHTML='<span class="hilal-extra-icon-v1">🤲</span><span class="hilal-extra-label-v1">Dua İstekleri</span>';b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openD()});let z=grid.querySelector('.hilal-menu-extra-card-v1[data-hilal-extra="zikir"]');if(z)grid.insertBefore(b,z.nextSibling);else grid.appendChild(b)}
- function addSettings(){let stack=document.querySelector('#settingsPage .settings-stack');if(!stack||stack.querySelector('[data-hilal-dua-settings]'))return;let b=document.createElement('button');b.type='button';b.dataset.hilalDuaSettings='1';b.className='hilal-settings-tool-card-v1';b.innerHTML='<span class="tool-icon">🤲</span><span class="tool-title">Dua İstekleri</span>';b.addEventListener('click',openD);let wrap=stack.querySelector('.hilal-settings-tools-v1');if(wrap)wrap.appendChild(b);}
- function init(){['guestMenu','teacherMenu'].forEach(id=>addCard(document.getElementById(id)?.querySelector('.guest-menu-grid,.teacher-menu-grid')));addSettings()}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,250));else setTimeout(init,250);
- document.addEventListener('click',e=>{if(e.target.closest?.('#mainMenuTrigger'))setTimeout(init,100)},true);setInterval(init,2500);
+const DKEY='hilal_dua_requests_v2';
+const SKEY='hilal_dua_support_v2';
+const META='hilal_dua_cloud_meta_v2';
+let activeTab='all',activeType='dua',supportRequestId=null,supportPreset=0;
+const presets=[
+ '🤲 Senin için dua ettim. Allah kabul etsin.',
+ '📖 Senin için Yasin-i Şerif okudum. Allah kabul etsin.',
+ '📿 Senin için zikir çektim. Allah kabul etsin.',
+ '❤️ Seninle beraberiz, dualarımız seninle.',
+ '🌙 Allah gönlüne ferahlık versin.',
+ '🕊️ Allah rahmet eylesin, mekânı cennet olsun.',
+ '🤍 Rabbim yardımcın olsun.',
+ '🌿 Allah şifa ve kolaylık versin.',
+ '🤲 Dualarımıza seni de dâhil ettik.',
+ '🌙 Allah dileğini hayırlısıyla kabul etsin.'
+];
+const types={dua:['🤲','Dua İsteği'],zikir:['📿','Zikir İsteği'],yasin:['📖','Yasin İsteği'],vefat:['🕊️','Vefat Eden Yakınım İçin'],diger:['❤️','Manevi İstek']};
+function load(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch(e){return f}}
+function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function userKey(){try{let u=window.currentUser||currentUser;return String(u?.email||u?.uid||u?.username||u?.name||'misafir').toLowerCase()}catch(e){return 'misafir'}}
+function userName(){try{let u=window.currentUser||currentUser;return String(u?.name||u?.displayName||u?.username||'Misafir')}catch(e){return 'Misafir'}}
+function cloudUrl(key){try{return HILAL_FIREBASE_DATABASE_URL+'/shared/'+encodeURIComponent(key)+'.json'}catch(e){return ''}}
+async function cloudGet(key){try{let r=await fetch(cloudUrl(key)+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)return null;let j=await r.json();return Array.isArray(j?.data)?j.data:[]}catch(e){return null}}
+async function cloudPut(key,data){try{let stamp=Date.now();let r=await fetch(cloudUrl(key),{method:'PUT',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({updatedAt:stamp,data:data})});return r.ok}catch(e){return false}}
+async function refreshCloud(){let [a,b]=await Promise.all([cloudGet(DKEY),cloudGet(SKEY)]);if(a!==null){saveLocal(DKEY,a)}if(b!==null){saveLocal(SKEY,b)}render()}
+async function mutate(key,fn){let local=load(key,[]);let remote=await cloudGet(key);let data=Array.isArray(remote)?remote:local;fn(data);saveLocal(key,data);cloudPut(key,data);return data}
+function fmtDate(ts){try{return new Date(ts).toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'})}catch(e){return ''}}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function getRequests(){return load(DKEY,[]).filter(x=>x&&x.active!==false).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0))}
+function getSupports(){return load(SKEY,[])}
+function render(){let box=document.getElementById('hilalDuaListV2');if(!box)return;let rs=getRequests();if(activeTab==='mine')rs=rs.filter(x=>String(x.userKey)===userKey());if(!rs.length){box.innerHTML='<div class="hdv2-empty">Henüz bu bölümde bir istek yok.<br><br>İlk isteği siz paylaşabilirsiniz. 🤲</div>';return}let supports=getSupports();box.innerHTML=rs.map(r=>card(r,supports)).join('')}
+function card(r,supports){let t=types[r.type]||types.diger;let ss=supports.filter(s=>String(s.requestId)===String(r.id));let dua=ss.filter(s=>s.kind==='dua').length;let zik=ss.filter(s=>s.kind==='zikir').reduce((n,s)=>n+(Number(s.amount)||0),0);let yas=ss.filter(s=>s.kind==='yasin').length;let mine=String(r.userKey)===userKey();let owner=mine;let who=r.anonymous?'Gizli bir kardeşimiz':(r.userName||'Misafir');let msg=ss.slice(-6).reverse().map(s=>'<div class="hdv2-support-line">'+esc(s.phrase)+(s.kind==='zikir'?' <strong>('+Number(s.amount||0).toLocaleString('tr-TR')+' adet)</strong>':'')+' · '+esc(s.supporterName||'Bir kardeşimiz')+'</div>').join('');return '<article class="hdv2-card"><div class="hdv2-card-head"><div class="hdv2-icon">'+t[0]+'</div><div><div class="hdv2-kind">'+esc(t[1])+'</div><div class="hdv2-who">'+esc(who)+' · '+fmtDate(r.createdAt)+'</div></div></div><div class="hdv2-text">'+esc(r.text)+'</div><div class="hdv2-stats"><span class="hdv2-stat">🤲 '+dua+' dua</span><span class="hdv2-stat">📿 '+zik.toLocaleString('tr-TR')+' zikir</span><span class="hdv2-stat">📖 '+yas+' Yasin</span></div><div class="hdv2-actions"><button class="primary" type="button" onclick="openHilalDuaSupportV2('+JSON.stringify(String(r.id))+')">🤲 Destek Ol</button><button type="button" onclick="toggleHilalDuaSupportsV2(this)">💚 Destekleri Gör</button></div>'+ (owner?'<div class="hdv2-actions" style="margin-top:8px"><button type="button" onclick="deleteHilalDuaV2('+JSON.stringify(String(r.id))+')">🗑️ İsteğimi Sil</button></div>':'') + '<div class="hdv2-supports" style="display:none">'+(msg||'<div class="hdv2-support-line">Henüz destek mesajı yok.</div>')+'</div></article>'}
+function fillPresets(){let b=document.getElementById('hilalDuaPresetsV2');b.innerHTML=presets.map((p,i)=>'<button type="button" class="hdv2-preset'+(i===supportPreset?' active':'')+'" data-preset="'+i+'">'+esc(p)+'</button>').join('');b.querySelectorAll('[data-preset]').forEach(x=>x.onclick=()=>{supportPreset=Number(x.dataset.preset)||0;b.querySelectorAll('.hdv2-preset').forEach(y=>y.classList.remove('active'));x.classList.add('active');document.getElementById('hilalDuaAmountWrapV2').classList.toggle('show',supportRequestId&&activeType==='zikir')})}
+window.openHilalDuaRequestsV2=function(){document.getElementById('guestMenu')?.classList.add('hidden');document.getElementById('teacherMenu')?.classList.add('hidden');document.getElementById('adminMenu')?.classList.add('hidden');document.getElementById('hilalDuaPageV2').classList.add('hdv2-open');document.getElementById('hilalDuaPageV2').setAttribute('aria-hidden','false');document.body.dataset.hilalDuaOpen='1';render();refreshCloud()}
+window.closeHilalDuaRequestsV2=function(){document.getElementById('hilalDuaPageV2').classList.remove('hdv2-open');document.getElementById('hilalDuaPageV2').setAttribute('aria-hidden','true');delete document.body.dataset.hilalDuaOpen}
+window.openHilalDuaComposeV2=function(){activeType='dua';document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach((b,i)=>b.classList.toggle('active',i===0));document.getElementById('hilalDuaTextV2').value='';document.getElementById('hilalDuaAnonV2').checked=false;document.getElementById('hilalDuaComposeV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','false')}
+window.closeHilalDuaComposeV2=function(){document.getElementById('hilalDuaComposeV2').classList.remove('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','true')}
+window.publishHilalDuaV2=async function(){let text=document.getElementById('hilalDuaTextV2').value.trim();if(text.length<3){alert('Lütfen dua isteğinizi yazın.');return}let r={id:'dua_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),type:activeType,text:text.slice(0,500),userKey:userKey(),userName:userName(),anonymous:document.getElementById('hilalDuaAnonV2').checked,createdAt:Date.now(),active:true};await mutate(DKEY,d=>d.push(r));closeHilalDuaComposeV2();render()}
+window.openHilalDuaSupportV2=function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;supportRequestId=String(id);activeType=r.type;supportPreset=0;fillPresets();document.getElementById('hilalDuaAmountV2').value=100;document.getElementById('hilalDuaAmountWrapV2').classList.toggle('show',r.type==='zikir');document.getElementById('hilalDuaSupportV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaSupportV2').setAttribute('aria-hidden','false')}
+window.closeHilalDuaSupportV2=function(){document.getElementById('hilalDuaSupportV2').classList.remove('hdv2-modal-open');document.getElementById('hilalDuaSupportV2').setAttribute('aria-hidden','true');supportRequestId=null}
+window.submitHilalDuaSupportV2=async function(){if(!supportRequestId)return;let r=getRequests().find(x=>String(x.id)===String(supportRequestId));if(!r)return;let kind=r.type==='zikir'?'zikir':r.type==='yasin'?'yasin':'dua';let amount=kind==='zikir'?Math.max(1,Math.min(1000000,Number(document.getElementById('hilalDuaAmountV2').value)||0)):0;if(kind==='zikir'&&!amount){alert('Zikir miktarını girin.');return}let s={id:'ds_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),requestId:String(r.id),kind,amount,phrase:presets[supportPreset]||presets[0],supporterKey:userKey(),supporterName:'Bir kardeşimiz',createdAt:Date.now()};await mutate(SKEY,d=>d.push(s));closeHilalDuaSupportV2();render()}
+window.deleteHilalDuaV2=async function(id){if(!confirm('Bu dua isteğini silmek istiyor musunuz?'))return;await mutate(DKEY,d=>{let x=d.find(r=>String(r.id)===String(id));if(x&&String(x.userKey)===userKey())x.active=false});render()}
+window.toggleHilalDuaSupportsV2=function(btn){let el=btn.closest('.hdv2-card')?.querySelector('.hdv2-supports');if(el)el.style.display=el.style.display==='none'?'block':'none'}
+document.querySelectorAll('#hilalDuaPageV2 .hdv2-tab').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.hdv2Tab;document.querySelectorAll('#hilalDuaPageV2 .hdv2-tab').forEach(x=>x.classList.toggle('active',x===b));render()}));
+document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(b=>b.addEventListener('click',()=>{activeType=b.dataset.hdv2Type;document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(x=>x.classList.toggle('active',x===b));}));
+document.addEventListener('click',e=>{if(e.target.closest?.('#hilalDuaPageV2'))return});
+setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contains('hdv2-open'))refreshCloud()},20000);
 })();
 </script>
