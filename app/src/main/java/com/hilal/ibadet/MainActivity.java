@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.ClipData;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -55,6 +58,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ReminderReceiver.stopActiveSound();
+        // Namaz vakti bildirimini uygulama açılır açılmaz yeniden başlat.
+        // Böylece uygulama içindeki WebView ekranından bağımsız olarak
+        // telefonda sürekli/ongoing bildirim olarak çalışmaya devam eder.
+        try {
+            PrayerStatusScheduler.scheduleNext(this, 1200L);
+        } catch (Exception ignored) { }
         pendingReminderId = getIntent() == null ? "" :
                 getIntent().getStringExtra("hilalReminderId");
         if (pendingReminderId == null) pendingReminderId = "";
@@ -313,6 +322,55 @@ public class MainActivity extends Activity {
                 data.remove("soundUrl");
                 ReminderScheduler.schedule(MainActivity.this, data, true);
             } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
+        public void requestNativeLocation() {
+            runOnUiThread(() -> {
+                try {
+                    if (Build.VERSION.SDK_INT >= 23 &&
+                            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+                        return;
+                    }
+                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    if (lm == null) return;
+                    Location best = null;
+                    String[] providers = new String[]{LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER};
+                    for (String provider : providers) {
+                        try {
+                            if (!lm.isProviderEnabled(provider)) continue;
+                            Location last = lm.getLastKnownLocation(provider);
+                            if (last != null && (best == null || last.getTime() > best.getTime())) best = last;
+                        } catch (Exception ignored) { }
+                    }
+                    if (best != null) {
+                        sendNativeLocation(best);
+                    }
+                    final LocationListener listener = new LocationListener() {
+                        @Override public void onLocationChanged(Location location) {
+                            sendNativeLocation(location);
+                            try { lm.removeUpdates(this); } catch (Exception ignored) { }
+                        }
+                    };
+                    for (String provider : providers) {
+                        try {
+                            if (lm.isProviderEnabled(provider)) lm.requestLocationUpdates(provider, 1000L, 5f, listener);
+                        } catch (Exception ignored) { }
+                    }
+                    webView.postDelayed(() -> { try { lm.removeUpdates(listener); } catch (Exception ignored) { } }, 12000L);
+                } catch (Exception ignored) { }
+            });
+        }
+
+        private void sendNativeLocation(Location location) {
+            if (location == null || webView == null) return;
+            final double lat = location.getLatitude();
+            final double lon = location.getLongitude();
+            final float acc = location.hasAccuracy() ? location.getAccuracy() : 0f;
+            webView.post(() -> webView.evaluateJavascript(
+                    "window.__hilalNativeLocation && window.__hilalNativeLocation(" + lat + "," + lon + "," + acc + ");", null));
         }
 
         @JavascriptInterface
