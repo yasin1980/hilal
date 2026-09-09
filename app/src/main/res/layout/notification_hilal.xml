@@ -2,22 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="68dp"
-    android:orientation="horizontal"
+    android:minHeight="76dp"
+    android:orientation="vertical"
     android:gravity="center"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp"
     android:background="@drawable/notification_premium_bg">
     <TextView
         android:id="@android:id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Öğle • 13:15 • Çıkmasına 02:14:36"
+        android:text="Öğle"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:fontFamily="sans"
         android:maxLines="1"
@@ -25,7 +25,16 @@
         android:includeFontPadding="false" />
     <TextView
         android:id="@android:id/text1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="13:15  •  Çıkmasına 02:14:36"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:fontFamily="sans"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:layout_marginTop="2dp" />
 </LinearLayout>
