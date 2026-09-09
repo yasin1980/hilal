@@ -1189,7 +1189,7 @@ body.__kart_tema_kapali .reader-content{
 .reader-paper{
   overflow-y:auto!important;
   overflow-x:hidden!important;
-  touch-action:none!important;
+  touch-action:pan-y pinch-zoom!important;
   padding:16px 14px 44px!important;
 }
 .reader-stage{
@@ -1654,6 +1654,24 @@ body.__kart_tema_kapali .reader-file-link{
 
 
 /* ===== v1.63 | v1.54 TABANLI GERÇEK HTML PANELLER ===== */
+.hilal-launch-splash{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:transparent;
+  opacity:1;
+  transition:opacity .55s ease;
+  pointer-events:auto;
+}
+.hilal-launch-splash::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:inherit;
+}
+.hilal-launch-splash.hide{opacity:0;pointer-events:none}
+.start-screen.launching .login-stage > *:not(.login-stage-bg):not(.login-stage-mask){visibility:hidden!important}
+.start-screen.launching .login-stage-bg,.start-screen.launching .login-stage-mask{visibility:visible!important}
 .start-screen {
   min-height:100vh;
   padding:0!important;
@@ -16502,6 +16520,7 @@ html,body{
 <div class="app">
 
 <section id="startScreen" class="start-screen">
+  <div id="hilalLaunchSplash" class="hilal-launch-splash" aria-hidden="true"></div>
   <div class="login-stage">
     <div class="login-stage-bg"></div>
     <div class="login-stage-mask"></div>
@@ -18858,6 +18877,7 @@ function directGuestEntry(){
     role:"guest",
     key:"guest-public-"+hilalInstallId()
   };
+  try{saveJSON("hilal_active_session_v1",currentUser)}catch(e){}
 
   document.body.classList.remove("teacher-mode","admin-mode");
   document.body.classList.add("guest-mode");
@@ -19008,6 +19028,8 @@ function doLogin(){
     loginStatus.textContent="Ad soyad veya şifre yanlış.";
     return;
   }
+
+  try{saveJSON("hilal_active_session_v1",currentUser)}catch(e){}
 
   const role=currentUser.role;
   document.body.classList.toggle("teacher-mode",role==="teacher");
@@ -21738,7 +21760,7 @@ function logout(){
   try{closeVirtReader()}catch(e){}
   closeAdminMenu();
   closeTeacherMenu();closeGuestMenu();
-  currentUser=null;document.body.classList.remove("teacher-mode");document.body.classList.remove("guest-mode");document.body.classList.remove("admin-mode");document.body.classList.remove("admin-mode");
+  currentUser=null;try{localStorage.removeItem("hilal_active_session_v1")}catch(e){} document.body.classList.remove("teacher-mode");document.body.classList.remove("guest-mode");document.body.classList.remove("admin-mode");document.body.classList.remove("admin-mode");
   mainApp.classList.add("hidden");startScreen.classList.remove("hidden");syncAnnouncementFab();syncPublicationFab()
 }
 function goPage(b){
@@ -26287,7 +26309,8 @@ document.addEventListener("click",function(ev){
           window.HilalNative.schedule({
             id,
             whenMs,
-            title: "Hilâl Hatırlatıcı",
+            title: parts[1] === "publication" ? "🔔 Yayınların Hatırlatıcısı"
+              : (parts[1] === "announcement" ? "🔔 Duyuruların Hatırlatıcısı" : "🔔 Hilâl Hatırlatıcısı"),
             body: (typeof findReminderItemTitle === "function" ? findReminderItemTitle(parts[1], parts.slice(2).join("::")) : "Hatırlatıcı"),
             sound: /^fav[1-4]$/.test(r.sound || "") ? r.sound : (r.sound === "custom" ? "custom" : (r.sound === "phone" ? "phone" : "fav1")),
             soundData: r.sound === "custom"
@@ -39245,3 +39268,45 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 #calendarPage .hilal-vakit-card-v91{margin-left:10px!important;margin-right:10px!important;padding-left:12px!important;padding-right:12px!important;gap:8px!important}
 #calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{letter-spacing:.03em!important}
 </style>
+
+<script>
+(function(){
+  const SESSION_KEY="hilal_active_session_v1";
+  function hideLaunchSplash(){
+    const start=document.getElementById("startScreen");
+    const splash=document.getElementById("hilalLaunchSplash");
+    if(start)start.classList.remove("launching");
+    if(splash){splash.classList.add("hide");setTimeout(()=>splash.remove(),650);}
+  }
+  function playLaunchSound(){
+    try{if(window.HilalAndroid&&typeof window.HilalAndroid.playSystemNotificationSound==="function") window.HilalAndroid.playSystemNotificationSound();}
+    catch(e){}
+  }
+  function restoreSession(){
+    let u=null;
+    try{u=JSON.parse(localStorage.getItem(SESSION_KEY)||"null")}catch(e){}
+    const valid=u&&["guest","teacher","admin"].includes(u.role);
+    if(valid){
+      currentUser=u; selectedRole=u.role;
+      document.body.classList.toggle("teacher-mode",u.role==="teacher");
+      document.body.classList.toggle("guest-mode",u.role==="guest");
+      document.body.classList.toggle("admin-mode",u.role==="admin");
+      try{hilalSyncSingleRoleMenu()}catch(e){}
+      try{hilalRefreshGuestMenuIdentity()}catch(e){}
+      try{closeLogin()}catch(e){}
+      const start=document.getElementById("startScreen"), main=document.getElementById("mainApp");
+      if(start)start.classList.add("hidden");
+      if(main)main.classList.remove("hidden");
+      try{showPage(u.role==="admin"?"adminTodayPage":u.role==="teacher"?"todayPage":"calendarPage")}catch(e){}
+      try{renderAll()}catch(e){}
+    }
+    hideLaunchSplash();
+  }
+  document.addEventListener("DOMContentLoaded",function(){
+    const start=document.getElementById("startScreen");
+    if(start)start.classList.add("launching");
+    setTimeout(playLaunchSound,180);
+    setTimeout(restoreSession,900);
+  },{once:true});
+})();
+</script>
