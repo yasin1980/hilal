@@ -39543,3 +39543,178 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 #readerModal .reader-paper{display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y pinch-zoom!important;overscroll-behavior-y:contain!important;box-sizing:border-box!important;}
 #readerModal #readerContent{height:auto!important;min-height:max-content!important;overflow:visible!important;flex:none!important;}
 </style>
+
+<!-- HILÂL MENÜ / GEÇİŞ TEMİZLİĞİ V2: tek Kaza + iç sayfa menü konumu + Sünnet kilit temizliği -->
+<style id="hilal-menu-transition-polish-v2">
+/* Menü butonu: yuvarlak nefes halkaları kalsın, butonun kare/dikdörtgen çerçevesi kalksın. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger{
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  background:transparent !important;
+  background-color:transparent !important;
+}
+#mainApp #mainMenuTrigger.main-role-menu-trigger:focus,
+#mainApp #mainMenuTrigger.main-role-menu-trigger:focus-visible,
+#mainApp #mainMenuTrigger.main-role-menu-trigger:active{
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+}
+
+/* Takvim ana sayfada: sol üst. İç sayfalarda: Geri düğmesinin hemen altında. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger{
+  top:max(var(--hilal-system-top,8px), env(safe-area-inset-top,0px)) !important;
+  bottom:auto !important;
+  left:max(8px,env(safe-area-inset-left,0px)) !important;
+  right:auto !important;
+}
+body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) #mainApp #mainMenuTrigger.main-role-menu-trigger{
+  top:68px !important;
+}
+</style>
+
+<script id="hilal-menu-transition-polish-v2-js">
+(function(){
+  'use strict';
+
+  function isMenuCard(el){
+    return !!el && el.matches('button,a,[class*="menu-item"],[class*="menu-card"],[class*="item"]');
+  }
+
+  function cleanKazaDuplicates(grid){
+    if(!grid) return;
+    const items=[...grid.children].filter(isMenuCard);
+    const kazas=items.filter(function(el){
+      const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr-TR');
+      return t.includes('kaza namaz');
+    });
+    if(kazas.length>1){
+      /* İlk Kaza kartı korunur; fazladan Kaza kartları kaldırılır. */
+      kazas.slice(1).forEach(function(el){
+        try{el.remove()}catch(e){}
+      });
+    }
+  }
+
+  function ensureZikir(grid){
+    if(!grid) return null;
+    let z=[...grid.children].find(function(el){
+      const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr-TR');
+      return t.includes('zikirmatik');
+    });
+    if(z) return z;
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='hilal-menu-extra-card-v1';
+    b.dataset.hilalExtra='zikir';
+    b.innerHTML='<span class="hilal-extra-icon-v1">📿</span><span class="hilal-extra-label-v1">Zikirmatik</span>';
+    b.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      try{window.openHilalZikirmatikV13?.()}catch(err){}
+    });
+    grid.appendChild(b);
+    return b;
+  }
+
+  function placeCards(){
+    ['guestMenu','teacherMenu'].forEach(function(id){
+      const menu=document.getElementById(id);
+      const grid=menu?.querySelector('.guest-menu-grid,.teacher-menu-grid');
+      if(!grid)return;
+
+      cleanKazaDuplicates(grid);
+      const calendar=[...grid.children].find(function(el){
+        const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr-TR');
+        return t.includes('takvim') && t.includes('ezan');
+      });
+      const kaza=[...grid.children].find(function(el){
+        const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr-TR');
+        return t.includes('kaza namaz');
+      });
+      const zikir=ensureZikir(grid);
+
+      if(calendar && kaza) grid.insertBefore(kaza,calendar.nextSibling);
+      if(calendar && zikir){
+        const currentKaza=[...grid.children].find(function(el){
+          const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLocaleLowerCase('tr-TR');
+          return t.includes('kaza namaz');
+        });
+        grid.insertBefore(zikir,currentKaza ? currentKaza.nextSibling : calendar.nextSibling);
+      }
+    });
+  }
+
+  function cleanSunnetLock(){
+    try{
+      if(typeof window.closeSunnetDailyModal==='function') window.closeSunnetDailyModal();
+    }catch(e){}
+    try{
+      document.body.classList.remove('sunnet-daily-open');
+      document.documentElement.classList.remove('sunnet-daily-open');
+      const modal=document.getElementById('sunnetDailyModal');
+      if(modal)modal.classList.add('hidden');
+      document.body.style.position='';
+      document.body.style.top='';
+      document.body.style.left='';
+      document.body.style.right='';
+      document.body.style.width='';
+      document.body.style.overflow='';
+      document.documentElement.style.overflow='';
+    }catch(e){}
+  }
+
+  /* Sayfa değişiminde Sünnet'in günlük penceresinden kalabilecek ekran kilidini temizle. */
+  const oldShowPage=window.showPage;
+  if(typeof oldShowPage==='function' && !oldShowPage.__hilalPolishWrapped){
+    const wrapped=function(id){
+      if(id!=='sunnetIhyaPage') cleanSunnetLock();
+      return oldShowPage.apply(this,arguments);
+    };
+    wrapped.__hilalPolishWrapped=true;
+    window.showPage=wrapped;
+  }
+
+  /* Çıkışta da Sünnet modalı/scroll kilidi kesin olarak temizlensin. */
+  const oldLogout=window.logout;
+  if(typeof oldLogout==='function' && !oldLogout.__hilalPolishWrapped){
+    const wrappedLogout=function(){
+      cleanSunnetLock();
+      return oldLogout.apply(this,arguments);
+    };
+    wrappedLogout.__hilalPolishWrapped=true;
+    window.logout=wrappedLogout;
+  }
+
+  /* Hoca/misafir menüsünden Sünnet'e girerken eski modal kalıntısı olmasın. */
+  const oldGuestGo=window.guestGoPage;
+  if(typeof oldGuestGo==='function' && !oldGuestGo.__hilalPolishWrapped){
+    const wrappedGuest=function(id){
+      if(id!=='sunnetIhyaPage') cleanSunnetLock();
+      else cleanSunnetLock();
+      return oldGuestGo.apply(this,arguments);
+    };
+    wrappedGuest.__hilalPolishWrapped=true;
+    window.guestGoPage=wrappedGuest;
+  }
+  const oldTeacherGo=window.teacherGoPage;
+  if(typeof oldTeacherGo==='function' && !oldTeacherGo.__hilalPolishWrapped){
+    const wrappedTeacher=function(id){
+      if(id!=='sunnetIhyaPage') cleanSunnetLock();
+      else cleanSunnetLock();
+      return oldTeacherGo.apply(this,arguments);
+    };
+    wrappedTeacher.__hilalPolishWrapped=true;
+    window.teacherGoPage=wrappedTeacher;
+  }
+
+  function init(){placeCards();}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,180);});
+  else setTimeout(init,180);
+  document.addEventListener('click',function(e){
+    if(e.target.closest && e.target.closest('#mainMenuTrigger')) setTimeout(placeCards,100);
+  },true);
+  window.addEventListener('pageshow',function(){setTimeout(placeCards,120);});
+  window.addEventListener('resize',function(){setTimeout(placeCards,80);},{passive:true});
+})();
+</script>
