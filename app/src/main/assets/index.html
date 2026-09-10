@@ -39797,7 +39797,6 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
 #hilalDuaPageV2 .hdv2-card .hdv2-owner-actions{pointer-events:auto!important}
 #hilalDuaPageV2 .hdv2-card .hdv2-quick-row{margin-top:9px!important}
 #hilalDuaPageV2 .hdv2-card .hdv2-stat{font-weight:850!important}
-</style>
 <script id="hilal-v87-dua-navigation-ownership-final">
 (function(){
   function normalizeMenuCards(){
@@ -39829,6 +39828,164 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
   },true);
 })();
 </script>
+
+
+<style id="hilal-v88-dua-final-ui">
+/* V8.8 — Dua navigation and shared/owner separation final pass. Other app areas remain unchanged. */
+/* Main-menu Dua card: exactly the same two-line card language as sibling navigation cards. */
+body .guest-menu .guest-menu-grid > [data-hilal-dua-menu="1"],
+body .teacher-menu .teacher-menu-grid > [data-hilal-dua-menu="1"],
+body .admin-menu .admin-menu-grid > [data-hilal-dua-menu="1"]{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:6px!important;
+  text-align:left!important;
+  white-space:normal!important;
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+body .guest-menu .guest-menu-grid > [data-hilal-dua-menu="1"] .hilal-dua-menu-label,
+body .teacher-menu .teacher-menu-grid > [data-hilal-dua-menu="1"] .hilal-dua-menu-label,
+body .admin-menu .admin-menu-grid > [data-hilal-dua-menu="1"] .hilal-dua-menu-label{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:6px!important;
+  width:100%!important;
+  font:inherit!important;
+  color:inherit!important;
+  line-height:1.18!important;
+  text-align:left!important;
+}
+.hilal-dua-menu-icon-v88{font-size:27px!important;line-height:1!important;display:block!important}
+.hilal-dua-menu-text-v88{font:inherit!important;line-height:1.18!important;display:block!important}
+/* No notification/card badge is allowed to alter the card layout. */
+[data-hilal-dua-menu="1"] .hilal-dua-menu-badge{right:7px!important;top:7px!important}
+
+/* Dua page navigation: exact shared hamburger ring system, with no pseudo rings or square frame. */
+#hilalDuaPageV2 .hdv2-menu-trigger{
+  width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;flex:0 0 48px!important;
+  position:relative!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;
+  border:0!important;outline:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;
+}
+#hilalDuaPageV2 .hdv2-menu-trigger::before,#hilalDuaPageV2 .hdv2-menu-trigger::after{content:none!important;display:none!important}
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1{
+  position:absolute!important;left:50%!important;top:50%!important;width:54px!important;height:54px!important;
+  transform:translate(-50%,-50%)!important;display:block!important;pointer-events:none!important;z-index:0!important;
+}
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1 .ring{
+  position:absolute!important;left:50%!important;top:50%!important;border-radius:50%!important;box-sizing:border-box!important;
+  border:2.5px solid rgba(238,201,81,.86)!important;transform:translate(-50%,-50%)!important;pointer-events:none!important;
+  animation:hilalMenuRingGlowV1 1.55s ease-in-out infinite!important;box-shadow:none!important;
+}
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1 .r1{width:34px!important;height:34px!important;animation-delay:0s!important}
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1 .r2{width:43px!important;height:43px!important;animation-delay:.16s!important}
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1 .r3{width:52px!important;height:52px!important;animation-delay:.32s!important}
+#hilalDuaPageV2 .hdv2-menu-trigger>span:not(.hilal-menu-ring-wrap-v1){
+  position:relative!important;z-index:3!important;display:block!important;width:25px!important;height:3px!important;min-height:3px!important;
+  margin:0!important;border-radius:4px!important;background:#176b50!important;box-shadow:0 0 0 1px rgba(176,138,60,.28),0 1px 6px rgba(23,107,80,.28)!important;
+}
+#hilalDuaPageV2 .hdv2-menu-trigger>span:nth-of-type(2):not(.hilal-menu-ring-wrap-v1){background:#b9954d!important;width:22px!important}
+#hilalDuaPageV2 .hdv2-menu-trigger:focus,#hilalDuaPageV2 .hdv2-menu-trigger:focus-visible,#hilalDuaPageV2 .hdv2-menu-trigger:active{border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important}
+
+/* Dua page top bar: hamburger + Geri are a fixed, shared navigation pair. */
+#hilalDuaPageV2 .hdv2-top{
+  display:grid!important;grid-template-columns:48px 82px minmax(0,1fr) 42px!important;align-items:center!important;gap:7px!important;
+  min-height:62px!important;padding:7px 10px!important;box-sizing:border-box!important;
+}
+#hilalDuaPageV2 .hdv2-back{
+  width:82px!important;min-width:82px!important;height:42px!important;margin:0!important;padding:0 10px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+  border:1px solid rgba(214,179,95,.62)!important;border-radius:13px!important;
+  background:linear-gradient(145deg,rgba(7,70,53,.98),rgba(4,48,38,.99))!important;color:#f0cd76!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.13)!important;font:800 14px/1 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;
+}
+#hilalDuaPageV2 .hdv2-back-arrow{font-size:24px!important;line-height:1!important;transform:translateY(-1px)!important}
+#hilalDuaPageV2 .hdv2-title{min-width:0!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+/* Shared/public cards are support-only. Owner controls are rendered only in İsteklerim. */
+#hilalDuaPageV2[data-hdv2-tab="all"] .hdv2-owner-actions{display:none!important}
+#hilalDuaPageV2[data-hdv2-tab="mine"] .hdv2-owner-actions{display:grid!important}
+#hilalDuaPageV2 .hdv2-quick-row{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;margin:10px 0 8px!important}
+#hilalDuaPageV2 .hdv2-zikir-quick{grid-template-columns:1fr 1fr!important}
+#hilalDuaPageV2 .hdv2-quick-main,#hilalDuaPageV2 .hdv2-quick-done{
+  min-height:46px!important;border-radius:14px!important;border:1px solid rgba(23,107,80,.14)!important;
+  background:linear-gradient(135deg,rgba(23,107,80,.08),rgba(176,138,60,.06))!important;color:#176b50!important;
+  font-weight:900!important;cursor:pointer!important;touch-action:manipulation!important;
+}
+#hilalDuaPageV2 .hdv2-quick-done{background:linear-gradient(135deg,#176b50,#0d4d3a)!important;color:#fff!important;border-color:rgba(218,181,91,.55)!important}
+#hilalDuaPageV2 .hdv2-actions{margin-top:4px!important}
+#hilalDuaPageV2 .hdv2-actions button{width:100%!important;min-height:40px!important;border-radius:12px!important;font-weight:850!important}
+
+@media(max-width:420px){
+  #hilalDuaPageV2 .hdv2-top{grid-template-columns:48px 82px minmax(0,1fr) 42px!important;gap:5px!important;padding-left:7px!important;padding-right:7px!important}
+  #hilalDuaPageV2 .hdv2-title{font-size:15px!important}
+  #hilalDuaPageV2 .hdv2-zikir-quick{grid-template-columns:1fr 1fr!important}
+}
+</style>
+
+<script id="hilal-v88-dua-final-ui-js">
+(function(){
+  'use strict';
+  const DKEY='hilal_dua_requests_v2';
+  function guestKey(){
+    try{
+      let g=localStorage.getItem('hilal_guest_identity_v2');
+      if(!g){g='guest_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem('hilal_guest_identity_v2',g)}
+      return String(g).trim().toLowerCase();
+    }catch(e){return 'guest_local'}
+  }
+  /* Include the persistent guest identity in ownership matching. */
+  try{
+    const fn=window.currentHilalUserKeys;
+    window.currentHilalUserKeys=function(){
+      let out=[];try{out=(typeof fn==='function'?fn():[])||[]}catch(e){}
+      let hasAuth=out.length>0;
+      if(!hasAuth)out.push(guestKey());
+      return [...new Set(out.filter(Boolean).map(v=>String(v).trim().toLowerCase()))];
+    };
+  }catch(e){}
+
+  function normalizeDuaMenuCards(){
+    document.querySelectorAll('[data-hilal-dua-menu="1"]').forEach(function(b){
+      let label=b.querySelector('.hilal-dua-menu-label');
+      if(!label){
+        label=document.createElement('span');label.className='hilal-dua-menu-label';
+        b.innerHTML='';b.appendChild(label);
+      }
+      label.innerHTML='<span class="hilal-dua-menu-icon-v88">🤲</span><span class="hilal-dua-menu-text-v88">Dua İstekleri</span>';
+      let old=b.querySelector('.hilal-dua-menu-badge');
+      if(old)b.appendChild(old);
+    });
+  }
+  function syncTabState(){
+    let p=document.getElementById('hilalDuaPageV2');
+    if(p)p.setAttribute('data-hdv2-tab',(window.__hilalDuaActiveTabV88||'all'));
+  }
+  /* Wrap render so the page state is explicit for CSS and never leaks owner buttons into shared view. */
+  try{
+    if(typeof window.render==='function' && !window.render.__v88wrapped){
+      const old=window.render;
+      window.render=function(){syncTabState();return old.apply(this,arguments)};
+      window.render.__v88wrapped=true;
+    }
+  }catch(e){}
+  document.addEventListener('click',function(e){
+    let t=e.target.closest&&e.target.closest('[data-hdv2-tab]');
+    if(t){window.__hilalDuaActiveTabV88=t.getAttribute('data-hdv2-tab')||'all';syncTabState()}
+    if(e.target.closest&&e.target.closest('[data-hilal-dua-menu="1"]'))setTimeout(normalizeDuaMenuCards,0);
+    if(e.target.closest&&e.target.closest('#hilalDuaPageV2'))setTimeout(syncTabState,0);
+  },true);
+  function init(){normalizeDuaMenuCards();syncTabState();setTimeout(normalizeDuaMenuCards,300);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 </body>
 </html>
 
@@ -40335,7 +40492,7 @@ function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}
 function currentHilalUser(){try{let u=(typeof currentUser!=='undefined'&&currentUser)||window.currentUser||null;if(u&&typeof u==='object'&&Object.keys(u).length)return u;let raw=localStorage.getItem('hilal_active_session_v1');let saved=raw?JSON.parse(raw):null;return (saved&&typeof saved==='object')?saved:{} }catch(e){try{let raw=localStorage.getItem('hilal_active_session_v1');return raw?JSON.parse(raw):{}}catch(_){return {}}}}
 function currentHilalUserKeys(){try{let u=currentHilalUser();return [...new Set([u.key,u.email,u.uid,u.username,u.name,u.displayName,u.id,u.userKey,u.userId].filter(Boolean).map(v=>String(v).trim().toLowerCase()))]}catch(e){return []}}
 function userKey(){let u=currentHilalUser();let v=u.key||u.uid||u.email||u.username||u.id||u.userKey||u.userId; if(v)return String(v).trim().toLowerCase(); try{let g=localStorage.getItem('hilal_guest_identity_v2'); if(!g){g='guest_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,10); localStorage.setItem('hilal_guest_identity_v2',g)} return g.toLowerCase()}catch(e){return 'guest_local'}}
-function isHilalDuaOwner(r){if(!r)return false;let ks=currentHilalUserKeys();let saved=[r.userKey,r.ownerKey,r.ownerEmail,r.ownerUid,r.ownerUsername,r.ownerId,r.createdBy,r.createdByKey,r.userId,r.createdById].filter(Boolean).map(v=>String(v).trim().toLowerCase());if(ks.length&&saved.some(v=>ks.includes(v)))return true;let u=currentHilalUser();let nm=String(u?.name||u?.displayName||u?.username||'').trim().toLowerCase();let rn=String(r.userName||'').trim().toLowerCase();if(nm&&rn&&nm===rn)return true;return false}
+function isHilalDuaOwner(r){if(!r)return false;let ks=currentHilalUserKeys();try{let raw=localStorage.getItem('hilal_guest_identity_v2');if(!ks.length&&raw)ks.push(String(raw).trim().toLowerCase())}catch(e){}let saved=[r.userKey,r.ownerKey,r.ownerEmail,r.ownerUid,r.ownerUsername,r.ownerId,r.createdBy,r.createdByKey,r.userId,r.createdById].filter(Boolean).map(v=>String(v).trim().toLowerCase());if(ks.length&&saved.some(v=>ks.includes(v)))return true;let u=currentHilalUser();let hasIdentity=ks.length>0||!!(u&&typeof u==='object'&&Object.keys(u).length);if(!hasIdentity)return false;let nm=String(u?.name||u?.displayName||u?.username||'').trim().toLowerCase();let rn=String(r.userName||'').trim().toLowerCase();if(nm&&rn&&nm===rn&&rn!=='misafir')return true;return false}
 function userName(){try{let u=currentHilalUser();return String(u?.name||u?.displayName||u?.username||'Misafir')}catch(e){return 'Misafir'}}
 function cloudUrl(key){try{return HILAL_FIREBASE_DATABASE_URL+'/shared/'+encodeURIComponent(key)+'.json'}catch(e){return ''}}
 async function cloudGet(key){try{let r=await fetch(cloudUrl(key)+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)return null;let j=await r.json();return Array.isArray(j?.data)?j.data:[]}catch(e){return null}}
