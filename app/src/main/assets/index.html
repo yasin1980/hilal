@@ -39635,6 +39635,142 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
   }
 }
 </style>
+
+<style id="hilal-v85-menu-unification-final">
+/* HİLÂL V8.5 — Tüm hamburger menüleri tek standart: yuvarlak + 3 halka + 3 çizgi. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27,
+#hilalDuaPageV2 .hdv2-menu-trigger{
+  width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;
+  flex:0 0 48px!important;position:relative!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;border:0!important;
+  outline:0!important;border-radius:50%!important;background:transparent!important;
+  background-color:transparent!important;box-shadow:none!important;overflow:visible!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;opacity:1!important;
+  filter:none!important;visibility:visible!important;pointer-events:auto!important;
+  touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+}
+/* Kare/yuvarlak olmayan eski pseudo çerçeveleri tamamen kaldır. Halkaları gerçek ring-wrap çizer. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger::after,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18::after,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27::after,
+#hilalDuaPageV2 .hdv2-menu-trigger::after{content:none!important;display:none!important;border:0!important;box-shadow:none!important;}
+/* Dua'nın eski pseudo halkalarını da kapat; gerçek 3 halka ana menüyle birebir aynı görünür. */
+#hilalDuaPageV2 .hdv2-menu-trigger::before{content:none!important;display:none!important;}
+/* Üç çizgi tüm menülerde aynı kalınlıkta ve belirgin. */
+#hilalAppDummy{}
+#hilalDuaPageV2 .hdv2-menu-trigger span,
+#mainApp #mainMenuTrigger.main-role-menu-trigger::before,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18::before,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27::before{
+  color:#efcd78!important;
+}
+#hilalDuaPageV2 .hdv2-menu-trigger span{width:23px!important;height:3px!important;min-height:3px!important;margin:0 0 4px!important;border-radius:4px!important;background:#176b50!important;box-shadow:0 0 0 1px rgba(176,138,60,.35),0 1px 6px rgba(23,107,80,.32)!important;position:relative!important;z-index:3!important;}
+#hilalDuaPageV2 .hdv2-menu-trigger span:nth-child(2){width:23px!important;background:#b9954d!important;}
+#hilalDuaPageV2 .hdv2-menu-trigger span:last-child{margin-bottom:0!important;}
+/* Diğer ekranlardaki mevcut halka sarmalayıcılarını görünür ve aktif tut. */
+#mainApp #mainMenuTrigger .hilal-menu-ring-wrap-v1,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18 .hilal-menu-ring-wrap-v1,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27 .hilal-menu-ring-wrap-v1,
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1{
+  position:absolute!important;left:50%!important;top:50%!important;width:54px!important;height:54px!important;
+  transform:translate(-50%,-50%)!important;display:block!important;z-index:0!important;
+  pointer-events:none!important;overflow:visible!important;
+}
+#mainApp #mainMenuTrigger .hilal-menu-ring-wrap-v1 .ring,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18 .hilal-menu-ring-wrap-v1 .ring,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27 .hilal-menu-ring-wrap-v1 .ring,
+#hilalDuaPageV2 .hdv2-menu-trigger .hilal-menu-ring-wrap-v1 .ring{
+  border:2.5px solid rgba(238,201,81,.86)!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+/* Ana menü butonundaki kare iç çerçeveyi de iptal et. */
+#mainApp #mainMenuTrigger.main-role-menu-trigger:focus,
+#mainApp #mainMenuTrigger.main-role-menu-trigger:focus-visible,
+#mainApp #mainMenuTrigger.main-role-menu-trigger:active,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18:focus,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18:focus-visible,
+#kazaNamazlarimPage #mainMenuTrigger.hilal-kaza-real-menu-v18:active,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27:focus,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27:focus-visible,
+#hilalZikirmatikPageV13 #mainMenuTrigger.hilal-zikir-real-menu-v27:active,
+#hilalDuaPageV2 .hdv2-menu-trigger:focus,
+#hilalDuaPageV2 .hdv2-menu-trigger:focus-visible,
+#hilalDuaPageV2 .hdv2-menu-trigger:active{border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;}
+</style>
+<script id="hilal-v85-dua-menu-ring-sync">
+(function(){
+  'use strict';
+  function ensureDuaMenuRings(){
+    var b=document.getElementById('hilalDuaMenuTriggerV2');
+    if(!b)return;
+    if(!b.querySelector('.hilal-menu-ring-wrap-v1')){
+      var w=document.createElement('span');
+      w.className='hilal-menu-ring-wrap-v1';
+      w.setAttribute('aria-hidden','true');
+      w.innerHTML='<i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>';
+      b.appendChild(w);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensureDuaMenuRings,{once:true});else ensureDuaMenuRings();
+  document.addEventListener('click',function(e){
+    if(e.target.closest && e.target.closest('#hilalDuaMenuTriggerV2'))setTimeout(ensureDuaMenuRings,0);
+    if(e.target.closest && e.target.closest('#hilalDuaPageV2'))setTimeout(ensureDuaMenuRings,0);
+  },true);
+  setTimeout(ensureDuaMenuRings,250);
+  setTimeout(ensureDuaMenuRings,1000);
+})();
+</script>
+
+<style id="hilal-v86-dua-request-actions">
+/* V8.6 Dua İstekleri: kart altında doğrudan manevi destek aksiyonları */
+#hilalDuaPageV2 .hdv2-quick-row{display:grid;grid-template-columns:1fr;gap:8px;margin:4px 0 9px}
+#hilalDuaPageV2 .hdv2-quick-row.hdv2-zikir-quick{grid-template-columns:1fr 1fr}
+#hilalDuaPageV2 .hdv2-quick-main,#hilalDuaPageV2 .hdv2-quick-done{min-height:45px;border-radius:13px;padding:0 12px;font-weight:900;font-size:12.5px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#hilalDuaPageV2 .hdv2-quick-main{border:1px solid rgba(23,107,80,.22);background:linear-gradient(135deg,#eaf6f0,#f7fbf8);color:#176b50;box-shadow:0 5px 14px rgba(23,107,80,.07)}
+#hilalDuaPageV2 .hdv2-quick-done{border:1px solid rgba(176,138,60,.35);background:linear-gradient(135deg,#fbf5e8,#fffaf1);color:#795d28;box-shadow:0 5px 14px rgba(176,138,60,.07)}
+#hilalDuaPageV2 .hdv2-quick-main:active,#hilalDuaPageV2 .hdv2-quick-done:active{transform:scale(.985)}
+#hilalDuaPageV2 .hdv2-zikir-entry{display:flex;align-items:center;gap:7px;margin:-3px 0 10px;padding:7px 9px;border-radius:11px;background:rgba(23,107,80,.035);border:1px dashed rgba(23,107,80,.14)}
+#hilalDuaPageV2 .hdv2-zikir-entry input{width:100%;min-width:0;height:38px;box-sizing:border-box;border:1px solid rgba(23,107,80,.16);border-radius:10px;background:#fff;color:#18362b;padding:0 10px;font:800 13px system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+#hilalDuaPageV2 .hdv2-zikir-entry span{font-size:11px;font-weight:850;color:#63736b}
+#hilalDuaPageV2 .hdv2-progress{margin:8px 0 11px;padding:10px 11px;border-radius:13px;background:linear-gradient(135deg,rgba(23,107,80,.055),rgba(176,138,60,.045));border:1px solid rgba(23,107,80,.09)}
+#hilalDuaPageV2 .hdv2-progress-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#53675e}
+#hilalDuaPageV2 .hdv2-progress-top strong{color:#176b50;font-size:11.5px}
+#hilalDuaPageV2 .hdv2-progress-track{height:7px;margin:8px 0 5px;border-radius:999px;background:rgba(23,107,80,.10);overflow:hidden}
+#hilalDuaPageV2 .hdv2-progress-track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#176b50,#b9954d);min-width:0}
+#hilalDuaPageV2 .hdv2-progress small{font-size:10px;color:#738078}
+#hilalDuaPageV2 .hdv2-actions{margin-top:2px}
+#hilalDuaPageV2 .hdv2-actions button{min-height:40px;font-size:11.5px}
+#hilalDuaPageV2 .hdv2-tab[data-hdv2-tab="all"]:after{content:'  •  ortak alan';font-size:9px;opacity:.72}
+#hilalDuaPageV2 .hdv2-card .hdv2-supports{margin-top:8px}
+#hilalDuaPageV2 .hdv2-card .hdv2-owner-actions{margin-top:9px}
+/* Menüde Dua İstekleri tek kart kalır; sayı küçük rozet olarak görünür. */
+[data-hilal-dua-menu="1"]{position:relative!important;overflow:visible!important}
+[data-hilal-dua-menu="1"] .hilal-dua-menu-label{display:block}
+[data-hilal-dua-menu="1"] .hilal-dua-menu-badge{position:absolute;right:7px;top:6px;min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:999px;display:grid;place-items:center;background:linear-gradient(135deg,#176b50,#0d4d3a);color:#f4d681;border:1px solid rgba(238,201,81,.58);font:900 10px/1 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;box-shadow:0 3px 8px rgba(0,0,0,.18);z-index:4}
+#hilalDuaTargetWrapV2.show{display:block!important}
+@media(max-width:420px){#hilalDuaPageV2 .hdv2-quick-row.hdv2-zikir-quick{grid-template-columns:1fr 1fr}#hilalDuaPageV2 .hdv2-quick-main,#hilalDuaPageV2 .hdv2-quick-done{font-size:11.5px;padding:0 8px}}
+</style>
+<script id="hilal-v86-dua-menu-badge">
+(function(){
+  function update(){
+    try{
+      var n=0,raw=localStorage.getItem('hilal_dua_requests_v2');
+      if(raw){var a=JSON.parse(raw);if(Array.isArray(a))n=a.filter(function(x){return x&&x.active!==false}).length}
+      document.querySelectorAll('[data-hilal-dua-menu="1"]').forEach(function(b){
+        var label=b.querySelector('.hilal-dua-menu-label');
+        if(!label){label=document.createElement('span');label.className='hilal-dua-menu-label';label.innerHTML=b.innerHTML;b.innerHTML='';b.appendChild(label)}
+        var old=b.querySelector('.hilal-dua-menu-badge');if(old)old.remove();
+        if(n>0){var badge=document.createElement('span');badge.className='hilal-dua-menu-badge';badge.textContent=n>99?'99+':String(n);b.appendChild(badge)}
+      });
+    }catch(e){}
+  }
+  function init(){update();setInterval(update,5000)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
 
@@ -40101,6 +40237,7 @@ body:has(#mainApp .page.active:not(#todayPage):not(#calendarPage)) .page.active 
     </div>
     <label for="hilalDuaTextV2">Dua isteğiniz</label>
     <textarea id="hilalDuaTextV2" maxlength="500" placeholder="Örn. Sağlık sorunlarım var. Allah rızası için dua eder misiniz?"></textarea>
+    <div id="hilalDuaTargetWrapV2" class="hdv2-amount"><label for="hilalDuaTargetV2">📿 Hedef zikir adedi</label><input id="hilalDuaTargetV2" type="number" min="1" max="1000000" value="1000" inputmode="numeric" placeholder="Örn. 1000000"></div>
     <div class="hdv2-row"><label class="hdv2-check"><input id="hilalDuaAnonV2" type="checkbox"> İsmimi gizle</label><label class="hdv2-check"><input id="hilalDuaDemoV2" type="checkbox" checked> Yalnızca dua niyetimi paylaş</label></div>
     <div class="hdv2-modal-actions"><button type="button" onclick="closeHilalDuaComposeV2()">Vazgeç</button><button type="button" class="primary" onclick="publishHilalDuaV2()">🤲 İsteği Paylaş</button></div>
   </div>
@@ -40152,22 +40289,26 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function getRequests(){return load(DKEY,[]).filter(x=>x&&x.active!==false).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0))}
 function getSupports(){return load(SKEY,[])}
 function render(){let box=document.getElementById('hilalDuaListV2');if(!box)return;let rs=getRequests();if(activeTab==='mine')rs=rs.filter(isHilalDuaOwner);if(!rs.length){box.innerHTML='<div class="hdv2-empty">Henüz bu bölümde bir istek yok.<br><br>İlk isteği siz paylaşabilirsiniz. 🤲</div>';return}let supports=getSupports();box.innerHTML=rs.map(r=>card(r,supports)).join('')}
-function card(r,supports){let t=types[r.type]||types.diger;let ss=supports.filter(s=>String(s.requestId)===String(r.id));let dua=ss.filter(s=>s.kind==='dua').length;let zik=ss.filter(s=>s.kind==='zikir').reduce((n,s)=>n+(Number(s.amount)||0),0);let yas=ss.filter(s=>s.kind==='yasin').length;let mine=isHilalDuaOwner(r);let owner=mine || activeTab==='mine';let who=r.anonymous?'Gizli bir kardeşimiz':(r.userName||'Misafir');let msg=ss.slice(-6).reverse().map(s=>'<div class="hdv2-support-line">'+esc(s.phrase)+(s.kind==='zikir'?' <strong>('+Number(s.amount||0).toLocaleString('tr-TR')+' adet)</strong>':'')+' · '+esc(s.supporterName||'Bir kardeşimiz')+'</div>').join('');return '<article class="hdv2-card"><div class="hdv2-card-head"><div class="hdv2-icon">'+t[0]+'</div><div><div class="hdv2-kind">'+esc(t[1])+'</div><div class="hdv2-who">'+esc(who)+' · '+fmtDate(r.createdAt)+'</div></div></div><div class="hdv2-text">'+esc(r.text)+'</div><div class="hdv2-stats"><span class="hdv2-stat">🤲 '+dua+' dua</span><span class="hdv2-stat">📿 '+zik.toLocaleString('tr-TR')+' zikir</span><span class="hdv2-stat">📖 '+yas+' Yasin</span></div><div class="hdv2-actions"><button class="primary" type="button" onclick="openHilalDuaSupportV2('+JSON.stringify(String(r.id))+')">🤲 Destek Ol</button><button type="button" onclick="toggleHilalDuaSupportsV2(this)">💚 Destekleri Gör</button></div>'+ (owner?'<div class="hdv2-owner-actions"><button class="hdv2-edit-btn" type="button" onclick="openHilalDuaEditV2('+JSON.stringify(String(r.id))+')">✎  Düzenle</button><button class="hdv2-delete-btn" type="button" onclick="deleteHilalDuaV2('+JSON.stringify(String(r.id))+')">🗑  İsteği Sil</button></div>':'') + '<div class="hdv2-supports" style="display:none">'+(msg||'<div class="hdv2-support-line">Henüz destek mesajı yok.</div>')+'</div></article>'}
+function card(r,supports){let t=types[r.type]||types.diger;let ss=supports.filter(s=>String(s.requestId)===String(r.id));let dua=ss.filter(s=>s.kind==='dua').length;let zik=ss.filter(s=>s.kind==='zikir').reduce((n,s)=>n+(Number(s.amount)||0),0);let yas=ss.filter(s=>s.kind==='yasin').length;let target=Math.max(0,Number(r.targetAmount)||0);let mine=isHilalDuaOwner(r);let owner=mine || activeTab==='mine';let who=r.anonymous?'Gizli bir kardeşimiz':(r.userName||'Misafir');let pct=target?Math.min(100,Math.round((zik/target)*100)):0;let msg=ss.slice(-8).reverse().map(s=>'<div class="hdv2-support-line">'+esc(s.phrase)+(s.kind==='zikir'?' <strong>('+Number(s.amount||0).toLocaleString('tr-TR')+' adet)</strong>':'')+' · '+esc(s.supporterName||'Bir kardeşimiz')+'</div>').join('');let quick='';if(r.type==='zikir'){quick='<div class="hdv2-quick-row hdv2-zikir-quick"><button type="button" class="hdv2-quick-main" onclick="quickHilalZikirV2('+JSON.stringify(String(r.id))+')">📿 Zikir Çektim</button><button type="button" class="hdv2-quick-done" onclick="quickHilalZikirDoneV2('+JSON.stringify(String(r.id))+')">✓ Tamamladım</button></div><div class="hdv2-zikir-entry"><input id="hilalZikirQuick_'+esc(String(r.id))+'" type="number" min="1" max="1000000" value="100" inputmode="numeric" aria-label="Çekilen zikir adedi"><span>adet</span></div>'}else if(r.type==='yasin'){quick='<div class="hdv2-quick-row"><button type="button" class="hdv2-quick-main" onclick="quickHilalSupportV2('+JSON.stringify(String(r.id))+',\'yasin\')">📖 Yasin Okudum</button></div>'}else if(r.type==='vefat'){quick='<div class="hdv2-quick-row"><button type="button" class="hdv2-quick-main" onclick="quickHilalSupportV2('+JSON.stringify(String(r.id))+',\'dua\')">🤲 Dua Ettim</button></div>'}else if(r.type==='diger'){quick='<div class="hdv2-quick-row"><button type="button" class="hdv2-quick-main" onclick="quickHilalSupportV2('+JSON.stringify(String(r.id))+',\'dua\')">❤️ Destek Oldum</button></div>'}else{quick='<div class="hdv2-quick-row"><button type="button" class="hdv2-quick-main" onclick="quickHilalSupportV2('+JSON.stringify(String(r.id))+',\'dua\')">🤲 Dua Ettim</button></div>'}let progress=target?'<div class="hdv2-progress"><div class="hdv2-progress-top"><span>📿 Zikir ilerlemesi</span><strong>'+zik.toLocaleString('tr-TR')+' / '+target.toLocaleString('tr-TR')+'</strong></div><div class="hdv2-progress-track"><i style="width:'+pct+'%"></i></div><small>%'+pct+' tamamlandı</small></div>':'';return '<article class="hdv2-card"><div class="hdv2-card-head"><div class="hdv2-icon">'+t[0]+'</div><div><div class="hdv2-kind">'+esc(t[1])+'</div><div class="hdv2-who">'+esc(who)+' · '+fmtDate(r.createdAt)+'</div></div></div><div class="hdv2-text">'+esc(r.text)+'</div>'+progress+'<div class="hdv2-stats"><span class="hdv2-stat">🤲 '+dua+' dua</span><span class="hdv2-stat">📿 '+zik.toLocaleString('tr-TR')+' zikir</span><span class="hdv2-stat">📖 '+yas+' Yasin</span></div>'+quick+'<div class="hdv2-actions"><button type="button" onclick="toggleHilalDuaSupportsV2(this)">💚 Destekleri Gör</button></div>'+ (owner?'<div class="hdv2-owner-actions"><button class="hdv2-edit-btn" type="button" onclick="openHilalDuaEditV2('+JSON.stringify(String(r.id))+')">✎  Düzenle</button><button class="hdv2-delete-btn" type="button" onclick="deleteHilalDuaV2('+JSON.stringify(String(r.id))+')">🗑  İsteği Sil</button></div>':'') + '<div class="hdv2-supports" style="display:none">'+(msg||'<div class="hdv2-support-line">Henüz destek yok. İlk desteği sen verebilirsin. 🤲</div>')+'</div></article>'}
 function fillPresets(){let b=document.getElementById('hilalDuaPresetsV2');b.innerHTML=presets.map((p,i)=>'<button type="button" class="hdv2-preset'+(i===supportPreset?' active':'')+'" data-preset="'+i+'">'+esc(p)+'</button>').join('');b.querySelectorAll('[data-preset]').forEach(x=>x.onclick=()=>{supportPreset=Number(x.dataset.preset)||0;b.querySelectorAll('.hdv2-preset').forEach(y=>y.classList.remove('active'));x.classList.add('active');document.getElementById('hilalDuaAmountWrapV2').classList.toggle('show',supportRequestId&&activeType==='zikir')})}
 window.hilalDuaToggleMenuV2=function(ev){if(ev){try{ev.preventDefault();ev.stopPropagation()}catch(e){}}let role=(window.currentUser&&window.currentUser.role)||((typeof selectedRole!=='undefined')?selectedRole:'guest');let menu=role==='teacher'?document.getElementById('teacherMenu'):role==='admin'?document.getElementById('adminMenu'):document.getElementById('guestMenu');if(!menu)return;[document.getElementById('teacherMenu'),document.getElementById('adminMenu'),document.getElementById('guestMenu')].forEach(m=>{if(m&&m!==menu)m.classList.add('hidden')});menu.classList.toggle('hidden');menu.style.zIndex='10250';menu.style.position='fixed';menu.style.top='58px';menu.style.left='12px';};
 window.openHilalDuaRequestsV2=function(){document.getElementById('guestMenu')?.classList.add('hidden');document.getElementById('teacherMenu')?.classList.add('hidden');document.getElementById('adminMenu')?.classList.add('hidden');document.getElementById('hilalDuaPageV2').classList.add('hdv2-open');document.getElementById('hilalDuaPageV2').setAttribute('aria-hidden','false');document.body.dataset.hilalDuaOpen='1';render();refreshCloud()}
 window.closeHilalDuaRequestsV2=function(){document.getElementById('hilalDuaPageV2').classList.remove('hdv2-open');document.getElementById('hilalDuaPageV2').setAttribute('aria-hidden','true');[document.getElementById('guestMenu'),document.getElementById('teacherMenu'),document.getElementById('adminMenu')].forEach(m=>{if(m){m.classList.add('hidden');m.style.removeProperty('z-index');m.style.removeProperty('position');m.style.removeProperty('top');m.style.removeProperty('left')}});delete document.body.dataset.hilalDuaOpen}
-window.openHilalDuaComposeV2=function(){editRequestId=null;activeType='dua';document.querySelector('#hilalDuaComposeV2 h3').textContent='Yeni Dua İsteği';document.querySelector('#hilalDuaComposeV2 .hdv2-modal-actions .primary').textContent='🤲 İsteği Paylaş';document.querySelector('#hilalDuaComposeV2 .hdv2-edit-note')?.classList.remove('show');document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach((b,i)=>b.classList.toggle('active',i===0));document.getElementById('hilalDuaTextV2').value='';document.getElementById('hilalDuaAnonV2').checked=false;document.getElementById('hilalDuaComposeV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','false')}
+window.openHilalDuaComposeV2=function(){editRequestId=null;activeType='dua';document.querySelector('#hilalDuaComposeV2 h3').textContent='Yeni Dua İsteği';document.querySelector('#hilalDuaComposeV2 .hdv2-modal-actions .primary').textContent='🤲 İsteği Paylaş';document.querySelector('#hilalDuaComposeV2 .hdv2-edit-note')?.classList.remove('show');document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach((b,i)=>b.classList.toggle('active',i===0));document.getElementById('hilalDuaTextV2').value='';document.getElementById('hilalDuaAnonV2').checked=false;document.getElementById('hilalDuaTargetV2').value='';document.getElementById('hilalDuaTargetWrapV2').classList.remove('show');document.getElementById('hilalDuaComposeV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','false')}
 window.closeHilalDuaComposeV2=function(){editRequestId=null;document.getElementById('hilalDuaComposeV2').classList.remove('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','true')}
-window.openHilalDuaEditV2=function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;if(!isHilalDuaOwner(r)&&activeTab!=='mine'){alert('Bu istek size ait görünmüyor.');return;}editRequestId=String(r.id);activeType=r.type||'dua';document.querySelector('#hilalDuaComposeV2 h3').textContent='Dua İsteğini Düzenle';document.querySelector('#hilalDuaComposeV2 .hdv2-modal-actions .primary').textContent='✓ Değişiklikleri Kaydet';let note=document.querySelector('#hilalDuaComposeV2 .hdv2-edit-note');if(note)note.classList.add('show');document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(b=>b.classList.toggle('active',b.dataset.hdv2Type===activeType));document.getElementById('hilalDuaTextV2').value=r.text||'';document.getElementById('hilalDuaAnonV2').checked=!!r.anonymous;document.getElementById('hilalDuaComposeV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','false')};
-window.publishHilalDuaV2=async function(){let text=document.getElementById('hilalDuaTextV2').value.trim();if(text.length<3){alert('Lütfen dua isteğinizi yazın.');return}if(editRequestId){await mutate(DKEY,d=>{let r=d.find(x=>String(x.id)===String(editRequestId));if(r&&isHilalDuaOwner(r)){r.text=text.slice(0,500);r.type=activeType||r.type;r.anonymous=document.getElementById('hilalDuaAnonV2').checked;r.updatedAt=Date.now()}});closeHilalDuaComposeV2();render();return}let cu=currentHilalUser(),uk=userKey();let r={id:'dua_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),type:activeType,text:text.slice(0,500),userKey:uk,ownerKey:uk,ownerId:cu.id||'',ownerEmail:cu.email||'',ownerUid:cu.uid||'',ownerUsername:cu.username||'',createdBy:uk,createdByKey:uk,userId:cu.id||cu.uid||'',userName:userName(),anonymous:document.getElementById('hilalDuaAnonV2').checked,createdAt:Date.now(),active:true};await mutate(DKEY,d=>d.push(r));closeHilalDuaComposeV2();render()}
+window.openHilalDuaEditV2=function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;if(!isHilalDuaOwner(r)&&activeTab!=='mine'){alert('Bu istek size ait görünmüyor.');return;}editRequestId=String(r.id);activeType=r.type||'dua';document.querySelector('#hilalDuaComposeV2 h3').textContent='İsteği Düzenle';document.querySelector('#hilalDuaComposeV2 .hdv2-modal-actions .primary').textContent='✓ Değişiklikleri Kaydet';let note=document.querySelector('#hilalDuaComposeV2 .hdv2-edit-note');if(note)note.classList.add('show');document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(b=>b.classList.toggle('active',b.dataset.hdv2Type===activeType));document.getElementById('hilalDuaTextV2').value=r.text||'';document.getElementById('hilalDuaAnonV2').checked=!!r.anonymous;document.getElementById('hilalDuaTargetV2').value=Math.max(1,Number(r.targetAmount)||1000);document.getElementById('hilalDuaTargetWrapV2').classList.toggle('show',activeType==='zikir');document.getElementById('hilalDuaComposeV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaComposeV2').setAttribute('aria-hidden','false')};
+window.publishHilalDuaV2=async function(){let text=document.getElementById('hilalDuaTextV2').value.trim();if(text.length<3){alert('Lütfen dua isteğinizi yazın.');return}if(editRequestId){await mutate(DKEY,d=>{let r=d.find(x=>String(x.id)===String(editRequestId));if(r&&isHilalDuaOwner(r)){r.text=text.slice(0,500);r.type=activeType||r.type;r.anonymous=document.getElementById('hilalDuaAnonV2').checked;r.targetAmount=activeType==='zikir'?Math.max(1,Math.min(1000000,Number(document.getElementById('hilalDuaTargetV2').value)||1000)):0;r.updatedAt=Date.now()}});closeHilalDuaComposeV2();render();return}let cu=currentHilalUser(),uk=userKey();let target=activeType==='zikir'?Math.max(1,Math.min(1000000,Number(document.getElementById('hilalDuaTargetV2').value)||detectHilalZikirTarget(text)||1000)):0;let r={id:'dua_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),type:activeType,text:text.slice(0,500),targetAmount:target,userKey:uk,ownerKey:uk,ownerId:cu.id||'',ownerEmail:cu.email||'',ownerUid:cu.uid||'',ownerUsername:cu.username||'',createdBy:uk,createdByKey:uk,userId:cu.id||cu.uid||'',userName:userName(),anonymous:document.getElementById('hilalDuaAnonV2').checked,createdAt:Date.now(),active:true};await mutate(DKEY,d=>d.push(r));closeHilalDuaComposeV2();render()}
 window.openHilalDuaSupportV2=function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;supportRequestId=String(id);activeType=r.type;supportPreset=0;fillPresets();document.getElementById('hilalDuaAmountV2').value=100;document.getElementById('hilalDuaAmountWrapV2').classList.toggle('show',r.type==='zikir');document.getElementById('hilalDuaSupportV2').classList.add('hdv2-modal-open');document.getElementById('hilalDuaSupportV2').setAttribute('aria-hidden','false')}
 window.closeHilalDuaSupportV2=function(){document.getElementById('hilalDuaSupportV2').classList.remove('hdv2-modal-open');document.getElementById('hilalDuaSupportV2').setAttribute('aria-hidden','true');supportRequestId=null}
 window.submitHilalDuaSupportV2=async function(){if(!supportRequestId)return;let r=getRequests().find(x=>String(x.id)===String(supportRequestId));if(!r)return;let kind=r.type==='zikir'?'zikir':r.type==='yasin'?'yasin':'dua';let amount=kind==='zikir'?Math.max(1,Math.min(1000000,Number(document.getElementById('hilalDuaAmountV2').value)||0)):0;if(kind==='zikir'&&!amount){alert('Zikir miktarını girin.');return}let s={id:'ds_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),requestId:String(r.id),kind,amount,phrase:presets[supportPreset]||presets[0],supporterKey:userKey(),supporterName:'Bir kardeşimiz',createdAt:Date.now()};await mutate(SKEY,d=>d.push(s));closeHilalDuaSupportV2();render()}
+function detectHilalZikirTarget(text){let q=String(text||'').toLowerCase().replace(/\./g,'');let m=q.match(/(\d[\d\s]*)\s*(milyon|bin)?/);if(!m)return 0;let n=Number(String(m[1]).replace(/\s/g,''));if(!Number.isFinite(n)||n<1)return 0;let u=m[2]||'';if(u==='milyon')n*=1000000;else if(u==='bin')n*=1000;return Math.min(1000000,Math.round(n))}
+window.quickHilalSupportV2=async function(id,kind){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;let s={id:'ds_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),requestId:String(r.id),kind,amount:0,phrase:kind==='yasin'?presets[1]:presets[0],supporterKey:userKey(),supporterName:'Bir kardeşimiz',createdAt:Date.now(),status:'completed'};await mutate(SKEY,d=>d.push(s));render()}
+window.quickHilalZikirV2=async function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;let key=userKey();let input=document.getElementById('hilalZikirQuick_'+String(id));let amount=Math.max(1,Math.min(1000000,Number(input?.value)||100));let existing=getSupports().find(s=>String(s.requestId)===String(r.id)&&s.kind==='zikir'&&String(s.supporterKey||'')===String(key)&&s.status==='taken');if(existing){alert('Bu zikir isteğinde aldığınız miktarı önce tamamlayın.');return}let s={id:'ds_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),requestId:String(r.id),kind:'zikir',amount,phrase:'📿 Zikri aldım. Allah kabul etsin.',supporterKey:key,supporterName:'Bir kardeşimiz',createdAt:Date.now(),status:'taken'};await mutate(SKEY,d=>d.push(s));render()}
+window.quickHilalZikirDoneV2=async function(id){let r=getRequests().find(x=>String(x.id)===String(id));if(!r)return;let key=userKey();let data=getSupports();let candidate=null;for(let i=data.length-1;i>=0;i--){let s=data[i];if(String(s.requestId)===String(r.id)&&s.kind==='zikir'&&String(s.supporterKey||'')===String(key)&&s.status==='taken'){candidate=s;break}}if(!candidate){alert('Önce zikir miktarını belirleyip “📿 Aldım” düğmesine basın.');return}await mutate(SKEY,d=>{let x=d.find(s=>String(s.id)===String(candidate.id));if(x){x.status='completed';x.completedAt=Date.now();x.phrase='📿 Zikrimi tamamladım. Allah kabul etsin.'}});render()}
 window.deleteHilalDuaV2=async function(id){let x=getRequests().find(r=>String(r.id)===String(id));if(!x)return;if(!isHilalDuaOwner(x)&&activeTab!=='mine'){alert('Bu istek size ait görünmüyor.');return}if(!confirm('Bu dua isteğini ve ona ait destek kayıtlarını silmek istiyor musunuz?'))return;await mutate(DKEY,d=>{let i=d.findIndex(r=>String(r.id)===String(id));if(i>=0)d.splice(i,1)});await mutate(SKEY,d=>{for(let i=d.length-1;i>=0;i--)if(String(d[i]?.requestId)===String(id))d.splice(i,1)});render()}
 window.toggleHilalDuaSupportsV2=function(btn){let el=btn.closest('.hdv2-card')?.querySelector('.hdv2-supports');if(el)el.style.display=el.style.display==='none'?'block':'none'}
 document.querySelectorAll('#hilalDuaPageV2 .hdv2-tab').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.hdv2Tab;document.querySelectorAll('#hilalDuaPageV2 .hdv2-tab').forEach(x=>x.classList.toggle('active',x===b));render()}));
-document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(b=>b.addEventListener('click',()=>{activeType=b.dataset.hdv2Type;document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(x=>x.classList.toggle('active',x===b));}));
+document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(b=>b.addEventListener('click',()=>{activeType=b.dataset.hdv2Type;document.querySelectorAll('#hilalDuaComposeV2 .hdv2-type').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('hilalDuaTargetWrapV2').classList.toggle('show',activeType==='zikir');}));
 document.addEventListener('click',e=>{if(e.target.closest?.('#hilalDuaPageV2'))return});
 setInterval(()=>{if(document.getElementById('hilalDuaPageV2')?.classList.contains('hdv2-open'))refreshCloud()},20000);
 })();
