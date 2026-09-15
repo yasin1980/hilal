@@ -40342,7 +40342,7 @@ class HilalNavigation {
     this.root.style.setProperty('display',appOpen?'block':'none','important');
     if(!appOpen) return;
     this.roleMenuOpen();
-    this.back.hidden=false; /* V124: Ana Sayfa butonu Takvim & Ezan dahil tüm navigasyon sınıflarında görünür. */
+    this.back.hidden=this.isHome();
   }
   closeRoleMenus(){
     ['guestMenu','teacherMenu','adminMenu'].forEach(id=>document.getElementById(id)?.classList.add('hidden'));
@@ -56927,128 +56927,56 @@ ready(function(){
 })();
 </script>
 
-<style id="hilal-dua-general-header-clear-fix-v123">
-/* Yalnız Dua İstekleri > Genel Dua üst başlık satırı.
-   Önceki negatif konumlandırmaları etkisizleştirir; Geri / Genel Dua / Aldıklarım net görünür. */
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open{
-  margin-top:0!important;
-  padding-top:12px!important;
-  overflow:visible!important;
-}
-#hilalDuaPageV2 #hdtiGeneralVi
-<!-- HILAL V124 — ORTAK NAVİGASYON: İLK AÇILIŞ SOL ÜST + ANA SAYFA AYNI HİZA + SÜRÜKLEME KALICI -->
-<style id="hilal-v123-common-nav-position-fix">
-:root{
-  --hilal-v123-nav-top:calc(max(env(safe-area-inset-top, 0px), 48px) + 16px);
-  --hilal-v123-menu-left:max(18px, calc(env(safe-area-inset-left, 0px) + 14px));
-  --hilal-v123-gap:12px;
-  --hilal-v123-menu-size:48px;
-  --hilal-v123-home-size:48px;
-}
-#mainApp #mainMenuTrigger.hilal-navigation__menu,
-#mainApp #mainMenuTrigger.hilal-shared-menu-trigger-v94{
-  top:var(--hilal-v123-nav-top)!important;
-  left:var(--hilal-v123-menu-left)!important;
-  width:var(--hilal-v123-menu-size)!important;
-  height:var(--hilal-v123-menu-size)!important;
-  min-width:var(--hilal-v123-menu-size)!important;
-  min-height:var(--hilal-v123-menu-size)!important;
-  right:auto!important;bottom:auto!important;
-}
-#hilalNavigation .hilal-navigation__back{
-  top:var(--hilal-v123-nav-top)!important;
-  left:calc(var(--hilal-v123-menu-left) + var(--hilal-v123-menu-size) + var(--hilal-v123-gap))!important;
-  width:var(--hilal-v123-home-size)!important;
-  min-width:var(--hilal-v123-home-size)!important;
-  height:var(--hilal-v123-home-size)!important;
-  right:auto!important;bottom:auto!important;
-}
-/* Tüm ana navigasyon sayfalarının ilk içeriği ortak kontrol çizgisinden hafif aşağı başlar. */
-#mainApp > .page.active{
-  scroll-padding-top:calc(var(--hilal-v123-nav-top) + var(--hilal-v123-menu-size) + 12px)!important;
-}
-@media(max-width:390px){
-  :root{
-    --hilal-v123-menu-left:max(14px, calc(env(safe-area-inset-left, 0px) + 10px));
-    --hilal-v123-gap:10px;
-    --hilal-v123-menu-size:46px;
-    --hilal-v123-home-size:46px;
-  }
-}
-</style>
-<script id="hilal-v124-common-nav-default-and-drag-persist-js">
-(function(){
-  'use strict';
-  var POS_KEY='hilal_global_menu_position_v3';
-  var MIGRATION_KEY='hilal_nav_v124_default_applied';
 
-  function applyFirstOpenDefaultOnce(){
-    /* V124 ilk açılışta ortak başlangıç konumu: sol üst.
-       Bu işlem yalnız bir kez yapılır; sonrasında misafirin sürüklediği konum korunur. */
-    try{
-      if(localStorage.getItem(MIGRATION_KEY)!=='1'){
-        localStorage.removeItem(POS_KEY);
-        localStorage.setItem(MIGRATION_KEY,'1');
-      }
-    }catch(_){ }
-  }
-
-  function keepHomeVisible(){
-    var nav=window.hilalNavigation;
-    if(!nav || !nav.back) return;
-    if(nav.appIsOpen && nav.appIsOpen()) nav.back.hidden=false;
-  }
-
-  applyFirstOpenDefaultOnce();
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){
-      requestAnimationFrame(function(){
-        try{ window.hilalNavigation?.restoreMenuPosition?.(); }catch(_){ }
-        keepHomeVisible();
-      });
-    },{once:true});
-  }else{
-    requestAnimationFrame(function(){
-      try{ window.hilalNavigation?.restoreMenuPosition?.(); }catch(_){ }
-      keepHomeVisible();
-    });
-  }
-  document.addEventListener('hilal:navigation-sync',function(){
-    requestAnimationFrame(keepHomeVisible);
-  });
-})();
-</script>
-ew.hdti-open > .hdti-head{
-  position:relative!important;
-  z-index:20!important;
-  transform:none!important;
-  margin-top:0!important;
-  margin-bottom:12px!important;
-  padding-top:2px!important;
-  width:100%!important;
-  min-height:52px!important;
-  align-items:center!important;
-  overflow:visible!important;
-}
+<!-- HILAL V125 — Genel Dua üst başlık korunumu + APK ortak navigasyon ilk konum düzeltmesi -->
+<style id="hilal-dua-general-header-clear-fix-v125">
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open{margin-top:0!important;padding-top:12px!important;overflow:visible!important;}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{position:relative!important;z-index:20!important;transform:none!important;margin-top:0!important;margin-bottom:12px!important;padding-top:2px!important;width:100%!important;min-height:52px!important;align-items:center!important;overflow:visible!important;}
 #hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-back,
 #hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title,
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{
-  position:relative!important;
-  z-index:21!important;
-  opacity:1!important;
-  visibility:visible!important;
-  transform:none!important;
-}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title{
-  color:#f7df93!important;
-  text-shadow:none!important;
-}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{
-  color:#ffe59a!important;
-  overflow:visible!important;
-}
-@media(max-width:420px){
-  #hilalDuaPageV2 #hdtiGeneralView.hdti-open{margin-top:0!important;padding-top:12px!important;}
-  #hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{transform:none!important;margin-bottom:12px!important;}
-}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{position:relative!important;z-index:21!important;opacity:1!important;visibility:visible!important;transform:none!important;}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title{color:#f7df93!important;text-shadow:none!important;}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{color:#ffe59a!important;overflow:visible!important;}
 </style>
+<style id="hilal-v125-common-nav-default-css">
+:root{--hilal-v125-nav-top:calc(max(env(safe-area-inset-top, 0px), 34px) + 12px);--hilal-v125-menu-left:max(18px,calc(env(safe-area-inset-left,0px) + 14px));--hilal-v125-gap:12px;--hilal-v125-size:48px;}
+/* Varsayılan açılış konumu. Sürükleme başladığında JS inline konum kullanır. */
+#mainApp #mainMenuTrigger.hilal-navigation__menu:not(.hilal-v125-user-position){top:var(--hilal-v125-nav-top)!important;left:var(--hilal-v125-menu-left)!important;right:auto!important;bottom:auto!important;}
+#mainApp #mainMenuTrigger.hilal-navigation__menu{width:var(--hilal-v125-size)!important;height:var(--hilal-v125-size)!important;min-width:var(--hilal-v125-size)!important;min-height:var(--hilal-v125-size)!important;}
+#hilalNavigation .hilal-navigation__back{top:var(--hilal-v125-nav-top)!important;left:calc(var(--hilal-v125-menu-left) + var(--hilal-v125-size) + var(--hilal-v125-gap))!important;right:auto!important;bottom:auto!important;width:var(--hilal-v125-size)!important;height:var(--hilal-v125-size)!important;min-width:var(--hilal-v125-size)!important;min-height:var(--hilal-v125-size)!important;}
+@media(max-width:390px){:root{--hilal-v125-menu-left:max(14px,calc(env(safe-area-inset-left,0px) + 10px));--hilal-v125-gap:10px;--hilal-v125-size:46px;}}
+</style>
+<script id="hilal-v125-apk-nav-default-migration-js">
+(function(){
+ 'use strict';
+ var POS_KEY='hilal_global_menu_position_v3';
+ var MIGRATION_KEY='hilal_nav_v125_apk_default_applied';
+ function nav(){return window.hilalNavigation||null;}
+ function resetOnce(){
+   try{if(localStorage.getItem(MIGRATION_KEY)!=='1'){localStorage.removeItem(POS_KEY);localStorage.setItem(MIGRATION_KEY,'1');}}
+   catch(_){ }
+ }
+ function apply(){
+   var n=nav(); if(!n||!n.menu)return;
+   var btn=n.menu;
+   var saved=null; try{saved=JSON.parse(localStorage.getItem(POS_KEY)||'null')}catch(_){ }
+   if(saved&&Number.isFinite(saved.left)&&Number.isFinite(saved.top)){
+     btn.classList.add('hilal-v125-user-position');
+     btn.style.setProperty('left',saved.left+'px','important');
+     btn.style.setProperty('top',saved.top+'px','important');
+   }else{
+     btn.classList.remove('hilal-v125-user-position');
+     btn.style.removeProperty('left');btn.style.removeProperty('top');btn.style.removeProperty('right');btn.style.removeProperty('bottom');
+   }
+   if(n.back)n.back.hidden=false;
+ }
+ resetOnce();
+ function ready(){requestAnimationFrame(function(){apply();setTimeout(apply,120);});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+ document.addEventListener('hilal:navigation-sync',function(){requestAnimationFrame(apply)});
+ /* Kullanıcı ilk gerçek sürüklemede serbest konuma geçsin; mevcut HilalNavigation kaydı aynen çalışsın. */
+ document.addEventListener('pointermove',function(e){
+   var n=nav(); if(n&&n.dragging&&n.menu)n.menu.classList.add('hilal-v125-user-position');
+ },true);
+})();
+</script>
