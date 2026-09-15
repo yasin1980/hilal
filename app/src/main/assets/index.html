@@ -57129,6 +57129,23 @@ html body #hilalNavigation .hilal-navigation__back{
   z-index:9001!important;
 }
 
+/* V129 — aynı premium üst ayrımı yalnız Günün İbadetleri sayfasına da uygula. */
+#todayPage{
+  --hilal-v128-content-gap:76px;
+}
+#mainApp > #todayPage > :first-child{
+  margin-top:var(--hilal-v128-content-gap)!important;
+  position:relative!important;
+  z-index:1!important;
+}
+#todayPage > :first-child{
+  border-top-color:rgba(217,183,96,.48)!important;
+}
+
+@media(max-width:390px){
+  #todayPage{--hilal-v128-content-gap:72px;}
+}
+
 @media(max-width:390px){
   #announcementsPage,
   #generalPublicationsPage,
