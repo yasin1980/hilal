@@ -56927,128 +56927,151 @@ ready(function(){
 })();
 </script>
 
+<style id="hilal-dua-general-header-clear-fix-v123">
+/* Yalnız Dua İstekleri > Genel Dua üst başlık satırı.
+   Önceki negatif konumlandırmaları etkisizleştirir; Geri / Genel Dua / Aldıklarım net görünür. */
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open{
+  margin-top:0!important;
+  padding-top:12px!important;
+  overflow:visible!important;
+}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{
+  position:relative!important;
+  z-index:20!important;
+  transform:none!important;
+  margin-top:0!important;
+  margin-bottom:12px!important;
+  padding-top:2px!important;
+  width:100%!important;
+  min-height:52px!important;
+  align-items:center!important;
+  overflow:visible!important;
+}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-back,
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title,
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{
+  position:relative!important;
+  z-index:21!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title{
+  color:#f7df93!important;
+  text-shadow:none!important;
+}
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{
+  color:#ffe59a!important;
+  overflow:visible!important;
+}
+@media(max-width:420px){
+  #hilalDuaPageV2 #hdtiGeneralView.hdti-open{margin-top:0!important;padding-top:12px!important;}
+  #hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{transform:none!important;margin-bottom:12px!important;}
+}
+</style>
 
-<!-- HILAL V125 — Genel Dua üst başlık korunumu + APK ortak navigasyon ilk konum düzeltmesi -->
-<style id="hilal-dua-general-header-clear-fix-v125">
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open{margin-top:0!important;padding-top:12px!important;overflow:visible!important;}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{position:relative!important;z-index:20!im
 
-<!-- HILAL V126 — SADECE ORTAK NAVİGASYON KONUMU + ÜST KART AYRIMI -->
-<style id="hilal-v126-common-nav-position-and-clearance-css">
+<!-- HILAL V127 — ORTAK NAVİGASYON TEMİZ MOTOR: Android ilk konum + sürükleme + kart ayrımı -->
+<style id="hilal-v127-clean-common-navigation-css">
 :root{
-  --hilal-v126-nav-top:calc(max(env(safe-area-inset-top, 0px), 34px) + 12px);
-  --hilal-v126-menu-left:max(18px,calc(env(safe-area-inset-left,0px) + 14px));
-  --hilal-v126-size:48px;
-  --hilal-v126-gap:12px;
+  --hilal-v127-nav-top:calc(max(env(safe-area-inset-top, 0px), 34px) + 12px);
+  --hilal-v127-menu-left:max(16px,calc(env(safe-area-inset-left,0px) + 12px));
+  --hilal-v127-size:48px;
+  --hilal-v127-gap:10px;
 }
-/* Bütün navigasyon sınıflarında varsayılan tek konum: sol üst + Ana Sayfa aynı hiza. */
-#mainApp #mainMenuTrigger.hilal-navigation__menu:not(.hilal-v126-user-position){
-  position:fixed!important;top:var(--hilal-v126-nav-top)!important;left:var(--hilal-v126-menu-left)!important;
-  right:auto!important;bottom:auto!important;width:var(--hilal-v126-size)!important;height:var(--hilal-v126-size)!important;
-  min-width:var(--hilal-v126-size)!important;min-height:var(--hilal-v126-size)!important;
+/* Tek gerçek hamburger: kullanıcı henüz taşımadıysa bütün sayfalarda aynı sol-üst başlangıç. */
+html body #hilalNavigation #mainMenuTrigger.hilal-navigation__menu:not(.hilal-v127-user-position){
+  position:fixed!important;
+  top:var(--hilal-v127-nav-top)!important;
+  left:var(--hilal-v127-menu-left)!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:var(--hilal-v127-size)!important;
+  height:var(--hilal-v127-size)!important;
+  min-width:var(--hilal-v127-size)!important;
+  min-height:var(--hilal-v127-size)!important;
+  max-width:var(--hilal-v127-size)!important;
+  max-height:var(--hilal-v127-size)!important;
+  transform:none!important;
 }
-#hilalNavigation .hilal-navigation__back{
-  position:fixed!important;top:var(--hilal-v126-nav-top)!important;
-  left:calc(var(--hilal-v126-menu-left) + var(--hilal-v126-size) + var(--hilal-v126-gap))!important;
-  right:auto!important;bottom:auto!important;width:var(--hilal-v126-size)!important;height:var(--hilal-v126-size)!important;
-  min-width:var(--hilal-v126-size)!important;min-height:var(--hilal-v126-size)!important;
+/* Ana Sayfa butonu hamburger ile aynı yatay çizgide. */
+html body #hilalNavigation .hilal-navigation__back{
+  position:fixed!important;
+  top:var(--hilal-v127-nav-top)!important;
+  left:calc(var(--hilal-v127-menu-left) + var(--hilal-v127-size) + var(--hilal-v127-gap))!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:var(--hilal-v127-size)!important;
+  height:var(--hilal-v127-size)!important;
+  min-width:var(--hilal-v127-size)!important;
+  min-height:var(--hilal-v127-size)!important;
+  max-width:var(--hilal-v127-size)!important;
+  max-height:var(--hilal-v127-size)!important;
+  margin:0!important;
+  transform:none!important;
 }
-/* Android APK'da üstteki ilk kart/çizgi ortak navigasyon düğmelerine yapışmasın. */
-#mainApp .page.hilal-vertical-scroll-v112 > :first-child{margin-top:14px!important;}
+/* Normal navigasyon sayfalarının ilk kartı ortak buton çizgisine yapışmasın. */
+#mainApp > .page.hilal-vertical-scroll-v112 > :first-child,
+#mainApp > .page.active > :first-child{
+  margin-top:24px!important;
+}
+/* Tam ekran/özel navigasyon sınıflarında da aynı küçük premium ayrım. */
 #kazaNamazlarimPage.hilal-vertical-scroll-v112 > :first-child,
 #hilalZikirmatikPageV13.hilal-vertical-scroll-v112 > :first-child,
 #hilalDuaPageV2.hilal-vertical-scroll-v112 > :first-child,
 #hilalDuaFeedV55.hilal-vertical-scroll-v112 > :first-child,
-#hilalDuaMyPageV53.hilal-vertical-scroll-v112 > :first-child{margin-top:14px!important;}
+#hilalDuaMyPageV53.hilal-vertical-scroll-v112 > :first-child{
+  margin-top:24px!important;
+}
 @media(max-width:390px){
-  :root{--hilal-v126-menu-left:max(14px,calc(env(safe-area-inset-left,0px) + 10px));--hilal-v126-size:46px;--hilal-v126-gap:10px;}
+  :root{--hilal-v127-menu-left:max(12px,calc(env(safe-area-inset-left,0px) + 9px));--hilal-v127-size:46px;--hilal-v127-gap:9px;}
 }
 </style>
-<script id="hilal-v126-common-nav-position-js">
+<script id="hilal-v127-clean-common-navigation-js">
 (function(){
- 'use strict';
- var OLD_KEY='hilal_global_menu_position_v3';
- var KEY='hilal_global_menu_position_v126';
- var MIG='hilal_nav_v126_default_applied';
- function n(){return window.hilalNavigation||null;}
- function resetLegacyOnce(){
-   try{
-     if(localStorage.getItem(MIG)!=='1'){
-       localStorage.removeItem(OLD_KEY);
-       localStorage.removeItem(KEY);
-       localStorage.setItem(MIG,'1');
-     }
-   }catch(_){ }
- }
- function apply(){
-   var x=n(); if(!x||!x.menu)return;
-   x.storageKey=KEY;
-   var b=x.menu,p=null;
-   try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){ }
-   if(p&&Number.isFinite(p.left)&&Number.isFinite(p.top)){
-     b.classList.add('hilal-v126-user-position');
-     b.style.setProperty('left',p.left+'px','important');
-     b.style.setProperty('top',p.top+'px','important');
-     b.style.setProperty('right','auto','important');
-     b.style.setProperty('bottom','auto','important');
-   }else{
-     b.classList.remove('hilal-v125-user-position','hilal-v126-user-position');
-     b.style.removeProperty('left');b.style.removeProperty('top');b.style.removeProperty('right');b.style.removeProperty('bottom');
-   }
- }
- resetLegacyOnce();
- function ready(){requestAnimationFrame(function(){apply();setTimeout(apply,100);setTimeout(apply,500);});}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
- document.addEventListener('hilal:navigation-sync',function(){requestAnimationFrame(apply)});
- document.addEventListener('pointermove',function(){var x=n();if(x&&x.dragging&&x.menu)x.menu.classList.add('hilal-v126-user-position');},true);
-})();
-</script>
-portant;transform:none!important;margin-top:0!important;margin-bottom:12px!important;padding-top:2px!important;width:100%!important;min-height:52px!important;align-items:center!important;overflow:visible!important;}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-back,
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title,
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{position:relative!important;z-index:21!important;opacity:1!important;visibility:visible!important;transform:none!important;}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-title{color:#f7df93!important;text-shadow:none!important;}
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head .hdti-my-toggle{color:#ffe59a!important;overflow:visible!important;}
-</style>
-<style id="hilal-v125-common-nav-default-css">
-:root{--hilal-v125-nav-top:calc(max(env(safe-area-inset-top, 0px), 34px) + 12px);--hilal-v125-menu-left:max(18px,calc(env(safe-area-inset-left,0px) + 14px));--hilal-v125-gap:12px;--hilal-v125-size:48px;}
-/* Varsayılan açılış konumu. Sürükleme başladığında JS inline konum kullanır. */
-#mainApp #mainMenuTrigger.hilal-navigation__menu:not(.hilal-v125-user-position){top:var(--hilal-v125-nav-top)!important;left:var(--hilal-v125-menu-left)!important;right:auto!important;bottom:auto!important;}
-#mainApp #mainMenuTrigger.hilal-navigation__menu{width:var(--hilal-v125-size)!important;height:var(--hilal-v125-size)!important;min-width:var(--hilal-v125-size)!important;min-height:var(--hilal-v125-size)!important;}
-#hilalNavigation .hilal-navigation__back{top:var(--hilal-v125-nav-top)!important;left:calc(var(--hilal-v125-menu-left) + var(--hilal-v125-size) + var(--hilal-v125-gap))!important;right:auto!important;bottom:auto!important;width:var(--hilal-v125-size)!important;height:var(--hilal-v125-size)!important;min-width:var(--hilal-v125-size)!important;min-height:var(--hilal-v125-size)!important;}
-@media(max-width:390px){:root{--hilal-v125-menu-left:max(14px,calc(env(safe-area-inset-left,0px) + 10px));--hilal-v125-gap:10px;--hilal-v125-size:46px;}}
-</style>
-<script id="hilal-v125-apk-nav-default-migration-js">
-(function(){
- 'use strict';
- var POS_KEY='hilal_global_menu_position_v3';
- var MIGRATION_KEY='hilal_nav_v125_apk_default_applied';
- function nav(){return window.hilalNavigation||null;}
- function resetOnce(){
-   try{if(localStorage.getItem(MIGRATION_KEY)!=='1'){localStorage.removeItem(POS_KEY);localStorage.setItem(MIGRATION_KEY,'1');}}
-   catch(_){ }
- }
- function apply(){
-   var n=nav(); if(!n||!n.menu)return;
-   var btn=n.menu;
-   var saved=null; try{saved=JSON.parse(localStorage.getItem(POS_KEY)||'null')}catch(_){ }
-   if(saved&&Number.isFinite(saved.left)&&Number.isFinite(saved.top)){
-     btn.classList.add('hilal-v125-user-position');
-     btn.style.setProperty('left',saved.left+'px','important');
-     btn.style.setProperty('top',saved.top+'px','important');
-   }else{
-     btn.classList.remove('hilal-v125-user-position');
-     btn.style.removeProperty('left');btn.style.removeProperty('top');btn.style.removeProperty('right');btn.style.removeProperty('bottom');
-   }
-   if(n.back)n.back.hidden=false;
- }
- resetOnce();
- function ready(){requestAnimationFrame(function(){apply();setTimeout(apply,120);});}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
- document.addEventListener('hilal:navigation-sync',function(){requestAnimationFrame(apply)});
- /* Kullanıcı ilk gerçek sürüklemede serbest konuma geçsin; mevcut HilalNavigation kaydı aynen çalışsın. */
- document.addEventListener('pointermove',function(e){
-   var n=nav(); if(n&&n.dragging&&n.menu)n.menu.classList.add('hilal-v125-user-position');
- },true);
+  'use strict';
+  var KEY='hilal_global_menu_position_v127';
+  var MIG='hilal_nav_v127_clean_motor_applied';
+  var LEGACY=['hilal_global_menu_position_v3','hilal_global_menu_position_v125','hilal_global_menu_position_v126'];
+  function nav(){return window.hilalNavigation||null;}
+  function clearLegacyOnce(){
+    try{
+      if(localStorage.getItem(MIG)!=='1'){
+        LEGACY.forEach(function(k){localStorage.removeItem(k);});
+        localStorage.removeItem(KEY); /* Bu sürüm ilk kez kurulunca kesin sol-üstten başlar. */
+        localStorage.setItem(MIG,'1');
+      }
+    }catch(_){ }
+  }
+  function readSaved(){
+    try{var p=JSON.parse(localStorage.getItem(KEY)||'null');return p&&Number.isFinite(p.left)&&Number.isFinite(p.top)?p:null;}catch(_){return null;}
+  }
+  function apply(){
+    var n=nav(); if(!n||!n.menu)return;
+    n.storageKey=KEY;
+    var b=n.menu,p=readSaved();
+    if(p){
+      b.classList.add('hilal-v127-user-position');
+      b.style.setProperty('left',p.left+'px','important');
+      b.style.setProperty('top',p.top+'px','important');
+      b.style.setProperty('right','auto','important');
+      b.style.setProperty('bottom','auto','important');
+    }else{
+      b.classList.remove('hilal-v125-user-position','hilal-v126-user-position','hilal-v127-user-position');
+      ['left','top','right','bottom','transform'].forEach(function(k){b.style.removeProperty(k);});
+    }
+  }
+  clearLegacyOnce();
+  function ready(){
+    apply();
+    requestAnimationFrame(apply);
+    setTimeout(apply,80);setTimeout(apply,350);setTimeout(apply,1000);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+  document.addEventListener('hilal:navigation-sync',function(){requestAnimationFrame(apply);});
+  document.addEventListener('pointermove',function(){
+    var n=nav(); if(n&&n.dragging&&n.menu)n.menu.classList.add('hilal-v127-user-position');
+  },true);
+  window.addEventListener('pageshow',function(){setTimeout(apply,0);});
 })();
 </script>
