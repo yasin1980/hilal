@@ -57075,3 +57075,70 @@ html body #hilalNavigation .hilal-navigation__back{
   window.addEventListener('pageshow',function(){setTimeout(apply,0);});
 })();
 </script>
+
+<!-- HILAL V128 — Yalnız seçili 8 sayfada Android üst navigasyon / ilk kart premium ayrımı -->
+<style id="hilal-v128-selected-pages-premium-top-layout">
+/*
+  Yalnız: Genel Duyurular, Genel Yayınlar, Takip Ettiklerim, Favoriler,
+  Günlük Virdler, Sünnet-i İhya, Öneri/Şikayet, Ayarlar.
+  Ortak hamburger + Ana Sayfa satırının altına gerçek bir içerik bandı açar.
+  Diğer sayfalar/sınıflar V127 davranışını aynen korur.
+*/
+#announcementsPage,
+#generalPublicationsPage,
+#guestFollowingPage,
+#favoritesPage,
+#dailyVirtPage,
+#sunnetIhyaPage,
+#feedbackCenterPage,
+#settingsPage{
+  --hilal-v128-content-gap:76px;
+}
+
+#mainApp > #announcementsPage > :first-child,
+#mainApp > #generalPublicationsPage > :first-child,
+#mainApp > #guestFollowingPage > :first-child,
+#mainApp > #favoritesPage > :first-child,
+#mainApp > #dailyVirtPage > :first-child,
+#mainApp > #sunnetIhyaPage > :first-child,
+#mainApp > #feedbackCenterPage > :first-child,
+#mainApp > #settingsPage > :first-child{
+  margin-top:var(--hilal-v128-content-gap)!important;
+  position:relative!important;
+  z-index:1!important;
+}
+
+/* Üst başlık kartının navigasyonla görsel rekabetini azalt: premium, hafif üst çizgi. */
+#announcementsPage > :first-child,
+#generalPublicationsPage > :first-child,
+#guestFollowingPage > :first-child,
+#favoritesPage > :first-child,
+#dailyVirtPage > :first-child,
+#sunnetIhyaPage > :first-child,
+#feedbackCenterPage > :first-child,
+#settingsPage > :first-child{
+  border-top-color:rgba(217,183,96,.48)!important;
+}
+
+/* Ortak navigasyon her zaman içerik kartlarının üst katmanında, fakat karta değmeden. */
+html body #hilalNavigation{
+  z-index:9000!important;
+}
+html body #hilalNavigation #mainMenuTrigger,
+html body #hilalNavigation .hilal-navigation__back{
+  z-index:9001!important;
+}
+
+@media(max-width:390px){
+  #announcementsPage,
+  #generalPublicationsPage,
+  #guestFollowingPage,
+  #favoritesPage,
+  #dailyVirtPage,
+  #sunnetIhyaPage,
+  #feedbackCenterPage,
+  #settingsPage{
+    --hilal-v128-content-gap:72px;
+  }
+}
+</style>
