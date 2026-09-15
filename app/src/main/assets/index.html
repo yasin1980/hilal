@@ -40342,7 +40342,7 @@ class HilalNavigation {
     this.root.style.setProperty('display',appOpen?'block':'none','important');
     if(!appOpen) return;
     this.roleMenuOpen();
-    this.back.hidden=this.isHome();
+    this.back.hidden=false; /* V124: Ana Sayfa butonu Takvim & Ezan dahil tüm navigasyon sınıflarında görünür. */
   }
   closeRoleMenus(){
     ['guestMenu','teacherMenu','adminMenu'].forEach(id=>document.getElementById(id)?.classList.add('hidden'));
@@ -56935,7 +56935,90 @@ ready(function(){
   padding-top:12px!important;
   overflow:visible!important;
 }
-#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{
+#hilalDuaPageV2 #hdtiGeneralVi
+<!-- HILAL V124 — ORTAK NAVİGASYON: İLK AÇILIŞ SOL ÜST + ANA SAYFA AYNI HİZA + SÜRÜKLEME KALICI -->
+<style id="hilal-v123-common-nav-position-fix">
+:root{
+  --hilal-v123-nav-top:calc(max(env(safe-area-inset-top, 0px), 48px) + 16px);
+  --hilal-v123-menu-left:max(18px, calc(env(safe-area-inset-left, 0px) + 14px));
+  --hilal-v123-gap:12px;
+  --hilal-v123-menu-size:48px;
+  --hilal-v123-home-size:48px;
+}
+#mainApp #mainMenuTrigger.hilal-navigation__menu,
+#mainApp #mainMenuTrigger.hilal-shared-menu-trigger-v94{
+  top:var(--hilal-v123-nav-top)!important;
+  left:var(--hilal-v123-menu-left)!important;
+  width:var(--hilal-v123-menu-size)!important;
+  height:var(--hilal-v123-menu-size)!important;
+  min-width:var(--hilal-v123-menu-size)!important;
+  min-height:var(--hilal-v123-menu-size)!important;
+  right:auto!important;bottom:auto!important;
+}
+#hilalNavigation .hilal-navigation__back{
+  top:var(--hilal-v123-nav-top)!important;
+  left:calc(var(--hilal-v123-menu-left) + var(--hilal-v123-menu-size) + var(--hilal-v123-gap))!important;
+  width:var(--hilal-v123-home-size)!important;
+  min-width:var(--hilal-v123-home-size)!important;
+  height:var(--hilal-v123-home-size)!important;
+  right:auto!important;bottom:auto!important;
+}
+/* Tüm ana navigasyon sayfalarının ilk içeriği ortak kontrol çizgisinden hafif aşağı başlar. */
+#mainApp > .page.active{
+  scroll-padding-top:calc(var(--hilal-v123-nav-top) + var(--hilal-v123-menu-size) + 12px)!important;
+}
+@media(max-width:390px){
+  :root{
+    --hilal-v123-menu-left:max(14px, calc(env(safe-area-inset-left, 0px) + 10px));
+    --hilal-v123-gap:10px;
+    --hilal-v123-menu-size:46px;
+    --hilal-v123-home-size:46px;
+  }
+}
+</style>
+<script id="hilal-v124-common-nav-default-and-drag-persist-js">
+(function(){
+  'use strict';
+  var POS_KEY='hilal_global_menu_position_v3';
+  var MIGRATION_KEY='hilal_nav_v124_default_applied';
+
+  function applyFirstOpenDefaultOnce(){
+    /* V124 ilk açılışta ortak başlangıç konumu: sol üst.
+       Bu işlem yalnız bir kez yapılır; sonrasında misafirin sürüklediği konum korunur. */
+    try{
+      if(localStorage.getItem(MIGRATION_KEY)!=='1'){
+        localStorage.removeItem(POS_KEY);
+        localStorage.setItem(MIGRATION_KEY,'1');
+      }
+    }catch(_){ }
+  }
+
+  function keepHomeVisible(){
+    var nav=window.hilalNavigation;
+    if(!nav || !nav.back) return;
+    if(nav.appIsOpen && nav.appIsOpen()) nav.back.hidden=false;
+  }
+
+  applyFirstOpenDefaultOnce();
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      requestAnimationFrame(function(){
+        try{ window.hilalNavigation?.restoreMenuPosition?.(); }catch(_){ }
+        keepHomeVisible();
+      });
+    },{once:true});
+  }else{
+    requestAnimationFrame(function(){
+      try{ window.hilalNavigation?.restoreMenuPosition?.(); }catch(_){ }
+      keepHomeVisible();
+    });
+  }
+  document.addEventListener('hilal:navigation-sync',function(){
+    requestAnimationFrame(keepHomeVisible);
+  });
+})();
+</script>
+ew.hdti-open > .hdti-head{
   position:relative!important;
   z-index:20!important;
   transform:none!important;
