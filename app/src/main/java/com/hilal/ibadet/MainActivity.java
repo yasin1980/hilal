@@ -1,709 +1,137 @@
-package com.hilal.ibadet;
+\
+package com.nsp112.hilal;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.KeyguardManager;
-import android.content.Intent;
-import android.content.Context;
-import android.content.ClipData;
+import android.app.*;
+import android.content.*;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Build;
-import android.os.PowerManager;
-import android.os.Vibrator;
-import android.os.VibrationEffect;
+import android.os.*;
 import android.provider.Settings;
-import android.util.Base64;
 import android.view.View;
-import android.view.HapticFeedbackConstants;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
-import android.webkit.GeolocationPermissions;
-import android.webkit.JavascriptInterface;
-import android.webkit.CookieManager;
-import android.webkit.WebResourceRequest;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import org.json.JSONObject;
-import org.json.JSONArray;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.lang.ref.WeakReference;
+import android.webkit.*;
+import java.util.*;
 
 public class MainActivity extends Activity {
-    private static WeakReference<MainActivity> foregroundActivity = new WeakReference<>(null);
     private WebView webView;
-    private String pendingReminderId = "";
-    private ValueCallback<Uri[]> fileCallback;
-    private static final int FILE_PICKER_REQUEST = 9001;
-    private static final int LOCATION_PERMISSION_REQUEST = 1001;
-    private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String PERMISSION_PREFS = "hilal_permission_setup_v1";
-    private SensorManager sensorManager;
-    private Sensor rotationSensor;
-    private Sensor accelerometer;
-    private Sensor magnetometer;
-    private SensorEventListener compassListener;
-    private final float[] rotationMatrix = new float[9];
-    private final float[] orientationValues = new float[3];
-    private final float[] gravityValues = new float[3];
-    private final float[] magneticValues = new float[3];
-    private boolean haveGravity = false;
-    private boolean haveMagnetic = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ReminderReceiver.stopActiveSound();
-        // Namaz vakti bildirimini uygulama açılır açılmaz yeniden başlat.
-        // Böylece uygulama içindeki WebView ekranından bağımsız olarak
-        // telefonda sürekli/ongoing bildirim olarak çalışmaya devam eder.
-        try {
-            PrayerStatusScheduler.scheduleNext(this, 1200L);
-        } catch (Exception ignored) { }
-        pendingReminderId = getIntent() == null ? "" :
-                getIntent().getStringExtra("hilalReminderId");
-        if (pendingReminderId == null) pendingReminderId = "";
+    @Override public void onCreate(Bundle b) {
+        super.onCreate(b);
+        setContentView(R.layout.activity_main);
+        webView = findViewById(R.id.webView);
 
-        if (android.os.Build.VERSION.SDK_INT >= 30) {
-            getWindow().setDecorFitsSystemWindows(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(android.graphics.Color.rgb(0,63,47));
+            getWindow().setNavigationBarColor(android.graphics.Color.rgb(0,63,47));
         }
-        getWindow().setStatusBarColor(0xFF061A14);
-        getWindow().setNavigationBarColor(0xFF061A14);
 
-        webView = new WebView(this);
-        webView.setFitsSystemWindows(true);
-        webView.setHapticFeedbackEnabled(true);
-        HilalAndroidBridge bridge = new HilalAndroidBridge();
-        webView.addJavascriptInterface(bridge, "HilalAndroid");
-        webView.addJavascriptInterface(bridge, "AndroidHilal");
-        setContentView(webView);
-
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setDatabaseEnabled(true);
-        settings.setGeolocationEnabled(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccessFromFileURLs(false);
-        settings.setAllowUniversalAccessFromFileURLs(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setSafeBrowsingEnabled(true);
-        settings.setMediaPlaybackRequiresUserGesture(false);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
-        WebView.setWebContentsDebuggingEnabled(false);
+        WebSettings s = webView.getSettings();
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
+        s.setAllowFileAccess(true);
+        s.setAllowContentAccess(true);
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setLoadWithOverviewMode(false);
+        s.setUseWideViewPort(true);
+        s.setTextZoom(100);
+        if (Build.VERSION.SDK_INT >= 21) s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
         webView.setWebViewClient(new WebViewClient() {
-            private boolean handleExternal(Uri uri) {
-                if (uri == null) return true;
-                String value = uri.toString();
-                if (value.startsWith("file:///android_asset/") || value.startsWith("about:blank") ||
-                        value.startsWith("blob:") || value.startsWith("data:")) return false;
-                try {
-                    Intent external = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(external);
-                } catch (Exception ignored) { }
+            @Override public void onPageFinished(WebView v, String url) {
+                super.onPageFinished(v,url);
+            }
+            @Override public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
+                Uri u = r.getUrl();
+                if ("file".equals(u.getScheme())) return false;
+                try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch(Exception ignored){}
                 return true;
             }
-            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return handleExternal(request == null ? null : request.getUrl());
-            }
-            @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return handleExternal(url == null ? null : Uri.parse(url));
-            }
-            @Override public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                // Büyük yerel HTML tamamen hazır olmadan bildirim hedefini tüketme.
-                view.postDelayed(() -> dispatchReminderTarget(getIntent()), 250L);
-                view.postDelayed(() -> dispatchReminderTarget(getIntent()), 1200L);
+            @Override public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
+                super.onReceivedError(v,r,e);
             }
         });
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback,
-                                             FileChooserParams params) {
-                if (fileCallback != null) fileCallback.onReceiveValue(null);
-                fileCallback = callback;
+        webView.setWebChromeClient(new WebChromeClient());
+
+        HilalBridge bridge = new HilalBridge(this);
+        webView.addJavascriptInterface(bridge, "AndroidHilal");
+        webView.addJavascriptInterface(bridge, "HilalAndroid");
+        webView.addJavascriptInterface(bridge, "Android");
+
+        requestNotificationPermission();
+        webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 112);
+        }
+    }
+
+    @Override public void onBackPressed() {
+        if (webView != null && webView.canGoBack()) webView.goBack();
+        else super.onBackPressed();
+    }
+
+    public static class HilalBridge {
+        private final Activity a;
+        HilalBridge(Activity a){ this.a=a; }
+
+        @JavascriptInterface public boolean hasReminderAccess() {
+            if (Build.VERSION.SDK_INT < 31) return true;
+            AlarmManager am=(AlarmManager)a.getSystemService(ALARM_SERVICE);
+            return am.canScheduleExactAlarms();
+        }
+
+        @JavascriptInterface public void requestReminderAccess() {
+            if (Build.VERSION.SDK_INT >= 31 && !hasReminderAccess()) {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                    String[] accepted = params.getAcceptTypes();
-                    String requestedType = "*/*";
-                    ArrayList<String> acceptedTypes = new ArrayList<>();
-                    if (accepted != null) {
-                        for (String group : accepted) {
-                            if (group == null) continue;
-                            for (String rawType : group.split(",")) {
-                                String type = rawType.trim();
-                                if (type.isEmpty() || type.startsWith(".")) continue;
-                                if (!acceptedTypes.contains(type)) acceptedTypes.add(type);
-                            }
-                        }
-                    }
-                    if (acceptedTypes.size() == 1) requestedType = acceptedTypes.get(0);
-                    else if (!acceptedTypes.isEmpty())
-                        intent.putExtra(Intent.EXTRA_MIME_TYPES, acceptedTypes.toArray(new String[0]));
-                    intent.setType(requestedType);
-                    if (params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE)
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                    startActivityForResult(intent, FILE_PICKER_REQUEST);
-                    return true;
-                } catch (Exception error) {
-                    fileCallback = null;
-                    return false;
-                }
+                    Intent i=new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.parse("package:"+a.getPackageName()));
+                    a.startActivity(i);
+                } catch(Exception ignored){}
             }
-
-            @Override
-            public void onGeolocationPermissionsShowPrompt(String origin,
-                                                            GeolocationPermissions.Callback callback) {
-                boolean granted = checkSelfPermission(
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                        checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                if (!granted) requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-                boolean trustedOrigin = origin != null && origin.startsWith("file://");
-                callback.invoke(origin, granted && trustedOrigin, false);
-            }
-        });
-
-        if (savedInstanceState == null) webView.loadUrl("file:///android_asset/index.html");
-        else webView.restoreState(savedInstanceState);
-
-        webView.postDelayed(this::startInitialPermissionFlow, 700L);
-    }
-
-    private void startInitialPermissionFlow() {
-        if (getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
-                .getBoolean("initial_flow_completed", false)) return;
-        continueInitialPermissionFlow();
-    }
-
-    private void continueInitialPermissionFlow() {
-        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED && !getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
-                .getBoolean("notification_asked", false)) {
-            getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
-                    .putBoolean("notification_asked", true).apply();
-            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                    NOTIFICATION_PERMISSION_REQUEST);
-            return;
-        }
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                !getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
-                .getBoolean("location_asked", false)) {
-            getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
-                    .putBoolean("location_asked", true).apply();
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-            return;
-        }
-        requestExactAlarmAccess(false);
-        getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
-                .putBoolean("initial_flow_completed", true).apply();
-    }
-
-    private void requestExactAlarmAccess(boolean force) {
-        if (Build.VERSION.SDK_INT < 31) return;
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (alarm == null || alarm.canScheduleExactAlarms()) return;
-        if (!force && getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
-                .getBoolean("exact_screen_opened", false)) return;
-        try {
-            getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
-                    .putBoolean("exact_screen_opened", true).apply();
-            Intent settingsIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                    Uri.parse("package:" + getPackageName()));
-            startActivity(settingsIntent);
-        } catch (Exception ignored) { }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST || requestCode == LOCATION_PERMISSION_REQUEST) {
-            webView.postDelayed(this::continueInitialPermissionFlow, 300L);
-        }
-    }
-
-    public class HilalAndroidBridge {
-        @JavascriptInterface
-        public void stopReminderSound() {
-            ReminderReceiver.stopActiveSound();
         }
 
-        @JavascriptInterface
-        public void playSystemNotificationSound() {
+        @JavascriptInterface public void scheduleReminder(String json) {
+            ReminderScheduler.schedule(a, json);
+        }
+
+        @JavascriptInterface public void cancelReminder(String id) {
+            ReminderScheduler.cancel(a, id);
+        }
+
+        @JavascriptInterface public void cancelReminderPrefix(String prefix) {
+            ReminderScheduler.cancelPrefix(a, prefix);
+        }
+
+        @JavascriptInterface public void exitApp() { a.finish(); }
+
+        @JavascriptInterface public double getNotificationVolumeRatio() {
+            AudioManager m=(AudioManager)a.getSystemService(AUDIO_SERVICE);
+            int max=m.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+            return max<=0 ? 0 : (double)m.getStreamVolume(AudioManager.STREAM_NOTIFICATION)/max;
+        }
+
+        @JavascriptInterface public void playSystemNotificationSound() {
             try {
-                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                if (uri == null) return;
-                android.media.Ringtone ringtone = RingtoneManager.getRingtone(MainActivity.this, uri);
-                if (ringtone != null) ringtone.play();
-            } catch (Exception ignored) { }
+                Uri uri=android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION);
+                android.media.Ringtone r=android.media.RingtoneManager.getRingtone(a,uri);
+                if(r!=null) r.play();
+            } catch(Exception ignored){}
         }
 
-        @JavascriptInterface
-        public double getNotificationVolumeRatio() {
-            AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            if (audio == null) return 0.0;
-            int max = audio.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
-            int current = audio.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
-            return max > 0 ? (double) current / (double) max : 0.0;
+        @JavascriptInterface public void shareContent(String title,String text,String dataUrl) {
+            Intent i=new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT,title);
+            i.putExtra(Intent.EXTRA_TEXT,text);
+            a.startActivity(Intent.createChooser(i,title));
         }
 
-        @JavascriptInterface
-        public void performHaptic(int kind) {
-            try {
-                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (vibrator == null || !vibrator.hasVibrator()) return;
-                long[] pattern = kind > 0
-                        ? new long[]{0, 70, 55, 110}
-                        : new long[]{0, 22};
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
-                } else {
-                    vibrator.vibrate(pattern, -1);
-                }
-            } catch (Exception ignored) { }
+        @JavascriptInterface public void shareFiles(String title,String text,String payload) {
+            shareContent(title,text,"");
         }
-
-        @JavascriptInterface
-        public synchronized String consumePendingReminderId() {
-            // Geriye uyumlu isim; hedef yalnızca JS gerçekten açtığını bildirdiğinde silinir.
-            return pendingReminderId == null ? "" : pendingReminderId;
-        }
-
-        @JavascriptInterface
-        public synchronized void acknowledgePendingReminderId(String id) {
-            if (id != null && id.equals(pendingReminderId)) pendingReminderId = "";
-        }
-
-        @JavascriptInterface
-        public void scheduleReminder(String json) {
-            try {
-                JSONObject data = new JSONObject(json);
-                String id = data.optString("id", "hilal-reminder");
-                long whenMs = data.optLong("whenMs", 0L);
-                if (whenMs <= System.currentTimeMillis()) return;
-                String soundData = data.optString("soundData", "");
-                File audioFile = new File(getFilesDir(), "reminder_" + id.hashCode() + ".mp3");
-                if (soundData.startsWith("data:audio/")) {
-                    int comma = soundData.indexOf(',');
-                    if (comma > 0) {
-                        byte[] bytes = Base64.decode(soundData.substring(comma + 1), Base64.DEFAULT);
-                        try (FileOutputStream output = new FileOutputStream(audioFile)) {
-                            output.write(bytes);
-                        }
-                        data.put("soundPath", audioFile.getAbsolutePath());
-                    }
-                } else if (!data.optString("soundUrl", "").isEmpty()) {
-                    String soundUrl = data.optString("soundUrl", "");
-                    data.put("soundPath", audioFile.getAbsolutePath());
-                    new Thread(() -> {
-                        try (InputStream input = new URL(soundUrl).openStream();
-                             FileOutputStream output = new FileOutputStream(audioFile)) {
-                            byte[] buffer = new byte[8192]; int count;
-                            while ((count = input.read(buffer)) > 0) output.write(buffer, 0, count);
-                        } catch (Exception ignored) { }
-                        data.remove("soundData");
-                        data.remove("soundUrl");
-                        ReminderScheduler.schedule(MainActivity.this, data, true);
-                    }).start();
-                    return;
-                }
-                data.remove("soundData");
-                data.remove("soundUrl");
-                ReminderScheduler.schedule(MainActivity.this, data, true);
-            } catch (Exception ignored) { }
-        }
-
-        @JavascriptInterface
-        public boolean startNativeCompass() {
-            return MainActivity.this.startNativeCompassInternal();
-        }
-
-        @JavascriptInterface
-        public void stopNativeCompass() {
-            MainActivity.this.stopNativeCompassInternal();
-        }
-
-        @JavascriptInterface
-        public void requestNativeLocation() {
-            runOnUiThread(() -> {
-                try {
-                    if (Build.VERSION.SDK_INT >= 23 &&
-                            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                            checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-                        return;
-                    }
-                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    if (lm == null) return;
-                    Location best = null;
-                    String[] providers = new String[]{LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER};
-                    for (String provider : providers) {
-                        try {
-                            if (!lm.isProviderEnabled(provider)) continue;
-                            Location last = lm.getLastKnownLocation(provider);
-                            if (last != null && (best == null || last.getTime() > best.getTime())) best = last;
-                        } catch (Exception ignored) { }
-                    }
-                    if (best != null) {
-                        sendNativeLocation(best);
-                    }
-                    final LocationListener listener = new LocationListener() {
-                        @Override public void onLocationChanged(Location location) {
-                            sendNativeLocation(location);
-                            try { lm.removeUpdates(this); } catch (Exception ignored) { }
-                        }
-                    };
-                    for (String provider : providers) {
-                        try {
-                            if (lm.isProviderEnabled(provider)) lm.requestLocationUpdates(provider, 1000L, 5f, listener);
-                        } catch (Exception ignored) { }
-                    }
-                    webView.postDelayed(() -> { try { lm.removeUpdates(listener); } catch (Exception ignored) { } }, 12000L);
-                } catch (Exception ignored) { }
-            });
-        }
-
-        private void sendNativeLocation(Location location) {
-            if (location == null || webView == null) return;
-            final double lat = location.getLatitude();
-            final double lon = location.getLongitude();
-            final float acc = location.hasAccuracy() ? location.getAccuracy() : 0f;
-            webView.post(() -> webView.evaluateJavascript(
-                    "window.__hilalNativeLocation && window.__hilalNativeLocation(" + lat + "," + lon + "," + acc + ");", null));
-        }
-
-        @JavascriptInterface
-        public void updatePrayerStatus(String json) {
-            try {
-                getSharedPreferences("hilal_prayer_status_v1", MODE_PRIVATE)
-                        .edit().putString("times", json == null ? "" : json).apply();
-                PrayerStatusScheduler.showNow(MainActivity.this);
-            } catch (Exception ignored) { }
-        }
-
-        @JavascriptInterface
-        public void cancelReminder(String id) {
-            ReminderScheduler.cancel(MainActivity.this, id);
-        }
-
-        @JavascriptInterface
-        public void cancelReminderPrefix(String prefix) {
-            ReminderScheduler.cancelPrefix(MainActivity.this, prefix == null ? "" : prefix);
-        }
-
-        @JavascriptInterface
-        public boolean hasReminderAccess() {
-            boolean notifications = Build.VERSION.SDK_INT < 33 ||
-                    checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
-            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            boolean exact = Build.VERSION.SDK_INT < 31 || alarm == null || alarm.canScheduleExactAlarms();
-            return notifications && exact;
-        }
-
-        @JavascriptInterface
-        public void requestReminderAccess() {
-            runOnUiThread(() -> {
-                if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    boolean asked = getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
-                            .getBoolean("notification_asked", false);
-                    if (!asked || shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
-                                .putBoolean("notification_asked", true).apply();
-                        requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                                NOTIFICATION_PERMISSION_REQUEST);
-                    } else {
-                        try {
-                            Intent settingsIntent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                            settingsIntent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                            startActivity(settingsIntent);
-                        } catch (Exception ignored) { }
-                    }
-                    return;
-                }
-                requestExactAlarmAccess(true);
-            });
-        }
-
-        @JavascriptInterface
-        public void shareContent(String title, String text, String imageDataUrl) {
-            try {
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.putExtra(Intent.EXTRA_SUBJECT, title == null ? "Hilâl" : title);
-                share.putExtra(Intent.EXTRA_TEXT, text == null ? "" : text);
-                boolean hasImage = imageDataUrl != null && imageDataUrl.startsWith("data:image/");
-                if (hasImage) {
-                    int comma = imageDataUrl.indexOf(',');
-                    byte[] bytes = Base64.decode(imageDataUrl.substring(comma + 1), Base64.DEFAULT);
-                    File shareDir = new File(getCacheDir(), "shared_virds");
-                    if (!shareDir.exists()) shareDir.mkdirs();
-                    File[] oldFiles = shareDir.listFiles();
-                    if (oldFiles != null) for (File oldFile : oldFiles) oldFile.delete();
-                    File outputFile = new File(shareDir, "hilal_paylasim.png");
-                    try (FileOutputStream output = new FileOutputStream(outputFile)) { output.write(bytes); }
-                    Uri uri = HilalShareProvider.uriFor(MainActivity.this, outputFile);
-                    share.setType("image/png");
-                    share.putExtra(Intent.EXTRA_STREAM, uri);
-                    share.setClipData(ClipData.newRawUri("Hilâl paylaşım kartı", uri));
-                    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } else share.setType("text/plain");
-                runOnUiThread(() -> startActivity(Intent.createChooser(share, "Hilâl paylaşımını gönder")));
-            } catch (Exception error) {
-                runOnUiThread(() -> {
-                    Intent fallback = new Intent(Intent.ACTION_SEND);
-                    fallback.setType("text/plain");
-                    fallback.putExtra(Intent.EXTRA_SUBJECT, title == null ? "Hilâl" : title);
-                    fallback.putExtra(Intent.EXTRA_TEXT, text == null ? "" : text);
-                    startActivity(Intent.createChooser(fallback, "Hilâl paylaşımını gönder"));
-                });
-            }
-        }
-
-        @JavascriptInterface
-        public void shareFiles(String title, String text, String filesJson) {
-            try {
-                JSONArray files = new JSONArray(filesJson == null ? "[]" : filesJson);
-                if (files.length() > 5) throw new IllegalArgumentException("Çok fazla paylaşım dosyası");
-                ArrayList<Uri> uris = new ArrayList<>();
-                ArrayList<String> mimeTypes = new ArrayList<>();
-                long totalBytes = 0L;
-                File shareDir = new File(getCacheDir(), "shared_virds");
-                if (!shareDir.exists()) shareDir.mkdirs();
-                File[] oldFiles = shareDir.listFiles();
-                if (oldFiles != null) for (File oldFile : oldFiles) oldFile.delete();
-
-                for (int i = 0; i < files.length(); i++) {
-                    JSONObject entry = files.optJSONObject(i);
-                    if (entry == null) continue;
-                    String dataUrl = entry.optString("dataUrl", "");
-                    int comma = dataUrl.indexOf(',');
-                    if (comma < 0) continue;
-                    if (dataUrl.length() > 42_000_000) throw new IllegalArgumentException("Dosya çok büyük");
-                    String mime = entry.optString("type", "application/octet-stream");
-                    String name = entry.optString("name", "hilal-dosya").replaceAll("[^a-zA-Z0-9._-]", "-");
-                    if (name.isEmpty()) name = "hilal-dosya-" + i;
-                    byte[] bytes = Base64.decode(dataUrl.substring(comma + 1), Base64.DEFAULT);
-                    totalBytes += bytes.length;
-                    if (totalBytes > 32L * 1024L * 1024L) throw new IllegalArgumentException("Paylaşım boyutu çok büyük");
-                    File outputFile = new File(shareDir, i + "-" + name);
-                    try (FileOutputStream output = new FileOutputStream(outputFile)) { output.write(bytes); }
-                    uris.add(HilalShareProvider.uriFor(MainActivity.this, outputFile));
-                    mimeTypes.add(mime);
-                }
-
-                Intent share = new Intent(uris.size() > 1 ? Intent.ACTION_SEND_MULTIPLE : Intent.ACTION_SEND);
-                share.putExtra(Intent.EXTRA_SUBJECT, title == null ? "Hilâl" : title);
-                share.putExtra(Intent.EXTRA_TEXT, text == null ? "" : text);
-                if (uris.size() > 1) share.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                else if (uris.size() == 1) share.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-                if (!uris.isEmpty()) {
-                    ClipData clip = ClipData.newRawUri("Hilâl paylaşım dosyaları", uris.get(0));
-                    for (int i = 1; i < uris.size(); i++) clip.addItem(new ClipData.Item(uris.get(i)));
-                    share.setClipData(clip);
-                }
-                String commonType = mimeTypes.isEmpty() ? "text/plain" : mimeTypes.get(0);
-                for (String mime : mimeTypes) if (!mime.equals(commonType)) { commonType = "*/*"; break; }
-                share.setType(commonType);
-                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                runOnUiThread(() -> startActivity(Intent.createChooser(share, "Hilâl paylaşımını gönder")));
-            } catch (Exception error) {
-                shareContent(title, text, "");
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != FILE_PICKER_REQUEST || fileCallback == null) return;
-        Uri[] files = null;
-        if (resultCode == RESULT_OK && data != null) {
-            if (data.getClipData() != null) {
-                int count = data.getClipData().getItemCount();
-                files = new Uri[count];
-                for (int i = 0; i < count; i++) files[i] = data.getClipData().getItemAt(i).getUri();
-            } else if (data.getData() != null) {
-                Uri uri = data.getData();
-                try {
-                    getContentResolver().takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } catch (Exception ignored) { }
-                files = new Uri[]{uri};
-            }
-        }
-        fileCallback.onReceiveValue(files);
-        fileCallback = null;
-    }
-
-    private synchronized boolean startNativeCompassInternal() {
-        try {
-            if (sensorManager == null) sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            if (sensorManager == null) return false;
-            if (rotationSensor == null) rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-            if (accelerometer == null) accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            if (magnetometer == null) magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            final Sensor useRotation = rotationSensor;
-            if (useRotation == null && (accelerometer == null || magnetometer == null)) return false;
-            if (compassListener != null) {
-                try { sensorManager.unregisterListener(compassListener); } catch (Exception ignored) {}
-            }
-            compassListener = new SensorEventListener() {
-                @Override public void onSensorChanged(SensorEvent event) {
-                    try {
-                        float azimuth;
-                        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-                            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-                        } else {
-                            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                                System.arraycopy(event.values, 0, gravityValues, 0, Math.min(3, event.values.length));
-                                haveGravity = true;
-                            } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-                                System.arraycopy(event.values, 0, magneticValues, 0, Math.min(3, event.values.length));
-                                haveMagnetic = true;
-                            }
-                            if (!haveGravity || !haveMagnetic ||
-                                    !SensorManager.getRotationMatrix(rotationMatrix, null, gravityValues, magneticValues)) return;
-                        }
-                        SensorManager.getOrientation(rotationMatrix, orientationValues);
-                        azimuth = (float) Math.toDegrees(orientationValues[0]);
-                        if (azimuth < 0) azimuth += 360f;
-                        final float heading = azimuth;
-                        if (webView != null) webView.post(() -> webView.evaluateJavascript(
-                                "window.__hilalNativeCompass && window.__hilalNativeCompass(" + heading + ");", null));
-                    } catch (Exception ignored) {}
-                }
-                @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-            };
-            if (useRotation != null) {
-                return sensorManager.registerListener(compassListener, useRotation, SensorManager.SENSOR_DELAY_GAME);
-            }
-            boolean a = sensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-            boolean m = sensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_GAME);
-            return a && m;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
-
-    private synchronized void stopNativeCompassInternal() {
-        try {
-            if (sensorManager != null && compassListener != null) sensorManager.unregisterListener(compassListener);
-        } catch (Exception ignored) {}
-        compassListener = null;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        webView.saveState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        foregroundActivity = new WeakReference<>(this);
-        ReminderScheduler.restoreAll(this);
-        if (webView != null) {
-            webView.postDelayed(() -> webView.evaluateJavascript(
-                    "try{syncAllRemindersToNative();syncEzanRemindersToNative();syncVirtRemindersToNative()}catch(e){}",
-                    null), 800L);
-            webView.postDelayed(() -> dispatchReminderTarget(getIntent()), 1200L);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopNativeCompassInternal();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        MainActivity active = foregroundActivity.get();
-        if (active == this) foregroundActivity.clear();
-        super.onPause();
-    }
-
-    static boolean deliverForegroundReminder(String id, String title, String body) {
-        MainActivity activity = foregroundActivity.get();
-        if (activity == null || activity.webView == null || activity.isFinishing()) return false;
-        PowerManager power = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-        KeyguardManager keyguard = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
-        if ((power != null && !power.isInteractive()) ||
-                (keyguard != null && keyguard.isKeyguardLocked())) return false;
-        activity.runOnUiThread(() -> activity.webView.evaluateJavascript(
-                "try{window.hilalShowForegroundReminder&&window.hilalShowForegroundReminder(" +
-                        JSONObject.quote(id == null ? "" : id) + "," +
-                        JSONObject.quote(title == null ? "Hilâl Hatırlatıcı" : title) + "," +
-                        JSONObject.quote(body == null ? "Hatırlatma zamanı" : body) + ")}catch(e){}", null));
-        return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        ReminderReceiver.stopActiveSound();
-        setIntent(intent);
-        String incoming = intent == null ? null : intent.getStringExtra("hilalReminderId");
-        if (incoming != null && !incoming.isEmpty()) pendingReminderId = incoming;
-        if (webView != null) webView.postDelayed(() -> dispatchReminderTarget(intent), 250L);
-    }
-
-    private void dispatchReminderTarget(Intent intent) {
-        if (webView == null || intent == null) return;
-        String id = intent.getStringExtra("hilalReminderId");
-        if ((id == null || id.isEmpty()) && pendingReminderId != null) id = pendingReminderId;
-        if (id == null || id.isEmpty()) return;
-        final String targetId = id;
-        webView.evaluateJavascript(
-                "(function(){try{if(typeof window.hilalOpenReminderTarget==='function'){" +
-                        "return window.hilalOpenReminderTarget(" + JSONObject.quote(targetId) + ")===true}" +
-                        "return false}catch(e){return false}})()", handled -> {
-                    if ("true".equals(handled)) {
-                        if (targetId.equals(pendingReminderId)) pendingReminderId = "";
-                        intent.removeExtra("hilalReminderId");
-                    }
-                });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView == null) {
-            super.onBackPressed();
-            return;
-        }
-        webView.evaluateJavascript(
-                "(function(){try{return !!(window.hilalHandleAndroidBack&&window.hilalHandleAndroidBack())}catch(e){return false}})()",
-                handled -> {
-                    if ("true".equals(handled)) return;
-                    if (webView.canGoBack()) webView.goBack();
-                    else MainActivity.super.onBackPressed();
-                });
     }
 }

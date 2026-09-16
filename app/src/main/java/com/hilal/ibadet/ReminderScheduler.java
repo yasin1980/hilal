@@ -1,123 +1,60 @@
-package com.hilal.ibadet;
+\
+package com.nsp112.hilal;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.app.*;
+import android.content.*;
 import android.os.Build;
 import org.json.JSONObject;
-import java.util.Map;
+import java.util.*;
 
-final class ReminderScheduler {
-    private static final String STORE = "hilal_native_reminders_v1";
+public final class ReminderScheduler {
+    private static final String PREF="hilal_native_reminders";
 
-    private ReminderScheduler() { }
+    static int code(String id){ return id==null?0:id.hashCode(); }
 
-    static boolean schedule(Context context, JSONObject data, boolean persist) {
+    public static void schedule(Context c,String json) {
         try {
-            String id = data.optString("id", "hilal-reminder");
-            long whenMs = data.optLong("whenMs", 0L);
-            if (whenMs <= System.currentTimeMillis()) return false;
+            JSONObject o=new JSONObject(json);
+            String id=o.optString("id", UUID.randomUUID().toString());
+            long when=o.optLong("whenMs",0);
+            if(when<=0) return;
 
-            Intent intent = new Intent(context, ReminderReceiver.class);
-            intent.setAction("com.hilal.ibadet.REMINDER." + id);
-            intent.putExtra("id", id);
-            intent.putExtra("title", data.optString("title", "Hilâl Hatırlatıcı"));
-            intent.putExtra("body", data.optString("body", "Hatırlatma zamanı"));
-            intent.putExtra("repeatMs", data.optLong("repeatMs", 0L));
-            intent.putExtra("sound", data.optString("sound", "phone"));
-            intent.putExtra("soundPath", data.optString("soundPath", ""));
-            // Normal hatırlatıcı zil sesi varsayılan olarak her zaman aktif.
-            intent.putExtra("soundEnabled", data.optBoolean("soundEnabled", true));
+            c.getSharedPreferences(PREF,Context.MODE_PRIVATE).edit().putString(id,json).apply();
 
-            PendingIntent pending = PendingIntent.getBroadcast(context, id.hashCode(), intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            if (alarm == null) return false;
+            Intent i=new Intent(c,ReminderReceiver.class);
+            i.putExtra("json",json);
+            PendingIntent pi=PendingIntent.getBroadcast(c,code(id),i,
+                PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0));
 
-            try {
-                if (Build.VERSION.SDK_INT >= 31 && !alarm.canScheduleExactAlarms()) {
-                    alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenMs, pending);
-                } else {
-                    alarm.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenMs, pending);
-                }
-            } catch (SecurityException denied) {
-                alarm.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenMs, pending);
+            AlarmManager am=(AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+            if(Build.VERSION.SDK_INT>=31 && !am.canScheduleExactAlarms()){
+                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,when,pi);
+            } else if(Build.VERSION.SDK_INT>=23){
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,when,pi);
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP,when,pi);
             }
+        } catch(Exception ignored){}
+    }
 
-            if (persist) preferences(context).edit().putString(id, data.toString()).apply();
-            return true;
-        } catch (Exception ignored) {
-            return false;
+    public static void cancel(Context c,String id) {
+        Intent i=new Intent(c,ReminderReceiver.class);
+        PendingIntent pi=PendingIntent.getBroadcast(c,code(id),i,
+            PendingIntent.FLAG_NO_CREATE | (Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0));
+        if(pi!=null){
+            ((AlarmManager)c.getSystemService(Context.ALARM_SERVICE)).cancel(pi);
+            pi.cancel();
         }
+        c.getSharedPreferences(PREF,Context.MODE_PRIVATE).edit().remove(id).apply();
     }
 
-    static void cancel(Context context, String id) {
-        Intent intent = new Intent(context, ReminderReceiver.class);
-        intent.setAction("com.hilal.ibadet.REMINDER." + id);
-        PendingIntent pending = PendingIntent.getBroadcast(context, id.hashCode(), intent,
-                PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
-        AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarm != null && pending != null) alarm.cancel(pending);
-        if (pending != null) pending.cancel();
-        preferences(context).edit().remove(id).apply();
+    public static void cancelPrefix(Context c,String prefix) {
+        Map<String,?> all=c.getSharedPreferences(PREF,Context.MODE_PRIVATE).getAll();
+        for(String id:new ArrayList<>(all.keySet())) if(id.startsWith(prefix)) cancel(c,id);
     }
 
-    static void cancelPrefix(Context context, String prefix) {
-        if (prefix == null || prefix.isEmpty()) return;
-        for (String id : preferences(context).getAll().keySet()) {
-            if (id.startsWith(prefix)) cancel(context, id);
-        }
-    }
-
-    static void afterFire(Context context, Intent source) {
-        String id = source.getStringExtra("id");
-        if (id == null) return;
-        long repeatMs = source.getLongExtra("repeatMs", 0L);
-        if (repeatMs <= 0L) {
-            preferences(context).edit().remove(id).apply();
-            return;
-        }
-        try {
-            String raw = preferences(context).getString(id, null);
-            JSONObject data = raw == null ? new JSONObject() : new JSONObject(raw);
-            data.put("id", id);
-            data.put("title", source.getStringExtra("title"));
-            data.put("body", source.getStringExtra("body"));
-            data.put("repeatMs", repeatMs);
-            data.put("sound", source.getStringExtra("sound"));
-            data.put("soundPath", source.getStringExtra("soundPath"));
-            data.put("soundEnabled", source.getBooleanExtra("soundEnabled", true));
-            long previous = Math.max(data.optLong("whenMs", 0L), System.currentTimeMillis());
-            long next = previous + repeatMs;
-            while (next <= System.currentTimeMillis() + 1000L) next += repeatMs;
-            data.put("whenMs", next);
-            schedule(context, data, true);
-        } catch (Exception ignored) { }
-    }
-
-    static void restoreAll(Context context) {
-        Map<String, ?> all = preferences(context).getAll();
-        long now = System.currentTimeMillis();
-        for (Map.Entry<String, ?> entry : all.entrySet()) {
-            try {
-                JSONObject data = new JSONObject(String.valueOf(entry.getValue()));
-                long whenMs = data.optLong("whenMs", 0L);
-                long repeatMs = data.optLong("repeatMs", 0L);
-                if (whenMs <= now && repeatMs > 0L) {
-                    while (whenMs <= now + 1000L) whenMs += repeatMs;
-                    data.put("whenMs", whenMs);
-                }
-                if (whenMs > now) schedule(context, data, true);
-                else preferences(context).edit().remove(entry.getKey()).apply();
-            } catch (Exception ignored) {
-                preferences(context).edit().remove(entry.getKey()).apply();
-            }
-        }
-    }
-
-    private static SharedPreferences preferences(Context context) {
-        return context.getSharedPreferences(STORE, Context.MODE_PRIVATE);
+    public static void restoreAll(Context c) {
+        Map<String,?> all=c.getSharedPreferences(PREF,Context.MODE_PRIVATE).getAll();
+        for(Object v:all.values()) if(v instanceof String) schedule(c,(String)v);
     }
 }

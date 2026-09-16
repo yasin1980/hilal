@@ -1,12 +1,6 @@
-package com.hilal.ibadet;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-
+\
+package com.nsp112.hilal;
+import android.content.*;
 public class ReminderRestoreReceiver extends BroadcastReceiver {
-    @Override public void onReceive(Context context, Intent intent) {
-        ReminderScheduler.restoreAll(context);
-        PrayerStatusScheduler.scheduleNext(context, 1000L);
-    }
+    @Override public void onReceive(Context c,Intent i){ ReminderScheduler.restoreAll(c); }
 }
