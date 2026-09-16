@@ -1,4 +1,4 @@
-\
+
 package com.hilal.ibadet;
 import android.content.*;
 public class ReminderRestoreReceiver extends BroadcastReceiver {
