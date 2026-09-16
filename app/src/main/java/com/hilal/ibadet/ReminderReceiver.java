@@ -1,5 +1,5 @@
 \
-package com.nsp112.hilal;
+package com.hilal.ibadet;
 
 import android.app.*;
 import android.content.*;
