@@ -19,6 +19,19 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.os.VibrationEffect;
+import android.os.CancellationSignal;
+import android.content.MutableContextWrapper;
+
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
+
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
@@ -56,6 +69,8 @@ public class MainActivity extends Activity {
     private static final int FILE_PICKER_REQUEST = 9001;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
+    private static final String GOOGLE_WEB_CLIENT_ID = "795218526269-62iltp57raqi9a83cub4dqqh0f1aibfl.apps.googleusercontent.com";
+    private CredentialManager credentialManager;
     private static final String PERMISSION_PREFS = "hilal_permission_setup_v1";
     private SensorManager sensorManager;
     private Sensor rotationSensor;
@@ -73,6 +88,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ReminderReceiver.stopActiveSound();
+        credentialManager = CredentialManager.create(this);
         // Namaz vakti bildirimini uygulama açılır açılmaz yeniden başlat.
         // Böylece uygulama içindeki WebView ekranından bağımsız olarak
         // telefonda sürekli/ongoing bildirim olarak çalışmaya devam eder.
@@ -249,6 +265,11 @@ public class MainActivity extends Activity {
     }
 
     public class HilalAndroidBridge {
+        @JavascriptInterface
+        public void googleSignIn(boolean returningOnly) {
+            runOnUiThread(() -> startGoogleSignIn(returningOnly));
+        }
+
         @JavascriptInterface
         public void stopReminderSound() {
             ReminderReceiver.stopActiveSound();
@@ -536,6 +557,75 @@ public class MainActivity extends Activity {
                 shareContent(title, text, "");
             }
         }
+    }
+
+    private void startGoogleSignIn(boolean returningOnly) {
+        try {
+            GetGoogleIdOption googleOption = new GetGoogleIdOption.Builder()
+                    .setFilterByAuthorizedAccounts(returningOnly)
+                    .setAutoSelectEnabled(returningOnly)
+                    .setServerClientId(GOOGLE_WEB_CLIENT_ID)
+                    .build();
+
+            GetCredentialRequest request = new GetCredentialRequest.Builder()
+                    .addCredentialOption(googleOption)
+                    .build();
+
+            MutableContextWrapper context = new MutableContextWrapper(this);
+            credentialManager.getCredentialAsync(
+                    context,
+                    request,
+                    new CancellationSignal(),
+                    getMainExecutor(),
+                    new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                        @Override
+                        public void onResult(GetCredentialResponse result) {
+                            handleGoogleCredential(result);
+                        }
+
+                        @Override
+                        public void onError(GetCredentialException error) {
+                            if (returningOnly) {
+                                sendGoogleAuthState("silent_none", "", "", "", "");
+                            } else {
+                                String message = error.getMessage() == null ? "Google girişi tamamlanamadı." : error.getMessage();
+                                sendGoogleAuthState("error", "", "", "", message);
+                            }
+                        }
+                    });
+        } catch (Exception error) {
+            sendGoogleAuthState("error", "", "", "", "Google girişi başlatılamadı.");
+        }
+    }
+
+    private void handleGoogleCredential(GetCredentialResponse response) {
+        try {
+            Credential credential = response.getCredential();
+            if (!(credential instanceof CustomCredential) ||
+                    !GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+                sendGoogleAuthState("error", "", "", "", "Google hesabı alınamadı.");
+                return;
+            }
+            GoogleIdTokenCredential google = GoogleIdTokenCredential.createFrom(credential.getData());
+            String email = google.getId() == null ? "" : google.getId();
+            String name = google.getDisplayName() == null ? email : google.getDisplayName();
+            String photo = google.getProfilePictureUri() == null ? "" : google.getProfilePictureUri().toString();
+            String token = google.getIdToken() == null ? "" : google.getIdToken();
+            sendGoogleAuthState("success", email, name, photo, token);
+        } catch (Exception error) {
+            sendGoogleAuthState("error", "", "", "", "Google hesabı okunamadı.");
+        }
+    }
+
+    private void sendGoogleAuthState(String state, String email, String name, String photo, String detail) {
+        if (webView == null) return;
+        webView.post(() -> webView.evaluateJavascript(
+                "try{window.__hilalGoogleAuthResult&&window.__hilalGoogleAuthResult(" +
+                        JSONObject.quote(state == null ? "" : state) + "," +
+                        JSONObject.quote(email == null ? "" : email) + "," +
+                        JSONObject.quote(name == null ? "" : name) + "," +
+                        JSONObject.quote(photo == null ? "" : photo) + "," +
+                        JSONObject.quote(detail == null ? "" : detail) + ")}catch(e){}", null));
     }
 
     @Override
