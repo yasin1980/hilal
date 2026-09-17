@@ -8,7 +8,13 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 52
-        versionName '5.10-notification-routing-fix'
+        versionCode 53
+        versionName '5.11-google-signin'
     }
+}
+
+dependencies {
+    implementation 'androidx.credentials:credentials:1.7.0-alpha03'
+    implementation 'androidx.credentials:credentials-play-services-auth:1.7.0-alpha03'
+    implementation 'com.google.android.libraries.identity.googleid:googleid:1.2.1'
 }
