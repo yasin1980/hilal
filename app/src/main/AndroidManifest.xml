@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Hilâl"
-        android:theme="@style/Theme.Hilal""
+        android:theme="@style/Theme.Hilal"
         android:usesCleartextTraffic="false">
         <activity
             android:name=".MainActivity"
