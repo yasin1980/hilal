@@ -18021,7 +18021,9 @@ body.hilal-all-page-emerald-v1 #kazaNamazlarimPage{
     <div class="login-stage-mask"></div>
 
     <button class="login-teacher-compact" type="button" onclick="openProfessionalTeacherLogin()" aria-label="Hoca Girişi" title="Hoca Girişi">
-      <span aria-hidden="true">📖</span><span>Hoca Giriş
+      <span aria-hidden="true">📖</span><span>Hoca Girişi</span>
+    </button>
+
 <style id="hilal-full-v3-nav-card-gap-fix">
 /* HİLÂL FULL V3 — SADECE ortak navigasyon ile ilk sayfa kartı arasındaki mesafe.
    Uygulama Menüsü + Ana Sayfa yerinde kalır. İçerik, navigasyonun altından başlar.
@@ -18038,7 +18040,6 @@ body.hilal-all-page-emerald-v1 #kazaNamazlarimPage{
 }
 @media(max-width:390px){:root{--hilal-full-v3-nav-gap:70px;}}
 </style>
-i<
 
 <style id="hilal-system-top-card-remove-v1">
 /* =========================================================
@@ -18115,8 +18116,6 @@ html, body, #mainApp, #startScreen{
   overflow-wrap:anywhere!important;
 }
 </style>
-/span>
-    </button>
 
     <button class="login-admin" onclick="openLogin('admin')" aria-label="Yönetici Girişi" title="Yönetici Girişi">
       ☾
@@ -18125,7 +18124,7 @@ html, body, #mainApp, #startScreen{
     <div class="login-panels">
       <article class="login-panel guest guest-simple-panel">
         <div class="login-panel-actions guest-entry-actions">
-          <button class="login-main guest-entry-button" id="hilalGoogleGuestLogin" onclick="hilalGoogleGuestLogin()">Google ile Giriş Yap</button>
+          <button class="login-main guest-entry-button" id="hilalGoogleGuestLogin" onclick="directGuestEntry()">Giriş Yap</button>
           <div id="hilalGoogleLoginStatus" class="login-mini-status" aria-live="polite"></div>
         </div>
       </article>
@@ -20463,28 +20462,34 @@ window.addEventListener("hilal-auth-user",function(ev){
 
 function directGuestEntry(){
   selectedRole="guest";
-  const resolvedGuestName=hilalGuestDisplayName();
+  const resolvedGuestName=(typeof hilalGuestDisplayName==="function" ? hilalGuestDisplayName() : "") || "Demo Misafir";
   currentUser={
-    name:resolvedGuestName||"Demo Misafir",
-    displayName:resolvedGuestName||"Demo Misafir",
+    name:resolvedGuestName,
+    displayName:resolvedGuestName,
     role:"guest",
-    key:"guest-public-"+hilalInstallId()
+    key:"guest-public-"+(typeof hilalInstallId==="function" ? hilalInstallId() : Date.now())
   };
-  try{saveJSON("hilal_active_session_v1",currentUser)}catch(e){}
+  try{saveJSON("hilal_active_session_v1",currentUser)}catch(e){
+    try{localStorage.setItem("hilal_active_session_v1",JSON.stringify(currentUser))}catch(_){}
+  }
 
-  document.body.classList.remove("teacher-mode","admin-mode");
+  document.body.classList.remove("teacher-mode","admin-mode","hilal-auth-screen-active");
   document.body.classList.add("guest-mode");
+
+  const start=document.getElementById("startScreen");
+  const main=document.getElementById("mainApp");
+  const login=document.getElementById("loginModal");
+  if(login)login.classList.add("hidden");
+  if(start)start.classList.add("hidden");
+  if(main)main.classList.remove("hidden");
+
+  const role=document.getElementById("roleText");
+  if(role)role.textContent=currentUser.name;
+
   try{hilalSyncSingleRoleMenu()}catch(e){}
   try{hilalRefreshGuestMenuIdentity()}catch(e){}
-
-  try{closeLogin()}catch(e){}
-  try{startScreen.classList.add("hidden")}catch(e){}
-  try{mainApp.classList.remove("hidden")}catch(e){}
-
-  try{roleText.textContent=currentUser.name}catch(e){}
   try{showPage("calendarPage")}catch(e){}
-  setTimeout(hilalRefreshGuestCalendarOpening,120);
-
+  try{setTimeout(hilalRefreshGuestCalendarOpening,120)}catch(e){}
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
   try{renderAll()}catch(e){}
@@ -20494,7 +20499,6 @@ function directGuestEntry(){
     if(gb)gb.classList.add("active");
   }catch(e){}
 }
-
 function directMainLogin(role){
   selectedRole=role;
 
@@ -29834,100 +29838,57 @@ function professionalTeacherLogin(){
 
   selectedRole="teacher";
 
-  /* DEMO HOCA: yönetici panelindeki Aktif/Pasif durumuna mutlaka uyar. */
   if(name.toLocaleLowerCase("tr-TR")==="demo hoca" && pass==="1234"){
     const demoAccount=(typeof demoAccounts!=="undefined" && demoAccounts.teacher) ? demoAccounts.teacher : {name:"Demo Hoca",role:"teacher"};
     const managed=(typeof findManagedAccountForLogin==="function") ? findManagedAccountForLogin(demoAccount) : null;
     if(managed && typeof normalizeAccountState==="function" && normalizeAccountState(managed)!=="active"){
-      if(status) status.textContent="";
-      showInactiveAccountNotice(managed);
+      if(status)status.textContent="";
+      if(typeof showInactiveAccountNotice==="function")showInactiveAccountNotice(managed);
       return;
     }
-    currentUser={
-      name:"Demo Hoca",
-      fullName:"Demo Hoca",
-      role:"teacher",
-      key:"teacher-demo",
-      status:"approved",
-      approved:true,
-      active:true
-    };
 
+    currentUser={name:"Demo Hoca",fullName:"Demo Hoca",role:"teacher",key:"teacher-demo",status:"approved",approved:true,active:true};
+    try{saveJSON("hilal_active_session_v1",currentUser)}catch(e){
+      try{localStorage.setItem("hilal_active_session_v1",JSON.stringify(currentUser))}catch(_){}
+    }
+
+    document.body.classList.remove("guest-mode","admin-mode","hilal-auth-screen-active");
     document.body.classList.add("teacher-mode");
-    document.body.classList.remove("guest-mode","admin-mode");
-    try{hilalSyncSingleRoleMenu()}catch(e){}
 
     document.getElementById("startScreen")?.classList.add("hidden");
     document.getElementById("loginModal")?.classList.add("hidden");
     document.getElementById("professionalTeacherLoginModal")?.classList.add("hidden");
     document.getElementById("mainApp")?.classList.remove("hidden");
-
-    const roleText=document.getElementById("roleText");
-    if(roleText)roleText.textContent="Hoca hesabı";
-
-    try{
-      if(typeof renderAll==="function") renderAll();
-    }catch(e){}
-
-    try{
-      if(typeof showPage==="function"){
-        showPage("calendarPage");
-      }else{
-        document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-        document.getElementById("todayPage")?.classList.remove("hidden");
-      }
-    }catch(e){}
-
     document.getElementById("guestMenu")?.classList.add("hidden");
     document.getElementById("adminMenu")?.classList.add("hidden");
 
-    document.querySelectorAll("#teacherMenu [data-tpage]")
-      .forEach(b=>b.classList.remove("active"));
+    const roleTextEl=document.getElementById("roleText");
+    if(roleTextEl)roleTextEl.textContent="Hoca hesabı";
 
+    try{hilalSyncSingleRoleMenu()}catch(e){}
+    try{showPage("calendarPage")}catch(e){}
+    try{renderAll()}catch(e){}
+    try{setTimeout(hilalRefreshGuestCalendarOpening,120)}catch(e){}
+
+    document.querySelectorAll("#teacherMenu [data-tpage]").forEach(b=>b.classList.remove("active"));
     const calendarBtn=document.querySelector('#teacherMenu [data-tpage="calendarPage"]');
     if(calendarBtn)calendarBtn.classList.add("active");
-
-    /* İlk girişte Hoca navigasyonunu aç */
-    document.getElementById("teacherMenu")?.classList.remove("hidden");
-
-    setTimeout(()=>{
-      try{
-        if(typeof hilalRefreshGuestCalendarOpening==="function"){
-          hilalRefreshGuestCalendarOpening();
-        }else if(typeof fetchPrayerTimes==="function"){
-          fetchPrayerTimes(new Date());
-        }
-      }catch(e){}
-    },120);
-
-
     if(status)status.textContent="";
     return;
   }
 
-  /* Gerçek/kayıtlı Hoca hesaplarında mevcut giriş sistemi aynen çalışır */
   let directName=document.getElementById("directTeacherName");
   let directPass=document.getElementById("directTeacherPass");
-
   if(!directName){
-    directName=document.createElement("input");
-    directName.type="hidden";
-    directName.id="directTeacherName";
-    document.body.appendChild(directName);
+    directName=document.createElement("input"); directName.type="hidden"; directName.id="directTeacherName"; document.body.appendChild(directName);
   }
   if(!directPass){
-    directPass=document.createElement("input");
-    directPass.type="hidden";
-    directPass.id="directTeacherPass";
-    document.body.appendChild(directPass);
+    directPass=document.createElement("input"); directPass.type="hidden"; directPass.id="directTeacherPass"; document.body.appendChild(directPass);
   }
-
   directName.value=name;
   directPass.value=pass;
 
-  if(typeof directMainLogin==="function"){
-    directMainLogin("teacher");
-  }
+  if(typeof directMainLogin==="function")directMainLogin("teacher");
 
   if(currentUser?.role==="teacher" && !document.getElementById("mainApp")?.classList.contains("hidden")){
     closeProfessionalTeacherLogin();
@@ -29937,10 +29898,7 @@ function professionalTeacherLogin(){
 
   if(status){
     const oldStatus=document.getElementById("directTeacherStatus");
-    status.textContent=
-      oldStatus?.textContent?.trim() ||
-      document.getElementById("loginStatus")?.textContent?.trim() ||
-      "Ad soyad veya şifre yanlış.";
+    status.textContent=oldStatus?.textContent?.trim() || document.getElementById("loginStatus")?.textContent?.trim() || "Ad soyad veya şifre yanlış.";
   }
 }
 
@@ -54319,7 +54277,6 @@ ready(function(){
 }
 </style>
 
-hdtiGener
 <!-- HILAL FULL V26 — GENEL DUA TEK MOTOR TEMİZLİĞİ
      ZİKİR: hilal-zikir-hoca-formulu-v2-js
      YASİN: hilal-yasin-v1-js
@@ -54327,7 +54284,6 @@ hdtiGener
      Eski Zikir v1, Hatim v1 ve Hatim hoca-adapt v2 çalışma motorları dosyadan çıkarıldı.
      Yeni click/touch motoru eklenmedi. Diğer sınıflar değiştirilmedi.
 -->
-alVi
 
 <!--
 
@@ -54380,7 +54336,7 @@ body:has(#calendarPage.active),
   padding-top:88px!important;
 }
 </style>
- HILAL PATCH: SADECE Dua İstekleri > Paylaştıklarım geri tuşu -->
+<!-- HILAL PATCH: SADECE Dua İstekleri > Paylaştıklarım geri tuşu -->
 <script id="hilal-dua-paylastiklarim-back-fix-v1">
 (function(){
   "use strict";
@@ -54405,7 +54361,8 @@ body:has(#calendarPage.active),
   document.addEventListener("click",goMain,true);
 })();
 </script>
-ew.hdti-open > .hdti-head{
+<style id="hilal-dua-general-head-visibility-fix">
+#hilalDuaPageV2 #hdtiGeneralView.hdti-open > .hdti-head{
   position:relative!important;
   z-index:20!important;
   transform:none!important;
