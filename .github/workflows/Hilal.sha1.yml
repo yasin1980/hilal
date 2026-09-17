@@ -1,0 +1,34 @@
+name: Hilal SHA1
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sha1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Java kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Hilal imza anahtari olustur
+        run: |
+          keytool -genkeypair \
+            -keystore hilal-release.jks \
+            -storepass HilalTemp2026 \
+            -keypass HilalTemp2026 \
+            -alias hilal \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Hilal, OU=NSP112, O=NSP112, L=Istanbul, C=TR"
+
+      - name: SHA1 goster
+        run: |
+          keytool -list -v \
+            -keystore hilal-release.jks \
+            -storepass HilalTemp2026 \
+            -alias hilal | grep "SHA1:"
