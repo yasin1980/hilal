@@ -243,7 +243,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onResume();
         foregroundActivity = new WeakReference<>(this);
         ReminderScheduler.restoreAll(this);
-        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
+        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
         if (webView != null) {
             webView.postDelayed(() -> webView.evaluateJavascript(
                     "try{syncAllRemindersToNative&&syncAllRemindersToNative();syncEzanRemindersToNative&&syncEzanRemindersToNative();syncVirtRemindersToNative&&syncVirtRemindersToNative()}catch(e){}",
@@ -269,11 +269,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         if (Float.isNaN(filteredHeading)) filteredHeading = raw;
         float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-        if (Math.abs(delta) < 0.25f) return;
-        // Hızlı tepki + küçük sensör titreşimlerinde kontrollü yumuşatma.
-        // Büyük dönüşlerde ibre telefonu gecikmeden yakalar.
+        if (Math.abs(delta) < 0.45f) return;
+        // Yön hesabı aynıdır; yalnız tepki hızı artırıldı.
         float absDelta = Math.abs(delta);
-        float alpha = absDelta > 35f ? 0.72f : (absDelta > 10f ? 0.52f : 0.34f);
+        float alpha = absDelta > 35f ? 0.42f : (absDelta > 12f ? 0.32f : 0.24f);
         filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
 
         final float h = filteredHeading;
