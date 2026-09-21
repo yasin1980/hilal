@@ -11,6 +11,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.hardware.GeomagneticField;
+import android.location.Location;
+import android.location.LocationManager;
+import android.view.Surface;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.PowerManager;
@@ -43,6 +47,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private float filteredHeading = Float.NaN;
+    private float magneticDeclination = 0f;
     private PermissionRequest pendingCameraRequest;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -243,7 +248,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onResume();
         foregroundActivity = new WeakReference<>(this);
         ReminderScheduler.restoreAll(this);
-        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
+        updateMagneticDeclination();
+        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
         if (webView != null) {
             webView.postDelayed(() -> webView.evaluateJavascript(
                     "try{syncAllRemindersToNative&&syncAllRemindersToNative();syncEzanRemindersToNative&&syncEzanRemindersToNative();syncVirtRemindersToNative&&syncVirtRemindersToNative()}catch(e){}",
@@ -258,22 +264,88 @@ public class MainActivity extends Activity implements SensorEventListener {
         sensorManager.unregisterListener(this);
     }
 
+    private void updateMagneticDeclination() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            magneticDeclination = 0f;
+            return;
+        }
+        try {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (lm == null) return;
+            Location best = null;
+            for (String provider : lm.getProviders(true)) {
+                Location loc = lm.getLastKnownLocation(provider);
+                if (loc == null) continue;
+                if (best == null || loc.getTime() > best.getTime()) best = loc;
+            }
+            if (best != null) {
+                GeomagneticField field = new GeomagneticField(
+                        (float) best.getLatitude(),
+                        (float) best.getLongitude(),
+                        (float) best.getAltitude(),
+                        System.currentTimeMillis());
+                magneticDeclination = field.getDeclination();
+            }
+        } catch (Exception ignored) { }
+    }
+
+    private void remapForDisplay(float[] inRotation, float[] outRotation) {
+        int displayRotation = Surface.ROTATION_0;
+        try {
+            displayRotation = getWindowManager().getDefaultDisplay().getRotation();
+        } catch (Exception ignored) { }
+
+        int axisX = SensorManager.AXIS_X;
+        int axisY = SensorManager.AXIS_Y;
+        switch (displayRotation) {
+            case Surface.ROTATION_90:
+                axisX = SensorManager.AXIS_Y;
+                axisY = SensorManager.AXIS_MINUS_X;
+                break;
+            case Surface.ROTATION_180:
+                axisX = SensorManager.AXIS_MINUS_X;
+                axisY = SensorManager.AXIS_MINUS_Y;
+                break;
+            case Surface.ROTATION_270:
+                axisX = SensorManager.AXIS_MINUS_Y;
+                axisY = SensorManager.AXIS_X;
+                break;
+            default:
+                break;
+        }
+        SensorManager.remapCoordinateSystem(inRotation, axisX, axisY, outRotation);
+    }
+
     @Override public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) return;
-        float[] rotation = new float[9];
-        float[] orientation = new float[3];
-        SensorManager.getRotationMatrixFromVector(rotation, event.values);
-        SensorManager.getOrientation(rotation, orientation);
-        float raw = (float)Math.toDegrees(orientation[0]);
-        if (raw < 0) raw += 360f;
 
-        if (Float.isNaN(filteredHeading)) filteredHeading = raw;
-        float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-        if (Math.abs(delta) < 0.45f) return;
-        // Yön hesabı aynıdır; yalnız tepki hızı artırıldı.
-        float absDelta = Math.abs(delta);
-        float alpha = absDelta > 35f ? 0.42f : (absDelta > 12f ? 0.32f : 0.24f);
-        filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
+        float[] rotation = new float[9];
+        float[] remapped = new float[9];
+        float[] orientation = new float[3];
+
+        SensorManager.getRotationMatrixFromVector(rotation, event.values);
+        remapForDisplay(rotation, remapped);
+        SensorManager.getOrientation(remapped, orientation);
+
+        // getOrientation azimuth is magnetic north. Qibla bearing is geographic/true north,
+        // therefore apply local geomagnetic declination before comparing them.
+        float raw = (float) Math.toDegrees(orientation[0]);
+        raw = (raw + magneticDeclination + 360f) % 360f;
+
+        if (Float.isNaN(filteredHeading)) {
+            filteredHeading = raw;
+        } else {
+            float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
+
+            // Small dead-band suppresses magnetometer tremor without freezing normal turns.
+            if (Math.abs(delta) < 0.45f) return;
+
+            // Circular smoothing: calm near target, responsive during deliberate turns.
+            float absDelta = Math.abs(delta);
+            float alpha = absDelta > 45f ? 0.46f : (absDelta > 15f ? 0.34f : 0.24f);
+            filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
+        }
 
         final float h = filteredHeading;
         runOnUiThread(() -> webView.evaluateJavascript(
