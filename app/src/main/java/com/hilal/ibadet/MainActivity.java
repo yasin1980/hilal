@@ -21,11 +21,11 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity implements SensorEventListener {
     private static final int REQ_LOCATION = 1001;
     private static final int REQ_CAMERA = 1002;
+    private PermissionRequest pendingCameraRequest;
     private WebView webView;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private float filteredHeading = Float.NaN;
-    private PermissionRequest pendingCameraRequest;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +60,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     callback.invoke(origin, true, false);
                 }
             }
-
-            @Override public void onPermissionRequest(final PermissionRequest request) {
+            @Override public void onPermissionRequest(PermissionRequest request) {
                 runOnUiThread(() -> {
                     boolean wantsCamera = false;
                     for (String resource : request.getResources()) {
@@ -82,28 +81,12 @@ public class MainActivity extends Activity implements SensorEventListener {
                     }
                 });
             }
-
-            @Override public void onPermissionRequestCanceled(PermissionRequest request) {
-                if (pendingCameraRequest == request) pendingCameraRequest = null;
-            }
         });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        webView.loadUrl("file:///android_asset/index.html");
-    }
 
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
-            final PermissionRequest request = pendingCameraRequest;
-            pendingCameraRequest = null;
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
-            } else {
-                request.deny();
-            }
-        }
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
     @Override protected void onResume() {
@@ -127,15 +110,33 @@ public class MainActivity extends Activity implements SensorEventListener {
         SensorManager.getOrientation(rotation, orientation);
         float raw = (float)Math.toDegrees(orientation[0]);
         if (raw < 0) raw += 360f;
+
         if (Float.isNaN(filteredHeading)) filteredHeading = raw;
         float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
         if (Math.abs(delta) < 0.7f) return;
         float alpha = Math.abs(delta) > 35f ? 0.08f : 0.18f;
         filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
+
         final float h = filteredHeading;
         runOnUiThread(() -> webView.evaluateJavascript(
             "if(typeof setHeading==='function'){setHeading(" + h + ");}" +
             "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null));
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
+            PermissionRequest request = pendingCameraRequest;
+            pendingCameraRequest = null;
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+            } else {
+                request.deny();
+                if (webView != null) {
+                    webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('hilalCameraDenied'));", null);
+                }
+            }
+        }
     }
 
     @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
