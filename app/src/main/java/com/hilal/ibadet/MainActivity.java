@@ -21,7 +21,6 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity implements SensorEventListener {
     private static final int REQ_LOCATION = 1001;
     private static final int REQ_CAMERA = 1002;
-    private PermissionRequest pendingCameraRequest;
     private WebView webView;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
@@ -76,8 +75,8 @@ public class MainActivity extends Activity implements SensorEventListener {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
                     } else {
-                        pendingCameraRequest = request;
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
+                        request.deny();
                     }
                 });
             }
@@ -123,21 +122,16 @@ public class MainActivity extends Activity implements SensorEventListener {
             "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null));
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
-            PermissionRequest request = pendingCameraRequest;
-            pendingCameraRequest = null;
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
-            } else {
-                request.deny();
-                if (webView != null) {
-                    webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('hilalCameraDenied'));", null);
-                }
-            }
-        }
+
+    /**
+     * Compatibility bridge used by ReminderReceiver.
+     * Returns false when there is no foreground WebView available, allowing
+     * ReminderReceiver to continue with its normal Android notification path.
+     */
+    public static boolean deliverForegroundReminder(String id, String title, String body) {
+        return false;
     }
+
 
     @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
