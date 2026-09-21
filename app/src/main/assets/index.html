@@ -55993,8 +55993,55 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
 <!-- HILAL: isolated Qibla camera overlay -->
-<style id="hilal-qibla-camera-clean-v1">\n#calendarPage .hilal-qibla-v1428{position:relative!important;overflow:hidden!important;isolation:isolate!important;min-height:clamp(430px,72vh,680px)!important;background:#063d31!important}\n#calendarPage .hilal-qibla-v1428 .qcam-video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:0!important;background:#063d31!important}\n#calendarPage .hilal-qibla-v1428 .qcam-shade{position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(180deg,rgba(1,25,20,.38),rgba(1,25,20,.08) 35%,rgba(1,25,20,.34))!important}\n#calendarPage .hilal-qibla-v1428>.q1428-head,#calendarPage .hilal-qibla-v1428>.q1428-compass,#calendarPage .hilal-qibla-v1428>.q1431-alignment{position:relative!important;z-index:2!important}\n#calendarPage .hilal-qibla-v1428>.q1428-compass{width:min(82vw,360px)!important;max-width:calc(100% - 18px)!important;background:radial-gradient(circle,rgba(5,73,55,.18) 0 42%,rgba(2,30,24,.38) 72%,rgba(2,30,24,.55) 100%)!important;backdrop-filter:blur(1px)}\n#calendarPage .hilal-qibla-v1428 .qcam-open{position:relative!important;z-index:3!important;display:block!important;margin:8px auto 0!important;min-height:40px!important;padding:8px 14px!important;border:1px solid rgba(239,199,94,.72)!important;border-radius:12px!important;background:rgba(4,65,49,.88)!important;color:#fff!important;font-weight:800!important}\n#calendarPage .hilal-qibla-v1428.qcam-live .qcam-open{display:none!important}\n#calendarPage .hilal-qibla-v1428 .qcam-msg{position:relative!important;z-index:3!important;text-align:center!important;font-size:12px!important;color:#f7f0dc!important;margin:6px 8px 0!important;min-height:16px!important}\n#calendarPage .hilal-qibla-v1428.qcam-live .qcam-msg{display:none!important}\n@media(max-width:390px){#calendarPage .hilal-qibla-v1428{min-height:430px!important;padding-left:10px!important;padding-right:10px!important}#calendarPage .hilal-qibla-v1428>.q1428-compass{width:min(86vw,330px)!important}}\n</style>
-<script id="hilal-qibla-camera-runtime-v1">\n(function(){\n'use strict';\nlet stream=null;\nfunction q(){return document.getElementById('hilalQiblaV1428')}\nfunction stopCamera(){if(stream){stream.getTracks().forEach(t=>{try{t.stop()}catch(e){}});stream=null}const root=q();if(root)root.classList.remove('qcam-live')}\nasync function startCamera(){\n const root=q(); if(!root)return; const msg=root.querySelector('.qcam-msg');\n try{\n  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('unsupported');\n  if(stream){root.classList.add('qcam-live');return}\n  if(msg)msg.textContent='Kamera açılıyor…';\n  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});\n  const v=root.querySelector('.qcam-video'); if(v){v.srcObject=stream;await v.play().catch(()=>{});}\n  root.classList.add('qcam-live'); if(msg)msg.textContent='';\n }catch(e){\n  stopCamera();\n  if(msg)msg.textContent=(e&&e.name==='NotAllowedError')?'Kamera izni kapalı. Telefon Ayarlar > Hilâl > İzinler > Kamera bölümünden izin verin.':'Kamera açılamadı. Kamera iznini kontrol edin.';\n }\n}\nfunction install(){\n const root=q(); if(!root||root.dataset.cameraInstalled==='1')return; root.dataset.cameraInstalled='1';\n const v=document.createElement('video');v.className='qcam-video';v.autoplay=true;v.muted=true;v.playsInline=true;v.setAttribute('aria-hidden','true');\n const shade=document.createElement('div');shade.className='qcam-shade';\n root.insertBefore(v,root.firstChild);root.insertBefore(shade,v.nextSibling);\n const btn=document.createElement('button');btn.type='button';btn.className='qcam-open';btn.textContent='Kamerayı Aç';btn.addEventListener('click',e=>{e.stopPropagation();startCamera()});\n const msg=document.createElement('div');msg.className='qcam-msg';msg.textContent='Kıbleyi kamera üzerinde görmek için Kamerayı Aç’a dokunun.';\n root.appendChild(btn);root.appendChild(msg);\n const compass=document.getElementById('q1428CompassTap');if(compass)compass.addEventListener('click',()=>startCamera(),{passive:true});\n}\ndocument.addEventListener('DOMContentLoaded',()=>setTimeout(install,500));\ndocument.addEventListener('click',()=>setTimeout(install,80),true);\nwindow.addEventListener('hilalCameraDenied',()=>{const root=q(),m=root&&root.querySelector('.qcam-msg');if(m)m.textContent='Kamera izni verilmedi. Telefon ayarlarından Kamera iznini açın.'});\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});\nwindow.addEventListener('pagehide',stopCamera);\n})();\n</script>
+<style id="hilal-qibla-camera-clean-v1">
+#calendarPage .hilal-qibla-v1428{position:relative!important;overflow:hidden!important;isolation:isolate!important;min-height:clamp(430px,72vh,680px)!important;background:#063d31!important}
+#calendarPage .hilal-qibla-v1428 .qcam-video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:0!important;background:#063d31!important}
+#calendarPage .hilal-qibla-v1428 .qcam-shade{position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(180deg,rgba(1,25,20,.38),rgba(1,25,20,.08) 35%,rgba(1,25,20,.34))!important}
+#calendarPage .hilal-qibla-v1428>.q1428-head,#calendarPage .hilal-qibla-v1428>.q1428-compass,#calendarPage .hilal-qibla-v1428>.q1431-alignment{position:relative!important;z-index:2!important}
+#calendarPage .hilal-qibla-v1428>.q1428-compass{width:min(82vw,360px)!important;max-width:calc(100% - 18px)!important;background:radial-gradient(circle,rgba(5,73,55,.18) 0 42%,rgba(2,30,24,.38) 72%,rgba(2,30,24,.55) 100%)!important;backdrop-filter:blur(1px)}
+#calendarPage .hilal-qibla-v1428 .qcam-open{position:relative!important;z-index:3!important;display:block!important;margin:8px auto 0!important;min-height:40px!important;padding:8px 14px!important;border:1px solid rgba(239,199,94,.72)!important;border-radius:12px!important;background:rgba(4,65,49,.88)!important;color:#fff!important;font-weight:800!important}
+#calendarPage .hilal-qibla-v1428.qcam-live .qcam-open{display:none!important}
+#calendarPage .hilal-qibla-v1428 .qcam-msg{position:relative!important;z-index:3!important;text-align:center!important;font-size:12px!important;color:#f7f0dc!important;margin:6px 8px 0!important;min-height:16px!important}
+#calendarPage .hilal-qibla-v1428.qcam-live .qcam-msg{display:none!important}
+@media(max-width:390px){#calendarPage .hilal-qibla-v1428{min-height:430px!important;padding-left:10px!important;padding-right:10px!important}#calendarPage .hilal-qibla-v1428>.q1428-compass{width:min(86vw,330px)!important}}
+</style>
+<script id="hilal-qibla-camera-runtime-v1">
+(function(){
+'use strict';
+let stream=null;
+function q(){return document.getElementById('hilalQiblaV1428')}
+function stopCamera(){if(stream){stream.getTracks().forEach(t=>{try{t.stop()}catch(e){}});stream=null}const root=q();if(root)root.classList.remove('qcam-live')}
+async function startCamera(){
+ const root=q(); if(!root)return; const msg=root.querySelector('.qcam-msg');
+ try{
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error('unsupported');
+  if(stream){root.classList.add('qcam-live');return}
+  if(msg)msg.textContent='Kamera açılıyor…';
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+  const v=root.querySelector('.qcam-video'); if(v){v.srcObject=stream;await v.play().catch(()=>{});}
+  root.classList.add('qcam-live'); if(msg)msg.textContent='';
+ }catch(e){
+  stopCamera();
+  if(msg)msg.textContent=(e&&e.name==='NotAllowedError')?'Kamera izni kapalı. Telefon Ayarlar > Hilâl > İzinler > Kamera bölümünden izin verin.':'Kamera açılamadı. Kamera iznini kontrol edin.';
+ }
+}
+function install(){
+ const root=q(); if(!root||root.dataset.cameraInstalled==='1')return; root.dataset.cameraInstalled='1';
+ const v=document.createElement('video');v.className='qcam-video';v.autoplay=true;v.muted=true;v.playsInline=true;v.setAttribute('aria-hidden','true');
+ const shade=document.createElement('div');shade.className='qcam-shade';
+ root.insertBefore(v,root.firstChild);root.insertBefore(shade,v.nextSibling);
+ const btn=document.createElement('button');btn.type='button';btn.className='qcam-open';btn.textContent='Kamerayı Aç';btn.addEventListener('click',e=>{e.stopPropagation();startCamera()});
+ const msg=document.createElement('div');msg.className='qcam-msg';msg.textContent='Kıbleyi kamera üzerinde görmek için Kamerayı Aç’a dokunun.';
+ root.appendChild(btn);root.appendChild(msg);
+ const compass=document.getElementById('q1428CompassTap');if(compass)compass.addEventListener('click',()=>startCamera(),{passive:true});
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(install,500));
+document.addEventListener('click',()=>setTimeout(install,80),true);
+window.addEventListener('hilalCameraDenied',()=>{const root=q(),m=root&&root.querySelector('.qcam-msg');if(m)m.textContent='Kamera izni verilmedi. Telefon ayarlarından Kamera iznini açın.'});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
+window.addEventListener('pagehide',stopCamera);
+})();
+</script>
 </body>
 </html>
 <style id="hilal-dua-general-center-overflow-fix-v2">
