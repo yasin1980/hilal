@@ -14,17 +14,22 @@ import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.webkit.WebViewAssetLoader;
+
 public class MainActivity extends Activity implements SensorEventListener {
     private static final int REQ_LOCATION = 1001;
     private static final int REQ_CAMERA = 1002;
+
     private WebView webView;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private float filteredHeading = Float.NaN;
+    private PermissionRequest pendingCameraRequest;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +49,16 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
 
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .build();
+
         webView.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
+            }
+            @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                return assetLoader.shouldInterceptRequest(request.getUrl());
             }
         });
 
@@ -59,6 +71,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     callback.invoke(origin, true, false);
                 }
             }
+
             @Override public void onPermissionRequest(PermissionRequest request) {
                 runOnUiThread(() -> {
                     boolean wantsCamera = false;
@@ -75,8 +88,8 @@ public class MainActivity extends Activity implements SensorEventListener {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
                     } else {
+                        pendingCameraRequest = request;
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAMERA);
-                        request.deny();
                     }
                 });
             }
@@ -85,7 +98,25 @@ public class MainActivity extends Activity implements SensorEventListener {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        webView.loadUrl("file:///android_asset/index.html");
+        // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
+            PermissionRequest request = pendingCameraRequest;
+            pendingCameraRequest = null;
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+            } else {
+                request.deny();
+                if (webView != null) {
+                    webView.evaluateJavascript(
+                        "window.dispatchEvent(new CustomEvent('hilalCameraDenied'));", null);
+                }
+            }
+        }
     }
 
     @Override protected void onResume() {
@@ -122,16 +153,9 @@ public class MainActivity extends Activity implements SensorEventListener {
             "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null));
     }
 
-
-    /**
-     * Compatibility bridge used by ReminderReceiver.
-     * Returns false when there is no foreground WebView available, allowing
-     * ReminderReceiver to continue with its normal Android notification path.
-     */
     public static boolean deliverForegroundReminder(String id, String title, String body) {
         return false;
     }
-
 
     @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
