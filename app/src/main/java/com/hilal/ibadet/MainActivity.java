@@ -269,8 +269,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         if (Float.isNaN(filteredHeading)) filteredHeading = raw;
         float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-        if (Math.abs(delta) < 0.7f) return;
-        float alpha = Math.abs(delta) > 35f ? 0.08f : 0.18f;
+        if (Math.abs(delta) < 0.25f) return;
+        // Hızlı tepki + küçük sensör titreşimlerinde kontrollü yumuşatma.
+        // Büyük dönüşlerde ibre telefonu gecikmeden yakalar.
+        float absDelta = Math.abs(delta);
+        float alpha = absDelta > 35f ? 0.72f : (absDelta > 10f ? 0.52f : 0.34f);
         filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
 
         final float h = filteredHeading;
