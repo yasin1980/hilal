@@ -2,13 +2,18 @@ package com.hilal.ibadet;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Build;
+import android.provider.Settings;
+import android.net.Uri;
 import android.view.Window;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
@@ -24,6 +29,8 @@ import androidx.webkit.WebViewAssetLoader;
 public class MainActivity extends Activity implements SensorEventListener {
     private static final int REQ_LOCATION = 1001;
     private static final int REQ_CAMERA = 1002;
+    private static final int REQ_NOTIFICATION = 1003;
+    private static final String PERMISSION_PREFS = "hilal_permission_setup_v2";
 
     private WebView webView;
     private SensorManager sensorManager;
@@ -100,10 +107,60 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        // Eski çalışan Hilâl davranışı: uygulama ilk açılışında gerekli izinleri sırayla iste.
+        webView.postDelayed(this::startInitialPermissionFlow, 700L);
+    }
+
+
+    private void startInitialPermissionFlow() {
+        continueInitialPermissionFlow();
+    }
+
+    private void continueInitialPermissionFlow() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATION);
+            return;
+        }
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            }, REQ_LOCATION);
+            return;
+        }
+
+        requestExactAlarmAccess();
+    }
+
+    private void requestExactAlarmAccess() {
+        if (Build.VERSION.SDK_INT < 31) return;
+        try {
+            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarm == null || alarm.canScheduleExactAlarms()) return;
+
+            boolean opened = getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE)
+                    .getBoolean("exact_screen_opened", false);
+            if (opened) return;
+
+            getSharedPreferences(PERMISSION_PREFS, MODE_PRIVATE).edit()
+                    .putBoolean("exact_screen_opened", true).apply();
+
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        } catch (Exception ignored) { }
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_NOTIFICATION || requestCode == REQ_LOCATION) {
+            if (webView != null) webView.postDelayed(this::continueInitialPermissionFlow, 300L);
+        }
+
         if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
             PermissionRequest request = pendingCameraRequest;
             pendingCameraRequest = null;
@@ -122,9 +179,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override protected void onResume() {
         super.onResume();
         if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOCATION);
-        }
+
     }
 
     @Override protected void onPause() {
