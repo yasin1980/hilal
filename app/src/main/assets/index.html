@@ -19271,7 +19271,17 @@ html,body{
 <button aria-label="Hoca Girişi" class="login-teacher-compact" onclick="openProfessionalTeacherLogin()" title="Hoca Girişi" type="button">
 <span aria-hidden="true">📖</span><span>Hoca Girişi</span>
 </button>
-<!-- HILAL V28 — HOCA SEC CTA IC METIN/OK CERCEVE TEMIZLIGI — SADECE GORSEL -->
+<!-- HILAL V28 — HOCA SEC CTA IC METIN/OK CERCEV
+<style id="hilal-v35-qibla-camera-clean-fit">
+/* Yalnız Kıble alanı: kamera/pusula ekran uyumu ve teknik metin temizliği */
+#calendarPage .hilal-qibla-v1428{overflow:hidden!important;position:relative!important}
+#calendarPage .q1428-compass{width:min(82vw,340px)!important;height:min(82vw,340px)!important;max-width:340px!important;max-height:340px!important;margin-inline:auto!important}
+#calendarPage .q1428-camera-video{inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
+#calendarPage .hilal-qibla-v1428 pre,#calendarPage .hilal-qibla-v1428 code{display:none!important}
+#calendarPage .q1428-camera-error{max-width:78%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+@media(max-width:380px){#calendarPage .q1428-compass{width:min(78vw,300px)!important;height:min(78vw,300px)!important}}
+</style>
+E TEMIZLIGI — SADECE GORSEL -->
 <style id="hilal-v28-teacher-picker-cta-inner-clean">
 #announcementsPage .teacher-picker-cta > span,
 #generalPublicationsPage .teacher-picker-cta > span{
@@ -56043,9 +56053,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 <!--
 
-#h
-<!-- HILAL V13 — SADECE GENEL
-<style id="hilal-v54-qibla-blue-
 <!-- HILAL V34 — Kıble Kamera AR katmanı: mevcut pusula motoruna dokunmaz -->
 <style id="hilal-v34-qibla-camera-ar">
 #calendarPage .hilal-qibla-v1428{overflow:hidden!important}
@@ -56088,7 +56095,7 @@ async function startCamera(){
    if(err)err.style.display='none';
    status('Kamerayı Kıble yönüne çevirin');
  }catch(e){
-   if(err){err.textContent='Kamera açılamadı. Kamera iznini verip pusulaya yeniden dokunun.';err.style.display='block'}
+   if(err){err.textContent='Kamera izni gerekli. İzin verdikten sonra pusulaya tekrar dokunun.';err.style.display='block'}
    if(badge){badge.textContent='KAMERA İZNİ';badge.classList.remove('live')}
    status('Kamera izni gerekli');
    try{window.HilalAndroid?.requestCameraPermission?.()}catch(_){}
@@ -56116,8 +56123,7 @@ setInterval(()=>{const p=document.getElementById('calendarPage'); if(p && !p.cla
 window.HilalQiblaCamera={start:startCamera,stop:stopCamera};
 })();
 </script>
-
-live">
+<style id="hilal-v54-qibla-blue-live">
 /* V54 — yalnız Kıble pusulası: mavi premium çerçeve/halka.
    Kıble yakalandığında mevcut q1432-aligned durumu yeşile döner. */
 #calendarPage .hilal-qibla-v1428{
