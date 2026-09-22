@@ -35162,7 +35162,7 @@ document.addEventListener("click",()=>setTimeout(installMiracV1427,60),true);
 const KAABA_LAT=21.422487, KAABA_LON=39.826206;
 let qiblaBearing=null, heading=null, sensorObj=null, listenersBound=false, lastSensorAt=0;
 let headingHistory=[], activeOrientationSource=null, lastAbsoluteAt=0, lastAcceptedRaw=null, lastAcceptedAt=0;
-let qiblaLock=false;
+let lastNativeHeadingAt=0;
 
 function rad(x){return x*Math.PI/180}
 function deg(x){return x*180/Math.PI}
@@ -35223,55 +35223,32 @@ function circularMean(values){
  for(const a of values){const r=rad(a);sx+=Math.cos(r);sy+=Math.sin(r)}
  return norm(deg(Math.atan2(sy,sx)));
 }
-function setHeading(v){
+function setHeading(v,isNative){
  if(!Number.isFinite(v))return;
  const now=Date.now();
- const raw=norm(v + screenAngle());
-
- /* Kıble yakalandığında küçük manyetik oynamaları kilitle.
-    Telefon gerçekten yön değiştirirse kilit otomatik çözülür. */
- if(qiblaBearing!=null){
-   let rawDelta=((qiblaBearing-raw+540)%360)-180;
-   const ad=Math.abs(rawDelta);
-   if(qiblaLock){
-     if(ad<=7){
-       heading=qiblaBearing;
-       headingHistory=[raw];
-       lastAcceptedRaw=raw; lastAcceptedAt=now; lastSensorAt=now;
-       render();
-       return;
-     }
-     qiblaLock=false;
-     headingHistory.length=0;
-   }else if(ad<=3){
-     qiblaLock=true;
-     heading=qiblaBearing;
-     headingHistory=[raw];
-     lastAcceptedRaw=raw; lastAcceptedAt=now; lastSensorAt=now;
-     render();
-     return;
-   }
+ if(isNative){
+   heading=norm(v);
+   lastSensorAt=now;
+   render();
+   return;
  }
-
- // Tek karelik aşırı manyetik sıçramayı engelle; gerçek dönüşü geciktirme.
- if(lastAcceptedRaw!=null && now-lastAcceptedAt<180){
+ if(now-lastNativeHeadingAt<1800)return;
+ const raw=norm(v + screenAngle());
+ if(lastAcceptedRaw!=null && now-lastAcceptedAt<350){
    const rawJump=Math.abs(((raw-lastAcceptedRaw+540)%360)-180);
-   if(rawJump>85)return;
+   if(rawJump>55)return;
  }
  lastAcceptedRaw=raw; lastAcceptedAt=now;
-
  headingHistory.push(raw);
- if(headingHistory.length>2)headingHistory.shift();
+ if(headingHistory.length>3)headingHistory.shift();
  const next=circularMean(headingHistory);
  if(next==null)return;
-
  if(heading==null){
    heading=next;
  }else{
    let diff=((next-heading+540)%360)-180;
-   if(Math.abs(diff)<0.18){lastSensorAt=now;return;}
-   const ad=Math.abs(diff);
-   const gain=ad>22?0.92:ad>8?0.80:0.66;
+   if(Math.abs(diff)<0.8){lastSensorAt=now;return;}
+   const gain=Math.abs(diff)>18?0.65:Math.abs(diff)>7?0.48:0.32;
    heading=norm(heading+diff*gain);
  }
  lastSensorAt=now;
@@ -35295,12 +35272,15 @@ function orientationHandler(e){
 }
 function bindOrientationEvents(){
  if(listenersBound)return;
+ window.addEventListener("hilalNativeHeading",function(e){
+   const v=Number(e && e.detail && e.detail.heading);
+   if(!Number.isFinite(v))return;
+   lastNativeHeadingAt=Date.now();
+   activeOrientationSource="native";
+   setHeading(v,true);
+ },true);
  window.addEventListener("deviceorientationabsolute",orientationHandler,true);
  window.addEventListener("deviceorientation",orientationHandler,true);
- window.addEventListener("hilalNativeHeading",function(e){
-   const h=Number(e?.detail?.heading);
-   if(Number.isFinite(h))setHeading(h);
- },{passive:true});
  listenersBound=true;
 }
 async function tryGenericSensor(){
@@ -60322,52 +60302,3 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 @media(max-width:380px){#calendarPage .hilal-vakit-card-v91{grid-template-columns:minmax(0,1fr) 104px !important;padding:9px 11px !important;gap:7px !important;min-height:58px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{min-width:104px !important;font-size:22px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{font-size:12px !important}}
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
-
-<style id="hilal-qibla-fast-response-lock-v1">
-#calendarPage #q1428Needle{
-  transition:transform .075s linear!important;
-}
-#calendarPage #q1432Dial{
-  transition:transform .075s linear!important;
-}
-#calendarPage .q1428-compass.q1432-aligned #q1428Needle{
-  transition:none!important;
-}
-</style>
-
-<script id="hilal-dua-zikir-hatim-single-action-v1">
-(function(){
-"use strict";
-const ROOT="#hilalDuaPageV2";
-const ACTIONS=[
- "[data-hzv2-open]","[data-hzv2-take]","[data-hzv2-counter]",
- "[data-hzv2-minus]","[data-hzv2-complete]",
- "[data-hhr3-open]","[data-hhr3-juz]"
-].join(",");
-const recent=new WeakMap();
-
-function targetOf(e){
- const t=e.target?.closest?.(ACTIONS);
- return t && t.closest(ROOT) ? t : null;
-}
-document.addEventListener("pointerdown",function(e){
- const t=targetOf(e); if(t)recent.set(t,Date.now());
-},true);
-document.addEventListener("pointerup",function(e){
- const t=targetOf(e); if(t)recent.set(t,Date.now());
-},true);
-
-/* Zikir/Hatim kendi tek motorunda pointer olayıyla zaten işleniyor.
-   Arkasından gelen sentetik click'in eski/delege listener'ları ikinci kez
-   çalıştırmasına izin verme. */
-document.addEventListener("click",function(e){
- const t=targetOf(e); if(!t)return;
- const at=recent.get(t)||0;
- if(Date.now()-at<500){
-   e.preventDefault();
-   e.stopPropagation();
-   e.stopImmediatePropagation();
- }
-},true);
-})();
-</script>
