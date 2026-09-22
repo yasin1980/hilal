@@ -2,6 +2,18 @@
 
 <html lang="tr">
 <head>
+<!--
+HİLÂL İZOLE MİMARİ SÖZLEŞMESİ — KALICI
+1. Hilal Core: yalnız uygulama çekirdeği ve yaşam döngüsü.
+2. HilalUI: yalnız gerçekten ortak UI (menü, geri, safe-area vb.).
+3. Her modül kendi kök elemanı altında HTML/CSS/JS/state sınırında çalışır.
+4. Alt bileşen/motor başka modülün DOM'una, state'ine veya listener'ına müdahale etmez.
+5. Güncelleme yalnız hedef sınıfın gerçek kaynağında yapılır; dosya sonuna Vxx/FIX yaması eklenmez.
+6. Aynı işlev için tek aktif controller/motor bırakılır; eski çakışan hedef kod temizlenir.
+7. Global html/body/.page/.card/button kuralları yalnız Hilal Core/HilalUI sorumluluğundaysa kullanılabilir.
+8. Her değişiklikte hedef + ortak navigasyon + kilitli motorlar regresyon kontrolünden geçirilir.
+-->
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <title>Hilâl 01 DEMO — Takvim &amp; Ezan Vakit Zili — Ezan Hatırlatıcı</title>
@@ -17809,38 +17821,7 @@ body.hilal-all-page-emerald-v1 #kazaNamazlarimPage{
   margin-top:14px!important;
 }
 </style>
-<style id="hilal-dua-base-menu-alt-hiza-fix-v1">
-/* HILAL — yalnız seçilen ana menü sayfaları.
-   Uygulama Menüsü + Ana Sayfa sabit kalır; sayfa içeriği ortak güvenli alandan başlar. */
-:root{ --hilal-common-nav-content-gap:72px; }
-#todayPage,
-#announcementsPage,
-#generalPublicationsPage,
-#guestFollowingPage,
-#favoritesPage,
-#dailyVirtPage,
-#sunnetIhyaPage,
-#settingsPage,
-#feedbackCenterPage{
-  padding-top:var(--hilal-common-nav-content-gap)!important;
-  box-sizing:border-box!important;
-}
-/* Eski ilk-kart margin kuralları bu sayfalarda üst boşluğu bozmasın. */
-#todayPage > :first-child,
-#announcementsPage > :first-child,
-#generalPublicationsPage > :first-child,
-#guestFollowingPage > :first-child,
-#favoritesPage > :first-child,
-#dailyVirtPage > :first-child,
-#sunnetIhyaPage > :first-child,
-#settingsPage > :first-child,
-#feedbackCenterPage > :first-child{
-  margin-top:0!important;
-}
-@media(max-width:390px){
-  :root{ --hilal-common-nav-content-gap:70px; }
-}
-</style>
+<!-- İZOLE MİMARİ: eski yinelenen üst-hiza kuralı kaldırıldı; ortak navigasyon boşluğu tek kaynaktan yönetilir. -->
 <style id="hilal-v8-teacher-login-only">
 /* Yalnız Hoca Girişi: ana girişten hafif küçük. */
 #startScreen .login-teacher-compact{min-width:0!important;min-height:44px!important;padding:9px 13px!important;font-size:14px!important;white-space:nowrap!important;}
@@ -19168,8 +19149,8 @@ body.teacher-mode #teacherPublicationList::after{
   transform:none!important;
 }
 
-/* Uygulamanın gerçek kök/WebView taşma zemini */
-html,body{
+/* İZOLE: Hatim görünümü yalnız Dua İstekleri kökü içinde etkili olur. */
+#hilalDuaPageV2{
   background-color:#04392f!important;
   overscroll-behavior-y:none!important;
 }
@@ -19264,6 +19245,30 @@ html,body{
   pointer-events:none;
   background:transparent;
 }
+</style>
+
+<style id="hilal-flow-page-library-v2">
+/* HILAL FLOW PAGE LIBRARY V2 — tek doğal sayfa akışı / ortak alt navigasyon güvenliği */
+:root{--hilal-bottom-nav-clearance:calc(154px + env(safe-area-inset-bottom,0px));}
+.hilal-nav-safe-page{padding-bottom:var(--hilal-bottom-nav-clearance)!important;scroll-padding-bottom:var(--hilal-bottom-nav-clearance)!important;}
+.hilal-nav-safe-list{padding-bottom:0!important;}
+.hilal-flow-editor-host{display:block;width:100%;margin:0 0 12px;padding:0;}
+.hilal-flow-editor-host:empty{display:none;}
+.hilal-flow-card{position:relative!important;inset:auto!important;display:block!important;width:100%!important;margin:10px 0 14px!important;padding:0!important;background:transparent!important;z-index:auto!important;}
+/* Virdlerim: modal/pencere değil, sayfanın kendi doğal akışı. */
+#dailyVirtPage{padding-bottom:var(--hilal-bottom-nav-clearance)!important;scroll-padding-bottom:var(--hilal-bottom-nav-clearance)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;}
+#dailyVirtPage .virt-page-wrap{padding-bottom:0!important;}
+#dailyVirtPage .virt-flow-editor .virt-modal{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:15px!important;border-radius:20px!important;background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:0 10px 28px rgba(0,0,0,.10)!important;}
+#dailyVirtPage .virt-flow-editor .virt-save{margin-bottom:8px!important;scroll-margin-bottom:var(--hilal-bottom-nav-clearance)!important;}
+#dailyVirtPage #virtList{padding-bottom:0!important;}
+#dailyVirtPage #virtList::after{content:"";display:block;width:100%;height:var(--hilal-bottom-nav-clearance);min-height:var(--hilal-bottom-nav-clearance);clear:both;pointer-events:none;background:transparent;}
+#dailyVirtPage #virtList>.virt-item-pro:last-child{margin-bottom:0!important;scroll-margin-bottom:var(--hilal-bottom-nav-clearance)!important;}
+#dailyVirtPage .virt-card{padding-bottom:0!important;}
+#dailyVirtPage .virt-list-media{grid-column:1/-1;width:100%;max-height:190px;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.05);display:none;margin:2px 0 4px;}
+#dailyVirtPage .virt-list-media.is-ready{display:block;}
+#dailyVirtPage .virt-list-media img{display:block;width:100%;height:170px;object-fit:cover;border-radius:14px;}
+#dailyVirtPage #virtList>.virt-item-pro:has(.virt-list-media.is-ready){grid-template-columns:auto minmax(0,1fr) auto;}
+@media(max-width:390px){:root{--hilal-bottom-nav-clearance:calc(158px + env(safe-area-inset-bottom,0px));}#dailyVirtPage .virt-list-media img{height:150px;}}
 </style>
 </head>
 <body>
@@ -19518,7 +19523,6 @@ html,body{
 }
 @media(max-width:390px){:root{--hilal-full-v3-nav-gap:70px;}}
 </style>
-i&lt;
 
 <style id="hilal-system-top-card-remove-v1">
 /* =========================================================
@@ -19728,7 +19732,8 @@ html, body, #mainApp, #startScreen{
 <h3>📿 Günlük Virdlerim</h3>
 <button class="virt-add-btn" onclick="openVirtEditor()" type="button">+ Vird Ekle</button>
 </div>
-<div class="virt-list" id="virtList"></div>
+<div id="virtEditorHost" class="hilal-flow-editor-host" aria-live="polite"></div>
+<div class="virt-list hilal-nav-safe-list" id="virtList"></div>
 </article>
 </section>
 </main>
@@ -29777,6 +29782,7 @@ function renderVirtList(){
       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVirtReader('${v.id}')}">
 
       <div class="virt-nav-icon">📿</div>
+      ${v.hasImage?`<div class="virt-list-media" data-virt-image-id="${v.id}" aria-label="Vird görseli"></div>`:""}
 
       <div class="virt-summary">
         <div class="virt-title">${escapeHtml(v.title||"İsimsiz Vird")}</div>
@@ -29806,6 +29812,25 @@ function renderVirtList(){
       </div>
 
     </div>`).join("");
+  hydrateVirtListMedia(arr);
+}
+async function hydrateVirtListMedia(arr){
+  for(const v of (arr||[])){
+    if(!v?.hasImage)continue;
+    const slot=document.querySelector(`[data-virt-image-id="${CSS.escape(String(v.id))}"]`);
+    if(!slot)continue;
+    try{
+      const blob=await getVirtMedia(virtMediaKey(v.id,"image"));
+      if(!blob)continue;
+      const url=URL.createObjectURL(blob);
+      const img=new Image();
+      img.alt=v.title?`${v.title} görseli`:"Vird görseli";
+      img.onload=()=>setTimeout(()=>URL.revokeObjectURL(url),1000);
+      img.src=url;
+      slot.replaceChildren(img);
+      slot.classList.add("is-ready");
+    }catch(e){}
+  }
 }
 function escapeHtml(x){
   return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -29881,7 +29906,7 @@ function toggleVirtSoundPreview(btn){
   const id=document.getElementById("virtSoundId")?.value||"fav1";
   if(typeof hilalPreviewReminderSound==="function")hilalPreviewReminderSound(id,btn);
 }
-function closeVirtEditor(){try{hilalStopReminderPreview?.()}catch(e){}clearVirtEditorPreviewUrls();document.getElementById("virtModalBg")?.remove()}
+function closeVirtEditor(){try{hilalStopReminderPreview?.()}catch(e){}clearVirtEditorPreviewUrls();const host=document.getElementById("virtEditorHost");if(host){host.innerHTML="";host.classList.remove("is-open");}document.getElementById("virtModalBg")?.remove()}
 function fileToDataUrl(file){
   return new Promise((resolve,reject)=>{
     const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file);
@@ -29956,8 +29981,11 @@ async function openVirtEditor(id=""){
   const v=arr.find(x=>x.id===id)||{};
   virtEditorMode=v.mode||"free";
   closeVirtEditor();
-  const bg=document.createElement("div");
-  bg.id="virtModalBg"; bg.className="virt-modal-bg";
+  const host=document.getElementById("virtEditorHost");
+  if(!host)return;
+  host.classList.add("is-open");
+  const bg=document.createElement("section");
+  bg.id="virtModalBg"; bg.className="virt-flow-editor hilal-flow-card";
   bg.innerHTML=`
     <div class="virt-modal">
       <div class="virt-modal-head">
@@ -30066,7 +30094,8 @@ async function openVirtEditor(id=""){
       </div>
     </div>`;
   bg.addEventListener("click",e=>{if(e.target===bg)closeVirtEditor()});
-  document.body.appendChild(bg);
+  host.replaceChildren(bg);
+  requestAnimationFrame(()=>{try{bg.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}});
   setVirtSchedule(v.scheduleType||"daily");
   setupVirtTimeWheels();
   loadExistingVirtMediaPreview(v);
@@ -54217,9 +54246,6 @@ ready(function(){
        el.ontouchend=run;
        el.onclick=e=>{if(Date.now()-last>wait)run(e)}
      }
-   };
-     if(window.PointerEvent)el.onpointerdown=run;
-     else{el.ontouchstart=run;el.onclick=e=>{if(Date.now()-last>250)run(e)}}
    }
 
    box.querySelectorAll("[data-hhv1-open]").forEach(btn=>bindTap(btn,()=>{
@@ -55020,16 +55046,18 @@ ready(function(){
       if(String(existing.userKey)!==user)return;
 
       /* Aynı kullanıcının ikinci basışı: Okundu.
-         1-29 arasında gövde aynen açık kalır; tüm kart render edilmez. */
-      existing.done=!existing.done;
-      existing.doneAt=existing.done?new Date().toISOString():null;
+         İzole tek yönlü akış: Al -> Aldım -> Okundu.
+         Okundu olan cüz tekrar dokunulunca geriye dönmez. */
+      if(existing.done)return;
+      existing.done=true;
+      existing.doneAt=new Date().toISOString();
       item.updatedAt=new Date().toISOString();
       saveLocal(items);
 
-      btn.classList.remove("done","taken","mine");
-      btn.classList.add(existing.done?"done":"mine");
+      btn.classList.remove("taken","mine");
+      btn.classList.add("done");
       const label=btn.querySelector("span");
-      if(label)label.textContent=existing.done?"Okundu":"Aldım";
+      if(label)label.textContent="Okundu";
 
       const after=stats(r);
 
@@ -55046,13 +55074,12 @@ ready(function(){
       updateRoundDom(id,rn);
       updateOverview(btn.closest("[data-hhr3-card]"),id);
 
-      const wanted=existing.done;
       syncMutate(id,remote=>{
         const rr=remote.rounds[rn-1];
         const re=rr?.juz?.[key];
         if(re&&String(re.userKey)===user){
-          re.done=wanted;
-          re.doneAt=wanted?new Date().toISOString():null;
+          re.done=true;
+          re.doneAt=re.doneAt||new Date().toISOString();
         }
         remote.updatedAt=new Date().toISOString();
       });
@@ -56174,7 +56201,7 @@ window.addEventListener('pagehide',stopCamera);
   window.addEventListener('pageshow',()=>setTimeout(refresh,180));
 })();
 </script>
-ive">
+<style id="hilal-v54-qibla-premium-frame">
 /* V54 — yalnız Kıble pusulası: mavi premium çerçeve/halka.
    Kıble yakalandığında mevcut q1432-aligned durumu yeşile döner. */
 #calendarPage .hilal-qibla-v1428{
