@@ -35203,7 +35203,8 @@ function render(){
  if(qiblaBearing!=null && heading!=null){
    let d=norm(qiblaBearing-heading); if(d>180)d-=360;
    if(deltaEl)deltaEl.textContent=Math.abs(Math.round(d))+"°";
-   const ok=Math.abs(d)<=5;
+   const wasAligned=!!(compass&&compass.classList.contains("q1432-aligned"));
+   const ok=wasAligned ? Math.abs(d)<=7 : Math.abs(d)<=5;
    if(align)align.classList.toggle("on",ok);
    if(compass)compass.classList.toggle("q1432-aligned",ok);
    if(alignText)alignText.textContent=ok?"Kıble yönündesiniz":(d>0?"Sağa "+Math.abs(Math.round(d))+"° dönün":"Sola "+Math.abs(Math.round(d))+"° dönün");
@@ -56128,6 +56129,17 @@ window.addEventListener('pagehide',stopCamera);
 #h
 <!-- HILAL V13 — SADECE GENEL
 <style id="hilal-v54-qibla-blue-l
+<!-- HILAL V3: only Qibla camera center + ±5° focus hysteresis -->
+<style id="hilal-v3-qibla-camera-center-lower">
+#calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{
+  margin-top:78px!important;
+  margin-bottom:8px!important;
+}
+@media(max-width:390px){
+  #calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{margin-top:68px!important;}
+}
+</style>
+
 <!-- HILAL V2: only Qibla camera position + Ezan notification visibility/state -->
 <style id="hilal-v2-qibla-camera-lower-and-ezan-active-fix">
 /* Kamera açıkken pusula çemberini görüntünün biraz daha aşağı/orta bölümüne al. */
