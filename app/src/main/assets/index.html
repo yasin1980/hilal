@@ -29474,6 +29474,7 @@ function disableEzanPrayerReminder(key){
   const s=loadEzanSettings();
   s[key]=false;
   saveEzanSettings(s);
+  try{window.syncEzanRemindersToNative?.()}catch(e){}
   renderEzanReminderRows();
   refreshPrayerBellButtons();
   closeEzanBellPicker();
@@ -33200,7 +33201,7 @@ function hilalSoundById(id){return HILAL_FAVORI_HATIRLATICI_SESLERI.find(x=>x.id
 function hilalPreviewReminderSound(id,btn){if(hilalReminderPreviewAudio&&btn?.classList.contains('playing')){hilalStopReminderPreview();return}hilalStopReminderPreview();try{const a=new Audio(hilalSoundById(id).src);hilalReminderPreviewAudio=a;btn?.classList.add('playing');a.onended=hilalStopReminderPreview;a.onerror=hilalStopReminderPreview;a.play().catch(hilalStopReminderPreview)}catch(e){hilalStopReminderPreview()}}
 function hilalSelectPrayerSound(key,id){const s=loadEzanSettings();s.sound=s.sound||{};s.sound[key]=id;saveEzanSettings(s);document.querySelectorAll('.hilal-sound-row').forEach(r=>r.classList.toggle('selected',r.dataset.soundId===id));document.querySelectorAll('.hilal-sound-select').forEach(b=>b.textContent=b.dataset.soundId===id?'Seçili':'Seç')}
 function hilalSetPrayerMinute(key,minutes){const s=loadEzanSettings();s.before=s.before||{};s.before[key]=Number(minutes||0);saveEzanSettings(s);document.querySelectorAll('.ezan-minute-option').forEach(b=>b.classList.toggle('active',Number(b.dataset.minute)===Number(minutes)))}
-async function hilalSavePrayerReminder(key){await ensureEzanNotificationsReady();const s=loadEzanSettings();s.master=true;s[key]=true;s.before=s.before||{};if(s.before[key]===undefined)s.before[key]=10;s.sound=s.sound||{};if(!s.sound[key])s.sound[key]='fav1';saveEzanSettings(s);try{renderEzanReminderRows();refreshPrayerBellButtons()}catch(e){};const d=prayerDefByKey(key),m=Number(s.before[key]||0);try{showToast?.(`🔔 ${d?.name||''} hatırlatıcısı ${m===0?'vaktinde':m+' dk önce'} aktif`)}catch(e){};closeEzanBellPicker()}
+async function hilalSavePrayerReminder(key){await ensureEzanNotificationsReady();const s=loadEzanSettings();s.master=true;s[key]=true;s.before=s.before||{};if(s.before[key]===undefined)s.before[key]=10;s.sound=s.sound||{};if(!s.sound[key])s.sound[key]='fav1';saveEzanSettings(s);try{renderEzanReminderRows();refreshPrayerBellButtons()}catch(e){};try{window.syncEzanRemindersToNative?.()}catch(e){};const d=prayerDefByKey(key),m=Number(s.before[key]||0);try{showToast?.(`🔔 ${d?.name||''} hatırlatıcısı ${m===0?'vaktinde':m+' dk önce'} aktif`)}catch(e){};closeEzanBellPicker()}
 const hilalOldClose=window.closeEzanBellPicker;
 window.closeEzanBellPicker=function(){hilalStopReminderPreview();try{hilalOldClose?.()}catch(e){document.getElementById("ezanBellPickerBackdrop")?.remove()}};
 window.openEzanBellPicker=async function(key){await ensureEzanNotificationsReady();const d=prayerDefByKey(key);if(!d)return;const s=loadEzanSettings(),before=Number(s.before?.[key]??10),selected=s.sound?.[key]||'fav1',tm=findPrayerTimeFromPage(d)||"Vakit bilgisi bekleniyor";closeEzanBellPicker();const back=document.createElement("div");back.id="ezanBellPickerBackdrop";back.className="ezan-bell-picker-backdrop";back.innerHTML=`<div class="ezan-bell-picker" role="dialog" aria-modal="true"><div class="ezan-bell-picker-head"><div><div class="ezan-bell-picker-title">🔔 ${d.name} Namazı Hatırlatıcısı</div><div class="ezan-bell-picker-sub">${tm} • Kaç dakika önce haber verilsin?</div></div><button class="ezan-bell-picker-close" type="button" onclick="closeEzanBellPicker()">×</button></div><div class="ezan-minute-grid">${[0,5,10,15,20,30,45,60].map(v=>`<button type="button" data-minute="${v}" class="ezan-minute-option ${v===before?'active':''}" onclick="hilalSetPrayerMinute('${key}',${v})">${v===0?'Vaktinde':v+' dk önce'}</button>`).join('')}</div><div class="hilal-sound-section"><div class="hilal-sound-title">Bildirim Zilleri</div><div class="hilal-sound-sub">🔔 Bir kez dokun: dinle • tekrar dokun: durdur</div><div class="hilal-sound-list">${HILAL_FAVORI_HATIRLATICI_SESLERI.map(x=>`<div class="hilal-sound-row ${x.id===selected?'selected':''}" data-sound-id="${x.id}"><div class="hilal-sound-name">${x.name}</div><div class="hilal-sound-actions"><button type="button" class="hilal-sound-select" data-sound-id="${x.id}" onclick="hilalSelectPrayerSound('${key}','${x.id}')">${x.id===selected?'Seçili':'Seç'}</button><button type="button" class="hilal-sound-preview" onclick="hilalPreviewReminderSound('${x.id}',this)">🔔</button></div></div>`).join('')}</div></div><div class="ezan-bell-picker-status"><div><b>Bu vakit için hatırlatıcı</b><div class="muted" style="font-size:11px;margin-top:2px">${s[key]?'Aktif':'Kapalı'}</div></div><button type="button" class="btn secondary" onclick="disableEzanPrayerReminder('${key}')">${s[key]?'Kapat':'Kapalı'}</button></div><button type="button" class="hilal-reminder-save" onclick="hilalSavePrayerReminder('${key}')">Hatırlatıcıyı Kaydet</button></div>`;back.addEventListener("click",ev=>{if(ev.target===back)closeEzanBellPicker()});document.body.appendChild(back)};
@@ -56067,10 +56068,29 @@ function install(){
  root.appendChild(btn);root.appendChild(msg);
  const compass=document.getElementById('q1428CompassTap');if(compass)compass.addEventListener('click',()=>startCamera(),{passive:true});
 }
-document.addEventListener('DOMContentLoaded',()=>setTimeout(install,500));
-document.addEventListener('click',()=>setTimeout(install,80),true);
+let autoCameraObserver=null;
+function qiblaIsVisible(){
+ const root=q(); if(!root)return false;
+ const r=root.getBoundingClientRect();
+ const cs=getComputedStyle(root);
+ return cs.display!=='none'&&cs.visibility!=='hidden'&&r.width>20&&r.height>20&&r.bottom>0&&r.top<innerHeight;
+}
+function autoStartCameraIfQiblaVisible(){
+ install();
+ if(!document.hidden&&qiblaIsVisible()&&!stream) startCamera();
+}
+function installAutoCameraWatch(){
+ install();
+ if(autoCameraObserver)return;
+ autoCameraObserver=new MutationObserver(()=>setTimeout(autoStartCameraIfQiblaVisible,60));
+ autoCameraObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden']});
+ window.addEventListener('scroll',()=>setTimeout(autoStartCameraIfQiblaVisible,50),{passive:true});
+ setTimeout(autoStartCameraIfQiblaVisible,300);
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(installAutoCameraWatch,500));
+document.addEventListener('click',()=>setTimeout(autoStartCameraIfQiblaVisible,100),true);
 window.addEventListener('hilalCameraDenied',()=>{const root=q(),m=root&&root.querySelector('.qcam-msg');if(m)m.textContent='Kamera izni verilmedi. Telefon ayarlarından Kamera iznini açın.'});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();else setTimeout(autoStartCameraIfQiblaVisible,180)});
 window.addEventListener('pagehide',stopCamera);
 })();
 </script>
