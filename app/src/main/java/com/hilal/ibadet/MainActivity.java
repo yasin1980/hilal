@@ -3,6 +3,7 @@ package com.hilal.ibadet;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Build;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.net.Uri;
 import android.view.Window;
@@ -23,6 +25,11 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.JavascriptInterface;
+import android.view.Surface;
+import android.view.Display;
+
+import org.json.JSONObject;
 
 import androidx.webkit.WebViewAssetLoader;
 
@@ -37,6 +44,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     private Sensor rotationSensor;
     private float filteredHeading = Float.NaN;
     private PermissionRequest pendingCameraRequest;
+    private final float[] rotationMatrix = new float[9];
+    private final float[] remappedMatrix = new float[9];
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +64,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        // HTML hatırlatıcı motorunun Android AlarmManager köprüsü.
+        webView.addJavascriptInterface(new HilalBridge(), "AndroidHilal");
 
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
@@ -178,7 +190,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onResume() {
         super.onResume();
-        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
+        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
 
     }
 
@@ -189,23 +201,114 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) return;
-        float[] rotation = new float[9];
-        float[] orientation = new float[3];
-        SensorManager.getRotationMatrixFromVector(rotation, event.values);
-        SensorManager.getOrientation(rotation, orientation);
-        float raw = (float)Math.toDegrees(orientation[0]);
+
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+
+        // Ekran dönüşünü hesaba kat. Telefon yatay/dikey ekran döndürülse de
+        // kuzey başlığı ekranın gerçek yönüne göre kalır.
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int axisX = SensorManager.AXIS_X;
+        int axisY = SensorManager.AXIS_Y;
+        if (rotation == Surface.ROTATION_90) { axisX = SensorManager.AXIS_Y; axisY = SensorManager.AXIS_MINUS_X; }
+        else if (rotation == Surface.ROTATION_180) { axisX = SensorManager.AXIS_MINUS_X; axisY = SensorManager.AXIS_MINUS_Y; }
+        else if (rotation == Surface.ROTATION_270) { axisX = SensorManager.AXIS_MINUS_Y; axisY = SensorManager.AXIS_X; }
+        SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix);
+
+        // İki kullanım biçimini destekle:
+        // 1) Telefon düz/masada: ekranın üst kenarı (+Y) hedef yönüdür.
+        // 2) Telefon dik/elde: kameranın baktığı yön (-Z) hedef yönüdür.
+        // Eğim arttıkça iki vektör arasında yumuşak geçiş yapılır.
+        float topEast = remappedMatrix[1], topNorth = remappedMatrix[4];
+        float forwardEast = -remappedMatrix[2], forwardNorth = -remappedMatrix[5];
+        float topHorizontal = (float)Math.sqrt(topEast*topEast + topNorth*topNorth);
+        float forwardHorizontal = (float)Math.sqrt(forwardEast*forwardEast + forwardNorth*forwardNorth);
+        float wForward = forwardHorizontal / Math.max(0.001f, topHorizontal + forwardHorizontal);
+        // Düz konumda üst kenarı, dik konumda kamera yönünü daha kararlı seç.
+        wForward = Math.max(0f, Math.min(1f, (wForward - 0.28f) / 0.44f));
+        float east = topEast * (1f - wForward) + forwardEast * wForward;
+        float north = topNorth * (1f - wForward) + forwardNorth * wForward;
+        if (Math.abs(east) + Math.abs(north) < 0.0001f) return;
+        float raw = (float)Math.toDegrees(Math.atan2(east, north));
         if (raw < 0) raw += 360f;
 
-        if (Float.isNaN(filteredHeading)) filteredHeading = raw;
-        float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-        if (Math.abs(delta) < 0.7f) return;
-        float alpha = Math.abs(delta) > 35f ? 0.08f : 0.18f;
-        filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
+        if (Float.isNaN(filteredHeading)) {
+            filteredHeading = raw;
+        } else {
+            float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
+            float absDelta = Math.abs(delta);
+            // Çok küçük sensör gürültüsünü kes, gerçek dönüşe ise hızlı cevap ver.
+            if (absDelta < 0.55f) return;
+            float alpha = absDelta >= 35f ? 0.78f :
+                          absDelta >= 15f ? 0.64f :
+                          absDelta >= 5f  ? 0.48f : 0.34f;
+            filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
+        }
 
         final float h = filteredHeading;
         runOnUiThread(() -> webView.evaluateJavascript(
-            "if(typeof setHeading==='function'){setHeading(" + h + ");}" +
+            "window.__hilalNativeCompassActive=true;" +
+            "if(typeof setHeading==='function'){setHeading(" + h + ",true);}" +
             "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null));
+    }
+
+    private class HilalBridge {
+        @JavascriptInterface public boolean hasReminderAccess() {
+            if (Build.VERSION.SDK_INT < 31) return true;
+            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+            return am!=null && am.canScheduleExactAlarms();
+        }
+
+        @JavascriptInterface public void requestReminderAccess() {
+            runOnUiThread(() -> requestExactAlarmAccess());
+        }
+
+        @JavascriptInterface public void scheduleReminder(String json) {
+            try {
+                JSONObject o=new JSONObject(json);
+                String id=o.optString("id", "hilal");
+                long whenMs=o.optLong("whenMs", 0L);
+                if (whenMs <= 0L) return;
+                Intent i=new Intent();
+                i.setClassName(MainActivity.this, "com.hilal.ibadet.ReminderReceiver");
+                i.setAction("com.hilal.ibadet.HILAL_REMINDER");
+                i.putExtra("id", id);
+                i.putExtra("title", o.optString("title", "Hilâl Hatırlatıcı"));
+                i.putExtra("body", o.optString("body", "Hatırlatıcınız var"));
+                i.putExtra("sound", o.optString("sound", "fav1"));
+                i.putExtra("soundData", o.optString("soundData", ""));
+                i.putExtra("soundUrl", o.optString("soundUrl", ""));
+                i.putExtra("soundEnabled", o.optBoolean("soundEnabled", true));
+                i.putExtra("repeatMs", o.optLong("repeatMs", 0L));
+                i.putExtra("whenMs", whenMs);
+                PendingIntent pi=PendingIntent.getBroadcast(MainActivity.this, id.hashCode(), i,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                if(am==null)return;
+                if(Build.VERSION.SDK_INT>=31 && !am.canScheduleExactAlarms()) { requestReminderAccess(); return; }
+                if(Build.VERSION.SDK_INT>=23) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenMs, pi);
+                else if(Build.VERSION.SDK_INT>=19) am.setExact(AlarmManager.RTC_WAKEUP, whenMs, pi);
+                else am.set(AlarmManager.RTC_WAKEUP, whenMs, pi);
+            } catch(Exception ignored) {}
+        }
+
+        @JavascriptInterface public void cancelReminder(String id) {
+            try {
+                Intent i=new Intent();
+                i.setClassName(MainActivity.this, "com.hilal.ibadet.ReminderReceiver");
+                i.setAction("com.hilal.ibadet.HILAL_REMINDER");
+                PendingIntent pi=PendingIntent.getBroadcast(MainActivity.this, id.hashCode(), i,
+                    PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
+                if(pi!=null){ AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE); if(am!=null)am.cancel(pi); pi.cancel(); }
+            }catch(Exception ignored){}
+        }
+
+        @JavascriptInterface public void cancelReminderPrefix(String prefix) {
+            // Tek tek kimlikler HTML tarafınca yeniden eşitlenir; eski sürümlerle uyumluluk için tutulur.
+        }
+
+        @JavascriptInterface public String consumePendingReminderId(){ return ""; }
+        @JavascriptInterface public void acknowledgePendingReminderId(String id){}
+        @JavascriptInterface public void stopReminderSound(){}
     }
 
     public static boolean deliverForegroundReminder(String id, String title, String body) {
