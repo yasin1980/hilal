@@ -29461,6 +29461,7 @@ async function activateEzanPrayerReminder(key,minutes){
   s.before=s.before||{};
   s.before[key]=Number(minutes||0);
   saveEzanSettings(s);
+  try{window.syncEzanRemindersToNative?.()}catch(e){}
   renderEzanReminderRows();
   refreshPrayerBellButtons();
   closeEzanBellPicker();
@@ -29474,7 +29475,6 @@ function disableEzanPrayerReminder(key){
   const s=loadEzanSettings();
   s[key]=false;
   saveEzanSettings(s);
-  try{window.syncEzanRemindersToNative?.()}catch(e){}
   renderEzanReminderRows();
   refreshPrayerBellButtons();
   closeEzanBellPicker();
@@ -56068,29 +56068,10 @@ function install(){
  root.appendChild(btn);root.appendChild(msg);
  const compass=document.getElementById('q1428CompassTap');if(compass)compass.addEventListener('click',()=>startCamera(),{passive:true});
 }
-let autoCameraObserver=null;
-function qiblaIsVisible(){
- const root=q(); if(!root)return false;
- const r=root.getBoundingClientRect();
- const cs=getComputedStyle(root);
- return cs.display!=='none'&&cs.visibility!=='hidden'&&r.width>20&&r.height>20&&r.bottom>0&&r.top<innerHeight;
-}
-function autoStartCameraIfQiblaVisible(){
- install();
- if(!document.hidden&&qiblaIsVisible()&&!stream) startCamera();
-}
-function installAutoCameraWatch(){
- install();
- if(autoCameraObserver)return;
- autoCameraObserver=new MutationObserver(()=>setTimeout(autoStartCameraIfQiblaVisible,60));
- autoCameraObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden']});
- window.addEventListener('scroll',()=>setTimeout(autoStartCameraIfQiblaVisible,50),{passive:true});
- setTimeout(autoStartCameraIfQiblaVisible,300);
-}
-document.addEventListener('DOMContentLoaded',()=>setTimeout(installAutoCameraWatch,500));
-document.addEventListener('click',()=>setTimeout(autoStartCameraIfQiblaVisible,100),true);
+document.addEventListener('DOMContentLoaded',()=>setTimeout(install,500));
+document.addEventListener('click',()=>setTimeout(install,80),true);
 window.addEventListener('hilalCameraDenied',()=>{const root=q(),m=root&&root.querySelector('.qcam-msg');if(m)m.textContent='Kamera izni verilmedi. Telefon ayarlarından Kamera iznini açın.'});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();else setTimeout(autoStartCameraIfQiblaVisible,180)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
 window.addEventListener('pagehide',stopCamera);
 })();
 </script>
