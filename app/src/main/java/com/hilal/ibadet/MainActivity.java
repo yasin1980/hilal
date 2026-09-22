@@ -196,16 +196,11 @@ public class MainActivity extends Activity implements SensorEventListener {
         float raw = (float)Math.toDegrees(orientation[0]);
         if (raw < 0) raw += 360f;
 
-        if (Float.isNaN(filteredHeading)) {
-            filteredHeading = raw;
-        } else {
-            float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-            float absDelta = Math.abs(delta);
-            if (absDelta < 1.2f) return;
-            float alpha = absDelta >= 30f ? 0.55f :
-                          absDelta >= 10f ? 0.38f : 0.22f;
-            filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
-        }
+        if (Float.isNaN(filteredHeading)) filteredHeading = raw;
+        float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
+        if (Math.abs(delta) < 0.7f) return;
+        float alpha = Math.abs(delta) > 35f ? 0.08f : 0.18f;
+        filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
 
         final float h = filteredHeading;
         runOnUiThread(() -> webView.evaluateJavascript(
