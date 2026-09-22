@@ -50,6 +50,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private volatile float magneticDeclination = 0f;
     private int compassAccuracy = SensorManager.SENSOR_STATUS_UNRELIABLE;
     private long lastCompassDispatchMs = 0L;
+    private boolean uprightCompassMode = false;
     private boolean exactAlarmWasGranted = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -248,7 +249,23 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         float[] orientation = new float[3];
         SensorManager.getOrientation(remappedMatrix, orientation);
-        float rawTrueHeading = (float)Math.toDegrees(orientation[0]);
+        // Duz kullanımda ekranın üst kenarı; telefon belirgin biçimde dik tutulduğunda
+        // kameranın baktığı ileri eksen kullanılır. Modlar arasında sürekli karışım YOK:
+        // 65° üstünde dik moda girer, 50° altına dönmeden çıkmaz (histerezis).
+        float pitchDeg = Math.abs((float)Math.toDegrees(orientation[1]));
+        if (!uprightCompassMode && pitchDeg >= 65f) uprightCompassMode = true;
+        else if (uprightCompassMode && pitchDeg <= 50f) uprightCompassMode = false;
+
+        float rawTrueHeading;
+        if (uprightCompassMode) {
+            float forwardEast = -remappedMatrix[2];
+            float forwardNorth = -remappedMatrix[5];
+            float horizontal = (float)Math.hypot(forwardEast, forwardNorth);
+            if (horizontal < 0.12f) return;
+            rawTrueHeading = (float)Math.toDegrees(Math.atan2(forwardEast, forwardNorth));
+        } else {
+            rawTrueHeading = (float)Math.toDegrees(orientation[0]);
+        }
         rawTrueHeading = (rawTrueHeading + magneticDeclination + 360f) % 360f;
 
         if (Float.isNaN(filteredHeading)) {
@@ -257,16 +274,13 @@ public class MainActivity extends Activity implements SensorEventListener {
             float delta = ((rawTrueHeading - filteredHeading + 540f) % 360f) - 180f;
             float ad = Math.abs(delta);
 
-            // Sabit telefonda manyetometrenin mikro titremesini kes. Bu bir Kibleye
-            // yapay kilit degildir; yalnizca sensor gurultusunu bastirir.
-            if (ad < 1.25f) return;
-
-            // One-Euro benzeri adaptif dairesel filtre: kucuk hareket sakin,
-            // kullanici telefonu cevirince gecikmeden takip eder.
-            float alpha = ad >= 45f ? 0.82f :
-                          ad >= 20f ? 0.68f :
-                          ad >= 8f  ? 0.48f :
-                          ad >= 3f  ? 0.28f : 0.16f;
+            // Mikro titreşimleri tamamen yut. Küçük hareketleri özellikle yavaşlat;
+            // ancak kullanıcı telefonu belirgin çevirirse gecikmeden takip et.
+            if (ad < 1.6f) return;
+            float alpha = ad >= 45f ? 0.68f :
+                          ad >= 20f ? 0.50f :
+                          ad >= 10f ? 0.32f :
+                          ad >= 5f  ? 0.20f : 0.10f;
             filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
         }
 
