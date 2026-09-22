@@ -11,6 +11,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.hardware.GeomagneticField;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.SystemClock;
@@ -46,6 +47,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     private PermissionRequest pendingCameraRequest;
     private final float[] rotationMatrix = new float[9];
     private final float[] remappedMatrix = new float[9];
+    private volatile float magneticDeclination = 0f;
+    private boolean uprightCompassMode = false;
+    private boolean exactAlarmWasGranted = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +120,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        exactAlarmWasGranted = hasExactAlarmAccess();
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
@@ -191,7 +196,21 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override protected void onResume() {
         super.onResume();
         if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
+        boolean exactNow = hasExactAlarmAccess();
+        if (exactNow) {
+            // Exact-alarm ekranından dönüldüğünde veya uygulama tekrar açıldığında
+            // kalıcı tek motorun bütün kayıtlarını yeniden kur.
+            ReminderScheduler.restoreAll(this);
+        }
+        exactAlarmWasGranted = exactNow;
+    }
 
+    private boolean hasExactAlarmAccess() {
+        if (Build.VERSION.SDK_INT < 31) return true;
+        try {
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            return am != null && am.canScheduleExactAlarms();
+        } catch (Exception e) { return false; }
     }
 
     @Override protected void onPause() {
@@ -203,52 +222,45 @@ public class MainActivity extends Activity implements SensorEventListener {
         if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) return;
 
         SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-
-        // Ekran dönüşünü hesaba kat. Telefon yatay/dikey ekran döndürülse de
-        // kuzey başlığı ekranın gerçek yönüne göre kalır.
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
-        int axisX = SensorManager.AXIS_X;
-        int axisY = SensorManager.AXIS_Y;
+        int axisX = SensorManager.AXIS_X, axisY = SensorManager.AXIS_Y;
         if (rotation == Surface.ROTATION_90) { axisX = SensorManager.AXIS_Y; axisY = SensorManager.AXIS_MINUS_X; }
         else if (rotation == Surface.ROTATION_180) { axisX = SensorManager.AXIS_MINUS_X; axisY = SensorManager.AXIS_MINUS_Y; }
         else if (rotation == Surface.ROTATION_270) { axisX = SensorManager.AXIS_MINUS_Y; axisY = SensorManager.AXIS_X; }
-        SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix);
+        if (!SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix)) return;
 
-        // İki kullanım biçimini destekle:
-        // 1) Telefon düz/masada: ekranın üst kenarı (+Y) hedef yönüdür.
-        // 2) Telefon dik/elde: kameranın baktığı yön (-Z) hedef yönüdür.
-        // Eğim arttıkça iki vektör arasında yumuşak geçiş yapılır.
+        // Düz ve dik kullanım arasında karışım YOK. Karışım pusulanın sağa-sola
+        // oynamasına neden oluyordu. Histerezis ile yalnız bir referans seçilir.
         float topEast = remappedMatrix[1], topNorth = remappedMatrix[4];
         float forwardEast = -remappedMatrix[2], forwardNorth = -remappedMatrix[5];
-        float topHorizontal = (float)Math.sqrt(topEast*topEast + topNorth*topNorth);
-        float forwardHorizontal = (float)Math.sqrt(forwardEast*forwardEast + forwardNorth*forwardNorth);
-        float wForward = forwardHorizontal / Math.max(0.001f, topHorizontal + forwardHorizontal);
-        // Düz konumda üst kenarı, dik konumda kamera yönünü daha kararlı seç.
-        wForward = Math.max(0f, Math.min(1f, (wForward - 0.28f) / 0.44f));
-        float east = topEast * (1f - wForward) + forwardEast * wForward;
-        float north = topNorth * (1f - wForward) + forwardNorth * wForward;
-        if (Math.abs(east) + Math.abs(north) < 0.0001f) return;
-        float raw = (float)Math.toDegrees(Math.atan2(east, north));
-        if (raw < 0) raw += 360f;
+        float topH = (float)Math.hypot(topEast, topNorth);
+        float forwardH = (float)Math.hypot(forwardEast, forwardNorth);
+        if (!uprightCompassMode && forwardH > 0.78f && topH < 0.63f) uprightCompassMode = true;
+        else if (uprightCompassMode && topH > 0.78f && forwardH < 0.63f) uprightCompassMode = false;
 
-        if (Float.isNaN(filteredHeading)) {
-            filteredHeading = raw;
-        } else {
+        float east = uprightCompassMode ? forwardEast : topEast;
+        float north = uprightCompassMode ? forwardNorth : topNorth;
+        if (Math.hypot(east, north) < 0.18) return;
+        float raw = (float)Math.toDegrees(Math.atan2(east, north));
+        raw = (raw + magneticDeclination + 360f) % 360f; // gerçek kuzey
+
+        if (Float.isNaN(filteredHeading)) filteredHeading = raw;
+        else {
             float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
-            float absDelta = Math.abs(delta);
-            // Çok küçük sensör gürültüsünü kes, gerçek dönüşe ise hızlı cevap ver.
-            if (absDelta < 0.55f) return;
-            float alpha = absDelta >= 35f ? 0.78f :
-                          absDelta >= 15f ? 0.64f :
-                          absDelta >= 5f  ? 0.48f : 0.34f;
+            float ad = Math.abs(delta);
+            if (ad < 0.35f) return;
+            float alpha = ad >= 30f ? 0.72f : ad >= 12f ? 0.55f : ad >= 4f ? 0.38f : 0.24f;
             filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
         }
 
         final float h = filteredHeading;
-        runOnUiThread(() -> webView.evaluateJavascript(
-            "window.__hilalNativeCompassActive=true;" +
-            "if(typeof setHeading==='function'){setHeading(" + h + ",true);}" +
-            "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null));
+        runOnUiThread(() -> {
+            if (webView == null) return;
+            webView.evaluateJavascript(
+                "window.__hilalNativeCompassActive=true;" +
+                "if(typeof setHeading==='function'){setHeading(" + h + ",true);}" +
+                "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null);
+        });
     }
 
     private class HilalBridge {
@@ -264,51 +276,36 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         @JavascriptInterface public void scheduleReminder(String json) {
             try {
-                JSONObject o=new JSONObject(json);
-                String id=o.optString("id", "hilal");
-                long whenMs=o.optLong("whenMs", 0L);
-                if (whenMs <= 0L) return;
-                Intent i=new Intent();
-                i.setClassName(MainActivity.this, "com.hilal.ibadet.ReminderReceiver");
-                i.setAction("com.hilal.ibadet.HILAL_REMINDER");
-                i.putExtra("id", id);
-                i.putExtra("title", o.optString("title", "Hilâl Hatırlatıcı"));
-                i.putExtra("body", o.optString("body", "Hatırlatıcınız var"));
-                i.putExtra("sound", o.optString("sound", "fav1"));
-                i.putExtra("soundData", o.optString("soundData", ""));
-                i.putExtra("soundUrl", o.optString("soundUrl", ""));
-                i.putExtra("soundEnabled", o.optBoolean("soundEnabled", true));
-                i.putExtra("repeatMs", o.optLong("repeatMs", 0L));
-                i.putExtra("whenMs", whenMs);
-                PendingIntent pi=PendingIntent.getBroadcast(MainActivity.this, id.hashCode(), i,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
-                if(am==null)return;
-                if(Build.VERSION.SDK_INT>=31 && !am.canScheduleExactAlarms()) { requestReminderAccess(); return; }
-                if(Build.VERSION.SDK_INT>=23) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, whenMs, pi);
-                else if(Build.VERSION.SDK_INT>=19) am.setExact(AlarmManager.RTC_WAKEUP, whenMs, pi);
-                else am.set(AlarmManager.RTC_WAKEUP, whenMs, pi);
-            } catch(Exception ignored) {}
+                JSONObject o = new JSONObject(json);
+                if (Build.VERSION.SDK_INT >= 31 && !hasExactAlarmAccess()) {
+                    // Kaydı kaybetme: Scheduler kalıcı olarak saklar ve izin dönüşünde restoreAll kurar.
+                    ReminderScheduler.schedule(MainActivity.this, o, true);
+                    runOnUiThread(() -> requestExactAlarmAccess());
+                    return;
+                }
+                ReminderScheduler.schedule(MainActivity.this, o, true);
+            } catch (Exception ignored) { }
         }
 
         @JavascriptInterface public void cancelReminder(String id) {
-            try {
-                Intent i=new Intent();
-                i.setClassName(MainActivity.this, "com.hilal.ibadet.ReminderReceiver");
-                i.setAction("com.hilal.ibadet.HILAL_REMINDER");
-                PendingIntent pi=PendingIntent.getBroadcast(MainActivity.this, id.hashCode(), i,
-                    PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
-                if(pi!=null){ AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE); if(am!=null)am.cancel(pi); pi.cancel(); }
-            }catch(Exception ignored){}
+            ReminderScheduler.cancel(MainActivity.this, id);
         }
 
         @JavascriptInterface public void cancelReminderPrefix(String prefix) {
-            // Tek tek kimlikler HTML tarafınca yeniden eşitlenir; eski sürümlerle uyumluluk için tutulur.
+            ReminderScheduler.cancelPrefix(MainActivity.this, prefix);
+        }
+
+        @JavascriptInterface public void setCompassLocation(double lat, double lon, double altitude) {
+            try {
+                GeomagneticField field = new GeomagneticField((float)lat, (float)lon, (float)altitude, System.currentTimeMillis());
+                magneticDeclination = field.getDeclination();
+                filteredHeading = Float.NaN;
+            } catch (Exception ignored) { }
         }
 
         @JavascriptInterface public String consumePendingReminderId(){ return ""; }
         @JavascriptInterface public void acknowledgePendingReminderId(String id){}
-        @JavascriptInterface public void stopReminderSound(){}
+        @JavascriptInterface public void stopReminderSound(){ ReminderReceiver.stopActiveSound(); }
     }
 
     public static boolean deliverForegroundReminder(String id, String title, String body) {
