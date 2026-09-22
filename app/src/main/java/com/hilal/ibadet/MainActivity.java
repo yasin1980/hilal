@@ -177,7 +177,13 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQ_NOTIFICATION || requestCode == REQ_LOCATION) {
-            if (webView != null) webView.postDelayed(this::continueInitialPermissionFlow, 300L);
+            if (webView != null) {
+                webView.postDelayed(this::continueInitialPermissionFlow, 300L);
+                webView.postDelayed(() -> webView.evaluateJavascript(
+                        "try{window.syncEzanRemindersToNative?.();" +
+                        "var b=window.AndroidHilal;if(b&&typeof b.updatePrayerStatus==='function'){" +
+                        "document.dispatchEvent(new Event('visibilitychange'));}}catch(e){}", null), 700L);
+            }
         }
 
         if (requestCode == REQ_CAMERA && pendingCameraRequest != null) {
@@ -303,13 +309,33 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private class HilalBridge {
         @JavascriptInterface public boolean hasReminderAccess() {
-            if (Build.VERSION.SDK_INT < 31) return true;
-            AlarmManager am=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            return am!=null && am.canScheduleExactAlarms();
+            boolean notificationOk = Build.VERSION.SDK_INT < 33 ||
+                    checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+            return notificationOk && hasExactAlarmAccess();
         }
 
         @JavascriptInterface public void requestReminderAccess() {
-            runOnUiThread(() -> requestExactAlarmAccess());
+            runOnUiThread(() -> {
+                if (Build.VERSION.SDK_INT >= 33 &&
+                        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATION);
+                    return;
+                }
+                requestExactAlarmAccess();
+            });
+        }
+
+        @JavascriptInterface public void updatePrayerStatus(String json) {
+            try {
+                if (json == null || json.trim().isEmpty()) return;
+                // Web tarafındaki güncel vakitleri native kalıcı bildirim motoruna aktar.
+                getSharedPreferences("hilal_prayer_status_v1", MODE_PRIVATE)
+                        .edit().putString("times", json).apply();
+                if (Build.VERSION.SDK_INT < 33 ||
+                        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    PrayerStatusScheduler.showNow(MainActivity.this);
+                }
+            } catch (Exception ignored) { }
         }
 
         @JavascriptInterface public void scheduleReminder(String json) {
