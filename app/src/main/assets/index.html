@@ -3103,7 +3103,8 @@ body.teacher-mode .teacher-publication-fab{display:block}
   position:fixed;inset:0;z-index:9998;
   background:rgba(0,0,0,.42);
   display:flex;align-items:flex-end;justify-content:center;
-  padding:14px;
+  /* Alt hareketli navigasyonun üstünde güvenli dokunma alanı bırak. */
+  padding:14px 14px calc(92px + env(safe-area-inset-bottom));
 }
 .ezan-bell-picker{
   width:min(520px,100%);
@@ -3113,7 +3114,11 @@ body.teacher-mode .teacher-publication-fab{display:block}
   border-radius:20px;
   box-shadow:0 18px 60px rgba(0,0,0,.28);
   padding:16px;
-  margin-bottom:max(10px,env(safe-area-inset-bottom));
+  margin-bottom:0;
+  max-height:calc(100dvh - 120px - env(safe-area-inset-bottom));
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 .ezan-bell-picker-head{
   display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
@@ -56122,7 +56127,41 @@ window.addEventListener('pagehide',stopCamera);
 
 #h
 <!-- HILAL V13 — SADECE GENEL
-<style id="hilal-v54-qibla-blue-live">
+<style id="hilal-v54-qibla-blue-l
+<!-- HILAL V2: only Qibla camera position + Ezan notification visibility/state -->
+<style id="hilal-v2-qibla-camera-lower-and-ezan-active-fix">
+/* Kamera açıkken pusula çemberini görüntünün biraz daha aşağı/orta bölümüne al. */
+#calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{
+  margin-top:42px!important;
+  margin-bottom:10px!important;
+}
+@media(max-width:390px){
+  #calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{margin-top:34px!important;}
+}
+/* Eski katmanlarda gizlenmiş Ezan Hatırlatıcı kartını tekrar aktif/görünür tut. */
+#calendarPage #ezanReminderCard{display:block!important;visibility:visible!important;opacity:1!important;}
+/* Aktif vakit zili eski genel 3D stiller tarafından ezilmesin. */
+#calendarPage .ezan-vakit-bell.active,
+#calendarPage [data-ezan-bell].active{
+  color:#fff7d6!important;
+  border-color:rgba(239,199,94,.92)!important;
+  background:linear-gradient(180deg,#0c8b62,#086247)!important;
+  box-shadow:0 0 0 2px rgba(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+</style>
+<script id="hilal-v2-ezan-notification-state-refresh">
+(function(){
+  function refresh(){
+    try{window.renderEzanReminderRows?.();}catch(e){}
+    try{window.refreshPrayerBellButtons?.();}catch(e){}
+    try{window.syncEzanRemindersToNative?.();}catch(e){}
+  }
+  window.addEventListener('load',()=>setTimeout(refresh,900));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refresh,120)});
+  window.addEventListener('pageshow',()=>setTimeout(refresh,180));
+})();
+</script>
+ive">
 /* V54 — yalnız Kıble pusulası: mavi premium çerçeve/halka.
    Kıble yakalandığında mevcut q1432-aligned durumu yeşile döner. */
 #calendarPage .hilal-qibla-v1428{
