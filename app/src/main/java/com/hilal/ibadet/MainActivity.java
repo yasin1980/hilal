@@ -48,7 +48,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     private final float[] rotationMatrix = new float[9];
     private final float[] remappedMatrix = new float[9];
     private volatile float magneticDeclination = 0f;
-    private boolean uprightCompassMode = false;
+    private int compassAccuracy = SensorManager.SENSOR_STATUS_UNRELIABLE;
+    private long lastCompassDispatchMs = 0L;
     private boolean exactAlarmWasGranted = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -221,52 +222,68 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) return;
 
+        // TEK KIBLE MOTORU: Android rotation-vector -> ekran koordinati -> gercek kuzey.
+        // Duz/dik mod, kamera ekseni ve ikinci yon kaynagi yoktur. Telefonun ekraninin
+        // ust kenari her durumda kullanicinin tuttugu yon kabul edilir.
         SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
-        int axisX = SensorManager.AXIS_X, axisY = SensorManager.AXIS_Y;
-        if (rotation == Surface.ROTATION_90) { axisX = SensorManager.AXIS_Y; axisY = SensorManager.AXIS_MINUS_X; }
-        else if (rotation == Surface.ROTATION_180) { axisX = SensorManager.AXIS_MINUS_X; axisY = SensorManager.AXIS_MINUS_Y; }
-        else if (rotation == Surface.ROTATION_270) { axisX = SensorManager.AXIS_MINUS_Y; axisY = SensorManager.AXIS_X; }
+        int axisX = SensorManager.AXIS_X;
+        int axisY = SensorManager.AXIS_Y;
+        switch (rotation) {
+            case Surface.ROTATION_90:
+                axisX = SensorManager.AXIS_Y;
+                axisY = SensorManager.AXIS_MINUS_X;
+                break;
+            case Surface.ROTATION_180:
+                axisX = SensorManager.AXIS_MINUS_X;
+                axisY = SensorManager.AXIS_MINUS_Y;
+                break;
+            case Surface.ROTATION_270:
+                axisX = SensorManager.AXIS_MINUS_Y;
+                axisY = SensorManager.AXIS_X;
+                break;
+        }
         if (!SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisY, remappedMatrix)) return;
 
-        // Düz ve dik kullanım arasında karışım YOK. Karışım pusulanın sağa-sola
-        // oynamasına neden oluyordu. Histerezis ile yalnız bir referans seçilir.
-        float topEast = remappedMatrix[1], topNorth = remappedMatrix[4];
-        float forwardEast = -remappedMatrix[2], forwardNorth = -remappedMatrix[5];
-        float topH = (float)Math.hypot(topEast, topNorth);
-        float forwardH = (float)Math.hypot(forwardEast, forwardNorth);
-        if (!uprightCompassMode && forwardH > 0.78f && topH < 0.63f) uprightCompassMode = true;
-        else if (uprightCompassMode && topH > 0.78f && forwardH < 0.63f) uprightCompassMode = false;
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(remappedMatrix, orientation);
+        float rawTrueHeading = (float)Math.toDegrees(orientation[0]);
+        rawTrueHeading = (rawTrueHeading + magneticDeclination + 360f) % 360f;
 
-        float east = uprightCompassMode ? forwardEast : topEast;
-        float north = uprightCompassMode ? forwardNorth : topNorth;
-        if (Math.hypot(east, north) < 0.18) return;
-        float raw = (float)Math.toDegrees(Math.atan2(east, north));
-        raw = (raw + magneticDeclination + 360f) % 360f; // gerçek kuzey
-
-        if (Float.isNaN(filteredHeading)) filteredHeading = raw;
-        else {
-            float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
+        if (Float.isNaN(filteredHeading)) {
+            filteredHeading = rawTrueHeading;
+        } else {
+            float delta = ((rawTrueHeading - filteredHeading + 540f) % 360f) - 180f;
             float ad = Math.abs(delta);
 
-            // ODAK KİLİDİ: Telefon sabit tutulduğunda sensörün 0.5-1 derece civarındaki
-            // doğal titreşimi ibreyi sağa-sola oynatmasın. Kullanıcı gerçekten döndürmeye
-            // başladığında ise büyük farklarda hızlı cevap vermeye devam etsin.
-            if (ad < 0.85f) return;
-            float alpha = ad >= 30f ? 0.76f :
-                          ad >= 12f ? 0.58f :
-                          ad >= 5f  ? 0.34f :
-                          ad >= 2f  ? 0.20f : 0.12f;
+            // Sabit telefonda manyetometrenin mikro titremesini kes. Bu bir Kibleye
+            // yapay kilit degildir; yalnizca sensor gurultusunu bastirir.
+            if (ad < 1.25f) return;
+
+            // One-Euro benzeri adaptif dairesel filtre: kucuk hareket sakin,
+            // kullanici telefonu cevirince gecikmeden takip eder.
+            float alpha = ad >= 45f ? 0.82f :
+                          ad >= 20f ? 0.68f :
+                          ad >= 8f  ? 0.48f :
+                          ad >= 3f  ? 0.28f : 0.16f;
             filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
         }
 
+        // WebView'i gereksiz sensor kareleriyle bogma; 25 Hz pusula icin yeterlidir.
+        long now = SystemClock.elapsedRealtime();
+        if (now - lastCompassDispatchMs < 40L) return;
+        lastCompassDispatchMs = now;
+
         final float h = filteredHeading;
+        final int accuracy = compassAccuracy;
         runOnUiThread(() -> {
             if (webView == null) return;
             webView.evaluateJavascript(
                 "window.__hilalNativeCompassActive=true;" +
+                "window.__hilalNativeCompassAccuracy=" + accuracy + ";" +
                 "if(typeof setHeading==='function'){setHeading(" + h + ",true);}" +
-                "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + "}}));", null);
+                "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + ",accuracy:" + accuracy + "}}));", null);
         });
     }
 
@@ -319,7 +336,17 @@ public class MainActivity extends Activity implements SensorEventListener {
         return false;
     }
 
-    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        if (sensor != null && sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            compassAccuracy = accuracy;
+            if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE || accuracy == SensorManager.SENSOR_STATUS_ACCURACY_LOW) {
+                runOnUiThread(() -> {
+                    if (webView != null) webView.evaluateJavascript(
+                        "window.dispatchEvent(new CustomEvent('hilalCompassAccuracy',{detail:{accuracy:" + accuracy + "}}));", null);
+                });
+            }
+        }
+    }
 
     @Override public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
