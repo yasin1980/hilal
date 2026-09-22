@@ -248,8 +248,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         else {
             float delta = ((raw - filteredHeading + 540f) % 360f) - 180f;
             float ad = Math.abs(delta);
-            if (ad < 0.35f) return;
-            float alpha = ad >= 30f ? 0.72f : ad >= 12f ? 0.55f : ad >= 4f ? 0.38f : 0.24f;
+
+            // ODAK KİLİDİ: Telefon sabit tutulduğunda sensörün 0.5-1 derece civarındaki
+            // doğal titreşimi ibreyi sağa-sola oynatmasın. Kullanıcı gerçekten döndürmeye
+            // başladığında ise büyük farklarda hızlı cevap vermeye devam etsin.
+            if (ad < 0.85f) return;
+            float alpha = ad >= 30f ? 0.76f :
+                          ad >= 12f ? 0.58f :
+                          ad >= 5f  ? 0.34f :
+                          ad >= 2f  ? 0.20f : 0.12f;
             filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
         }
 
