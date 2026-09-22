@@ -35162,7 +35162,6 @@ document.addEventListener("click",()=>setTimeout(installMiracV1427,60),true);
 const KAABA_LAT=21.422487, KAABA_LON=39.826206;
 let qiblaBearing=null, heading=null, sensorObj=null, listenersBound=false, lastSensorAt=0;
 let headingHistory=[], activeOrientationSource=null, lastAbsoluteAt=0, lastAcceptedRaw=null, lastAcceptedAt=0;
-let lastNativeHeadingAt=0;
 
 function rad(x){return x*Math.PI/180}
 function deg(x){return x*180/Math.PI}
@@ -35223,23 +35222,18 @@ function circularMean(values){
  for(const a of values){const r=rad(a);sx+=Math.cos(r);sy+=Math.sin(r)}
  return norm(deg(Math.atan2(sy,sx)));
 }
-function setHeading(v,isNative){
+function setHeading(v){
  if(!Number.isFinite(v))return;
  const now=Date.now();
- if(isNative){
-   heading=norm(v);
-   lastSensorAt=now;
-   render();
-   return;
- }
- if(now-lastNativeHeadingAt<1800)return;
  const raw=norm(v + screenAngle());
+ // Reject one-frame magnetic spikes while still allowing deliberate turns.
  if(lastAcceptedRaw!=null && now-lastAcceptedAt<350){
    const rawJump=Math.abs(((raw-lastAcceptedRaw+540)%360)-180);
    if(rawJump>55)return;
  }
  lastAcceptedRaw=raw; lastAcceptedAt=now;
  headingHistory.push(raw);
+ // APK/WebView için düşük gecikme: yalnız son 3 örneği yumuşat.
  if(headingHistory.length>3)headingHistory.shift();
  const next=circularMean(headingHistory);
  if(next==null)return;
@@ -35247,8 +35241,9 @@ function setHeading(v,isNative){
    heading=next;
  }else{
    let diff=((next-heading+540)%360)-180;
-   if(Math.abs(diff)<0.8){lastSensorAt=now;return;}
-   const gain=Math.abs(diff)>18?0.65:Math.abs(diff)>7?0.48:0.32;
+   // Çok küçük titreşimi süz, gerçek dönüşü ise neredeyse anlık takip et.
+   if(Math.abs(diff)<0.35){lastSensorAt=now;return;}
+   const gain=Math.abs(diff)>18?0.78:Math.abs(diff)>7?0.62:0.48;
    heading=norm(heading+diff*gain);
  }
  lastSensorAt=now;
@@ -35272,13 +35267,6 @@ function orientationHandler(e){
 }
 function bindOrientationEvents(){
  if(listenersBound)return;
- window.addEventListener("hilalNativeHeading",function(e){
-   const v=Number(e && e.detail && e.detail.heading);
-   if(!Number.isFinite(v))return;
-   lastNativeHeadingAt=Date.now();
-   activeOrientationSource="native";
-   setHeading(v,true);
- },true);
  window.addEventListener("deviceorientationabsolute",orientationHandler,true);
  window.addEventListener("deviceorientation",orientationHandler,true);
  listenersBound=true;
