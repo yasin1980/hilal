@@ -15,6 +15,8 @@ import android.hardware.GeomagneticField;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.SystemClock;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.net.Uri;
 import android.view.Window;
@@ -52,6 +54,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     private long lastCompassDispatchMs = 0L;
     private boolean uprightCompassMode = false;
     private boolean exactAlarmWasGranted = false;
+    private boolean pageReady = false;
+    private boolean compassRegistered = false;
+    private final Runnable delayedCompassStart = this::registerCompassIfNeeded;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +70,11 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setGeolocationEnabled(true);
-        s.setAllowFileAccess(true);
+        s.setAllowFileAccess(false);
         s.setAllowContentAccess(true);
+        s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -84,6 +92,12 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
+            }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                pageReady = true;
+                view.removeCallbacks(delayedCompassStart);
+                view.postDelayed(delayedCompassStart, 1200L);
             }
         });
 
@@ -127,8 +141,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
-        // Eski çalışan Hilâl davranışı: uygulama ilk açılışında gerekli izinleri sırayla iste.
-        webView.postDelayed(this::startInitialPermissionFlow, 700L);
+        // İzinler açılışta zincirleme istenmez; ilgili özellik kullanıldığında istenir.
     }
 
 
@@ -203,14 +216,18 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onResume() {
         super.onResume();
-        if (rotationSensor != null) sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
-        boolean exactNow = hasExactAlarmAccess();
-        if (exactNow) {
-            // Exact-alarm ekranından dönüldüğünde veya uygulama tekrar açıldığında
-            // kalıcı tek motorun bütün kayıtlarını yeniden kur.
-            ReminderScheduler.restoreAll(this);
+        if (webView != null && pageReady) {
+            webView.removeCallbacks(delayedCompassStart);
+            webView.postDelayed(delayedCompassStart, 500L);
         }
+        boolean exactNow = hasExactAlarmAccess();
+        if (exactNow && !exactAlarmWasGranted) ReminderScheduler.restoreAll(this);
         exactAlarmWasGranted = exactNow;
+    }
+
+    private void registerCompassIfNeeded() {
+        if (compassRegistered || rotationSensor == null || sensorManager == null || !pageReady) return;
+        compassRegistered = sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     private boolean hasExactAlarmAccess() {
@@ -223,7 +240,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        if (webView != null) webView.removeCallbacks(delayedCompassStart);
+        if (sensorManager != null && compassRegistered) sensorManager.unregisterListener(this);
+        compassRegistered = false;
     }
 
     @Override public void onSensorChanged(SensorEvent event) {
@@ -292,7 +311,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // WebView'i gereksiz sensor kareleriyle bogma; 25 Hz pusula icin yeterlidir.
         long now = SystemClock.elapsedRealtime();
-        if (now - lastCompassDispatchMs < 40L) return;
+        if (now - lastCompassDispatchMs < 60L) return;
         lastCompassDispatchMs = now;
 
         final float h = filteredHeading;
@@ -337,6 +356,18 @@ public class MainActivity extends Activity implements SensorEventListener {
                 }
             } catch (Exception ignored) { }
         }
+
+        @JavascriptInterface public void haptic(int milliseconds) {
+            final int ms = Math.max(8, Math.min(milliseconds, 80));
+            try {
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (vibrator == null || !vibrator.hasVibrator()) return;
+                if (Build.VERSION.SDK_INT >= 26) vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+                else vibrator.vibrate(ms);
+            } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface public void vibrate(int milliseconds) { haptic(milliseconds); }
 
         @JavascriptInterface public void scheduleReminder(String json) {
             try {
