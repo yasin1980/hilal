@@ -35282,8 +35282,17 @@ function bindOrientationEvents(){
    activeOrientationSource="native";
    setHeading(v,true);
  },true);
- window.addEventListener("deviceorientationabsolute",orientationHandler,true);
- window.addEventListener("deviceorientation",orientationHandler,true);
+ // Android uygulamasinda tek yon kaynagi native Rotation Vector'dur.
+ // Tarayici orientation akisini ayni anda dinlemek iki motorun birbiriyle
+ // yarismasina ve ibrenin saga-sola titremesine neden olur.
+ if(!(window.AndroidHilal)){
+   window.addEventListener("deviceorientationabsolute",orientationHandler,true);
+   window.addEventListener("deviceorientation",orientationHandler,true);
+ }
+ window.addEventListener("hilalCompassAccuracy",function(e){
+   const a=Number(e&&e.detail&&e.detail.accuracy);
+   if(a===0 || a===1) statusText("Pusula kalibrasyonu gerekli · telefonu 8 şeklinde hareket ettirin");
+ },true);
  listenersBound=true;
 }
 async function tryGenericSensor(){
@@ -56167,6 +56176,7 @@ window.addEventListener('pagehide',stopCamera);
    mevcut motorun kullandığı pencere olay akışını canlı tutar. */
 (function(){
  "use strict";
+ if(window.AndroidHilal)return;
  let last=0, raf=0, pending=null;
  function relay(e){
    if(window.__hilalNativeCompassActive)return;
