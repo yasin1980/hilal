@@ -28233,6 +28233,7 @@ window.__hilalNativeLocation=async function(lat,lon,accuracy){
   try{
     if(typeof bearingToKaaba==='function' && document.getElementById('q1428Location')){
       qiblaBearing=bearingToKaaba(Number(lat),Number(lon));
+      try{ if(window.AndroidHilal && typeof AndroidHilal.setCompassLocation==='function') AndroidHilal.setCompassLocation(Number(lat),Number(lon),0); }catch(e){}
       const l=document.getElementById('q1428Location'); const a=document.getElementById('q1428Accuracy');
       if(l)l.textContent=Number(lat).toFixed(4)+", "+Number(lon).toFixed(4);
       if(a)a.textContent="±"+Math.round(Number(accuracy)||0)+" m";
@@ -35286,6 +35287,7 @@ function bindOrientationEvents(){
  listenersBound=true;
 }
 async function tryGenericSensor(){
+ if(window.__hilalNativeCompassActive)return false;
  if(!("AbsoluteOrientationSensor" in window))return false;
  try{
    sensorObj=new AbsoluteOrientationSensor({frequency:30,referenceFrame:"device"});
@@ -35334,8 +35336,9 @@ function locate(){
  statusText("GPS konumu alınıyor…");
  if(!navigator.geolocation){statusText("Bu cihazda GPS kullanılamıyor");return}
  navigator.geolocation.getCurrentPosition(pos=>{
-   const {latitude:lat,longitude:lon,accuracy}=pos.coords;
+   const {latitude:lat,longitude:lon,accuracy,altitude}=pos.coords;
    qiblaBearing=bearingToKaaba(lat,lon);
+   try{ if(window.AndroidHilal && typeof AndroidHilal.setCompassLocation==='function') AndroidHilal.setCompassLocation(lat,lon,Number(altitude)||0); }catch(e){}
    const l=document.getElementById("q1428Location");
    const a=document.getElementById("q1428Accuracy");
    if(l)l.textContent=lat.toFixed(4)+", "+lon.toFixed(4);
