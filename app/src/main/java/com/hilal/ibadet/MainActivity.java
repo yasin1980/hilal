@@ -56,7 +56,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     private volatile float magneticDeclination = 0f;
     private int compassAccuracy = SensorManager.SENSOR_STATUS_UNRELIABLE;
     private long lastCompassDispatchMs = 0L;
-    private boolean uprightCompassMode = false;
+    private boolean compassRequested = false;
+    private boolean compassRegistered = false;
     private boolean exactAlarmWasGranted = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -219,16 +220,34 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onResume() {
         super.onResume();
-        if (rotationSensor != null) {
-            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
-        } else {
-            // Eski/ucuz cihaz fallback: accelerometer + magnetic field.
-            if (accelerometerSensor != null) sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
-            if (magneticSensor != null) sensorManager.registerListener(this, magneticSensor, SensorManager.SENSOR_DELAY_UI);
-        }
+        // STABLE V3: pusula açılışta çalışmaz. Kullanıcı Kıble pusulasını başlatınca devreye girer.
+        // Bu, eski cihazlarda WebView ilk çizimi ve giriş butonlarıyla sensör işinin yarışmasını önler.
+        if (compassRequested) registerCompassSensors();
         boolean exactNow = hasExactAlarmAccess();
         if (exactNow && !exactAlarmWasGranted) ReminderScheduler.restoreAll(this);
         exactAlarmWasGranted = exactNow;
+    }
+
+    private void registerCompassSensors() {
+        if (sensorManager == null || compassRegistered) return;
+        boolean ok = false;
+        if (rotationSensor != null) {
+            ok = sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            boolean a = accelerometerSensor != null && sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            boolean m = magneticSensor != null && sensorManager.registerListener(this, magneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            ok = a || m;
+        }
+        compassRegistered = ok;
+        filteredHeading = Float.NaN;
+        lastCompassDispatchMs = 0L;
+    }
+
+    private void unregisterCompassSensors() {
+        if (sensorManager != null && compassRegistered) sensorManager.unregisterListener(this);
+        compassRegistered = false;
+        haveAccel = false;
+        haveMagnetic = false;
     }
 
     private boolean hasExactAlarmAccess() {
@@ -241,7 +260,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        unregisterCompassSensors();
     }
 
     @Override public void onSensorChanged(SensorEvent event) {
@@ -279,23 +298,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         float[] orientation = new float[3];
         SensorManager.getOrientation(remappedMatrix, orientation);
-        // Duz kullanımda ekranın üst kenarı; telefon belirgin biçimde dik tutulduğunda
-        // kameranın baktığı ileri eksen kullanılır. Modlar arasında sürekli karışım YOK:
-        // 65° üstünde dik moda girer, 50° altına dönmeden çıkmaz (histerezis).
-        float pitchDeg = Math.abs((float)Math.toDegrees(orientation[1]));
-        if (!uprightCompassMode && pitchDeg >= 65f) uprightCompassMode = true;
-        else if (uprightCompassMode && pitchDeg <= 50f) uprightCompassMode = false;
-
-        float rawTrueHeading;
-        if (uprightCompassMode) {
-            float forwardEast = -remappedMatrix[2];
-            float forwardNorth = -remappedMatrix[5];
-            float horizontal = (float)Math.hypot(forwardEast, forwardNorth);
-            if (horizontal < 0.12f) return;
-            rawTrueHeading = (float)Math.toDegrees(Math.atan2(forwardEast, forwardNorth));
-        } else {
-            rawTrueHeading = (float)Math.toDegrees(orientation[0]);
-        }
+        // STABLE V3: tek ve standart referans kullanılır: ekranın üst kenarının kuzeye göre azimutu.
+        // Düz/dik mod arasında geçiş yapılmaz; bu geçiş eski sensörlerde 90/180 derece sıçramalara yol açabiliyordu.
+        float rawTrueHeading = (float)Math.toDegrees(orientation[0]);
         rawTrueHeading = (rawTrueHeading + magneticDeclination + 360f) % 360f;
 
         if (Float.isNaN(filteredHeading)) {
@@ -314,9 +319,9 @@ public class MainActivity extends Activity implements SensorEventListener {
             filteredHeading = (filteredHeading + alpha * delta + 360f) % 360f;
         }
 
-        // WebView'i gereksiz sensor kareleriyle bogma; 25 Hz pusula icin yeterlidir.
+        // STABLE V3: eski WebView ana iş parçacığını sensör olaylarıyla boğma; 10 Hz yeterlidir.
         long now = SystemClock.elapsedRealtime();
-        if (now - lastCompassDispatchMs < 40L) return;
+        if (now - lastCompassDispatchMs < 100L) return;
         lastCompassDispatchMs = now;
 
         final float h = filteredHeading;
@@ -332,6 +337,21 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private class HilalBridge {
+        @JavascriptInterface public void startCompass() {
+            runOnUiThread(() -> {
+                compassRequested = true;
+                registerCompassSensors();
+            });
+        }
+
+        @JavascriptInterface public void stopCompass() {
+            runOnUiThread(() -> {
+                compassRequested = false;
+                unregisterCompassSensors();
+                if (webView != null) webView.evaluateJavascript("window.__hilalNativeCompassActive=false;", null);
+            });
+        }
+
         @JavascriptInterface public boolean hasReminderAccess() {
             boolean notificationOk = Build.VERSION.SDK_INT < 33 ||
                     checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
