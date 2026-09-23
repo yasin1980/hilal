@@ -19286,6 +19286,14 @@ body.teacher-mode #teacherPublicationList::after{
 #hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] summary{
   touch-action:manipulation!important;
 }
+
+/* STABLE V8 — Dua İstekleri eski Android dokunma uyumu; yalnız bu root. */
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] button,
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] [role="button"],
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] summary{
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
 </style>
 </head>
 <body>
@@ -21268,8 +21276,13 @@ function hilalCloudMutateHatimJuz(change){
   });
   return __hilalHatimMutationQueue;
 }
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hilalCloudStart,{once:true});
-else hilalCloudStart();
+/* STABLE V8: eski Android'de açılış ekranını kilitlememek için bulut motoru girişten sonra başlar. */
+window.hilalStartCloudAfterEntry=function(){
+  if(__hilalCloudStarted)return;
+  const run=()=>{try{hilalCloudStart()}catch(e){}};
+  if("requestIdleCallback" in window)requestIdleCallback(run,{timeout:1800});
+  else setTimeout(run,900);
+};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function userKey(){return currentUser?.key||"anonymous"}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -21710,7 +21723,9 @@ function directGuestEntry(){
 
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
-  try{renderAll()}catch(e){}
+  /* STABLE V8: ilk dokunma/ilk sayfa boyansın; ağır toplu render sonra çalışsın. */
+  setTimeout(()=>{try{renderAll()}catch(e){}},450);
+  try{window.hilalStartCloudAfterEntry?.()}catch(e){}
 
   try{
     const gb=document.querySelector('#guestMenu [data-gpage="calendarPage"]');
@@ -24588,7 +24603,10 @@ function logout(){
 }
 function goPage(b){
   document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");showPage(b.dataset.page);renderAll()
+  b.classList.add("active");
+  showPage(b.dataset.page);
+  /* STABLE V8: eski WebView'da geçiş dokunmasını renderAll ile bloklama. */
+  setTimeout(()=>{try{renderAll()}catch(e){}},180);
 }
 function showPage(id){
   /* Android WebView: önceki modal/okuyucudan kalabilen scroll kilidini temizle */
@@ -24596,6 +24614,7 @@ function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   try{ window.scrollTo({top:0,left:0,behavior:"auto"}); }catch(e){ try{window.scrollTo(0,0)}catch(_){} }
+  if(id==="calendarPage")setTimeout(()=>{try{renderCalendar();schedulePrayerBellInjection()}catch(e){}},0);
   if(id==="settingsPage")setTimeout(renderSettingsAccount,0);
   setTimeout(syncAnnouncementFab,0);
   if(id==="adminPublicationsPage"){
@@ -28596,8 +28615,7 @@ function autoRefreshCalendar(){
 setInterval(autoRefreshCalendar,60000);
 updateCalendarClock();
 try{loadPrayerLocation()}catch(e){}
-try{renderPrayerTimesForDate(new Date())}catch(e){}
-setTimeout(()=>{try{autoRefreshPrayerLocation()}catch(e){}},500);
+/* STABLE V8: namaz ağı/konum hesabı giriş ekranında değil Takvim&Ezan açılınca çalışır. */
 document.addEventListener("visibilitychange",()=>{
   if(!document.hidden){
     autoRefreshCalendar();
@@ -29413,13 +29431,15 @@ function setEzanBefore(key,minutes){
 }
 async function ensureEzanNotificationsReady(){
   const s=loadEzanSettings();
-  if(!s.master){
-    s.master=true;
-    saveEzanSettings(s);
-  }
-  if("Notification" in window && Notification.permission==="default"){
-    try{await Notification.requestPermission()}catch(e){}
-  }
+  if(!s.master){s.master=true;saveEzanSettings(s);}
+  /* Android WebView'da Notification.requestPermission beklemesi/aksaması yerine native izin köprüsü. */
+  try{
+    if(window.AndroidHilal && typeof AndroidHilal.hasReminderAccess==="function" &&
+       typeof AndroidHilal.requestReminderAccess==="function" && !AndroidHilal.hasReminderAccess()){
+      AndroidHilal.requestReminderAccess();
+    }
+  }catch(e){}
+  return true;
 }
 function closeEzanBellPicker(){
   document.getElementById("ezanBellPickerBackdrop")?.remove();
@@ -29662,13 +29682,8 @@ function schedulePrayerBellInjection(){
     try{injectPrayerTimeBellButtons();refreshPrayerBellButtons()}catch(e){}
   },80);
 }
-document.addEventListener("DOMContentLoaded",schedulePrayerBellInjection);
-setTimeout(schedulePrayerBellInjection,500);
-setTimeout(schedulePrayerBellInjection,1500);
-try{
-  const ezanBellObserver=new MutationObserver(schedulePrayerBellInjection);
-  ezanBellObserver.observe(document.body,{childList:true,subtree:true});
-}catch(e){}
+/* STABLE V8: tüm document'i izleyen MutationObserver eski Android'de pahalıydı.
+   Zil enjeksiyonu yalnız Takvim&Ezan render edildiğinde çağrılır. */
 
 
 
@@ -53249,7 +53264,7 @@ ready(function(){
         sessionStorage.setItem("hzv2_open_"+id,open?"1":"0");
         btn.textContent=open?"▲ Kapat":"▼ Zikre Katıl / Sayacı Aç";
       };
-      if(window.PointerEvent)btn.onpointerup=run;
+      if(window.AndroidHilal)btn.onclick=run; else if(window.PointerEvent)btn.onpointerup=run;
       else{btn.ontouchstart=run;btn.onclick=e=>{if(Date.now()-last>250)run(e)}}
     });
 
@@ -53272,7 +53287,7 @@ ready(function(){
         sessionStorage.setItem("hzv2_open_"+id,"1");
         this.renderGeneral();
       };
-      if(window.PointerEvent)btn.onpointerup=run;
+      if(window.AndroidHilal)btn.onclick=run; else if(window.PointerEvent)btn.onpointerup=run;
       else{btn.ontouchstart=run;btn.onclick=e=>{if(Date.now()-last>250)run(e)}}
     });
 
@@ -53289,7 +53304,7 @@ ready(function(){
         sessionStorage.setItem("hzv2_open_"+id,"1");
         this.renderGeneral();
       };
-      if(window.PointerEvent)btn.onpointerup=run;
+      if(window.AndroidHilal)btn.onclick=run; else if(window.PointerEvent)btn.onpointerup=run;
       else{btn.ontouchstart=run;btn.onclick=e=>{if(Date.now()-last>220)run(e)}}
       btn.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")run(e)};
     });
@@ -53305,7 +53320,7 @@ ready(function(){
         sessionStorage.setItem("hzv2_open_"+id,"1");
         this.renderGeneral();
       };
-      if(window.PointerEvent)btn.onpointerup=run;
+      if(window.AndroidHilal)btn.onclick=run; else if(window.PointerEvent)btn.onpointerup=run;
       else btn.onclick=run;
     });
 
@@ -53346,7 +53361,7 @@ ready(function(){
         sessionStorage.setItem("hzv2_open_"+id,"1");
         this.renderGeneral();
       };
-      if(window.PointerEvent)btn.onpointerup=run;
+      if(window.AndroidHilal)btn.onclick=run; else if(window.PointerEvent)btn.onpointerup=run;
       else btn.onclick=run;
     });
   };
@@ -54985,7 +55000,7 @@ ready(function(){
         last=now;
         fn();
       };
-      if(window.PointerEvent)el.onpointerup=run;
+      if(window.AndroidHilal)el.onclick=run; else if(window.PointerEvent)el.onpointerup=run;
       else{
         el.ontouchend=run;
         el.onclick=e=>{if(Date.now()-last>250)run(e)};
