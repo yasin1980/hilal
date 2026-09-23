@@ -19272,6 +19272,29 @@ body.teacher-mode #teacherPublicationList::after{
 #dailyVirtPage #virtList>.virt-item-pro:has(.virt-list-media.is-ready){grid-template-columns:auto minmax(0,1fr) auto;}
 @media(max-width:390px){:root{--hilal-bottom-nav-clearance:calc(158px + env(safe-area-inset-bottom,0px));}#dailyVirtPage .virt-list-media img{height:150px;}}
 </style>
+
+<style id="hilal-v4-dua-kapali-kutu-css">
+/* STABLE V4: Dua İstekleri dış global efektlerden bağımsız boya/dokunma yüzeyi */
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"]{
+  isolation:isolate!important;
+  contain:paint!important;
+  overscroll-behavior-x:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] button,
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] [role="button"],
+#hilalDuaPageV2[data-hilal-isolated-module="dua-istekleri"] summary{
+  touch-action:manipulation!important;
+}
+</style>
+
+<style id="hilal-android-performance-v5">
+/* Android performans katmani: yalniz GPU maliyetli cam/blur efektlerini azaltir; is motorlari sabittir. */
+html.hilal-android-performance *,html.hilal-android-performance *::before,html.hilal-android-performance *::after{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+html.hilal-android-performance .h64-fallback-enter{animation-duration:.18s!important;transition-duration:.18s!important}
+</style>
 </head>
 <body>
 <div class="app">
@@ -49823,6 +49846,11 @@ class SwipeNavigationController{
   blockedTarget(t){
     if(!t?.closest)return false;
 
+    /* STABLE V4 — DUA İSTEKLERİ KAPALI KUTU
+       Bu root içindeyken global yatay swipe/navigation motoru dokunma olayına girmez.
+       Dua İstekleri yalnız kendi controller/motorlarını kullanır. */
+    if(t.closest('#hilalDuaPageV2,[data-hilal-isolated-module="dua-istekleri"]')) return true;
+
     /* V120 FEEDBACK INPUT/TEXTAREA SWIPE FIX
        Görselde işaretlenen iki gerçek yazı alanı da artık swipe yüzeyidir:
        - #feedbackSubject
@@ -57367,9 +57395,9 @@ html.h64-prev::view-transition-old(root){animation-name:h64OldPrev}html.h64-prev
   open(i,slot){let c=this.c(),rs=this.routes();if(!c||!rs[i])return;Promise.resolve(c.transitionTo(rs[i])).then(ok=>{if(ok!==false){c.index=i;try{c.recordSuccess?.()}catch(e){}this.lastIndex=-1;this.render(i,true)}})}
   move(dx){let dir=dx<0?1:-1,p=Math.min(1,Math.abs(dx)/Math.max(170,innerWidth*.52)),q=p*p*(3-2*p),wave=Math.sin(Math.PI*p),side=innerWidth<=390?114:128;[...this.stage.children].forEach(b=>{if(b.classList.contains('h64-empty'))return;let slot=+b.dataset.slot,x=slot*side,sc=slot===0?1.10:.84,op=slot===0?1:.76,y=slot===0?-5:0;if(slot===0){x=-dir*side*q;sc=1.10-.25*q+.018*wave;op=1-.15*q}else if(slot===dir){x=dir*side*(1-q);sc=.84+.26*q+.018*wave;op=.76+.24*q;y=-5*q}else{x=slot*side-dir*8*q;sc=.84-.025*q;op=.76-.12*q}b.style.transition='none';b.style.transform=`translate3d(${x}px,${y}px,0) scale(${sc})`;b.style.opacity=op;let l=b.querySelector('.h64-label');if(l)l.style.opacity=(slot===0?1-q:slot===dir?q:0)})}
   reset(){[...this.stage.children].forEach(b=>{b.style.transition='';b.style.transform='';b.style.opacity='';let l=b.querySelector('.h64-label');if(l)l.style.opacity=''})}
-  init(){this.ensure();this.render(undefined,true);document.addEventListener('hilal:navigation-sync',()=>{this.reset();this.lastIndex=-1;requestAnimationFrame(()=>this.render(undefined,true))});document.addEventListener('touchstart',e=>{const c=this.c();if(e.touches.length!==1||e.target.closest?.('#hilalLiquidNavV64')||c?.blockedTarget?.(e.target)){this.drag=false;return;}this.sx=e.touches[0].clientX;this.sy=e.touches[0].clientY;this.drag=true},{passive:true,capture:true});document.addEventListener('touchmove',e=>{if(!this.drag||e.touches.length!==1)return;let dx=e.touches[0].clientX-this.sx,dy=e.touches[0].clientY-this.sy;if(Math.abs(dx)>Math.abs(dy)*1.14)this.move(dx)},{passive:true,capture:true});let end=()=>{if(!this.drag)return;this.drag=false;this.reset();setTimeout(()=>{this.lastIndex=-1;this.render(undefined,true)},70)};document.addEventListener('touchend',end,{passive:true,capture:true});document.addEventListener('touchcancel',end,{passive:true,capture:true});setInterval(()=>{if(!this.drag)this.render()},600)}
+  init(){this.ensure();this.render(undefined,true);document.addEventListener('hilal:navigation-sync',()=>{this.reset();this.lastIndex=-1;requestAnimationFrame(()=>this.render(undefined,true))});document.addEventListener('touchstart',e=>{const c=this.c();if(e.touches.length!==1||e.target.closest?.('#hilalLiquidNavV64')||c?.blockedTarget?.(e.target)){this.drag=false;return;}this.sx=e.touches[0].clientX;this.sy=e.touches[0].clientY;this.drag=true},{passive:true,capture:true});document.addEventListener('touchmove',e=>{if(!this.drag||e.touches.length!==1)return;let dx=e.touches[0].clientX-this.sx,dy=e.touches[0].clientY-this.sy;if(Math.abs(dx)>Math.abs(dy)*1.14)this.move(dx)},{passive:true,capture:true});let end=()=>{if(!this.drag)return;this.drag=false;this.reset();setTimeout(()=>{this.lastIndex=-1;this.render(undefined,true)},70)};document.addEventListener('touchend',end,{passive:true,capture:true});document.addEventListener('touchcancel',end,{passive:true,capture:true});setInterval(()=>{if(!this.drag)this.render()},1200)}
  }
- function installTransition(){let c=window.SwipeNavigationController;if(!c||c.__h64Transition)return false;c.__h64Transition=true;const baseActivate=c.activate.bind(c);c.transitionTo=async function(route){let from=this.detectActiveKey(),rs=this.routes||[],fi=rs.findIndex(r=>r.key===from),ti=rs.findIndex(r=>r.key===route?.key),dir=ti>=0&&fi>=0?(ti>fi?1:-1):1;let root=document.documentElement,cls=dir>0?'h64-next':'h64-prev';root.classList.remove('h64-next','h64-prev');root.classList.add(cls);let activate=()=>{let ok=baseActivate(route);if(ok&&route?.key==='calendarPage'){try{let v=window.VerticalPageScrollControllerV112;v?.apply?.();requestAnimationFrame(()=>v?.apply?.())}catch(e){}}return ok};let ok=false;if(document.startViewTransition){let vt=document.startViewTransition(()=>{ok=activate()});try{await vt.finished}catch(e){}root.classList.remove(cls);return !!ok}else{ok=activate();requestAnimationFrame(()=>{let nr=this.activeRoot?.();if(nr){nr.style.setProperty('--h64-x',dir>0?'24px':'-24px');nr.classList.remove('h64-fallback-enter');void nr.offsetWidth;nr.classList.add('h64-fallback-enter');setTimeout(()=>nr.classList.remove('h64-fallback-enter'),330)}});setTimeout(()=>root.classList.remove(cls),340);return !!ok}}
+ function installTransition(){let c=window.SwipeNavigationController;if(!c||c.__h64Transition)return false;c.__h64Transition=true;const baseActivate=c.activate.bind(c);c.transitionTo=async function(route){let from=this.detectActiveKey(),rs=this.routes||[],fi=rs.findIndex(r=>r.key===from),ti=rs.findIndex(r=>r.key===route?.key),dir=ti>=0&&fi>=0?(ti>fi?1:-1):1;let root=document.documentElement,cls=dir>0?'h64-next':'h64-prev';root.classList.remove('h64-next','h64-prev');root.classList.add(cls);let activate=()=>{let ok=baseActivate(route);if(ok&&route?.key==='calendarPage'){try{let v=window.VerticalPageScrollControllerV112;v?.apply?.();requestAnimationFrame(()=>v?.apply?.())}catch(e){}}return ok};let ok=false;if(document.startViewTransition&&!document.documentElement.classList.contains('hilal-android-performance')){let vt=document.startViewTransition(()=>{ok=activate()});try{await vt.finished}catch(e){}root.classList.remove(cls);return !!ok}else{ok=activate();requestAnimationFrame(()=>{let nr=this.activeRoot?.();if(nr){nr.style.setProperty('--h64-x',dir>0?'24px':'-24px');nr.classList.remove('h64-fallback-enter');void nr.offsetWidth;nr.classList.add('h64-fallback-enter');setTimeout(()=>nr.classList.remove('h64-fallback-enter'),330)}});setTimeout(()=>root.classList.remove(cls),340);return !!ok}}
  return true}
  const boot=()=>{installTransition()||setTimeout(installTransition,200);window.HilalLiquidNavV64=new Dock64();window.HilalLiquidNavV64.init()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
