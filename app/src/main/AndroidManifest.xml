@@ -16,6 +16,7 @@
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
 
     <application
+        android:name=".HilalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Hilâl"
