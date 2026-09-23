@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId 'com.hilal.ibadet'
-        minSdk 23
+        minSdk 24
         targetSdk 35
         versionCode 54
         versionName '5.12-stable-v2'
