@@ -8,13 +8,13 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 29
         targetSdk 35
-        versionCode 55
-        versionName '5.13-stable-v3-giris-kible'
+        versionCode 56
+        versionName '5.14-stable-v5-performans'
     }
 }
 
 dependencies {
-    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'androidx.webkit:webkit:1.17.0'
     implementation 'androidx.credentials:credentials:1.7.0-alpha03'
     implementation 'androidx.credentials:credentials-play-services-auth:1.7.0-alpha03'
     implementation 'com.google.android.libraries.identity.googleid:googleid:1.2.1'
