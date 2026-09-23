@@ -35425,9 +35425,31 @@ function install(){
  if(prayerScreen)prayerScreen.insertAdjacentElement("afterend",q);
  else page.appendChild(q);
 
- const startCompass=async()=>{ locate(); await enableCompass(); };
+ let nativeCompassEnabled=false;
+ const startCompass=async()=>{
+   try{ if(window.AndroidHilal && typeof AndroidHilal.startCompass==='function'){ AndroidHilal.startCompass(); nativeCompassEnabled=true; } }catch(e){}
+   locate(); await enableCompass();
+ };
  const tap=document.getElementById("q1428CompassTap");
  tap.addEventListener("click",startCompass);
+ // Native sensörü yalnız Kıble kartı ekranda kullanılırken açık tut.
+ // Böylece eski cihazlarda Takvim/Ezan dikey kaydırması sensör callback'leri yüzünden kilitlenmez.
+ if('IntersectionObserver' in window){
+   const io=new IntersectionObserver(entries=>{
+     const visible=entries.some(x=>x.isIntersecting && x.intersectionRatio>0.05);
+     try{
+       if(!visible && nativeCompassEnabled && window.AndroidHilal && typeof AndroidHilal.stopCompass==='function') AndroidHilal.stopCompass();
+       else if(visible && nativeCompassEnabled && window.AndroidHilal && typeof AndroidHilal.startCompass==='function') AndroidHilal.startCompass();
+     }catch(e){}
+   },{threshold:[0,0.05]});
+   io.observe(tap);
+ }
+ document.addEventListener('visibilitychange',()=>{
+   try{
+     if(document.hidden && nativeCompassEnabled && window.AndroidHilal && typeof AndroidHilal.stopCompass==='function') AndroidHilal.stopCompass();
+     else if(!document.hidden && nativeCompassEnabled && window.AndroidHilal && typeof AndroidHilal.startCompass==='function') AndroidHilal.startCompass();
+   }catch(e){}
+ });
  tap.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();startCompass();}});
 }
 document.addEventListener("DOMContentLoaded",()=>setTimeout(install,250));
