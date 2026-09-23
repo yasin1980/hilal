@@ -9,7 +9,7 @@ android {
         minSdk 29
         targetSdk 35
         versionCode 58
-        versionName '5.16-stable-v7-guvenli-geri-donus'
+        versionName '5.16-stable-v8-eski-android-akis'
     }
 }
 
