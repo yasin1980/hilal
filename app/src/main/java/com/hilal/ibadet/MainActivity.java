@@ -15,8 +15,6 @@ import android.hardware.GeomagneticField;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.SystemClock;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.net.Uri;
 import android.view.Window;
@@ -45,6 +43,12 @@ public class MainActivity extends Activity implements SensorEventListener {
     private WebView webView;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
+    private Sensor accelerometerSensor;
+    private Sensor magneticSensor;
+    private final float[] accelValues = new float[3];
+    private final float[] magneticValues = new float[3];
+    private boolean haveAccel = false;
+    private boolean haveMagnetic = false;
     private float filteredHeading = Float.NaN;
     private PermissionRequest pendingCameraRequest;
     private final float[] rotationMatrix = new float[9];
@@ -54,9 +58,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     private long lastCompassDispatchMs = 0L;
     private boolean uprightCompassMode = false;
     private boolean exactAlarmWasGranted = false;
-    private boolean pageReady = false;
-    private boolean compassRegistered = false;
-    private final Runnable delayedCompassStart = this::registerCompassIfNeeded;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,14 +71,20 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setGeolocationEnabled(true);
-        s.setAllowFileAccess(false);
+        s.setAllowFileAccess(true);
         s.setAllowContentAccess(true);
-        s.setSupportZoom(false);
-        s.setBuiltInZoomControls(false);
-        s.setDisplayZoomControls(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
+        s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            s.setOffscreenPreRaster(false);
+        }
+        webView.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setHorizontalScrollBarEnabled(false);
 
         // HTML hatırlatıcı motorunun Android AlarmManager köprüsü.
         webView.addJavascriptInterface(new HilalBridge(), "AndroidHilal");
@@ -92,12 +99,6 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
-            }
-            @Override public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                pageReady = true;
-                view.removeCallbacks(delayedCompassStart);
-                view.postDelayed(delayedCompassStart, 1200L);
             }
         });
 
@@ -136,12 +137,14 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         exactAlarmWasGranted = hasExactAlarmAccess();
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
-        // İzinler açılışta zincirleme istenmez; ilgili özellik kullanıldığında istenir.
+        // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
 
 
@@ -216,18 +219,16 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onResume() {
         super.onResume();
-        if (webView != null && pageReady) {
-            webView.removeCallbacks(delayedCompassStart);
-            webView.postDelayed(delayedCompassStart, 500L);
+        if (rotationSensor != null) {
+            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
+        } else {
+            // Eski/ucuz cihaz fallback: accelerometer + magnetic field.
+            if (accelerometerSensor != null) sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI);
+            if (magneticSensor != null) sensorManager.registerListener(this, magneticSensor, SensorManager.SENSOR_DELAY_UI);
         }
         boolean exactNow = hasExactAlarmAccess();
         if (exactNow && !exactAlarmWasGranted) ReminderScheduler.restoreAll(this);
         exactAlarmWasGranted = exactNow;
-    }
-
-    private void registerCompassIfNeeded() {
-        if (compassRegistered || rotationSensor == null || sensorManager == null || !pageReady) return;
-        compassRegistered = sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     private boolean hasExactAlarmAccess() {
@@ -240,18 +241,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override protected void onPause() {
         super.onPause();
-        if (webView != null) webView.removeCallbacks(delayedCompassStart);
-        if (sensorManager != null && compassRegistered) sensorManager.unregisterListener(this);
-        compassRegistered = false;
+        sensorManager.unregisterListener(this);
     }
 
     @Override public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() != Sensor.TYPE_ROTATION_VECTOR) return;
+        final int type = event.sensor.getType();
+        if (type == Sensor.TYPE_ROTATION_VECTOR) {
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        } else if (rotationSensor == null && type == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(event.values, 0, accelValues, 0, 3); haveAccel = true;
+            if (!haveMagnetic || !SensorManager.getRotationMatrix(rotationMatrix, null, accelValues, magneticValues)) return;
+        } else if (rotationSensor == null && type == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, magneticValues, 0, 3); haveMagnetic = true;
+            if (!haveAccel || !SensorManager.getRotationMatrix(rotationMatrix, null, accelValues, magneticValues)) return;
+        } else return;
 
-        // TEK KIBLE MOTORU: Android rotation-vector -> ekran koordinati -> gercek kuzey.
-        // Duz/dik mod, kamera ekseni ve ikinci yon kaynagi yoktur. Telefonun ekraninin
-        // ust kenari her durumda kullanicinin tuttugu yon kabul edilir.
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
+        // STABLE V2 KIBLE: rotation-vector; yoksa accelerometer + magnetometer fallback.
 
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
         int axisX = SensorManager.AXIS_X;
@@ -311,7 +316,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // WebView'i gereksiz sensor kareleriyle bogma; 25 Hz pusula icin yeterlidir.
         long now = SystemClock.elapsedRealtime();
-        if (now - lastCompassDispatchMs < 60L) return;
+        if (now - lastCompassDispatchMs < 40L) return;
         lastCompassDispatchMs = now;
 
         final float h = filteredHeading;
@@ -357,18 +362,6 @@ public class MainActivity extends Activity implements SensorEventListener {
             } catch (Exception ignored) { }
         }
 
-        @JavascriptInterface public void haptic(int milliseconds) {
-            final int ms = Math.max(8, Math.min(milliseconds, 80));
-            try {
-                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (vibrator == null || !vibrator.hasVibrator()) return;
-                if (Build.VERSION.SDK_INT >= 26) vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
-                else vibrator.vibrate(ms);
-            } catch (Exception ignored) { }
-        }
-
-        @JavascriptInterface public void vibrate(int milliseconds) { haptic(milliseconds); }
-
         @JavascriptInterface public void scheduleReminder(String json) {
             try {
                 JSONObject o = new JSONObject(json);
@@ -408,7 +401,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        if (sensor != null && sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+        if (sensor != null && (sensor.getType() == Sensor.TYPE_ROTATION_VECTOR ||
+                (rotationSensor == null && sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD))) {
             compassAccuracy = accuracy;
             if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE || accuracy == SensorManager.SENSOR_STATUS_ACCURACY_LOW) {
                 runOnUiThread(() -> {
