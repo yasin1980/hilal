@@ -101,11 +101,6 @@ public class MainActivity extends Activity implements SensorEventListener {
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
             }
-            @Override public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                // Eski/orta Android GPU'larinda pahali blur/backdrop efektlerini kapat; is motorlarina dokunmaz.
-                view.evaluateJavascript("document.documentElement.classList.add('hilal-android-performance');", null);
-            }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -141,11 +136,9 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
         });
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        exactAlarmWasGranted = hasExactAlarmAccess();
+        // V7: acilis kritik yolunda sensor sorgulama yok. Kible acilinca hazirlanir.
+        // Bu, eski cihazlarda ilk WebView cizimini sensor servisinden ayirir.
+        webView.postDelayed(() -> exactAlarmWasGranted = hasExactAlarmAccess(), 1200L);
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
@@ -234,7 +227,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private void registerCompassSensors() {
-        if (sensorManager == null || compassRegistered) return;
+        if (compassRegistered) return;
+        if (sensorManager == null) {
+            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            if (sensorManager == null) return;
+            rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        }
         boolean ok = false;
         if (rotationSensor != null) {
             ok = sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
