@@ -101,6 +101,11 @@ public class MainActivity extends Activity implements SensorEventListener {
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
             }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Eski/orta Android GPU'larinda pahali blur/backdrop efektlerini kapat; is motorlarina dokunmaz.
+                view.evaluateJavascript("document.documentElement.classList.add('hilal-android-performance');", null);
+            }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
@@ -321,7 +326,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // STABLE V3: eski WebView ana iş parçacığını sensör olaylarıyla boğma; 10 Hz yeterlidir.
         long now = SystemClock.elapsedRealtime();
-        if (now - lastCompassDispatchMs < 100L) return;
+        if (now - lastCompassDispatchMs < 200L) return;
         lastCompassDispatchMs = now;
 
         final float h = filteredHeading;
@@ -331,7 +336,6 @@ public class MainActivity extends Activity implements SensorEventListener {
             webView.evaluateJavascript(
                 "window.__hilalNativeCompassActive=true;" +
                 "window.__hilalNativeCompassAccuracy=" + accuracy + ";" +
-                "if(typeof setHeading==='function'){setHeading(" + h + ",true);}" +
                 "window.dispatchEvent(new CustomEvent('hilalNativeHeading',{detail:{heading:" + h + ",accuracy:" + accuracy + "}}));", null);
         });
     }
