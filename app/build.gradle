@@ -9,7 +9,7 @@ android {
         minSdk 23
         targetSdk 35
         versionCode 54
-        versionName '5.12-stable-compat'
+        versionName '5.12-stable-v2'
     }
 }
 
