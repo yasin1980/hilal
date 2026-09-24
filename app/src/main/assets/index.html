@@ -19303,6 +19303,34 @@ body.teacher-mode #teacherPublicationList::after{
 }
 </style>
 <meta name="hilal-dua-library-lock" content="V16-single-click-immutable">
+
+<style id="hilal-v24-opening-instant-legacy-fix">
+/* V24 — SADECE AÇILIŞ EKRANI / ESKİ ANDROID */
+#hilalLaunchSplash{display:none!important;}
+#startScreen,
+#startScreen .login-stage{contain:layout paint;}
+#startScreen article.login-panel.guest.guest-simple-panel,
+#startScreen .guest-simple-panel,
+#startScreen .guest-entry-actions,
+#startScreen .login-panel-actions{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#startScreen .guest-entry-button{
+  outline:0!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+#startScreen .login-stage-mask{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -21285,8 +21313,12 @@ function hilalCloudMutateHatimJuz(change){
   });
   return __hilalHatimMutationQueue;
 }
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hilalCloudStart,{once:true});
-else hilalCloudStart();
+/* V24: Eski Android'de açılış ekranını ağ/Firebase işi bekletmez.
+   Bulut yalnız uygulamaya gerçek girişten sonra, ilk ekran çizildikten sonra başlar. */
+window.hilalStartCloudAfterEntry=function(){
+  if(__hilalCloudStarted)return;
+  setTimeout(function(){try{hilalCloudStart()}catch(e){}},1200);
+};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function userKey(){return currentUser?.key||"anonymous"}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -21727,7 +21759,10 @@ function directGuestEntry(){
 
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
-  try{renderAll()}catch(e){}
+
+  /* Önce uygulama ekranını çiz; ağır liste/bulut işleri sonra. */
+  setTimeout(function(){try{renderAll()}catch(e){}},180);
+  try{window.hilalStartCloudAfterEntry&&window.hilalStartCloudAfterEntry()}catch(e){}
 
   try{
     const gb=document.querySelector('#guestMenu [data-gpage="calendarPage"]');
@@ -42319,9 +42354,10 @@ setTimeout(fixOpeningPanels,50);
   }
   document.addEventListener("DOMContentLoaded",function(){
     const start=document.getElementById("startScreen");
-    if(start)start.classList.add("launching");
-    setTimeout(playLaunchSound,180);
-    setTimeout(restoreSession,0);
+    if(start)start.classList.remove("launching");
+    hideLaunchSplash();
+    /* Ses bile ilk boyamadan sonra çalışsın. */
+    setTimeout(playLaunchSound,650);
   },{once:true});
 })();
 </script>
