@@ -15,6 +15,8 @@ import android.hardware.GeomagneticField;
 import android.os.Bundle;
 import android.os.Build;
 import android.os.SystemClock;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.net.Uri;
 import android.view.Window;
@@ -341,6 +343,21 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private class HilalBridge {
+        @JavascriptInterface public void performHaptic(int kind) {
+            runOnUiThread(() -> {
+                try {
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (v == null || !v.hasVibrator()) return;
+                    long ms = kind == 1 ? 32L : 22L;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        v.vibrate(ms);
+                    }
+                } catch (Exception ignored) {}
+            });
+        }
+
         @JavascriptInterface public void startCompass() {
             runOnUiThread(() -> {
                 compassRequested = true;
