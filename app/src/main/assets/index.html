@@ -21315,9 +21315,17 @@ function hilalCloudMutateHatimJuz(change){
 }
 /* V24: Eski Android'de açılış ekranını ağ/Firebase işi bekletmez.
    Bulut yalnız uygulamaya gerçek girişten sonra, ilk ekran çizildikten sonra başlar. */
+window.__hilalEntryCommitted=false;
+window.__hilalPostEntryBootStarted=false;
 window.hilalStartCloudAfterEntry=function(){
-  if(__hilalCloudStarted)return;
-  setTimeout(function(){try{hilalCloudStart()}catch(e){}},1200);
+  if(window.__hilalPostEntryBootStarted)return;
+  window.__hilalPostEntryBootStarted=true;
+  const run=function(){
+    if(!window.__hilalEntryCommitted)return;
+    try{hilalCloudStart()}catch(e){}
+  };
+  if("requestIdleCallback" in window)requestIdleCallback(run,{timeout:1800});
+  else setTimeout(run,900);
 };
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function userKey(){return currentUser?.key||"anonymous"}
@@ -21759,9 +21767,15 @@ function directGuestEntry(){
 
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
+  window.__hilalEntryCommitted=true;
 
   /* Önce uygulama ekranını çiz; ağır liste/bulut işleri sonra. */
-  setTimeout(function(){try{renderAll()}catch(e){}},180);
+  if(!window.__hilalInitialRenderQueued){
+    window.__hilalInitialRenderQueued=true;
+    requestAnimationFrame(function(){
+      setTimeout(function(){try{renderAll()}catch(e){}},120);
+    });
+  }
   try{window.hilalStartCloudAfterEntry&&window.hilalStartCloudAfterEntry()}catch(e){}
 
   try{
@@ -56195,6 +56209,29 @@ document.addEventListener('click',()=>setTimeout(install,80),true);
 window.addEventListener('hilalCameraDenied',()=>{const root=q(),m=root&&root.querySelector('.qcam-msg');if(m)m.textContent='Kamera izni verilmedi. Telefon ayarlarından Kamera iznini açın.'});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera()});
 window.addEventListener('pagehide',stopCamera);
+})();
+</script>
+<script id="hilal-v25-startup-single-controller">
+(function(){
+"use strict";
+let repairing=false;
+function keepEntry(){
+ if(!window.__hilalEntryCommitted||repairing)return;
+ const start=document.getElementById("startScreen");
+ if(!start)return;
+ const cs=getComputedStyle(start);
+ if(cs.display!=="none"&&cs.visibility!=="hidden"){
+   repairing=true;
+   start.style.setProperty("display","none","important");
+   start.style.setProperty("visibility","hidden","important");
+   start.style.setProperty("pointer-events","none","important");
+   requestAnimationFrame(function(){repairing=false});
+ }
+}
+document.addEventListener("DOMContentLoaded",function(){
+ const start=document.getElementById("startScreen");
+ if(start)new MutationObserver(keepEntry).observe(start,{attributes:true,attributeFilter:["class","style","hidden"]});
+},{once:true});
 })();
 </script>
 </body>
