@@ -39540,16 +39540,25 @@ body.hilal-participation-clean-active #guestFollowingList{
   function renderPrayerRows(){
     const target=q("#hilalRefPrayerRowsV1");
     if(!target)return;
-    const rows=prayerSourceRows();
-    if(!rows.length)return;
 
-    target.innerHTML=rows.map((r,i)=>{
-      const rawName=txt(r.querySelector(".prayer-name > span:first-child")) || txt(r.querySelector(".prayer-name"));
-      const name=rawName.replace(/\s*S[İI]RADAK[İI]\s*$/i,"").trim() || ["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"][i];
-      const time=txt(r.querySelector(".prayer-time")) || "--:--";
+    const names=["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"];
+    const mapKeys=["İmsak","Güneş","Öğle","İkindi","Akşam","Yatsı"];
+    const rows=prayerSourceRows();
+    const liveMap=window.__hilalLivePrayerMap||{};
+    const cached=(window.__hilalPrayerCache&&window.__hilalPrayerCache.times)||{};
+    const cacheKeys=["Imsak","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
+
+    /* Kaynak satırlar henüz oluşmamış olsa bile panel boş kalmaz.
+       Önce canlı DOM, sonra mevcut canlı harita/cache, en son --:-- kullanılır. */
+    target.innerHTML=names.map((fallbackName,i)=>{
+      const r=rows[i]||null;
+      const rawName=r ? (txt(r.querySelector(".prayer-name > span:first-child")) || txt(r.querySelector(".prayer-name"))) : "";
+      const name=rawName.replace(/\s*S[İI]RADAK[İI]\s*$/i,"").trim() || fallbackName;
+      const time=(r && txt(r.querySelector(".prayer-time"))) || liveMap[mapKeys[i]] || cached[cacheKeys[i]] || "--:--";
       const key=name.toLocaleLowerCase("tr-TR");
       const icon=icons[key]||"•";
-      return `<div class="hilal-ref-prayer-row-v1" data-ref-row="${i}">
+      const isNext=!!(r && r.classList.contains("next-prayer"));
+      return `<div class="hilal-ref-prayer-row-v1${isNext?' is-next-prayer-v1':''}" data-ref-row="${i}">
         <div class="hilal-ref-prayer-icon-v1">${icon}</div>
         <div class="hilal-ref-prayer-name-v1">${name}</div>
         <div class="hilal-ref-prayer-time-v1">${time}</div>
