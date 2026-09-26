@@ -21009,7 +21009,6 @@ window.addEventListener("hilal-auth-user",function(ev){
 });
 
 function directGuestEntry(){
-
   selectedRole="guest";
   const resolvedGuestName=hilalGuestDisplayName();
   currentUser={
@@ -21025,18 +21024,17 @@ function directGuestEntry(){
   try{hilalSyncSingleRoleMenu()}catch(e){}
   try{hilalRefreshGuestMenuIdentity()}catch(e){}
 
-  /* Giriş sonrası Takvim sayfasını göstermeden önce mevcut motorlarla son halini hazırla. */
-  try{roleText.textContent=currentUser.name}catch(e){}
-  try{renderAll()}catch(e){}
-  try{hilalRefreshGuestCalendarOpening()}catch(e){}
-
   try{closeLogin()}catch(e){}
   try{startScreen.classList.add("hidden")}catch(e){}
   try{mainApp.classList.remove("hidden")}catch(e){}
+
+  try{roleText.textContent=currentUser.name}catch(e){}
   try{showPage("calendarPage")}catch(e){}
+  setTimeout(hilalRefreshGuestCalendarOpening,120);
 
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
+  try{renderAll()}catch(e){}
 
   try{
     const gb=document.querySelector('#guestMenu [data-gpage="calendarPage"]');
@@ -48168,5 +48166,3 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 @media(max-width:380px){#calendarPage .hilal-vakit-card-v91{grid-template-columns:minmax(0,1fr) 104px !important;padding:9px 11px !important;gap:7px !important;min-height:58px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{min-width:104px !important;font-size:22px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{font-size:12px !important}}
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
-
-
