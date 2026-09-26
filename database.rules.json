@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "shared": {
+      "hilal_follower_participations_v1": {
+        ".read": true,
+        ".write": true
+      },
+      "hilal_publications_v1": {
+        ".read": true,
+        ".write": true
+      },
+      "hilal_teacher_announcements_v1": {
+        ".read": true,
+        ".write": true
+      },
+      "hilal_hijri_daily_content_v1": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}
