@@ -44175,19 +44175,69 @@ window.addEventListener('pagehide',stopCamera);
     inset 0 0 50px rgba(0,0,0,.66)!important;
 }
 #calendarPage .q1428-compass:not(.q1432-aligned) .q
-<!-- HILAL V44 — DUA TELEFONLAR ARASI CANLI SENKRON -->
-<script id="hilal-v44-dua-live-sync-js">
+<!-- HILAL V46 — DUA REQUESTS V2 TELEFONLAR ARASI CANLI SENKRON -->
+<script id="hilal-v46-dua-v2-live-sync-js">
 (function(){
 "use strict";
-var KEY="hilal_follower_participations_v1",timer=0,busy=false;
-function open(){var b=document.body;return !!(b&&(b.classList.contains("hilal-dua-v165-open")||b.classList.contains("hilal-dua-subpage-active-v76")||document.querySelector("#hilalDuaPageV2.hdv2-open,#hilalDuaPageV2.hdv51-open,#hilalDuaV165Host.is-open")))}
-async function pull(){if(busy||document.hidden||!open()||typeof window.hilalCloudPullKey!=="function")return;busy=true;try{await window.hilalCloudPullKey(KEY,{force:false})}catch(_){}finally{busy=false}}
-function mode(){if(open()&&!document.hidden){if(!timer)timer=setInterval(pull,2000);pull()}else if(timer){clearInterval(timer);timer=0}}
-document.addEventListener("click",function(){setTimeout(mode,80);setTimeout(pull,450)},true);
+var KEY="hilal_dua_requests_v2", timer=0, busy=false, lastStamp="";
+
+function duaOpen(){
+  var b=document.body;
+  return !!(b && (
+    b.classList.contains("hilal-dua-v165-open") ||
+    b.classList.contains("hilal-dua-subpage-active-v76") ||
+    document.querySelector("#hilalDuaPageV2.hdv2-open,#hilalDuaPageV2.hdv51-open,#hilalDuaV165Host.is-open,#hilalDuaFeedV55.hd55-open,#hilalDuaMyPageV53.hdv53-open")
+  ));
+}
+function fire(){
+  try{
+    window.dispatchEvent(new CustomEvent("storage",{detail:{key:KEY}}));
+    document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:KEY,source:"cloud"}}));
+  }catch(_){}
+}
+async function pull(force){
+  if(busy || document.hidden || typeof window.hilalCloudPullKey!=="function") return;
+  busy=true;
+  try{
+    var before=localStorage.getItem(KEY)||"";
+    await window.hilalCloudPullKey(KEY,{force:!!force});
+    var after=localStorage.getItem(KEY)||"";
+    if(after!==before || (force && after)){
+      lastStamp=after;
+      fire();
+    }
+  }catch(e){
+    console.warn("[Hilal V46] dua v2 pull",e);
+  }finally{busy=false;}
+}
+function mode(){
+  if(duaOpen() && !document.hidden){
+    pull(true);
+    if(!timer) timer=setInterval(function(){pull(false)},1500);
+  }else if(timer){
+    clearInterval(timer); timer=0;
+  }
+}
+
+/* Dua ekranına giriş, sekme değişimi ve paylaşım sonrası hemen buluttan yenile. */
+document.addEventListener("click",function(){
+  setTimeout(mode,60);
+  setTimeout(function(){ if(duaOpen()) pull(true); },350);
+  setTimeout(function(){ if(duaOpen()) pull(true); },1200);
+},true);
+
 document.addEventListener("visibilitychange",mode);
-window.addEventListener("online",function(){mode();pull()});
-window.addEventListener("focus",function(){mode();pull()});
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mode,{once:true});else mode();
+window.addEventListener("focus",function(){mode(); if(duaOpen()) pull(true)});
+window.addEventListener("online",function(){mode(); if(duaOpen()) pull(true)});
+
+/* Aynı cihazdaki localStorage yazımlarında mevcut bulut motoru push yapar;
+   diğer telefonlar v2'yi doğrudan aynı anahtardan geri çeker. */
+window.addEventListener("storage",function(e){
+  if(e && e.key===KEY && duaOpen()) setTimeout(function(){pull(true)},250);
+});
+
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",mode,{once:true});
+else mode();
 })();
 </script>
 
