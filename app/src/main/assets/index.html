@@ -1684,7 +1684,7 @@ body.__kart_tema_kapali .reader-file-link{
 }
 
 
-/* AÇILIŞ: eski v1.63/v1.54 splash-launching katmanı kaldırıldı. */
+/* V54: eski v1.54/v1.63 launch katmanı tamamen kaldırıldı */
 .start-screen {
   min-height:100vh;
   padding:0!important;
@@ -1710,7 +1710,7 @@ body.__kart_tema_kapali .reader-file-link{
 .login-stage-bg {
   position:absolute;
   inset:0;
-  background-image:url("hilal_embedded_1_19bf506718.png");
+  background-image:none;
   background-repeat:no-repeat;
   background-position:center center;
   background-size:cover;
@@ -18486,21 +18486,22 @@ body.hilal-dua-v165-open:not(.hilal-dua-v165-home) #hilalNavigationBack{
 </style>
 
 
-<style id="hilal-v53-opening-single-source">
-/* TEK AÇILIŞ KAYNAĞI:
-   Güncel startScreen ilk frame'de görünür; eski splash/launching katmanı yoktur. */
-#startScreen{visibility:visible!important;opacity:1!important;}
-#startScreen .login-stage,
-#startScreen .login-stage-bg,
-#startScreen .login-stage-mask,
+<style id="hilal-v54-clean-opening">
+/* V54: Açılışta PNG/splash/launching yok. İlk kare doğrudan güncel giriş arayüzüdür. */
+#startScreen{background:#e7e2d8!important;visibility:visible!important;opacity:1!important;}
+#startScreen .login-stage{
+  background:
+    radial-gradient(circle at 50% 26%,rgba(255,248,220,.96) 0,rgba(231,226,216,.96) 38%,#d9e4dc 100%)!important;
+}
+#startScreen .login-stage-bg{display:none!important;background:none!important;}
+#startScreen .login-stage-mask{display:none!important;}
 #startScreen .login-teacher-compact,
 #startScreen .login-admin,
 #startScreen .login-panels,
 #startScreen .guest-simple-panel,
 #startScreen .guest-entry-actions,
 #startScreen .guest-entry-button{
-  animation:none!important;
-  transition:none!important;
+  visibility:visible!important;opacity:1!important;animation:none!important;transition:none!important;
 }
 </style>
 
@@ -18508,6 +18509,7 @@ body.hilal-dua-v165-open:not(.hilal-dua-v165-home) #hilalNavigationBack{
 <body>
 <div class="app">
 <section class="start-screen" id="startScreen">
+
 <div class="login-stage">
 <div class="login-stage-bg"></div>
 <div class="login-stage-mask"></div>
@@ -20451,8 +20453,8 @@ function hilalCloudStartStreams(){
 function hilalCloudStart(){
   if(__hilalCloudStarted)return;
   __hilalCloudStarted=true;
-  setTimeout(()=>hilalCloudSyncAll(true),3000);
-  setTimeout(hilalCloudStartStreams,4200);
+  setTimeout(()=>hilalCloudSyncAll(true),3500);
+  setTimeout(hilalCloudStartStreams,5000);
 
   /* Hilâl Ölçeklenebilir Altyapı - Faz 1
      EventSource destekleniyorsa değişiklikler gerçek zamanlı akıştan gelir.
@@ -41431,68 +41433,7 @@ body[data-hilal-dua-open="1"] #hilalNavigationBack {
    Tasarım ve işlev değiştirilmez.
    ========================================================= */
 
-/* 1) AÇILIŞ EKRANI:
-   launching sırasında kart/butonların bir an gizlenmesini engelle */
-#startScreen,
-#startScreen .login-stage,
-#startScreen .login-stage > *,
-#startScreen .login-panels,
-#startScreen .login-panel,
-#startScreen .login-teacher-compact,
-#startScreen .login-admin,
-#startScreen .guest-entry-button{
-  visibility:visible!important;
-  opacity:1!important;
-}
-
-#startScreen.launching .login-stage > *{
-  visibility:visible!important;
-  opacity:1!important;
-}
-
-/* Açılış butonlarında mavi Android/WebView tap/focus karesi olmasın */
-#startScreen button,
-#startScreen [role="button"],
-#startScreen .login-teacher-compact,
-#startScreen .login-admin,
-#startScreen .guest-entry-button{
-  -webkit-tap-highlight-color:transparent!important;
-  outline:none!important;
-  outline-width:0!important;
-  box-shadow:none;
-}
-
-#startScreen button:focus,
-#startScreen button:focus-visible,
-#startScreen button:active,
-#startScreen .login-teacher-compact:focus,
-#startScreen .login-teacher-compact:focus-visible,
-#startScreen .login-teacher-compact:active,
-#startScreen .login-admin:focus,
-#startScreen .login-admin:focus-visible,
-#startScreen .login-admin:active,
-#startScreen .guest-entry-button:focus,
-#startScreen .guest-entry-button:focus-visible,
-#startScreen .guest-entry-button:active{
-  outline:none!important;
-  -webkit-tap-highlight-color:transparent!important;
-}
-
-/* Sadece geçici basma ölçek/kaydırma hareketlerini kaldır */
-#startScreen .login-teacher-compact,
-#startScreen .login-admin,
-#startScreen .guest-entry-button,
-#startScreen .login-panel{
-  transition:none!important;
-  animation:none!important;
-}
-
-#startScreen .login-teacher-compact:active,
-#startScreen .login-admin:active,
-#startScreen .guest-entry-button:active{
-  transform:none!important;
-}
-
+/* V54: eski açılış flicker/launching telafi kodları kaldırıldı */
 /* 2) DUA İSTEKLERİ ANA İKİ KART:
    tıklarken kaybolma / küçülme / odak çerçevesi yok */
 #hilalDuaPageV2 .hdv52-card,
