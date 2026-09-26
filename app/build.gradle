@@ -8,8 +8,8 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 61
-        versionName '5.19-v22-stable-startup-single-controller'
+        versionCode 62
+        versionName '5.20-v44-fast-start-dua-live-sync'
     }
 }
 
