@@ -8,8 +8,8 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 64
-        versionName '5.22-v46-dua-v2-live-sync'
+        versionCode 69
+        versionName '5.27-v51-clean-multidevice-dua'
     }
 }
 
