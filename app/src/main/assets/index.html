@@ -18532,6 +18532,19 @@ body.hilal-dua-v165-open:not(.hilal-dua-v165-home) #hilalNavigationBack{
 #hilalNavigation > #hilalNavigationBack ~ #hilalNavigationBack{display:none!important;}
 </style>
 
+
+<style id="hilal-opening-critical-final">
+/* Yalnız açılıştaki oval düğmenin çevresindeki yatay kartı kesin olarak kaldırır. */
+body #startScreen article.login-panel.guest.guest-simple-panel{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -39970,18 +39983,7 @@ body.hilal-zikirmatik-open-v13{overflow:hidden!important}
   #todayAdminDailyCards .daily-entry-field.arabic>div{font-size:21px!important}
 }
 </style>
-<style id="hilal-entry-outer-frame-final-reset">
-/* Yalnız açılıştaki oval düğmenin çevresindeki yatay kartı kesin olarak kaldırır. */
-body #startScreen article.login-panel.guest.guest-simple-panel{
-  border:0!important;
-  outline:0!important;
-  background:transparent!important;
-  background-image:none!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-</style>
+
 <script id="hilal-expired-date-cleanup-v2">
 (function(){
   'use strict';
@@ -43585,16 +43587,7 @@ html,body{
     /* Mevcut çalışan misafir motoru korunur; yalnız doğrulanmış Google hesabından sonra çağrılır. */
     if(typeof window.directGuestEntry==="function") window.directGuestEntry();
   };
-  document.addEventListener("DOMContentLoaded",function(){
-    let returning=false;
-    try{returning=localStorage.getItem(FLAG)==="1";}catch(e){}
-    if(!returning) return;
-    setTimeout(function(){
-      try{
-        if(window.HilalAndroid && typeof HilalAndroid.googleSignIn==="function") HilalAndroid.googleSignIn(true);
-      }catch(e){}
-    },650);
-  },{once:true});
+  /* Otomatik/sessiz açılış girişi kaldırıldı; manuel giriş motoru korunur. */
 })();
 </script>
 <!-- HILAL MODULE LIBRARY V1
