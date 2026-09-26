@@ -2,10 +2,6 @@ package com.hilal.ibadet;
 
 import android.Manifest;
 import android.app.Activity;
-import android.widget.TextView;
-import android.widget.FrameLayout;
-import android.view.Gravity;
-import android.graphics.Color;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -71,7 +67,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(Color.rgb(6, 75, 58));
+        webView.setBackgroundColor(android.graphics.Color.rgb(6,75,58));
         setContentView(webView);
 
         WebSettings s = webView.getSettings();
