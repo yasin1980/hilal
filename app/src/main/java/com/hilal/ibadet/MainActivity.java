@@ -67,7 +67,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(android.graphics.Color.rgb(6,75,58));
+        webView.setBackgroundColor(android.graphics.Color.rgb(7,61,44));
+        webView.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null);
         setContentView(webView);
 
         WebSettings s = webView.getSettings();
@@ -144,9 +145,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         webView.postDelayed(() -> exactAlarmWasGranted = hasExactAlarmAccess(), 1200L);
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
-        if (savedInstanceState == null || webView.restoreState(savedInstanceState) == null) {
-            webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
-        }
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
@@ -460,9 +459,4 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override public void onBackPressed() {
         if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
     }
-    @Override protected void onSaveInstanceState(Bundle outState) {
-        if (webView != null) webView.saveState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
 }
