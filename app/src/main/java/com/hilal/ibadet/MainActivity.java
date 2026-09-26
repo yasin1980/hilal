@@ -68,7 +68,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         webView = new WebView(this);
         webView.setBackgroundColor(android.graphics.Color.rgb(7,29,24));
-        webView.setVisibility(android.view.View.INVISIBLE);
         setContentView(webView);
 
         WebSettings s = webView.getSettings();
@@ -105,15 +104,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
             }
-            @Override public void onPageCommitVisible(WebView view, String url) {
-                super.onPageCommitVisible(view, url);
-                view.setVisibility(android.view.View.VISIBLE);
-            }
-            @Override public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                view.setVisibility(android.view.View.VISIBLE);
-            }
-        });
+});
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
