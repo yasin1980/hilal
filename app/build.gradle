@@ -8,8 +8,8 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 65
-        versionName '5.23-v47-dua-real-live-boot-fix'
+        versionCode 66
+        versionName '5.24-v48-dua-inside-app-startup-fix'
     }
 }
 
