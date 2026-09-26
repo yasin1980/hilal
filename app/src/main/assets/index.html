@@ -1684,7 +1684,7 @@ body.__kart_tema_kapali .reader-file-link{
 }
 
 
-/* ===== AÇILIŞ TEMİZLENDİ: eski launch/splash katmanı kaldırıldı ===== */
+/* AÇILIŞ: eski v1.63/v1.54 splash-launching katmanı kaldırıldı. */
 .start-screen {
   min-height:100vh;
   padding:0!important;
@@ -18485,6 +18485,25 @@ body.hilal-dua-v165-open:not(.hilal-dua-v165-home) #hilalNavigationBack{
 #hilalNavigation > #hilalNavigationBack ~ #hilalNavigationBack{display:none!important;}
 </style>
 
+
+<style id="hilal-v53-opening-single-source">
+/* TEK AÇILIŞ KAYNAĞI:
+   Güncel startScreen ilk frame'de görünür; eski splash/launching katmanı yoktur. */
+#startScreen{visibility:visible!important;opacity:1!important;}
+#startScreen .login-stage,
+#startScreen .login-stage-bg,
+#startScreen .login-stage-mask,
+#startScreen .login-teacher-compact,
+#startScreen .login-admin,
+#startScreen .login-panels,
+#startScreen .guest-simple-panel,
+#startScreen .guest-entry-actions,
+#startScreen .guest-entry-button{
+  animation:none!important;
+  transition:none!important;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -20432,8 +20451,8 @@ function hilalCloudStartStreams(){
 function hilalCloudStart(){
   if(__hilalCloudStarted)return;
   __hilalCloudStarted=true;
-  setTimeout(()=>hilalCloudSyncAll(true),3500);
-  setTimeout(hilalCloudStartStreams,5000);
+  setTimeout(()=>hilalCloudSyncAll(true),3000);
+  setTimeout(hilalCloudStartStreams,4200);
 
   /* Hilâl Ölçeklenebilir Altyapı - Faz 1
      EventSource destekleniyorsa değişiklikler gerçek zamanlı akıştan gelir.
@@ -27860,7 +27879,7 @@ setInterval(autoRefreshCalendar,60000);
 updateCalendarClock();
 try{loadPrayerLocation()}catch(e){}
 try{renderPrayerTimesForDate(new Date())}catch(e){}
-setTimeout(()=>{try{autoRefreshPrayerLocation()}catch(e){}},2200);
+setTimeout(()=>{try{autoRefreshPrayerLocation()}catch(e){}},500);
 document.addEventListener("visibilitychange",()=>{
   if(!document.hidden){
     autoRefreshCalendar();
@@ -41426,7 +41445,7 @@ body[data-hilal-dua-open="1"] #hilalNavigationBack {
   opacity:1!important;
 }
 
-#startScreen .login-stage > *{
+#startScreen.launching .login-stage > *{
   visibility:visible!important;
   opacity:1!important;
 }
@@ -41474,7 +41493,6 @@ body[data-hilal-dua-open="1"] #hilalNavigationBack {
   transform:none!important;
 }
 
-/* Splash fade kartları örtüp aç-kapa hissi vermesin */
 /* 2) DUA İSTEKLERİ ANA İKİ KART:
    tıklarken kaybolma / küçülme / odak çerçevesi yok */
 #hilalDuaPageV2 .hdv52-card,
