@@ -1684,6 +1684,7 @@ body.__kart_tema_kapali .reader-file-link{
 }
 
 
+/* ===== GÜNCEL AÇILIŞ GÖRSEL TABANI ===== */
 .start-screen {
   min-height:100vh;
   padding:0!important;
@@ -3467,6 +3468,53 @@ body.teacher-mode .teacher-publication-fab{display:block}
   }
 }
 
+
+
+/* Açılış paneli standart konumu — tek kaynak */
+/* HİLÂL AÇILIŞ PANELİ — DEĞİŞMEZ STANDART
+   Sadece Hoca ve Yönetici üst giriş kartlarının konumu sabitlenir. */
+
+#startScreen .login-teacher-compact{
+  position:absolute!important;
+  z-index:5!important;
+  top:max(18px,calc(var(--hilal-system-top,0px) + 10px))!important;
+  left:max(18px,env(safe-area-inset-left))!important;
+  right:auto!important;
+  margin:0!important;
+  transform:none!important;
+  translate:none!important;
+  animation:none!important;
+  transition:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+#startScreen .login-admin{
+  position:absolute!important;
+  z-index:5!important;
+  top:max(18px,calc(var(--hilal-system-top,0px) + 10px))!important;
+  right:max(18px,env(safe-area-inset-right))!important;
+  left:auto!important;
+  margin:0!important;
+  transform:none!important;
+  translate:none!important;
+  animation:none!important;
+  transition:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* Telefonda da iki taraf tam karşılıklı ve sabit */
+@media (max-width:520px){
+  #startScreen .login-teacher-compact{
+    top:max(12px,calc(var(--hilal-system-top,0px) + 8px))!important;
+    left:max(12px,env(safe-area-inset-left))!important;
+  }
+  #startScreen .login-admin{
+    top:max(12px,calc(var(--hilal-system-top,0px) + 8px))!important;
+    right:max(12px,env(safe-area-inset-right))!important;
+  }
+}
 
 /* ===== GÜNLÜK VİRDLERİM ===== */
 .virt-page-wrap{padding:0 0 18px}
@@ -41017,52 +41065,7 @@ body[data-hilal-dua-open="1"] #hilalNavigationBack {
 })();
 </script>
 <!-- HILÂL DUA İSTEKLERİ GELİŞMİŞ SINIF V3 -->
-<style id="hilal-opening-panel-standard-fixed-v29-css">
-/* HİLÂL AÇILIŞ PANELİ — DEĞİŞMEZ STANDART
-   Sadece Hoca ve Yönetici üst giriş kartlarının konumu sabitlenir. */
 
-#startScreen .login-teacher-compact{
-  position:absolute!important;
-  z-index:5!important;
-  top:max(18px,calc(var(--hilal-system-top,0px) + 10px))!important;
-  left:max(18px,env(safe-area-inset-left))!important;
-  right:auto!important;
-  margin:0!important;
-  transform:none!important;
-  translate:none!important;
-  animation:none!important;
-  transition:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
-
-#startScreen .login-admin{
-  position:absolute!important;
-  z-index:5!important;
-  top:max(18px,calc(var(--hilal-system-top,0px) + 10px))!important;
-  right:max(18px,env(safe-area-inset-right))!important;
-  left:auto!important;
-  margin:0!important;
-  transform:none!important;
-  translate:none!important;
-  animation:none!important;
-  transition:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
-
-/* Telefonda da iki taraf tam karşılıklı ve sabit */
-@media (max-width:520px){
-  #startScreen .login-teacher-compact{
-    top:max(12px,calc(var(--hilal-system-top,0px) + 8px))!important;
-    left:max(12px,env(safe-area-inset-left))!important;
-  }
-  #startScreen .login-admin{
-    top:max(12px,calc(var(--hilal-system-top,0px) + 8px))!important;
-    right:max(12px,env(safe-area-inset-right))!important;
-  }
-}
-</style>
 <style id="hilal-native-prayer-status-clean-v1">
 /* Üstteki kalıcı namaz bildiriminin yalnızca vakit + saat + geri sayımı görünür. */
 </style>
