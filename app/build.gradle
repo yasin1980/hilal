@@ -8,8 +8,8 @@ android {
         applicationId 'com.hilal.ibadet'
         minSdk 26
         targetSdk 35
-        versionCode 80
-        versionName '5.38-v62-calendar-first-frame-clean'
+        versionCode 81
+        versionName '5.39-v63-first-frame-css-root-clean'
     }
 }
 
