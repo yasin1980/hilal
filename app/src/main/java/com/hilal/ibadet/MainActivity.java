@@ -67,16 +67,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(android.graphics.Color.rgb(231,226,216));
+        webView.setBackgroundColor(android.graphics.Color.rgb(7,29,24));
         setContentView(webView);
-
-        android.content.SharedPreferences openingClean =
-                getSharedPreferences("hilal_opening_clean", MODE_PRIVATE);
-        if (!openingClean.getBoolean("v54_done", false)) {
-            webView.clearCache(true);
-            webView.clearHistory();
-            openingClean.edit().putBoolean("v54_done", true).apply();
-        }
 
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
@@ -87,7 +79,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setAllowContentAccess(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
