@@ -1,1 +1,10 @@
-
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Hilal" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <!-- Düşük Android'de önceki WebView/Activity karesinin açılışta tekrar görünmesini engeller. -->
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">#071D18</item>
+        <item name="android:colorAccent">#C9A23A</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>
