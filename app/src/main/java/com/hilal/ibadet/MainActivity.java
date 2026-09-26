@@ -47,8 +47,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final String PERMISSION_PREFS = "hilal_permission_setup_v2";
 
     private WebView webView;
-    private FrameLayout rootView;
-    private TextView bootView;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private Sensor accelerometerSensor;
@@ -72,26 +70,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        rootView = new FrameLayout(this);
-        rootView.setBackgroundColor(Color.rgb(6, 75, 58));
-
-        bootView = new TextView(this);
-        bootView.setText("☾\nHilâl\nHicrî İbadet Asistanı");
-        bootView.setTextColor(Color.rgb(246, 240, 223));
-        bootView.setTextSize(24f);
-        bootView.setGravity(Gravity.CENTER);
-        bootView.setBackgroundColor(Color.rgb(6, 75, 58));
-        rootView.addView(bootView, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
-
         webView = new WebView(this);
-        webView.setAlpha(0f);
         webView.setBackgroundColor(Color.rgb(6, 75, 58));
-        rootView.addView(webView, new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT));
-        setContentView(rootView);
+        setContentView(webView);
 
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
@@ -126,16 +107,6 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
-            }
-            @Override public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                view.post(() -> {
-                    view.setAlpha(1f);
-                    if (bootView != null) {
-                        rootView.removeView(bootView);
-                        bootView = null;
-                    }
-                });
             }
         });
 
