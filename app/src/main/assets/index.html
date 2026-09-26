@@ -44174,7 +44174,85 @@ window.addEventListener('pagehide',stopCamera);
     inset 0 0 0 9px rgba(48,158,255,.42),
     inset 0 0 50px rgba(0,0,0,.66)!important;
 }
-#calendarPage .q1428-compass:not(.q1432-aligned) .q1428-ring{
+#calendarPage .q1428-compass:not(.q1432-aligned) .q
+<!-- HILAL V43 — DUA ALT SAYFALARI GERİ BUTONU GERÇEK MENÜ HİZASI -->
+<style id="hilal-v43-dua-back-real-menu-align-css">
+/* Konum JS tarafından gerçek hamburger düğmesinin ekrandaki konumundan hesaplanır. */
+body.hilal-dua-subpage-active-v76 #hilalNavigationBack,
+#hilalGenelDuaBackV90E.is-open{
+  position:fixed!important;
+  margin:0!important;
+  transform:none!important;
+}
+</style>
+<script id="hilal-v43-dua-back-real-menu-align-js">
+(function(){
+  'use strict';
+
+  function visible(el){
+    if(!el) return false;
+    var cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && cs.opacity!=='0';
+  }
+
+  function activeBack(){
+    var genel=document.getElementById('hilalGenelDuaBackV90E');
+    if(visible(genel)) return genel;
+
+    var ortak=document.getElementById('hilalNavigationBack');
+    if(visible(ortak) && document.body.classList.contains('hilal-dua-subpage-active-v76')) return ortak;
+
+    return null;
+  }
+
+  function align(){
+    var menu=document.getElementById('mainMenuTrigger');
+    var back=activeBack();
+    if(!menu || !back || !visible(menu)) return;
+
+    var r=menu.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+
+    /* Geri düğmesi hamburgerin SAĞINDA ve merkez çizgisi birebir aynı hizada. */
+    var bw=back.getBoundingClientRect().width || 76;
+    var bh=back.getBoundingClientRect().height || 42;
+    var gap=12;
+    var left=Math.round(r.right + gap);
+    var top=Math.round(r.top + (r.height-bh)/2);
+
+    /* Dar ekranda taşmayı engelle. */
+    if(left+bw > window.innerWidth-8) left=Math.max(8, Math.round(r.left-bw-gap));
+
+    back.style.setProperty('left', left+'px', 'important');
+    back.style.setProperty('right', 'auto', 'important');
+    back.style.setProperty('top', top+'px', 'important');
+    back.style.setProperty('bottom', 'auto', 'important');
+  }
+
+  var queued=false;
+  function queue(){
+    if(queued) return;
+    queued=true;
+    requestAnimationFrame(function(){queued=false;align();});
+  }
+
+  document.addEventListener('DOMContentLoaded',queue,{once:true});
+  document.addEventListener('click',function(){queue();setTimeout(queue,40);},true);
+  window.addEventListener('resize',queue);
+  window.addEventListener('orientationchange',function(){setTimeout(queue,80);});
+
+  /* Hamburger sürüklenirse gerçek konumunu takip et. */
+  ['pointermove','pointerup','touchmove','touchend'].forEach(function(ev){
+    document.addEventListener(ev,queue,{passive:true});
+  });
+
+  var mo=new MutationObserver(queue);
+  mo.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','style']});
+  setTimeout(queue,0);
+})();
+</script>
+
+1428-ring{
   border-color:#48adff!important;
   box-shadow:0 0 0 1px rgba(112,198,255,.34),0 0 16px rgba(48,158,255,.28)!important;
 }
