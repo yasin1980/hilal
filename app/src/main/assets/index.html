@@ -21024,17 +21024,18 @@ function directGuestEntry(){
   try{hilalSyncSingleRoleMenu()}catch(e){}
   try{hilalRefreshGuestMenuIdentity()}catch(e){}
 
+  /* Tek temiz giriş sırası: görünür sayfayı açmadan önce mevcut veriyi/DOM'u hazırla. */
+  try{roleText.textContent=currentUser.name}catch(e){}
+  try{renderAll()}catch(e){}
+  try{hilalRefreshGuestCalendarOpening()}catch(e){}
+
   try{closeLogin()}catch(e){}
   try{startScreen.classList.add("hidden")}catch(e){}
   try{mainApp.classList.remove("hidden")}catch(e){}
-
-  try{roleText.textContent=currentUser.name}catch(e){}
   try{showPage("calendarPage")}catch(e){}
-  setTimeout(hilalRefreshGuestCalendarOpening,120);
 
   try{setTimeout(syncAnnouncementFab,0)}catch(e){}
   try{setTimeout(syncPublicationFab,0)}catch(e){}
-  try{renderAll()}catch(e){}
 
   try{
     const gb=document.querySelector('#guestMenu [data-gpage="calendarPage"]');
