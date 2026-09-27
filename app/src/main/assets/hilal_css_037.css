@@ -1,0 +1,9 @@
+
+#teacherDelegatedAdminMenuBtn{display:none!important}
+#teacherSettingsDelegatedCard{display:none}
+#teacherSettingsDelegatedCard.is-visible{display:block}
+.teacher-settings-delegated-btn{
+  width:100%;border:0;background:transparent;color:inherit;padding:0;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left
+}
+.teacher-settings-de

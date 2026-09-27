@@ -1,0 +1,12 @@
+
+/* v1.13.47 — iç içe çerçeveleri kaldır, kart hiyerarşisini sadeleştir */
+
+/* "İsteğe bağlı" etiketi artık çerçevesiz küçük bilgi yazısı */
+#feedbackCenterPage #feedbackImageStatus{
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius

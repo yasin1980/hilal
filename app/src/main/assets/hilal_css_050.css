@@ -1,0 +1,12 @@
+
+/* YALNIZ görsel üstü Namaz Vakitleri alanı */
+
+/* Görselin alt-solundaki basılı menü halkasını ve eski satırları tamamen kapat */
+#calendarPage .hilal-ref-cover-times-v1{
+  left:3.2%!important;
+  top:51.7%!important;
+  width:93.6%!important;
+  height:45.2%!important;
+  border-radius:18px 18px 24px 24px!important;
+  background:
+    linear-gradient(180deg,rgba(5,69,53,.994),rgba(3,51

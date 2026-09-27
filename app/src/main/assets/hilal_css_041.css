@@ -1,0 +1,8 @@
+
+/* Hoca kopya panelinde yöneticiyle aynı görsel dil */
+#v1423HijriManager .hijri-month-card,
+#v1423HijriManager .hijri-day-card,
+#v1423HijriManager .hijri-type-card{margin-top:9px}
+#v1423HijriManager .hijri-month-order{
+  width:36px!important;height:36px!important;min-width:36px!important;
+  display:flex!important;align-items:center!important;justify-content:center!importa

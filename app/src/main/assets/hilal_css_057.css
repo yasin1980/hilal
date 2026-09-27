@@ -1,0 +1,28 @@
+
+/* Sadece Kaza Namazlarım kartı — diğer hiçbir elemana uygulanmaz */
+#kazaNamazlarimMenuItem{
+  box-sizing:border-box !important;
+}
+</style>
+<script id="sadece-kaza-menu-karti-uyum-js">
+(function(){
+  function syncKazaCard(){
+    const item=document.getElementById('kazaNamazlarimMenuItem');
+    if(!item || item.dataset.synced==='1') return;
+
+    const parent=item.parentElement;
+    if(!parent) return;
+    const siblings=[...parent.children].filter(x=>x!==item && x.id!=='kazaNamazlarimMenuItem');
+    const ref=siblings.find(x=>{
+      const s=getComputedStyle(x);
+      return x.matches('button,a,[class*="card"],[class*="item"]') &&
+             parseFloat(s.height||0)>30;
+    });
+    if(!ref) return;
+
+    /* Mevcut menü kartının class ve görünümünü devral */
+    item.className=ref.className;
+    const cs=getComputedStyle(ref);
+    [
+      'display','alignItems','justifyContent','gap','width','minHeight',
+      'padding','margin','border','borderRadius','background','bac

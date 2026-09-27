@@ -1,0 +1,14 @@
+
+/* ===== ANDROID / IOS SAFE AREA + RESPONSIVE FIT ===== */
+:root{
+  --hilal-safe-top: env(safe-area-inset-top, 0px);
+  --hilal-safe-right: env(safe-area-inset-right, 0px);
+  --hilal-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --hilal-safe-left: env(safe-area-inset-left, 0px);
+}
+html,body{
+  width:100%;
+  max-width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+  -webkit-text-siz

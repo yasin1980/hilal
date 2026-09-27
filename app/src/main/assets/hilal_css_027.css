@@ -1,0 +1,9 @@
+
+/* Misafir profilinde sadece kullanıcı adı alanı */
+body.guest-mode #profileSettingsBody .account-profile-grid{
+  grid-template-columns:1fr!important;
+}
+body.guest-mode #profileSettingsBody .account-profile-grid .field:nth-child(2),
+body.guest-mode #profileSettingsBody .account-profile-grid .field:nth-child(3),
+body.guest-mode #profileSettingsBody .account-profile-divider,
+bod

@@ -1,0 +1,13 @@
+
+/* YALNIZ görsel üstü Takvim / Namaz alanı */
+
+/* Hicrî ve Miladî tarih canlı veri hissini güçlendir */
+#calendarPage .hilal-ref-hijri-date-v1,
+#calendarPage .hilal-ref-greg-date-v1,
+#calendarPage .hilal-ref-countdown-v1{
+  font-variant-numeric:tabular-nums!important;
+}
+
+/* Konum artık gerçek çalışan kontrol alanı */
+#calendarPage .hilal-ref-location-wrap-v2{
+  position:absolute!imp

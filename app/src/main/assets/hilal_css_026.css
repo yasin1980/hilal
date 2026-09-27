@@ -1,0 +1,15 @@
+
+#calendarPage{
+  --v93-gold:#d8ad52;
+  --v93-gold-bright:#efcb74;
+  --v93-red:#a83a35;
+}
+
+/* Namaz vakitleri ana dış çerçeve */
+#calendarPage .hilal-prayer-head-card,
+#calendarPage .hilal-prayer-panel{
+  border-color:rgba(216,173,82,.82)!important;
+}
+#calendarPage .hilal-prayer-head-card{
+  border-left:1.5px solid rgba(216,173,82,.82)!important;
+  border-right:1.5px

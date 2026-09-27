@@ -1,0 +1,13 @@
+
+/* V99 — Ana modüller birbirinin arkasında görünmez; her tam ekran sınıf opak ve izoledir. */
+#hilalZikirmatikPageV13,
+#kazaNamazlarimPage,
+#hilalDuaPageV2,
+#hilalDuaMyPageV53,
+#hilalDuaFeedV55,
+#hilalDuaAddSheetV53,
+#hilalDuaComposeV54,
+#hilalDuaComposerV55{
+  box-sizing:border-box!important;
+  background-clip:padding-box!important;
+  isolation:isolate!important;

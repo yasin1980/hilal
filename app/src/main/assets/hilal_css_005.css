@@ -1,0 +1,5 @@
+
+.suspended-teacher-card{border:1px solid rgba(201,162,39,.46);border-radius:18px;padding:14px;margin:12px 0;background:rgba(255,255,255,.035)}
+.suspended-teacher-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.suspended-teacher-name{font-weight:900;font-size:1.03rem}
+.suspended-teacher-badge{display:inline-flex;a

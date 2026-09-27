@@ -1,0 +1,24 @@
+
+/* =========================================================
+   SADECE ÜST ALAN / HAMBURGER MENÜ
+   Tüm sayfalarda aynı zümrüt-altın görünüm.
+   Sayfa içerikleri ve işlevler sabit.
+   ========================================================= */
+
+/* Üstte kalan çizgi/kart izlerini temizle */
+#mainApp > .topbar{
+  background:transparent !important;
+  border:0 !important;
+  border-bottom:0 !important;
+  box-shadow:none !important;
+  min-height:58px !important;
+  padding-top:max(8px,var(--hilal-safe-top)) !important;
+  padding-left:max(10px,var(--hilal-safe-left)) !important;
+  padding-right:max(10px,var(--hilal-safe-right)) !important;
+  pointer-events:none !important;
+}
+
+/* Üst bardaki diğer öğeler görünmesin */
+#mainApp > .topbar > *{
+  visibility:hidden !important;
+  pointer-events:none !impo

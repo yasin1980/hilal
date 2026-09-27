@@ -1,0 +1,81 @@
+
+/* Yalnız o an sırada bulunan namaz vakti: belirgin, sakin ve uygulama tonlarıyla uyumlu. */
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1{
+  border:1.5px solid rgba(238,202,112,.88)!important;
+  background:
+    radial-gradient(circle at 9% 50%,rgba(73,218,150,.16),transparent 31%),
+    linear-gradient(100deg,rgba(8,103,76,.995),rgba(5,78,61,.998) 57%,rgba(4,62,51,.998))!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,239,182,.09),
+    inset 0 8px 22px rgba(75,213,149,.035),
+    0 0 0 2px rgba(4,48,39,.76),
+    0 0 0 3px rgba(224,187,93,.20),
+    0 6px 15px rgba(0,0,0,.15),
+    0 0 13px rgba(68,205,140,.13)!important;
+  animation:hilalElegantPrayerFocus 3.2s ease-in-out infinite!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1::before{
+  top:16%!important;
+  bottom:16%!important;
+  width:4px!important;
+  border-radius:0 5px 5px 0!important;
+  background:linear-gradient(180deg,#f3d98c 0%,#60dba4 50%,#dfb85c 100%)!important;
+  box-shadow:0 0 8px rgba(85,218,158,.30)!important;
+  opacity:1!important;
+  animation:none!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1::after{
+  left:18%!important;
+  right:18%!important;
+  bottom:6%!important;
+  height:1px!important;
+  background:linear-gradient(90deg,transparent,rgba(239,204,114,.58),rgba(94,218,162,.44),transparent)!important;
+  box-shadow:0 0 5px rgba(77,211,151,.16)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-icon-v1{
+  border-color:rgba(239,205,116,.82)!important;
+  background:linear-gradient(145deg,rgba(12,116,83,.98),rgba(5,71,55,.98))!important;
+  color:#f0ca6c!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(4,65,49,.66),
+    0 0 0 2px rgba(231,195,103,.13),
+    0 0 9px rgba(72,213,149,.20)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-name-v1{
+  color:#fffdf5!important;
+  text-shadow:0 2px 5px rgba(0,0,0,.23),0 0 8px rgba(255,235,171,.08)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-time-v1{
+  color:#f5d47e!important;
+  text-shadow:0 2px 5px rgba(0,0,0,.25),0 0 8px rgba(242,204,105,.13)!important;
+}
+#calendarPage #hilalRefPrayerRowsV1 .is-next-prayer-v1 .hilal-ref-prayer-bell-v1{
+  border-color:rgba(239,204,112,.80)!important;
+  background:linear-gradient(145deg,rgba(10,105,76,.98),rgba(4,65,51,.98))!important;
+  box-shadow:inset 0 0 0 1px rgba(255,239,181,.07),0 0 7px rgba(75,211,150,.13)!important;
+}
+@keyframes hilalElegantPrayerFocus{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.045)}
+}
+@media(prefers-reduced-motion:reduce){
+  #calendarPage #hilalRefPrayerRowsV1 .hilal-ref-prayer-row-v1.is-next-prayer-v1{animation:none!important}
+}
+</style>
+<style id="hilal-android-calendar-viewport-fill-v1">
+/* Yalnız dik telefon görünümünde Takvim & Ezan sahnesini kullanılabilir
+   ekran yüksekliğine yayar; alt sistem alanının üzerinde dengeli pay bırakır. */
+@media (max-width:600px) and (orientation:portrait){
+  #calendarPage.hilal-prayer-pro-page{
+    padding-bottom:14px!important;
+  }
+  #calendarPage .hilal-ref-image-calendar-v1{
+    width:100%!important;
+    height:calc(100dvh - var(--hilal-system-top,48px) - 44px - env(safe-area-inset-bottom,0px))!important;
+    min-height:calc(100vw * 1.7415)!important;
+    aspect-ratio:auto!important;
+    margin:0 auto 12px!important;
+  }
+}
+</style>
+<style id="hilal-next-prayer-premium

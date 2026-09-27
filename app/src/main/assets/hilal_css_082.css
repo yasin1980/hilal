@@ -1,0 +1,8 @@
+
+:root{
+ --hilal-gold-glow:rgba(229,194,98,.34);
+ --hilal-gold-glow-soft:rgba(229,194,98,.16);
+ --hilal-card-dark:#034b39;
+}
+#teacherPublicationsPage .teacher-publications-list-head,
+#teacherMyAnnouncementsPage .teacher-own-ann

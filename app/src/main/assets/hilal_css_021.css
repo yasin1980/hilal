@@ -1,0 +1,15 @@
+
+#calendarPage .hilal-vakit-cikis-line{
+  min-height:40px!important;
+  gap:18px!important;
+  margin-top:7px!important;
+}
+#calendarPage .hilal-vakit-cikis-label{
+  font-size:17px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+}
+#calendarPage .hilal-vakit-cikis-value{
+  font-size:25px!important;
+  line-height:1.05!important;
+  font-weight:100

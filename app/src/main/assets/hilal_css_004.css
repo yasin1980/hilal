@@ -1,0 +1,5428 @@
+
+#calendarPage.hilal-prayer-pro-page{position:relative!important;isolation:isolate;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;padding:20px 0 34px!important;background:#062019!important;color:#fff!important}
+#calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_image_01_6e045ce7e2.png");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
+#calendarPage.hilal-prayer-pro-page:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 18%,rgba(243,192,76,.10),transparent 25%),linear-gradient(180deg,rgba(1,17,12,.04),rgba(1,17,12,.22) 52%,rgba(1,17,12,.52));pointer-events:none}
+#calendarPage #ezanReminderCard,#calendarPage #bugununTarihiCard{display:none!important}
+#calendarPage .hilal-hijri-card,#calendarPage .hilal-prayer-head-card,#calendarPage .hilal-prayer-panel{margin-left:20px!important;margin-right:20px!important;border:1.5px solid #d8ad4d!important;background:linear-gradient(145deg,rgba(7,60,42,.90),rgba(6,40,30,.87))!important;backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 12px 30px rgba(0,0,0,.20)!important}
+#calendarPage .hilal-hijri-card{border-radius:30px!important;padding:25px 28px 23px!important;min-height:255px!important;box-sizing:border-box!important}
+#calendarPage .hilal-card-kicker{display:flex;align-items:center;gap:10px;color:#deb85d!important;font-size:18px!important;line-height:1.2!important;font-weight:650!important;letter-spacing:.035em!important}
+#calendarPage .hilal-cal-icon{font-size:26px;color:#deb85d}
+#calendarPage .hilal-hijri-card h2{margin:18px 0 0!important;color:#fff!important;font-size:39px!important;line-height:1.08!important;font-weight:950!important;letter-spacing:-.025em!important}
+#calendarPage .hilal-greg-date{margin-top:15px!important;text-align:center;color:#ddb75f!important;font-size:21px!important;font-weight:600!important}
+#calendarPage .hilal-gold-rule{height:24px;margin:7px 42px 0;display:flex;align-items:center;gap:8px;color:#d9ae4e}
+#calendarPage .hilal-gold-rule:before,#calendarPage .hilal-gold-rule:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#d9ae4e,transparent)}
+#calendarPage .calendar-live-clock{width:max-content!important;margin:8px auto 0!important;padding:9px 16px!important;border-radius:999px!important;border:1px solid rgba(213,224,216,.20)!important;background:rgba(3,29,21,.42)!important;color:#fff!important;font-size:25px!important;font-weight:950!important;display:flex!important;align-items:center!important;gap:10px!important}
+#calendarPage .calendar-live-dot{width:13px!important;height:13px!important;border-radius:0!important;background:#37d477!important;box-shadow:0 0 0 5px rgba(55,212,119,.13),0 0 15px rgba(55,212,119,.42)!important}
+#calendarPage .hilal-prayer-head-card{margin-top:16px!important;border-radius:26px!important;padding:20px 24px!important;display:grid!important;grid-template-columns:54px minmax(0,1fr) 64px!important;align-items:center!important;gap:12px!important}
+#calendarPage .hilal-mosque-icon{font-size:35px;filter:saturate(.72) sepia(.15)}
+#calendarPage .hilal-prayer-head-copy{min-width:0}
+#calendarPage .hilal-prayer-head-card h2{margin:4px 0 3px!important;color:#fff!important;font-size:31px!important;line-height:1.05!important;font-weight:950!important}
+#calendarPage .hilal-location{color:rgba(237,240,236,.68)!important;font-size:17px!important;white-space:normal!important}
+#calendarPage .hilal-allah-mark{color:#dcb252!important;font-family:serif!important;font-size:35px!important;font-weight:800!important;text-align:center!important}
+#calendarPage .hilal-prayer-panel{margin-top:12px!important;border-radius:31px!important;padding:18px 18px 17px!important;box-sizing:border-box!important;overflow:hidden!important}
+#calendarPage #prayerTimesList{display:flex!important;flex-direction:column!important;gap:10px!important}
+#calendarPage .prayer-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto 52px!important;align-items:center!important;gap:12px!important;min-height:82px!important;padding:11px 13px!important;border:1px solid rgba(207,223,213,.16)!important;border-radius:21px!important;background:linear-gradient(145deg,rgba(8,49,37,.84),rgba(7,38,30,.80))!important;box-sizing:border-box!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important}
+#calendarPage .prayer-main{display:flex!important;align-items:center!important;gap:13px!important;min-width:0!important}
+#calendarPage .prayer-icon{width:50px!important;height:50px!important;min-width:50px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;border:1px solid rgba(214,226,218,.15)!important;background:rgba(4,31,23,.58)!important;font-size:24px!important}
+#calendarPage .prayer-copy{min-width:0!important}
+#calendarPage .prayer-name{display:flex!important;align-items:center!important;gap:9px!important;color:#fff!important;font-size:21px!important;font-weight:950!important;line-height:1.1!important}
+#calendarPage .prayer-subtitle{display:none!important}
+#calendarPage .prayer-next-label{padding:4px 8px!important;border-radius:999px!important;background:#2fb76b!important;color:#fff!important;font-size:9px!important;font-weight:950!important;letter-spacing:.04em!important}
+#calendarPage .prayer-time{color:#fff!important;font-size:28px!important;line-height:1!important;font-weight:950!important;letter-spacing:-.02em!important;text-align:right!important}
+#calendarPage .prayer-actions{width:52px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important}
+#calendarPage .ezan-vakit-bell{position:static!important;transform:none!important;width:48px!important;height:48px!important;min-width:48px!important;border-radius:15px!important;border:1px solid rgba(225,181,66,.53)!important;background:rgba(6,30,23,.80)!important;color:#efbd3f!important;font-size:21px!important;box-shadow:none!important}
+#calendarPage .prayer-row.next-prayer{border-color:rgba(42,183,99,.68)!important;background:linear-gradient(145deg,rgba(10,86,51,.92),rgba(5,59,39,.91))!important;box-shadow:inset 0 0 0 1px rgba(51,209,114,.05),0 0 18px rgba(34,170,91,.08)!important}
+#calendarPage .prayer-row.next-prayer .prayer-icon{background:rgba(22,111,65,.52)!important;border-color:rgba(51,196,105,.22)!important}
+#calendarPage .prayer-row.next-prayer .prayer-name{color:#fff!important}
+#calendarPage .prayer-row.next-prayer .prayer-time{color:#43d57e!important}
+#calendarPage .prayer-source-note{display:none!important}
+#calendarPage .hilal-calendar-quote{margin:20px 20px 0!important;padding:14px 8px 0!important;border-top:1px solid rgba(221,181,83,.34)!important;text-align:center!important;color:#ddb75e!important;font-size:14px!important;font-weight:750!important;line-height:1.45!important;text-shadow:0 1px 4px rgba(0,0,0,.25)}
+#calendarPage .hilal-calendar-quote span{font-size:12px;color:#caa652}
+@media(max-width:600px){
+ #calendarPage.hilal-prayer-pro-page{padding-top:14px!important}
+ #calendarPage .hilal-hijri-card,#calendarPage .hilal-prayer-head-card,#calendarPage .hilal-prayer-panel{margin-left:16px!important;margin-right:16px!important}
+ #calendarPage .hilal-hijri-card{min-height:225px!important;padding:22px 21px 20px!important;border-radius:27px!important}
+ #calendarPage .hilal-card-kicker{font-size:16px!important}
+ #calendarPage .hilal-hijri-card h2{font-size:31px!important}
+ #calendarPage .hilal-greg-date{font-size:18px!important}
+ #calendarPage .calendar-live-clock{font-size:22px!important}
+ #calendarPage .hilal-prayer-head-card{grid-template-columns:46px minmax(0,1fr) 52px!important;padding:18px!important;border-radius:24px!important}
+ #calendarPage .hilal-mosque-icon{font-size:30px!important}
+ #calendarPage .hilal-prayer-head-card h2{font-size:27px!important}
+ #calendarPage .hilal-location{font-size:15px!important}
+ #calendarPage .hilal-allah-mark{font-size:29px!important}
+ #calendarPage .hilal-prayer-panel{padding:13px!important;border-radius:27px!important}
+ #calendarPage .prayer-row{grid-template-columns:minmax(0,1fr) auto 46px!important;gap:9px!important;min-height:72px!important;padding:9px 10px!important;border-radius:18px!important}
+ #calendarPage .prayer-main{gap:10px!important}
+ #calendarPage .prayer-icon{width:44px!important;height:44px!important;min-width:44px!important;border-radius:13px!important;font-size:21px!important}
+ #calendarPage .prayer-name{font-size:18px!important;gap:6px!important}
+ #calendarPage .prayer-next-label{font-size:8px!important;padding:4px 7px!important}
+ #calendarPage .prayer-time{font-size:23px!important}
+ #calendarPage .prayer-actions{width:46px!important}
+ #calendarPage .ezan-vakit-bell{width:44px!important;height:44px!important;min-width:44px!important;border-radius:14px!important;font-size:19px!important}
+}
+
+
+
+
+/* =========================================================
+   HİLAL — TEK PARÇA ZÜMRÜT CAM + ALTIN ÇERÇEVE ANA TEMA
+   ========================================================= */
+:root{
+  --hilal-z1: rgba(7,58,41,.88);
+  --hilal-z2: rgba(5,38,29,.84);
+  --hilal-z3: rgba(4,29,22,.78);
+  --hilal-gold: #ddb45a;
+  --hilal-gold-soft: rgba(221,180,90,.60);
+  --hilal-gold-faint: rgba(221,180,90,.32);
+  --hilal-green: #2eb36a;
+  --hilal-text: #ffffff;
+  --hilal-muted: rgba(237,241,238,.70);
+}
+
+/* TÜM ANA KARTLAR + SONRADAN ÜRETİLEN KARTLAR */
+body .card,
+body article,
+body section.card,
+body .panel,
+body .box,
+body .surface,
+body .sheet,
+body .modal-card,
+body .modal-panel,
+body .login-panel,
+body .role-card,
+body .teacher-pro-card,
+body .announcement-card,
+body .announcement-item,
+body .announcement-row,
+body .publication-card,
+body .publication-item,
+body .publication-row,
+body .favorite-card,
+body .favorite-item,
+body .today-card,
+body .today-item,
+body .virt-item,
+body .virt-item-pro,
+body .sunnet-category,
+body .sunnet-item,
+body .list-card,
+body .item-card,
+body .content-card,
+body .menu-card,
+body .info-card,
+body .stat-card,
+body .form-card,
+body .editor-card,
+body .upload-card,
+body .preview-card,
+body .status-card,
+body .summary-card,
+body .mini-card,
+body .small-card,
+body details,
+body .accordion-item,
+body .expand-card,
+body .collapsible-card{
+  border:1.25px solid var(--hilal-gold-soft)!important;
+  background:
+    linear-gradient(145deg,var(--hilal-z1),var(--hilal-z2))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 0 0 1px rgba(255,255,255,.012),
+    0 10px 26px rgba(0,0,0,.20)!important;
+  backdrop-filter:blur(10px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(118%)!important;
+  box-sizing:border-box!important;
+}
+
+/* Kartların içindeki üretilen burger/satır kartları */
+body .card > .row,
+body .card > .item,
+body .card > .list-row,
+body .card > .menu-row,
+body .card > .setting-row,
+body .card > .notification-row,
+body .card > [class*="item"],
+body .card > [class*="row"],
+body .panel > .row,
+body .panel > .item,
+body .panel > [class*="item"],
+body .panel > [class*="row"],
+body [class*="list"] > .card,
+body [class*="list"] > .item,
+body [class*="list"] > [class*="item"]{
+  border:1px solid var(--hilal-gold-faint)!important;
+  background:linear-gradient(145deg,rgba(7,52,38,.82),rgba(5,35,27,.78))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+
+/* Başlıklar */
+body .card h1,
+body .card h2,
+body .card h3,
+body article h1,
+body article h2,
+body article h3,
+body .panel h1,
+body .panel h2,
+body .panel h3,
+body .virt-title,
+body .sunnet-category strong{
+  color:var(--hilal-text)!important;
+}
+
+/* Altın başlık/etiket tonu */
+body .eyebrow,
+body .kicker,
+body .section-label,
+body .card-label,
+body [class*="eyebrow"],
+body [class*="kicker"]{
+  color:var(--hilal-gold)!important;
+}
+
+/* Yardımcı metin */
+body .muted,
+body .subtle,
+body .virt-meta,
+body .virt-note,
+body .teacher-pro-subtitle{
+  color:var(--hilal-muted)!important;
+}
+
+/* Favori / Bugün / Duyuru / Yayın üretilen kartların altın çerçevesini garanti et */
+#todayPage .card,
+#todayPage article,
+#favoritesPage .card,
+#favoritesPage article,
+#announcementsPage .card,
+#announcementsPage article,
+#generalPublicationsPage .card,
+#generalPublicationsPage article,
+#teacherMyAnnouncementsPage .card,
+#teacherMyAnnouncementsPage article,
+#teacherPublicationsPage .card,
+#teacherPublicationsPage article{
+  border-color:var(--hilal-gold-soft)!important;
+  background:linear-gradient(145deg,var(--hilal-z1),var(--hilal-z2))!important;
+}
+
+/* Dinamik listelerde doğrudan çocuk olarak üretilen kartlar */
+#todayPage [id*="List"] > *,
+#favoritesPage [id*="List"] > *,
+#announcementsPage [id*="List"] > *,
+#generalPublicationsPage [id*="List"] > *,
+#teacherMyAnnouncementsPage [id*="List"] > *,
+#teacherPublicationsPage [id*="List"] > *,
+#dailyVirtPage #virtList > *,
+#sunnetIhyaPage [id*="List"] > *{
+  border:1.15px solid var(--hilal-gold-soft)!important;
+  background:linear-gradient(145deg,rgba(7,56,40,.86),rgba(5,37,28,.82))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 8px 20px rgba(0,0,0,.16)!important;
+}
+
+/* Küçük badge / pill */
+body .pill,
+body .badge,
+body .chip,
+body .virt-reminder-pill,
+body [class*="badge"],
+body [class*="pill"]{
+  border:1px solid var(--hilal-gold-faint)!important;
+  background:rgba(5,31,24,.58)!important;
+  color:#f2e2b8!important;
+}
+
+/* Menü kartları */
+#guestMenu,
+#teacherMenu,
+#adminMenu{
+  border:1.25px solid var(--hilal-gold-soft)!important;
+  background:linear-gradient(145deg,rgba(5,45,33,.97),rgba(4,31,24,.97))!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.28)!important;
+}
+
+#guestMenu button,
+#teacherMenu button,
+#adminMenu button{
+  border:1px solid var(--hilal-gold-faint)!important;
+  background:rgba(6,38,29,.76)!important;
+  color:#fff!important;
+}
+
+#guestMenu button.active,
+#teacherMenu button.active,
+#adminMenu button.active{
+  border-color:rgba(47,187,103,.62)!important;
+  background:linear-gradient(145deg,rgba(15,90,56,.90),rgba(8,63,42,.90))!important;
+}
+
+/* Form alanları */
+body input,
+body select,
+body textarea{
+  border:1px solid var(--hilal-gold-faint)!important;
+  background:rgba(4,29,22,.74)!important;
+  color:#fff!important;
+}
+
+/* Aktif/seçili kartlar yeşil vurgulu ama altın çerçeve dili korunur */
+body .card.active,
+body .card.selected,
+body .virt-item.active,
+body .virt-item-pro.active,
+body .sunnet-category.active{
+  border-color:rgba(54,199,116,.68)!important;
+  background:linear-gradient(145deg,rgba(12,82,52,.90),rgba(6,57,39,.88))!important;
+}
+
+/* Takvim & Ezan kendi özel tasarımını korur */
+#calendarPage > .hero,
+#calendarPage article.card:has(#prayerTimesList),
+#calendarPage #prayerTimesList > *,
+#calendarPage .ezan-vakit-bell{
+  /* mevcut özel kurallar daha spesifik olarak devam eder */
+}
+
+/* İslami bildirim özel tasarımına dokunma */
+.hilal-islamic-alert-card,
+.hilal-islamic-alert-backdrop,
+.hilal-islamic-alert-actions{
+  /* mevcut özel görünüm korunur */
+}
+
+@media(max-width:600px){
+  body .card,
+  body article,
+  body .panel,
+  body .virt-item,
+  body .virt-item-pro,
+  body .announcement-card,
+  body .publication-card,
+  body .favorite-card,
+  body .today-card,
+  body .sunnet-category{
+    box-sizing:border-box!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL — İÇ KART / AÇILIR İÇERİK TEMA TAMAMLAMA
+   Eski beyaz/gri/mavi yüzeyleri zümrüt-cam + altına çevirir
+   ========================================================= */
+
+/* Sayfa içindeki kart gövdeleri ve açılır içerik yüzeyleri */
+body .page .card-body,
+body .page .card-content,
+body .page .content,
+body .page .content-box,
+body .page .inner-card,
+body .page .inner-box,
+body .page .inner-panel,
+body .page .detail-card,
+body .page .detail-box,
+body .page .detail-panel,
+body .page .details,
+body .page .details-body,
+body .page .accordion-body,
+body .page .collapse-body,
+body .page .expand-body,
+body .page .drawer-body,
+body .page .section-body,
+body .page .panel-body,
+body .page .list-wrap,
+body .page .list-box,
+body .page .list-item,
+body .page .feed-item,
+body .page .post-card,
+body .page .post-item,
+body .page .announcement,
+body .page .publication,
+body .page .favorite,
+body .page .today-pin,
+body .page .virt-card,
+body .page .sunnet-card{
+  border:1px solid rgba(221,180,90,.52)!important;
+  background:linear-gradient(145deg,rgba(7,56,40,.86),rgba(5,36,28,.83))!important;
+  color:#fff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 8px 20px rgba(0,0,0,.16)!important;
+  backdrop-filter:blur(9px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(116%)!important;
+}
+
+/* Açılır kartların başlık + içerik ikilisinde içerik tarafını garantiye al */
+body details > :not(summary),
+body .accordion-item > :not(.accordion-header),
+body .expand-card > :not(.expand-header),
+body .collapsible-card > :not(.collapsible-header){
+  color:rgba(241,245,242,.88)!important;
+}
+
+/* Dinamik kartların iç kapsayıcıları: eski açık arka planı temizle */
+body .announcement-card > div,
+body .announcement-item > div,
+body .publication-card > div,
+body .publication-item > div,
+body .favorite-card > div,
+body .favorite-item > div,
+body .today-card > div,
+body .today-item > div,
+body .virt-item > div,
+body .virt-item-pro > div,
+body .sunnet-item > div{
+  border-color:rgba(221,180,90,.28)!important;
+}
+
+/* Eski açık renkli "subcard" / içerik bloklarını yakala */
+body .subcard,
+body .sub-card,
+body .subpanel,
+body .sub-panel,
+body .nested-card,
+body .nested-panel,
+body .entry-card,
+body .entry-item,
+body .result-card,
+body .result-item,
+body .message-card,
+body .message-item,
+body .request-card,
+body .request-item{
+  border:1px solid rgba(221,180,90,.48)!important;
+  background:linear-gradient(145deg,rgba(7,53,39,.84),rgba(5,35,27,.82))!important;
+  color:#fff!important;
+}
+
+/* Sayfa içindeki doğrudan beyaz/gri kart benzeri div'lere ortak sınıf üzerinden tema */
+body .page [class*="card"]:not(.hilal-islamic-alert-card):not(.prayer-card),
+body .page [class*="panel"]:not(.hilal-islamic-alert-card),
+body .page [class*="tile"],
+body .page [class*="box"]{
+  border-color:rgba(221,180,90,.48)!important;
+}
+
+/* Kart içindeki başlık bantları da aynı aileye gelsin */
+body .page .card-header,
+body .page .panel-header,
+body .page .section-header,
+body .page .detail-header,
+body .page .accordion-header{
+  border-color:rgba(221,180,90,.38)!important;
+  background:rgba(6,43,32,.76)!important;
+  color:#fff!important;
+}
+
+/* İç metin alanlarında eski koyu/açık uyumsuzlukları azalt */
+body .page .card-body p,
+body .page .card-content p,
+body .page .detail-card p,
+body .page .list-item p,
+body .page .post-card p{
+  color:rgba(238,242,239,.78)!important;
+}
+
+/* Takvim & Ezan satırları kendi özel tasarımını korusun */
+#calendarPage #prayerTimesList > *,
+#calendarPage #prayerTimesList > * > *,
+#calendarPage .ezan-vakit-bell{
+  /* mevcut daha spesifik Takvim & Ezan stilleri korunur */
+}
+
+/* İslami modal özel tasarımını koru */
+.hilal-islamic-alert-card,
+.hilal-islamic-alert-card *{
+  /* mevcut özel stil */
+}
+
+
+
+/* GERÇEK HİLAL SINIFLARI — EKSİKSİZ KART YÜZEYİ */
+body .admin-panel-card,
+body .account-alert-card,
+body .pending-approval-box,
+body .feed-card,
+body .guest-simple-panel,
+body .deleted-feedback-box,
+body .virt-card,
+body .sunnet-cuz-card,
+body .teacher-publications-list-card,
+body .publisher-card,
+body .admin-summary-card,
+body .hijri-admin-card,
+body .reminder-date-card,
+body .register-preview-box,
+body .admin-user-card,
+body .teacher-announcement-card,
+body .shared-feed-card,
+body .teacher-like-row,
+body .teacher-picker-row,
+body .teacher-search-box{
+  border:1.2px solid rgba(221,180,90,.55)!important;
+  background:linear-gradient(145deg,rgba(7,57,41,.87),rgba(5,37,28,.84))!important;
+  color:#fff!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 9px 22px rgba(0,0,0,.17)!important;
+  backdrop-filter:blur(9px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(116%)!important;
+}
+
+body .teacher-publications-list-head,
+body .login-panel-head,
+body .reminder-date-card-title,
+body .card-actions{
+  border-color:rgba(221,180,90,.34)!important;
+  background:rgba(5,40,30,.68)!important;
+}
+
+body .admin-list > *,
+body .admin-approved-page-list > *,
+body .teacher-picker-list > *,
+body .virt-list > *{
+  border:1px solid rgba(221,180,90,.46)!important;
+  background:linear-gradient(145deg,rgba(7,52,38,.82),rgba(5,34,27,.80))!important;
+}
+
+
+
+/* =========================================================
+   EKRAN GÖRÜNTÜSÜ DÜZELTMESİ:
+   1) Açılan sayfanın EN ÜST ana kartının iç zemini gerçek zümrüt cam
+   2) Tüm altın çerçeveler Takvim & Ezan kadar belirgin
+   ========================================================= */
+
+:root{
+  --hilal-gold-strong:#e4bb57;
+  --hilal-gold-line:rgba(228,187,87,.86);
+  --hilal-gold-inner:rgba(255,220,126,.18);
+  --hilal-emerald-top:rgba(8,66,46,.94);
+  --hilal-emerald-bottom:rgba(5,43,32,.92);
+}
+
+/* Navigasyondan açılan her sayfanın en üstteki ana/başlık kartı */
+body .page > .hero,
+body .page > article.card:first-of-type,
+body .page > section.card:first-of-type,
+body .page > .card:first-of-type,
+body .page > .hilal-hijri-card:first-of-type,
+body .page > [class*="head-card"],
+body .page > [class*="header-card"]{
+  border:1.6px solid var(--hilal-gold-line)!important;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(34,112,76,.28),transparent 44%),
+    linear-gradient(145deg,var(--hilal-emerald-top),var(--hilal-emerald-bottom))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,231,168,.18),
+    inset 0 0 0 1px rgba(228,187,87,.08),
+    0 10px 28px rgba(0,0,0,.22)!important;
+  backdrop-filter:blur(10px) saturate(122%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(122%)!important;
+}
+
+/* Bütün ana kartlarda altını güçlendir */
+body .card,
+body article,
+body .panel,
+body .box,
+body .surface,
+body .feed-card,
+body .shared-feed-card,
+body .teacher-announcement-card,
+body .publisher-card,
+body .admin-panel-card,
+body .account-alert-card,
+body .pending-approval-box,
+body .virt-card,
+body .virt-item,
+body .virt-item-pro,
+body .sunnet-cuz-card,
+body .sunnet-item,
+body .announcement-card,
+body .publication-card,
+body .favorite-card,
+body .today-card,
+body .admin-user-card,
+body .admin-summary-card,
+body .reminder-date-card,
+body .teacher-picker-row{
+  border-color:var(--hilal-gold-line)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,231,168,.12),
+    inset 0 0 0 1px rgba(228,187,87,.045),
+    0 9px 23px rgba(0,0,0,.17)!important;
+}
+
+/* Alt/iç kartlar da zümrüt + daha görünür altın */
+body .page [class*="list"] > *,
+body .page [class*="feed"] > *:not(.hilal-card-share-icon),
+body .page [class*="items"] > *,
+body .page .list-item,
+body .page .feed-item,
+body .page .post-item,
+body .page .inner-card,
+body .page .detail-card,
+body .page .subcard,
+body .page .sub-card{
+  border:1.35px solid rgba(228,187,87,.72)!important;
+  background:
+    linear-gradient(145deg,rgba(7,61,43,.90),rgba(5,41,31,.88))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,231,168,.10),
+    0 7px 18px rgba(0,0,0,.14)!important;
+}
+
+/* Günün İbadetleri gibi başlık kartlarının eski koyu iç yüzeyini özellikle kaldır */
+#todayPage > .hero,
+#todayPage > .card:first-of-type,
+#todayPage > article:first-of-type,
+#favoritesPage > .hero,
+#favoritesPage > .card:first-of-type,
+#announcementsPage > .hero,
+#generalPublicationsPage > .hero,
+#dailyVirtPage > .hero,
+#sunnetIhyaPage > .hero{
+  background:
+    radial-gradient(circle at 20% 0%,rgba(34,120,79,.30),transparent 46%),
+    linear-gradient(145deg,rgba(8,68,47,.95),rgba(5,43,32,.93))!important;
+  border-color:var(--hilal-gold-line)!important;
+}
+
+/* Takvim & Ezan zaten referans: kendi daha spesifik düzeni korunur */
+#calendarPage > .hero,
+#calendarPage article.card:has(#prayerTimesList),
+#calendarPage #prayerTimesList > *{
+  border-color:rgba(228,187,87,.88)!important;
+}
+
+
+
+/* =========================================================
+   HİLAL — DIŞ KART ALTIN, İÇ YAZI ALANLARI SADE
+   ========================================================= */
+
+/* Yayın/duyuru/favori/bugün gibi kartların iç metin satırlarında
+   sonradan eklenen altın çerçeveyi kaldır. */
+body .publication-card .publication-title,
+body .publication-card .publication-meta,
+body .publication-card .publication-source,
+body .publication-card .publication-updated,
+body .publication-card .publication-body,
+body .publication-card .publication-author,
+body .publication-card .publication-like-row,
+body .publication-item .publication-title,
+body .publication-item .publication-meta,
+body .publication-item .publication-source,
+body .publication-item .publication-updated,
+body .publication-item .publication-body,
+body .publication-item .publication-author,
+body .announcement-card .announcement-title,
+body .announcement-card .announcement-meta,
+body .announcement-card .announcement-body,
+body .announcement-card .announcement-author,
+body .announcement-item .announcement-title,
+body .announcement-item .announcement-meta,
+body .announcement-item .announcement-body,
+body .favorite-card .favorite-title,
+body .favorite-card .favorite-meta,
+body .favorite-card .favorite-body,
+body .today-card .today-title,
+body .today-card .today-meta,
+body .today-card .today-body,
+body .shared-feed-card .feed-title,
+body .shared-feed-card .feed-meta,
+body .shared-feed-card .feed-body,
+body .shared-feed-card .feed-author,
+body .feed-card .feed-title,
+body .feed-card .feed-meta,
+body .feed-card .feed-body,
+body .feed-card .feed-author{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Dinamik kartların içindeki sıradan div/span/p bloklarında
+   sadece tema yüzünden oluşmuş çizgileri temizle. */
+body .publication-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-item > div:not(.card-actions):not(.actions):not(.buttons),
+body .announcement-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .announcement-item > div:not(.card-actions):not(.actions):not(.buttons),
+body .favorite-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .today-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .shared-feed-card > div:not(.card-actions):not(.actions):not(.buttons){
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* İç metinlerin kendisi sade kalsın */
+body .publication-card p,
+body .publication-card span,
+body .publication-item p,
+body .publication-item span,
+body .announcement-card p,
+body .announcement-card span,
+body .announcement-item p,
+body .announcement-item span,
+body .favorite-card p,
+body .favorite-card span,
+body .today-card p,
+body .today-card span,
+body .feed-card p,
+body .feed-card span,
+body .shared-feed-card p,
+body .shared-feed-card span{
+  background:transparent!important;
+}
+
+/* Yazar / kaynak / güncelleme / içerik satırlarının altın kutu görünümünü söndür */
+body .publisher-card,
+body .teacher-like-row{
+  border-color:rgba(221,180,90,.22)!important;
+  background:rgba(5,39,29,.38)!important;
+  box-shadow:none!important;
+}
+
+/* Butonlar kendi mevcut görünümünü korusun */
+body .card-actions,
+body .actions,
+body .buttons{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Ana dış kartların güçlü altın çerçevesi KALIR */
+body .publication-card,
+body .publication-item,
+body .announcement-card,
+body .announcement-item,
+body .favorite-card,
+body .today-card,
+body .feed-card,
+body .shared-feed-card{
+  border:1.45px solid rgba(228,187,87,.82)!important;
+  background:linear-gradient(145deg,rgba(7,61,43,.90),rgba(5,41,31,.88))!important;
+}
+
+
+
+/* =========================================================
+   YAYIN / DUYURU İÇERİĞİ — İÇ ÇERÇEVELERİ TAMAMEN KALDIR
+   Dış kart ve gerçek buton çerçeveleri korunur.
+   ========================================================= */
+
+/* Ekrandaki "Yayın • Zikir / Mevlidi Şerif / Demo Hoca" başlık bloğu */
+body .shared-feed-card .feed-head,
+body .shared-feed-card .feed-header,
+body .shared-feed-card .post-head,
+body .shared-feed-card .post-header,
+body .shared-feed-card .publication-head,
+body .shared-feed-card .publication-header,
+body .shared-feed-card .title-wrap,
+body .shared-feed-card .title-block,
+body .feed-card .feed-head,
+body .feed-card .feed-header,
+body .feed-card .post-head,
+body .feed-card .post-header,
+body .feed-card .publication-head,
+body .feed-card .publication-header,
+body .feed-card .title-wrap,
+body .feed-card .title-block,
+body .teacher-announcement-card .title-wrap,
+body .teacher-announcement-card .title-block,
+body .publication-card .title-wrap,
+body .publication-card .title-block{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Yayın kartının içindeki metinsel div'lere tema tarafından eklenen çizgileri kaldır.
+   Button/action alanlarına dokunmuyoruz. */
+body .shared-feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .teacher-announcement-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-item > div:not(.card-actions):not(.actions):not(.buttons){
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* İç içe başlık/metin kapsayıcılarında da altın kutu oluşmasın */
+body .shared-feed-card > div:not(.card-actions):not(.actions):not(.buttons) > div:not(.card-actions):not(.actions):not(.buttons),
+body .feed-card > div:not(.card-actions):not(.actions):not(.buttons) > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-card > div:not(.card-actions):not(.actions):not(.buttons) > div:not(.card-actions):not(.actions):not(.buttons){
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Metin ve başlıklar eski sade yapıda */
+body .shared-feed-card h1,
+body .shared-feed-card h2,
+body .shared-feed-card h3,
+body .shared-feed-card h4,
+body .shared-feed-card p,
+body .feed-card h1,
+body .feed-card h2,
+body .feed-card h3,
+body .feed-card h4,
+body .feed-card p,
+body .publication-card h1,
+body .publication-card h2,
+body .publication-card h3,
+body .publication-card h4,
+body .publication-card p{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Dış yayın kartının altın çerçevesi kalır */
+body .shared-feed-card,
+body .feed-card,
+body .publication-card,
+body .publication-item,
+body .teacher-announcement-card{
+  border:1.45px solid rgba(228,187,87,.82)!important;
+}
+
+/* Takip et, beğen, bugün/favori, hatırlatıcı gibi gerçek kontrollerin
+   kendi çerçevelerini koru. */
+body .shared-feed-card button,
+body .feed-card button,
+body .publication-card button,
+body .teacher-announcement-card button{
+  /* mevcut buton tasarımı aynen */
+}
+
+
+
+/* FAVORİ / BUGÜN KARTLARI — BAŞLIK VE KAYNAK İÇ ÇERÇEVESİNİ KALDIR */
+#favoritesPage h1,
+#favoritesPage h2,
+#favoritesPage h3,
+#favoritesPage h4,
+#favoritesPage p,
+#favoritesPage strong,
+#favoritesPage [class*="title"],
+#favoritesPage [class*="source"],
+#favoritesPage [class*="meta"],
+#favoritesPage [class*="body"],
+#todayPage h1,
+#todayPage h2,
+#todayPage h3,
+#todayPage h4,
+#todayPage p,
+#todayPage strong,
+#todayPage [class*="title"],
+#todayPage [class*="source"],
+#todayPage [class*="meta"],
+#todayPage [class*="body"]{
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Dinamik favori/bugün içerik kartlarının metin kapsayıcıları */
+#favoritesPage [id*="List"] > * > div:not(.actions):not(.buttons):not(.card-actions),
+#favoritesPage [id*="List"] > * > div:not(.actions):not(.buttons):not(.card-actions) > div:not(.actions):not(.buttons):not(.card-actions),
+#todayPage [id*="List"] > * > div:not(.actions):not(.buttons):not(.card-actions),
+#todayPage [id*="List"] > * > div:not(.actions):not(.buttons):not(.card-actions) > div:not(.actions):not(.buttons):not(.card-actions){
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Özellikle ekrandaki Mevlidi Şerifi başlığı ve Kaynak satırı */
+#favoritesPage [class*="title"],
+#favoritesPage [class*="source"],
+#favoritesPage [class*="content"],
+#favoritesPage [class*="text"],
+#todayPage [class*="title"],
+#todayPage [class*="source"],
+#todayPage [class*="content"],
+#todayPage [class*="text"]{
+  border:none!important;
+  background:transparent!important;
+}
+
+/* Dış kart ve gerçek butonlar korunur */
+#favoritesPage [id*="List"] > *,
+#todayPage [id*="List"] > *{
+  border:1.45px solid rgba(228,187,87,.82)!important;
+}
+
+
+
+/* =========================================================
+   FAVORİLER — SADE İÇERİK
+   Yalnızca dış favori kartının altın çerçevesi kalır.
+   İçerideki tema kaynaklı tüm altın çizgi/kutu çerçeveleri kaldırılır.
+   ========================================================= */
+
+/* Favoriler listesindeki her ana kartın içindeki normal içerik elemanları */
+#favoritesPage [id*="List"] > * *:not(button):not(img):not(video):not(audio):not(input):not(select):not(textarea){
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Başlık, kaynak, açıklama, tarih/konum, kategori gibi iç bloklar */
+#favoritesPage [id*="List"] > * h1,
+#favoritesPage [id*="List"] > * h2,
+#favoritesPage [id*="List"] > * h3,
+#favoritesPage [id*="List"] > * h4,
+#favoritesPage [id*="List"] > * p,
+#favoritesPage [id*="List"] > * strong,
+#favoritesPage [id*="List"] > * [class*="title"],
+#favoritesPage [id*="List"] > * [class*="source"],
+#favoritesPage [id*="List"] > * [class*="meta"],
+#favoritesPage [id*="List"] > * [class*="body"],
+#favoritesPage [id*="List"] > * [class*="content"],
+#favoritesPage [id*="List"] > * [class*="text"],
+#favoritesPage [id*="List"] > * [class*="author"]{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Dış kartın altın çerçevesini özellikle geri garanti et */
+#favoritesPage [id*="List"] > *{
+  border:1.45px solid rgba(228,187,87,.82)!important;
+  background:linear-gradient(145deg,rgba(7,61,43,.90),rgba(5,41,31,.88))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,231,168,.10),
+    0 8px 20px rgba(0,0,0,.16)!important;
+}
+
+/* Gerçek kontrol butonları (Kaldır / Hatırlatıcı vb.) kendi tasarımını korur */
+#favoritesPage [id*="List"] > * button{
+  /* mevcut buton stili korunur */
+}
+
+
+
+/* =========================================================
+   FAVORİLER — KESİN DÜZELTME
+   ANA FAVORİ KARTININ DIŞ ÇERÇEVESİ HARİÇ,
+   İÇİNDEKİ HİÇBİR DIV/BURGER/SATIR ALTIN ÇERÇEVE ALMAZ.
+   ========================================================= */
+
+/* Favoriler sayfasındaki dinamik listenin ANA çocuk kartı dışındaki
+   tüm torun elemanların tema kaynaklı çerçevelerini söndür. */
+#favoritesPage #favoritesList > * > *,
+#favoritesPage #favoritesList > * > * *,
+#favoritesPage #favoriteList > * > *,
+#favoritesPage #favoriteList > * > * *,
+#favoritesPage [data-favorites-list] > * > *,
+#favoritesPage [data-favorites-list] > * > * *{
+  border-color:transparent!important;
+  outline-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* İç div/burger/satır/kutu ne adla gelirse gelsin çerçevesiz */
+#favoritesPage #favoritesList > * div,
+#favoritesPage #favoriteList > * div,
+#favoritesPage [data-favorites-list] > * div{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Metin alanları tamamen sade */
+#favoritesPage #favoritesList > * h1,
+#favoritesPage #favoritesList > * h2,
+#favoritesPage #favoritesList > * h3,
+#favoritesPage #favoritesList > * h4,
+#favoritesPage #favoritesList > * p,
+#favoritesPage #favoritesList > * span,
+#favoritesPage #favoritesList > * strong,
+#favoritesPage #favoriteList > * h1,
+#favoritesPage #favoriteList > * h2,
+#favoritesPage #favoriteList > * h3,
+#favoritesPage #favoriteList > * h4,
+#favoritesPage #favoriteList > * p,
+#favoritesPage #favoriteList > * span,
+#favoritesPage #favoriteList > * strong{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* YALNIZCA ANA FAVORİ KARTININ dış çerçevesini geri koy */
+#favoritesPage #favoritesList > *,
+#favoritesPage #favoriteList > *,
+#favoritesPage [data-favorites-list] > *{
+  border:1.45px solid rgba(228,187,87,.82)!important;
+  background:linear-gradient(145deg,rgba(7,61,43,.90),rgba(5,41,31,.88))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,231,168,.10),
+    0 8px 20px rgba(0,0,0,.16)!important;
+}
+
+/* Gerçek butonların kendi sınırlarını geri yükle:
+   Kaldır / Hatırlatıcı gibi kontroller çerçevesiz kalmasın. */
+#favoritesPage #favoritesList > * button,
+#favoritesPage #favoriteList > * button,
+#favoritesPage [data-favorites-list] > * button{
+  border:1px solid rgba(228,187,87,.72)!important;
+}
+
+/* Görselin kendi dış hattı varsa korunabilir */
+#favoritesPage #favoritesList > * img,
+#favoritesPage #favoriteList > * img{
+  border-radius:18px!important;
+}
+
+
+#favoritesPage #favoriteItems > * > *,
+#favoritesPage #favoriteItems > * > * * {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+#favoritesPage #favoriteItems > * {
+  border:1.45px solid rgba(228,187,87,.82)!important;
+  background:linear-gradient(145deg,rgba(7,61,43,.90),rgba(5,41,31,.88))!important;
+}
+#favoritesPage #favoriteItems > * button {
+  border:1px solid rgba(228,187,87,.72)!important;
+}
+
+
+
+/* =========================================================
+   HİLAL — HOCAYI TAKİP ET / BEĞEN KONTROLLERİ
+   Zümrüt cam + altın/yeşil uyumlu profesyonel tasarım
+   ========================================================= */
+
+/* Hocayı takip et alanı */
+body .teacher-like-row,
+body .publisher-card,
+body [class*="follow-row"],
+body [class*="teacher-follow"],
+body [class*="publisher-row"]{
+  border:1px solid rgba(214,181,91,.38)!important;
+  background:
+    linear-gradient(145deg,rgba(7,55,40,.58),rgba(4,34,26,.52))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 7px 18px rgba(0,0,0,.12)!important;
+  backdrop-filter:blur(10px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(116%)!important;
+  border-radius:18px!important;
+}
+
+/* Hocayı Takip Et butonu */
+body .teacher-like-row button,
+body .publisher-card button,
+body [class*="follow-row"] button,
+body [class*="teacher-follow"] button,
+body button[class*="follow"]{
+  min-height:44px!important;
+  border:1px solid rgba(218,183,89,.52)!important;
+  border-radius:15px!important;
+  background:
+    linear-gradient(145deg,rgba(6,43,32,.82),rgba(4,29,23,.80))!important;
+  color:#fff!important;
+  font-weight:800!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 5px 14px rgba(0,0,0,.13)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+
+/* Takip edilmiş durumda yeşil vurgu */
+body .teacher-like-row button.active,
+body .publisher-card button.active,
+body button[class*="follow"].active,
+body button[class*="following"],
+body button[aria-pressed="true"][class*="follow"]{
+  border-color:rgba(65,194,116,.66)!important;
+  background:
+    linear-gradient(145deg,rgba(19,102,62,.90),rgba(8,69,46,.88))!important;
+  color:#f5fff8!important;
+}
+
+/* Beğeni satırı */
+body [class*="like-row"],
+body [class*="like-actions"],
+body [class*="reaction-row"]{
+  border:1px solid rgba(214,181,91,.34)!important;
+  background:
+    linear-gradient(145deg,rgba(7,54,39,.54),rgba(4,33,25,.48))!important;
+  border-radius:18px!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 6px 16px rgba(0,0,0,.10)!important;
+  backdrop-filter:blur(9px) saturate(114%)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(114%)!important;
+}
+
+/* Beğen butonu */
+body button[class*="like"],
+body .like-btn,
+body .publication-like-row button,
+body .feed-card button[onclick*="like"],
+body .shared-feed-card button[onclick*="like"]{
+  min-height:44px!important;
+  border:1px solid rgba(214,181,91,.46)!important;
+  border-radius:15px!important;
+  background:
+    linear-gradient(145deg,rgba(5,39,30,.78),rgba(3,27,21,.76))!important;
+  color:#fff!important;
+  font-weight:800!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 5px 13px rgba(0,0,0,.12)!important;
+}
+
+/* Beğenilmiş durumda yeşil */
+body button[class*="like"].active,
+body .like-btn.active,
+body button[aria-pressed="true"][class*="like"]{
+  border-color:rgba(61,196,114,.64)!important;
+  background:
+    linear-gradient(145deg,rgba(18,100,61,.90),rgba(7,67,45,.88))!important;
+  color:#f6fff8!important;
+}
+
+/* İç yazılar sade; ekstra sarı kutu yok */
+body .teacher-like-row *,
+body .publisher-card *,
+body [class*="like-row"] *,
+body [class*="like-actions"] *{
+  outline:none!important;
+}
+
+/* Mobil uyum */
+@media(max-width:600px){
+  body .teacher-like-row,
+  body .publisher-card,
+  body [class*="like-row"],
+  body [class*="like-actions"]{
+    border-radius:16px!important;
+  }
+}
+
+
+
+/* TAKİP ET / BEĞEN — OKUNAKLILIK GÜÇLENDİRME */
+body .teacher-like-row,
+body .publisher-card,
+body [class*="follow-row"],
+body [class*="teacher-follow"],
+body [class*="publisher-row"],
+body [class*="like-row"],
+body [class*="like-actions"],
+body [class*="reaction-row"]{
+  color:#f7fbf8!important;
+}
+
+/* Ana buton yazıları daha büyük, daha beyaz ve güçlü */
+body .teacher-like-row button,
+body .publisher-card button,
+body [class*="follow-row"] button,
+body [class*="teacher-follow"] button,
+body button[class*="follow"],
+body button[class*="like"],
+body .like-btn,
+body .publication-like-row button{
+  font-size:17px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  color:#ffffff!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.34)!important;
+  letter-spacing:.01em!important;
+}
+
+/* Hoca adı / bilgi metinleri */
+body .teacher-like-row strong,
+body .publisher-card strong,
+body .teacher-like-row .name,
+body .publisher-card .name{
+  font-size:17px!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+body .teacher-like-row .muted,
+body .publisher-card .muted,
+body .teacher-like-row small,
+body .publisher-card small,
+body [class*="like-row"] .muted,
+body [class*="like-row"] small{
+  font-size:14px!important;
+  line-height:1.35!important;
+  font-weight:650!important;
+  color:rgba(245,249,246,.82)!important;
+}
+
+/* Beğeni sayısı/metni de silik kalmasın */
+body [class*="like-row"] span,
+body [class*="like-actions"] span,
+body .publication-like-row span{
+  color:rgba(247,250,248,.88)!important;
+  font-size:14px!important;
+  font-weight:700!important;
+}
+
+/* Mobilde dokunma alanı ve okunabilirlik */
+@media(max-width:600px){
+  body .teacher-like-row button,
+  body .publisher-card button,
+  body button[class*="follow"],
+  body button[class*="like"],
+  body .like-btn{
+    min-height:48px!important;
+    font-size:16px!important;
+    padding-left:16px!important;
+    padding-right:16px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL — TEK RENK/FONT STANDARDI
+   Takvim & Ezan referans görünümü uygulama geneline
+   ========================================================= */
+
+:root{
+  --hilal-theme-emerald-1: rgba(7,61,43,.92);
+  --hilal-theme-emerald-2: rgba(5,41,31,.90);
+  --hilal-theme-emerald-3: rgba(4,31,24,.88);
+  --hilal-theme-gold: #e2b85a;
+  --hilal-theme-gold-line: rgba(226,184,90,.84);
+  --hilal-theme-gold-soft: rgba(226,184,90,.46);
+  --hilal-theme-white: #f8fbf9;
+  --hilal-theme-muted: rgba(235,240,236,.74);
+  --hilal-theme-green: #39ca79;
+}
+
+/* ---------- ANA KART YÜZEYİ ---------- */
+/* Dış kartlar aynı zümrüt cam + altın çizgi */
+body .hero,
+body .card,
+body article,
+body .panel,
+body .admin-panel-card,
+body .account-alert-card,
+body .pending-approval-box,
+body .feed-card,
+body .shared-feed-card,
+body .teacher-announcement-card,
+body .publication-card,
+body .publication-item,
+body .favorite-card,
+body .today-card,
+body .virt-card,
+body .virt-item,
+body .virt-item-pro,
+body .sunnet-cuz-card,
+body .sunnet-item,
+body .publisher-card,
+body .teacher-like-row,
+body .admin-user-card,
+body .admin-summary-card,
+body .reminder-date-card,
+body .teacher-picker-row,
+body .login-panel,
+body .guest-simple-panel{
+  border:1.45px solid var(--hilal-theme-gold-line)!important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(29,110,74,.18), transparent 42%),
+    linear-gradient(145deg,var(--hilal-theme-emerald-1),var(--hilal-theme-emerald-2))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,181,.12),
+    0 9px 24px rgba(0,0,0,.18)!important;
+  backdrop-filter:blur(10px) saturate(118%)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(118%)!important;
+  color:var(--hilal-theme-white)!important;
+}
+
+/* ---------- YAZI STANDARDI ---------- */
+
+/* Ana başlıklar */
+body .page h1,
+body .page h2,
+body .page h3,
+body .page h4,
+body .card h1,
+body .card h2,
+body .card h3,
+body .panel h1,
+body .panel h2,
+body .panel h3,
+body .virt-title{
+  color:var(--hilal-theme-white)!important;
+  font-weight:900!important;
+  letter-spacing:-.015em!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.18)!important;
+}
+
+/* Sayfa ana başlıkları biraz daha güçlü */
+body .page > .hero h1,
+body .page > .hero h2,
+body .page > .card:first-of-type h1,
+body .page > .card:first-of-type h2{
+  font-size:clamp(28px,5.2vw,38px)!important;
+  line-height:1.08!important;
+  font-weight:950!important;
+}
+
+/* Kart başlıkları */
+body .feed-card h2,
+body .feed-card h3,
+body .shared-feed-card h2,
+body .shared-feed-card h3,
+body .publication-card h2,
+body .publication-card h3,
+body .favorite-card h2,
+body .favorite-card h3,
+body .today-card h2,
+body .today-card h3,
+body .teacher-announcement-card h2,
+body .teacher-announcement-card h3{
+  font-size:clamp(20px,4.4vw,28px)!important;
+  line-height:1.16!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+
+/* Küçük üst etiketler altın */
+body .eyebrow,
+body .kicker,
+body .section-label,
+body .card-label,
+body .hilal-card-kicker,
+body .teacher-picker-eyebrow,
+body [class*="eyebrow"],
+body [class*="kicker"]{
+  color:var(--hilal-theme-gold)!important;
+  font-weight:850!important;
+  letter-spacing:.045em!important;
+}
+
+/* Normal metinler */
+body .page p,
+body .page .text,
+body .page [class*="body"],
+body .page [class*="description"],
+body .page [class*="content"]{
+  color:rgba(244,247,245,.86)!important;
+  font-weight:500!important;
+  line-height:1.42!important;
+}
+
+/* Yardımcı / ikincil metinler */
+body .muted,
+body .subtle,
+body small,
+body .virt-meta,
+body .virt-note,
+body [class*="meta"],
+body [class*="subtitle"],
+body [class*="subtext"]{
+  color:var(--hilal-theme-muted)!important;
+  font-weight:600!important;
+}
+
+/* Hoca adı/yayıncı adı daha net */
+body .publisher-card strong,
+body .teacher-like-row strong,
+body .feed-card strong,
+body .shared-feed-card strong,
+body .publication-card strong{
+  color:#fff!important;
+  font-weight:850!important;
+}
+
+/* ---------- İÇERİKTE GEREKSİZ ALTIN KUTU OLMASIN ---------- */
+/* Dış kartın altında kalan içerik, satır, başlık, kaynak alanları sade */
+body .feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .shared-feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-item > div:not(.card-actions):not(.actions):not(.buttons),
+body .favorite-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .today-card > div:not(.card-actions):not(.actions):not(.buttons),
+#favoritesPage #favoriteItems > * > *,
+#favoritesPage #favoriteItems > * > * *{
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Favorilerde yalnız dış kart altın; içerideki metin/burger çizgileri yok */
+#favoritesPage #favoriteItems > * > *:not(button):not(img):not(video):not(audio){
+  border:none!important;
+}
+
+#favoritesPage #favoriteItems > *{
+  border:1.45px solid var(--hilal-theme-gold-line)!important;
+  background:
+    linear-gradient(145deg,var(--hilal-theme-emerald-1),var(--hilal-theme-emerald-2))!important;
+}
+
+/* ---------- TAKİP / BEĞEN KONTROLLERİ ---------- */
+body .teacher-like-row,
+body .publisher-card,
+body [class*="like-row"],
+body [class*="like-actions"],
+body [class*="follow-row"]{
+  border:1px solid var(--hilal-theme-gold-soft)!important;
+  background:
+    linear-gradient(145deg,rgba(7,53,39,.64),rgba(4,32,25,.58))!important;
+  border-radius:18px!important;
+}
+
+body .teacher-like-row button,
+body .publisher-card button,
+body button[class*="follow"],
+body button[class*="like"],
+body .like-btn,
+body .publication-like-row button{
+  border:1px solid var(--hilal-theme-gold-soft)!important;
+  background:
+    linear-gradient(145deg,rgba(5,40,30,.82),rgba(3,27,21,.80))!important;
+  color:#fff!important;
+  font-size:17px!important;
+  font-weight:900!important;
+  min-height:46px!important;
+  border-radius:15px!important;
+}
+
+/* Aktif kontrol yeşil */
+body button.active,
+body button[aria-pressed="true"]{
+  border-color:rgba(57,202,121,.66)!important;
+}
+
+/* ---------- MENÜ / FORM ---------- */
+#guestMenu,
+#teacherMenu,
+#adminMenu{
+  border:1.35px solid var(--hilal-theme-gold-line)!important;
+  background:
+    linear-gradient(145deg,rgba(5,45,33,.97),rgba(4,31,24,.97))!important;
+}
+
+body input,
+body select,
+body textarea{
+  border:1px solid var(--hilal-theme-gold-soft)!important;
+  background:rgba(4,29,22,.76)!important;
+  color:#fff!important;
+  font-size:16px!important;
+}
+
+/* ---------- TAKVİM & EZAN REFERANSI ---------- */
+/* Aynı renk ailesi; özel yerleşimi aynen korunur */
+#calendarPage > .hero,
+#calendarPage article.card:has(#prayerTimesList),
+#calendarPage #prayerTimesList > *{
+  border-color:var(--hilal-theme-gold-line)!important;
+}
+
+#calendarPage #prayerTimesList .time,
+#calendarPage #prayerTimesList [class*="time"]{
+  color:#fff!important;
+  font-weight:950!important;
+}
+
+#calendarPage #prayerTimesList > *.next .time,
+#calendarPage #prayerTimesList > *.active .time,
+#calendarPage #prayerTimesList > *.is-next .time{
+  color:var(--hilal-theme-green)!important;
+}
+
+/* ---------- MOBİL OKUNAKLILIK ---------- */
+@media(max-width:600px){
+  body .page p,
+  body .page .text,
+  body .page [class*="body"],
+  body .page [class*="description"]{
+    font-size:16px!important;
+  }
+
+  body .muted,
+  body .subtle,
+  body small,
+  body [class*="meta"]{
+    font-size:14px!important;
+  }
+
+  body .teacher-like-row button,
+  body .publisher-card button,
+  body button[class*="follow"],
+  body button[class*="like"]{
+    font-size:16px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL — ESKİ ÇERÇEVE / GÖLGE İZLERİNİ TEMİZLE
+   Dış ana kart korunur, iç yüzeyler tek parça görünür.
+   ========================================================= */
+
+/* İçerik alanlarında geçmiş temalardan kalan ince çerçeve izlerini kaldır */
+body .page .card > *:not(button):not(input):not(select):not(textarea):not(img):not(video),
+body .page article > *:not(button):not(input):not(select):not(textarea):not(img):not(video),
+body .page .panel > *:not(button):not(input):not(select):not(textarea):not(img):not(video),
+body .feed-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .shared-feed-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .publication-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .publication-item > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .favorite-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .today-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .teacher-announcement-card > *:not(button):not(.card-actions):not(.actions):not(.buttons),
+body .virt-item > *:not(button),
+body .virt-item-pro > *:not(button),
+body .sunnet-item > *:not(button){
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* İç içe div/span/p seviyelerinde sarı çizgi izi görünmesin */
+body .feed-card div,
+body .shared-feed-card div,
+body .publication-card div,
+body .publication-item div,
+body .favorite-card div,
+body .today-card div,
+body .teacher-announcement-card div,
+body .virt-item div,
+body .virt-item-pro div,
+body .sunnet-item div{
+  outline:none!important;
+}
+
+/* Sadece tema yüzünden eklenmiş border izlerini içte temizle */
+body .feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .shared-feed-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .publication-item > div:not(.card-actions):not(.actions):not(.buttons),
+body .favorite-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .today-card > div:not(.card-actions):not(.actions):not(.buttons),
+body .teacher-announcement-card > div:not(.card-actions):not(.actions):not(.buttons){
+  border-color:transparent!important;
+}
+
+/* Favoriler: dış kart hariç içeride hiçbir çerçeve izi kalmasın */
+#favoritesPage #favoriteItems > * > *,
+#favoritesPage #favoriteItems > * > * *{
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Dış ana kart çerçevesini tekrar garanti et */
+#favoritesPage #favoriteItems > *,
+body .feed-card,
+body .shared-feed-card,
+body .publication-card,
+body .publication-item,
+body .favorite-card,
+body .today-card,
+body .teacher-announcement-card,
+body .virt-item,
+body .virt-item-pro,
+body .sunnet-item{
+  border:1.45px solid var(--hilal-theme-gold-line)!important;
+}
+
+/* Gerçek buton/aksiyon kontrollerinin kendi sınırları korunur */
+body button,
+body input,
+body select,
+body textarea{
+  outline:none;
+}
+
+/* Takvim & Ezan özel tasarımını bozma */
+#calendarPage #prayerTimesList > *,
+#calendarPage #prayerTimesList > * > *,
+#calendarPage .ezan-vakit-bell{
+  /* mevcut özel stil korunur */
+}
+
+
+
+/* =========================================================
+   HİLAL — OKUMA / BÜYÜTME EKRANI
+   Önceki sağlam sürüm + yalnız zümrüt orantılı büyütme
+   ========================================================= */
+
+/* Mevcut gerçek reader modal */
+#readerModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:99990!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:12px!important;
+  background:rgba(1,16,11,.78)!important;
+  backdrop-filter:blur(9px)!important;
+  -webkit-backdrop-filter:blur(9px)!important;
+  overflow:hidden!important;
+}
+#readerModal:not(.hidden){display:flex!important;}
+#readerModal.hidden{display:none!important;}
+
+/* Ana taşıyıcı: ekrana ortalı ve orantılı */
+#readerModal .reader-shell{
+  width:min(94vw,720px)!important;
+  max-width:720px!important;
+  height:min(90dvh,900px)!important;
+  max-height:90dvh!important;
+  margin:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border:1.45px solid rgba(226,184,90,.82)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(31,117,78,.20),transparent 42%),
+    linear-gradient(145deg,rgba(7,61,43,.98),rgba(4,34,26,.98))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,181,.12),
+    0 22px 60px rgba(0,0,0,.42)!important;
+}
+
+/* Üst bar da aynı zümrüt aile */
+#readerModal .reader-topbar{
+  flex:0 0 auto!important;
+  background:rgba(4,37,27,.78)!important;
+  border-bottom:1px solid rgba(226,184,90,.24)!important;
+  color:#fff!important;
+}
+
+/* Okuma sahnesi */
+#readerModal .reader-stage{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:stretch!important;
+  background:transparent!important;
+}
+
+/* Sarı kağıt tamamen kaldırıldı */
+#readerModal .reader-paper{
+  width:100%!important;
+  max-width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  padding:26px 22px 34px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  color:#f7fbf8!important;
+  transform-origin:center top!important;
+}
+
+/* İçerik ortada, yukarıdan aşağı doğal akış */
+#readerModal .reader-content,
+#readerModal #readerContent,
+#readerModal .reader-body,
+#readerModal #readerBody{
+  width:100%!important;
+  max-width:650px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  color:#f7fbf8!important;
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+/* Başlıklar */
+#readerModal .reader-title,
+#readerModal #readerTitle,
+#readerModal h1,
+#readerModal h2,
+#readerModal h3{
+  color:#fff!important;
+  font-weight:900!important;
+  line-height:1.22!important;
+  text-align:center!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.24)!important;
+}
+
+/* Metin */
+#readerModal p,
+#readerModal .reader-body,
+#readerModal #readerBody{
+  color:rgba(247,250,248,.91)!important;
+  font-size:17px!important;
+  line-height:1.68!important;
+  font-weight:550!important;
+}
+
+/* Kaynak/meta altın değil; sade açık ton */
+#readerModal .reader-meta,
+#readerModal #readerMeta,
+#readerModal .reader-source,
+#readerModal #readerSource,
+#readerModal .reader-owner,
+#readerModal #readerOwner,
+#readerModal .reader-type,
+#readerModal #readerType{
+  color:rgba(235,241,237,.76)!important;
+  border:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Görsel/media taşmasın */
+#readerModal img,
+#readerModal video,
+#readerModal iframe{
+  display:block!important;
+  max-width:100%!important;
+  width:auto!important;
+  height:auto!important;
+  margin:14px auto!important;
+  object-fit:contain!important;
+  border-radius:15px!important;
+}
+
+/* Mobil oran */
+@media(max-width:600px){
+  #readerModal{padding:8px!important;}
+  #readerModal .reader-shell{
+    width:96vw!important;
+    max-width:96vw!important;
+    height:91dvh!important;
+    max-height:91dvh!important;
+    border-radius:20px!important;
+  }
+  #readerModal .reader-paper{
+    padding:22px 17px 30px!important;
+  }
+  #readerModal p,
+  #readerModal .reader-body,
+  #readerModal #readerBody{
+    font-size:16.5px!important;
+    line-height:1.64!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL READER — İKİ PARMAKLA SADECE YAZI BÜYÜTME
+   Kart sabit, metinler birlikte ölçeklenir.
+   ========================================================= */
+
+#readerModal .reader-content,
+#readerModal #readerContent{
+  transform:none!important;
+  transform-origin:initial!important;
+}
+
+/* Bütün metin elemanları ana readerContent em ölçeğini takip eder. */
+#readerModal .reader-title,
+#readerModal #readerTitle{
+  font-size:1.42em!important;
+}
+#readerModal .reader-body,
+#readerModal #readerBody{
+  font-size:1em!important;
+}
+#readerModal .reader-owner,
+#readerModal #readerOwner,
+#readerModal .reader-source,
+#readerModal #readerSource,
+#readerModal .reader-meta,
+#readerModal #readerMeta{
+  font-size:.82em!important;
+}
+#readerModal .reader-type,
+#readerModal #readerType{
+  font-size:.72em!important;
+}
+
+/* İçeride HTML ile gelen tüm yazılar parent boyutuna bağlı kalsın. */
+#readerModal .reader-body p,
+#readerModal .reader-body span,
+#readerModal .reader-body div,
+#readerModal .reader-body strong,
+#readerModal .reader-body b,
+#readerModal .reader-body em,
+#readerModal .reader-body i,
+#readerModal .reader-body li,
+#readerModal #readerBody p,
+#readerModal #readerBody span,
+#readerModal #readerBody div,
+#readerModal #readerBody strong,
+#readerModal #readerBody b,
+#readerModal #readerBody em,
+#readerModal #readerBody i,
+#readerModal #readerBody li{
+  font-size:1em!important;
+}
+
+/* Kartın kendisi büyümesin. */
+#readerModal .reader-shell,
+#readerModal .reader-paper,
+#readerModal .reader-stage{
+  transform:none!important;
+}
+
+
+
+/* =========================================================
+   HİLAL — DUYURU / GENEL DUYURU KARTLARI
+   TEK ZÜMRÜT KATMAN
+   Dış ana kart kalır; içeride üst üste yeşil yüzey/gölge yok.
+   ========================================================= */
+
+/* Ana duyuru kartı: tek zümrüt yüzey */
+body .teacher-announcement-card,
+body .announcement-card,
+body .announcement-item,
+body [class*="announcement-card"],
+body [class*="announcement-item"]{
+  background:
+    linear-gradient(145deg,rgba(7,61,43,.94),rgba(5,41,31,.92))!important;
+  border:1.45px solid var(--hilal-theme-gold-line,rgba(226,184,90,.84))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,181,.10),
+    0 9px 22px rgba(0,0,0,.16)!important;
+}
+
+/* Kartın içindeki eski zümrüt katmanları tamamen şeffaflaştır */
+body .teacher-announcement-card > div:not(.actions):not(.buttons):not(.card-actions),
+body .teacher-announcement-card > section:not(.actions):not(.buttons):not(.card-actions),
+body .announcement-card > div:not(.actions):not(.buttons):not(.card-actions),
+body .announcement-card > section:not(.actions):not(.buttons):not(.card-actions),
+body .announcement-item > div:not(.actions):not(.buttons):not(.card-actions),
+body .announcement-item > section:not(.actions):not(.buttons):not(.card-actions),
+body [class*="announcement-card"] > div:not(.actions):not(.buttons):not(.card-actions),
+body [class*="announcement-item"] > div:not(.actions):not(.buttons):not(.card-actions){
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* İç içe metin/burger bloklarında ikinci yeşil yüzey veya eski gölge izi kalmasın */
+body .teacher-announcement-card div div,
+body .announcement-card div div,
+body .announcement-item div div,
+body [class*="announcement-card"] div div,
+body [class*="announcement-item"] div div{
+  background-color:transparent!important;
+  background-image:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Metin alanları sade */
+body .teacher-announcement-card h1,
+body .teacher-announcement-card h2,
+body .teacher-announcement-card h3,
+body .teacher-announcement-card p,
+body .teacher-announcement-card span,
+body .announcement-card h1,
+body .announcement-card h2,
+body .announcement-card h3,
+body .announcement-card p,
+body .announcement-card span,
+body .announcement-item h1,
+body .announcement-item h2,
+body .announcement-item h3,
+body .announcement-item p,
+body .announcement-item span{
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
+
+/* Gerçek aksiyon butonlarına dokunma */
+body .teacher-announcement-card button,
+body .announcement-card button,
+body .announcement-item button,
+body [class*="announcement-card"] button,
+body [class*="announcement-item"] button{
+  /* mevcut buton tasarımı korunur */
+}
+
+
+
+/* GENEL YAYINLAR + GENEL DUYURULAR + FAVORİLER — TEK ZÜMRÜT YÜZEY */
+
+/* Ana dış kart */
+body .publication-card,
+body .publication-item,
+body .shared-feed-card,
+body .feed-card,
+body .teacher-announcement-card,
+body .announcement-card,
+body .announcement-item,
+body .favorite-card,
+#favoritesPage #favoriteItems > *{
+  background:linear-gradient(145deg,rgba(7,61,43,.96),rgba(5,41,31,.94))!important;
+  border:1.45px solid rgba(226,184,90,.84)!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.16)!important;
+}
+
+/* Dış kartın içindeki bütün yapısal kutular: yeşil katman/gölge/çizgi yok */
+body .publication-card div:not([class*="actions"]):not([class*="buttons"]),
+body .publication-item div:not([class*="actions"]):not([class*="buttons"]),
+body .shared-feed-card div:not([class*="actions"]):not([class*="buttons"]),
+body .feed-card div:not([class*="actions"]):not([class*="buttons"]),
+body .teacher-announcement-card div:not([class*="actions"]):not([class*="buttons"]),
+body .announcement-card div:not([class*="actions"]):not([class*="buttons"]),
+body .announcement-item div:not([class*="actions"]):not([class*="buttons"]),
+body .favorite-card div:not([class*="actions"]):not([class*="buttons"]),
+#favoritesPage #favoriteItems > * div:not([class*="actions"]):not([class*="buttons"]){
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Başlık, hoca, açıklama, kaynak, güncelleme satırlarının koyu yeşil şeritlerini temizle */
+body .publication-card :is(h1,h2,h3,h4,p,span,strong,small),
+body .publication-item :is(h1,h2,h3,h4,p,span,strong,small),
+body .shared-feed-card :is(h1,h2,h3,h4,p,span,strong,small),
+body .feed-card :is(h1,h2,h3,h4,p,span,strong,small),
+body .teacher-announcement-card :is(h1,h2,h3,h4,p,span,strong,small),
+body .announcement-card :is(h1,h2,h3,h4,p,span,strong,small),
+body .announcement-item :is(h1,h2,h3,h4,p,span,strong,small),
+body .favorite-card :is(h1,h2,h3,h4,p,span,strong,small),
+#favoritesPage #favoriteItems > * :is(h1,h2,h3,h4,p,span,strong,small){
+  background:transparent!important;
+  background-image:none!important;
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* İsim verilmiş iç bilgi alanlarını da kesin şeffaf yap */
+body [class*="publication"] [class*="title"],
+body [class*="publication"] [class*="owner"],
+body [class*="publication"] [class*="source"],
+body [class*="publication"] [class*="meta"],
+body [class*="announcement"] [class*="title"],
+body [class*="announcement"] [class*="owner"],
+body [class*="announcement"] [class*="source"],
+body [class*="announcement"] [class*="meta"],
+#favoritesPage [class*="title"],
+#favoritesPage [class*="owner"],
+#favoritesPage [class*="source"],
+#favoritesPage [class*="meta"]{
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Görsel arkasında ikinci yeşil panel oluşmasın */
+body .publication-card img,
+body .publication-item img,
+body .shared-feed-card img,
+body .feed-card img,
+body .teacher-announcement-card img,
+body .announcement-card img,
+body .announcement-item img,
+body .favorite-card img,
+#favoritesPage #favoriteItems > * img{
+  background:transparent!important;
+}
+
+/* Gerçek butonlar korunur */
+body .publication-card button,
+body .publication-item button,
+body .shared-feed-card button,
+body .feed-card button,
+body .teacher-announcement-card button,
+body .announcement-card button,
+body .announcement-item button,
+body .favorite-card button,
+#favoritesPage #favoriteItems > * button{
+  filter:none!important;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01
+   HOCA PANELİ — MİSAFİR PANELİ İLE AYNI TASARIM STANDARDI
+   ========================================================= */
+
+/* Hoca sayfalarındaki ANA kartlar: tek zümrüt yüzey + dış altın çerçeve */
+body.teacher-mode .page .hero,
+body.teacher-mode .page > .card,
+body.teacher-mode .teacher-card,
+body.teacher-mode .teacher-panel-card,
+body.teacher-mode .publication-card,
+body.teacher-mode .publication-item,
+body.teacher-mode .teacher-announcement-card,
+body.teacher-mode .announcement-card,
+body.teacher-mode .announcement-item,
+body.teacher-mode .feed-card,
+body.teacher-mode .shared-feed-card,
+body.teacher-mode .favorite-card,
+body.teacher-mode .virt-item,
+body.teacher-mode .virt-item-pro{
+  background:linear-gradient(145deg,rgba(7,61,43,.96),rgba(5,41,31,.94))!important;
+  border:1.45px solid rgba(226,184,90,.84)!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.16)!important;
+  color:#f8fbf9!important;
+}
+
+/* Hoca kartlarının İÇİNDEKİ eski zümrüt katmanları ve altın kutu izlerini kaldır */
+body.teacher-mode .publication-card div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .publication-item div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .teacher-announcement-card div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .announcement-card div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .announcement-item div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .feed-card div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .shared-feed-card div:not([class*="actions"]):not([class*="buttons"]),
+body.teacher-mode .favorite-card div:not([class*="actions"]):not([class*="buttons"]){
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Başlık / hoca / kaynak / açıklama satırları ayrı yeşil kutu oluşturmasın */
+body.teacher-mode .publication-card :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .publication-item :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .teacher-announcement-card :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .announcement-card :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .announcement-item :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .feed-card :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .shared-feed-card :is(h1,h2,h3,h4,p,span,strong,small),
+body.teacher-mode .favorite-card :is(h1,h2,h3,h4,p,span,strong,small){
+  background:transparent!important;
+  background-image:none!important;
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Hoca panelindeki isimlendirilmiş iç bilgi blokları da misafir gibi sade */
+body.teacher-mode [class*="publication"] [class*="title"],
+body.teacher-mode [class*="publication"] [class*="owner"],
+body.teacher-mode [class*="publication"] [class*="source"],
+body.teacher-mode [class*="publication"] [class*="meta"],
+body.teacher-mode [class*="announcement"] [class*="title"],
+body.teacher-mode [class*="announcement"] [class*="owner"],
+body.teacher-mode [class*="announcement"] [class*="source"],
+body.teacher-mode [class*="announcement"] [class*="meta"]{
+  background:transparent!important;
+  background-image:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Hoca paneli yazı standardı */
+body.teacher-mode .page h1,
+body.teacher-mode .page h2,
+body.teacher-mode .page h3,
+body.teacher-mode .page h4{
+  color:#fff!important;
+  font-weight:900!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.18)!important;
+}
+
+body.teacher-mode .page .muted,
+body.teacher-mode .page small,
+body.teacher-mode .page [class*="meta"]{
+  color:rgba(235,240,236,.76)!important;
+}
+
+/* Küçük üst etiketlerde misafirle aynı altın vurgu */
+body.teacher-mode .eyebrow,
+body.teacher-mode .kicker,
+body.teacher-mode .section-label,
+body.teacher-mode [class*="eyebrow"],
+body.teacher-mode [class*="kicker"]{
+  color:#e2b85a!important;
+  font-weight:850!important;
+}
+
+/* Görseller kendi içinde temiz; arkasında ikinci zümrüt panel oluşmasın */
+body.teacher-mode .publication-card img,
+body.teacher-mode .publication-item img,
+body.teacher-mode .teacher-announcement-card img,
+body.teacher-mode .announcement-card img,
+body.teacher-mode .feed-card img,
+body.teacher-mode .shared-feed-card img{
+  background:transparent!important;
+}
+
+/* Gerçek aksiyon butonları korunur; misafir tarafındaki mevcut tasarımı kullanır */
+body.teacher-mode .publication-card button,
+body.teacher-mode .publication-item button,
+body.teacher-mode .teacher-announcement-card button,
+body.teacher-mode .announcement-card button,
+body.teacher-mode .announcement-item button,
+body.teacher-mode .feed-card button,
+body.teacher-mode .shared-feed-card button{
+  filter:none!important;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01 — KAYNAK YAZISI TEMİZLEME
+   "Kaynak:" metninin çevresindeki eski altın kutu/çizgi kaldırılır.
+   Ana dış kart ve gerçek butonlar korunur.
+   ========================================================= */
+
+/* Kaynak için kullanılan bilinen sınıflar */
+body .publication-source,
+body .announcement-source,
+body .favorite-source,
+body .feed-source,
+body .today-source,
+body [class*="publication"] [class*="source"],
+body [class*="announcement"] [class*="source"],
+body [class*="favorite"] [class*="source"],
+body [class*="feed"] [class*="source"],
+body [class*="today"] [class*="source"],
+body.teacher-mode [class*="source"]{
+  border:none!important;
+  border-width:0!important;
+  border-color:transparent!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+/* Kaynak satırının içindeki strong/span gibi parçalar da kutu oluşturmasın */
+body .publication-source *,
+body .announcement-source *,
+body .favorite-source *,
+body .feed-source *,
+body .today-source *,
+body [class*="publication"] [class*="source"] *,
+body [class*="announcement"] [class*="source"] *,
+body [class*="favorite"] [class*="source"] *,
+body [class*="feed"] [class*="source"] *,
+body [class*="today"] [class*="source"] *,
+body.teacher-mode [class*="source"] *{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Kendi Yayınlarım kartında kaynak etiketi kesin çerçevesiz */
+body.teacher-mode .publication-card [class*="source"],
+body.teacher-mode .publication-item [class*="source"],
+body.teacher-mode .feed-card [class*="source"],
+body.teacher-mode .shared-feed-card [class*="source"]{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01
+   YÖNETİCİ PANELİ — BOŞ DURUM / BİLGİ YAZILARI SADE
+   Silinmiş Hocalar, Geri Bildirimler vb.
+   ========================================================= */
+
+/* Yönetici panelindeki boş liste / mesaj yok / kayıt yok bilgi kutuları */
+#adminDeletedTeachersPage .empty-state,
+#adminDeletedGuestsPage .empty-state,
+#adminFeedbackPage .empty-state,
+#adminDeletedTeachersPage [class*="empty"],
+#adminDeletedGuestsPage [class*="empty"],
+#adminFeedbackPage [class*="empty"],
+#adminDeletedTeachersPage [class*="no-"],
+#adminDeletedGuestsPage [class*="no-"],
+#adminFeedbackPage [class*="no-"],
+#adminDeletedTeachersPage [class*="message"],
+#adminDeletedGuestsPage [class*="message"],
+#adminFeedbackPage [class*="message"]{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+/* Silinmiş Hocalar içindeki liste boşsa metin sade */
+#adminDeletedTeachersPage [id*="List"] > *:only-child,
+#adminDeletedGuestsPage [id*="List"] > *:only-child,
+#adminFeedbackPage [id*="List"] > *:only-child{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+/* Yönetici panelinde "mesaj bulunmuyor / kayıt bulunmuyor" gibi metinlerin çevresi */
+#adminDeletedTeachersPage p,
+#adminDeletedGuestsPage p,
+#adminFeedbackPage p,
+#adminDeletedTeachersPage .muted,
+#adminDeletedGuestsPage .muted,
+#adminFeedbackPage .muted,
+#adminDeletedTeachersPage small,
+#adminDeletedGuestsPage small,
+#adminFeedbackPage small{
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+/* Bilgi metni kendi başına altın kutuya dönüşmesin */
+#adminDeletedTeachersPage [class*="empty"] *,
+#adminDeletedGuestsPage [class*="empty"] *,
+#adminFeedbackPage [class*="empty"] *,
+#adminDeletedTeachersPage [class*="no-"] *,
+#adminDeletedGuestsPage [class*="no-"] *,
+#adminFeedbackPage [class*="no-"] *{
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+/* Yönetici navigasyon kartlarının KENDİ dış tasarımına dokunulmaz. */
+
+
+#adminDeletedAccountsPage [class*="empty"],
+#adminDeletedAccountsPage [class*="no-"],
+#adminDeletedAccountsPage .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#deletedAccountsList [class*="empty"],
+#deletedAccountsList [class*="no-"],
+#deletedAccountsList .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#deletedAccountsPageTitle [class*="empty"],
+#deletedAccountsPageTitle [class*="no-"],
+#deletedAccountsPageTitle .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#deletedFeedbackBox [class*="empty"],
+#deletedFeedbackBox [class*="no-"],
+#deletedFeedbackBox .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#hilalIslamicAlertMessage [class*="empty"],
+#hilalIslamicAlertMessage [class*="no-"],
+#hilalIslamicAlertMessage .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#managerMessageBody [class*="empty"],
+#managerMessageBody [class*="no-"],
+#managerMessageBody .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#managerMessageMeta [class*="empty"],
+#managerMessageMeta [class*="no-"],
+#managerMessageMeta .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#managerMessageModal [class*="empty"],
+#managerMessageModal [class*="no-"],
+#managerMessageModal .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+#sunnetGlobalMessage [class*="empty"],
+#sunnetGlobalMessage [class*="no-"],
+#sunnetGlobalMessage .muted:only-child {
+  border:none!important;
+  outline:none!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-image:none!important;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01
+   YÖNETİCİ > SİLİNMİŞ HESAPLAR > GERİ BİLDİRİMLER
+   KESİN İÇ ÇERÇEVE TEMİZLİĞİ
+   ========================================================= */
+
+/* Dış Geri Bildirimler kartı kalsın */
+#adminDeletedAccountsPage #deletedFeedbackBox.deleted-feedback-box{
+  background:linear-gradient(145deg,rgba(7,61,43,.94),rgba(5,41,31,.92))!important;
+  border:1.35px solid rgba(226,184,90,.60)!important;
+  border-radius:18px!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.14)!important;
+  padding:14px 16px!important;
+}
+
+/* İçerideki Geri Bildirimler başlığı ve mesaj satırı ASLA kutu/çerçeve almasın */
+#adminDeletedAccountsPage #deletedFeedbackBox > strong,
+#adminDeletedAccountsPage #deletedFeedbackBox > .muted,
+#adminDeletedAccountsPage #deletedFeedbackBox > div,
+#adminDeletedAccountsPage #deletedFeedbackBox strong,
+#adminDeletedAccountsPage #deletedFeedbackBox .muted,
+#adminDeletedAccountsPage #deletedFeedbackBox span,
+#adminDeletedAccountsPage #deletedFeedbackBox p{
+  border:none!important;
+  border-width:0!important;
+  border-style:none!important;
+  border-color:transparent!important;
+  outline:none!important;
+  outline-width:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  filter:none!important;
+  text-decoration:none!important;
+}
+
+/* Eski tema pseudo-element ile çizgi basıyorsa onu da söndür */
+#adminDeletedAccountsPage #deletedFeedbackBox > strong::before,
+#adminDeletedAccountsPage #deletedFeedbackBox > strong::after,
+#adminDeletedAccountsPage #deletedFeedbackBox > .muted::before,
+#adminDeletedAccountsPage #deletedFeedbackBox > .muted::after,
+#adminDeletedAccountsPage #deletedFeedbackBox div::before,
+#adminDeletedAccountsPage #deletedFeedbackBox div::after{
+  content:none!important;
+  display:none!important;
+  border:none!important;
+  box-shadow:none!important;
+  background:none!important;
+}
+
+/* Yeni mesaj bulunmuyor satırı sade */
+#adminDeletedAccountsPage #deletedFeedbackBox .muted{
+  color:rgba(235,240,236,.76)!important;
+  padding:0!important;
+  margin-top:4px!important;
+}
+
+/* Başlık sade, çerçevesiz */
+#adminDeletedAccountsPage #deletedFeedbackBox > strong{
+  display:block!important;
+  color:#fff!important;
+  font-weight:900!important;
+  padding:0!important;
+  margin:0!important;
+}
+
+/* Mesaj varsa yalnız gerçek buton çerçevesi korunur */
+#adminDeletedAccountsPage #deletedFeedbackBox button{
+  border:1px solid rgba(226,184,90,.64)!important;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01 — VİRT KALDIR BUTONU
+   ========================================================= */
+
+#dailyVirtPage #virtList > .virt-item-pro{
+  grid-template-rows:auto auto!important;
+}
+
+/* Üstte ikon + içerik + zil aynı yapıda kalır;
+   kaldır butonu kartın altında temiz bir satırdır. */
+#dailyVirtPage .virt-item-pro .virt-remove-row{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  margin-top:12px!important;
+  padding-top:11px!important;
+  border-top:1px solid rgba(226,184,90,.20)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+#dailyVirtPage .virt-item-pro .virt-remove-btn{
+  width:100%!important;
+  min-height:44px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  padding:10px 14px!important;
+
+  border:1px solid rgba(196,84,73,.44)!important;
+  border-radius:14px!important;
+  background:
+    linear-gradient(145deg,rgba(84,30,28,.34),rgba(52,24,23,.28))!important;
+  color:#ffd8d3!important;
+
+  font-size:14px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  letter-spacing:.01em!important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 5px 14px rgba(0,0,0,.09)!important;
+}
+
+#dailyVirtPage .virt-item-pro .virt-remove-btn:active{
+  transform:scale(.985)!important;
+  background:
+    linear-gradient(145deg,rgba(112,38,34,.52),rgba(69,27,25,.46))!important;
+}
+
+@media(max-width:600px){
+  #dailyVirtPage .virt-item-pro .virt-remove-row{
+    margin-top:10px!important;
+    padding-top:10px!important;
+  }
+
+  #dailyVirtPage .virt-item-pro .virt-remove-btn{
+    min-height:43px!important;
+    font-size:13.5px!important;
+  }
+}
+
+
+
+/* Hoca — Şifremi Unuttum */
+.teacher-forgot-link{
+  width:100%;
+  margin-top:10px;
+  border:none!important;
+  background:transparent!important;
+  color:#e2b85a!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  text-decoration:underline;
+  text-underline-offset:4px;
+  box-shadow:none!important;
+}
+
+.teacher-forgot-modal{
+  position:fixed;
+  inset:0;
+  z-index:100500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(2,18,13,.78);
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+}
+.teacher-forgot-modal.hidden{display:none!important;}
+
+.teacher-forgot-sheet{
+  width:min(94vw,520px);
+  max-height:88dvh;
+  overflow:auto;
+  border:1.45px solid rgba(226,184,90,.82);
+  border-radius:24px;
+  padding:22px;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(31,117,78,.18),transparent 42%),
+    linear-gradient(145deg,rgba(7,61,43,.98),rgba(4,34,26,.98));
+  color:#fff;
+  box-shadow:0 22px 60px rgba(0,0,0,.40);
+}
+.teacher-forgot-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:16px;
+}
+.teacher-forgot-head h3{margin:3px 0 0;color:#fff;}
+.teacher-forgot-close{
+  border:1px solid rgba(226,184,90,.50)!important;
+  background:rgba(4,31,24,.72)!important;
+  color:#fff!important;
+  border-radius:13px!important;
+  padding:9px 12px!important;
+}
+.teacher-forgot-sheet label{
+  display:block;
+  margin:12px 0;
+  color:#fff;
+  font-weight:800;
+}
+.teacher-forgot-sheet input{
+  width:100%;
+  margin-top:6px;
+  box-sizing:border-box;
+}
+.teacher-forgot-note,
+.teacher-forgot-success{
+  color:rgba(239,244,240,.82)!important;
+  line-height:1.45;
+}
+.teacher-forgot-success{
+  color:#bff0cf!important;
+  font-weight:850;
+}
+.teacher-forgot-msg{
+  margin-top:10px;
+  min-height:20px;
+  color:#ffd2c9;
+  font-weight:750;
+}
+
+
+
+/* =========================================================
+   HİLAL 28 AĞUSTOS 01 — AYARLAR / BİLGİLERİM VE ŞİFRELERİM
+   ========================================================= */
+.account-profile-card{
+  border:1.45px solid rgba(226,184,90,.82)!important;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(31,117,78,.18),transparent 42%),
+    linear-gradient(145deg,rgba(7,61,43,.96),rgba(5,41,31,.94))!important;
+}
+
+.account-profile-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:14px;
+}
+
+.account-profile-divider{
+  height:1px;
+  margin:17px 0;
+  background:linear-gradient(90deg,transparent,rgba(226,184,90,.42),transparent);
+}
+
+.account-profile-save{
+  width:100%;
+  min-height:48px;
+  margin-top:14px;
+}
+
+.account-profile-card input:disabled{
+  opacity:.64;
+  cursor:not-allowed;
+}
+
+@media(max-width:600px){
+  .account-profile-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.1 — PROFİL AYARLARI TEK AÇILIR KART
+   ========================================================= */
+.profile-settings-shell{
+  padding:0!important;
+  overflow:hidden!important;
+}
+.profile-settings-summary{
+  width:100%!important;
+  min-height:76px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  padding:14px 15px!important;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  text-align:left!important;
+  cursor:pointer!important;
+}
+.profile-settings-summary-left,
+.profile-settings-summary-right{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+.profile-settings-icon{
+  width:42px!important;
+  height:42px!important;
+  flex:0 0 42px!important;
+  border-radius:13px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:rgba(255,255,255,.055)!important;
+  border:1px solid rgba(226,184,90,.22)!important;
+  font-size:19px!important;
+}
+.profile-settings-title{
+  font-size:16px!important;
+  font-weight:950!important;
+}
+.profile-settings-name{
+  margin-top:4px!important;
+  font-size:12px!important;
+}
+.profile-settings-chevron{
+  min-width:24px!important;
+  text-align:center!important;
+  font-size:20px!important;
+  line-height:1!important;
+  opacity:.82!important;
+}
+.profile-settings-body{
+  padding:0 15px 16px!important;
+  border-top:1px solid rgba(226,184,90,.18)!important;
+}
+.profile-settings-body.hidden{display:none!important}
+.profile-settings-body .account-profile-grid{margin-top:15px!important}
+#profileSettingsSaveBtn{
+  width:100%!important;
+  min-height:50px!important;
+  margin-top:16px!important;
+  font-weight:950!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.2 — YÖNETİCİ KAYITLI KULLANICI PROFİLLERİ
+   ========================================================= */
+.admin-user-profiles-shell{margin-top:12px!important}
+.admin-profile-role-tabs{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:9px!important;
+  margin:15px 0 12px!important;
+}
+.admin-profile-role-btn{
+  min-height:44px!important;
+  border-radius:13px!important;
+  border:1px solid rgba(226,184,90,.22)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:inherit!important;
+  font-weight:900!important;
+}
+.admin-profile-role-btn.active{
+  border-color:rgba(226,184,90,.62)!important;
+  background:rgba(11,107,73,.34)!important;
+  box-shadow:inset 0 0 0 1px rgba(226,184,90,.12)!important;
+}
+.admin-profile-search-field{margin:0 0 11px!important}
+.admin-profile-user-list{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+}
+.admin-profile-user-row{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:58px!important;
+  padding:10px 11px!important;
+  border-radius:14px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  background:rgba(255,255,255,.035)!important;
+  color:inherit!important;
+  text-align:left!important;
+}
+.admin-profile-user-avatar{
+  width:38px!important;height:38px!important;flex:0 0 38px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:12px!important;
+  background:rgba(11,107,73,.24)!important;
+  border:1px solid rgba(226,184,90,.18)!important;
+}
+.admin-profile-user-main{min-width:0!important;flex:1!important}
+.admin-profile-user-name{
+  font-weight:950!important;
+  font-size:14px!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+.admin-profile-user-meta{
+  margin-top:3px!important;
+  font-size:11.5px!important;
+  opacity:.72!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+}
+.admin-profile-user-arrow{font-size:24px!important;opacity:.58!important}
+.admin-profile-empty{
+  padding:14px!important;
+  text-align:center!important;
+  opacity:.68!important;
+  font-size:13px!important;
+}
+.admin-profile-detail-wrap{
+  margin-top:14px!important;
+  padding-top:14px!important;
+  border-top:1px solid rgba(226,184,90,.18)!important;
+}
+.admin-profile-detail-wrap.hidden{display:none!important}
+.admin-profile-detail-head{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-bottom:10px!important;
+}
+.admin-profile-detail-title{font-size:15px!important;font-weight:950!important}
+.admin-profile-close-detail{
+  width:34px!important;height:34px!important;
+  border-radius:10px!important;
+  border:1px solid rgba(255,255,255,.1)!important;
+  background:rgba(255,255,255,.04)!important;
+  color:inherit!important;
+}
+.admin-profile-detail-card{
+  border-radius:15px!important;
+  border:1px solid rgba(226,184,90,.18)!important;
+  background:rgba(255,255,255,.025)!important;
+  overflow:hidden!important;
+}
+.admin-profile-info-row{
+  display:grid!important;
+  grid-template-columns:minmax(100px,38%) 1fr!important;
+  gap:12px!important;
+  padding:11px 12px!important;
+  border-bottom:1px solid rgba(255,255,255,.055)!important;
+}
+.admin-profile-info-row:last-child{border-bottom:0!important}
+.admin-profile-info-label{
+  font-size:12px!important;
+  font-weight:850!important;
+  opacity:.72!important;
+}
+.admin-profile-info-value{
+  font-size:13px!important;
+  font-weight:800!important;
+  text-align:right!important;
+  word-break:break-word!important;
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.3 DÜZELTİLMİŞ
+   Yönetici kullanıcıları: ortada pencere + 10'lu sayfalama
+   ========================================================= */
+.admin-profile-role-tabs-launcher{
+  margin-top:15px!important;
+}
+.admin-profile-launch-note{
+  padding:10px 4px 2px!important;
+  text-align:center!important;
+  font-size:12px!important;
+  line-height:1.45!important;
+  opacity:.66!important;
+}
+body.admin-profile-modal-open{
+  overflow:hidden!important;
+}
+.admin-profile-browser-modal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:99999!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px 12px!important;
+  background:rgba(0,18,13,.74)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+.admin-profile-browser-modal.hidden{display:none!important}
+.admin-profile-browser-dialog{
+  width:min(94vw,540px)!important;
+  max-height:88vh!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:23px!important;
+  border:1px solid rgba(226,184,90,.48)!important;
+  background:linear-gradient(180deg,rgba(7,62,46,.995),rgba(5,42,32,.998))!important;
+  box-shadow:0 26px 80px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+.admin-profile-browser-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  padding:16px 17px 14px!important;
+  border-bottom:1px solid rgba(226,184,90,.18)!important;
+}
+.admin-profile-browser-title{
+  font-size:18px!important;
+  font-weight:950!important;
+  letter-spacing:.1px!important;
+}
+.admin-profile-browser-sub{
+  margin-top:3px!important;
+  font-size:11.5px!important;
+}
+.admin-profile-browser-close{
+  width:38px!important;
+  height:38px!important;
+  flex:0 0 38px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:12px!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:inherit!important;
+  font-size:16px!important;
+}
+.admin-profile-browser-content{
+  padding:15px!important;
+  overflow:auto!important;
+}
+.admin-profile-browser-content.hidden{display:none!important}
+.admin-profile-browser-search{
+  margin:0 0 8px!important;
+}
+.admin-profile-browser-count{
+  min-height:44px!important;
+  margin-bottom:8px!important;
+  text-align:right!important;
+  font-size:11.5px!important;
+  opacity:.64!important;
+}
+.admin-profile-user-list{
+  max-height:none!important;
+}
+.admin-profile-user-row{
+  min-height:58px!important;
+}
+.admin-profile-pagination{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex-wrap:wrap!important;
+  padding-top:13px!important;
+}
+.admin-page-arrow,
+.admin-page-num{
+  min-width:36px!important;
+  height:36px!important;
+  padding:0 9px!important;
+  border-radius:11px!important;
+  border:1px solid rgba(226,184,90,.20)!important;
+  background:rgba(255,255,255,.04)!important;
+  color:inherit!important;
+  font-weight:900!important;
+}
+.admin-page-num.active{
+  background:rgba(11,107,73,.52)!important;
+  border-color:rgba(226,184,90,.58)!important;
+  box-shadow:inset 0 0 0 1px rgba(226,184,90,.10)!important;
+}
+.admin-page-arrow:disabled{
+  opacity:.28!important;
+}
+.admin-profile-back-btn{
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  padding:2px 0 12px!important;
+  font-weight:900!important;
+  opacity:.82!important;
+}
+.admin-profile-detail-head-centered{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  padding:8px 0 15px!important;
+}
+.admin-profile-detail-big-icon{
+  width:58px!important;
+  height:58px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:18px!important;
+  background:rgba(11,107,73,.27)!important;
+  border:1px solid rgba(226,184,90,.25)!important;
+  font-size:28px!important;
+  margin-bottom:9px!important;
+}
+.admin-profile-detail-person{
+  font-size:17px!important;
+  font-weight:950!important;
+}
+.admin-profile-detail-caption{
+  margin-top:3px!important;
+  font-size:12px!important;
+}
+.admin-profile-detail-card-centered{
+  border-radius:17px!important;
+  border:1px solid rgba(226,184,90,.18)!important;
+  background:rgba(255,255,255,.025)!important;
+  overflow:hidden!important;
+}
+.admin-profile-detail-card-centered .admin-profile-info-row{
+  padding:12px 13px!important;
+}
+@media(max-width:420px){
+  .admin-profile-browser-dialog{
+    width:96vw!important;
+    max-height:90vh!important;
+  }
+  .admin-profile-browser-content{
+    padding:13px!important;
+  }
+  .admin-profile-info-row{
+    grid-template-columns:minmax(92px,40%) 1fr!important;
+    gap:9px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.4 — GPS KONUMUNA GÖRE EZAN VAKİTLERİ
+   ========================================================= */
+.hilal-prayer-location-row{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+  margin-top:4px!important;
+}
+.hilal-prayer-location-row .hilal-location{
+  margin:0!important;
+  flex:1 1 150px!important;
+}
+.prayer-location-refresh{
+  min-height:30px!important;
+  padding:5px 9px!important;
+  border-radius:10px!important;
+  border:1px solid rgba(226,184,90,.25)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:inherit!important;
+  font-size:10.5px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+.prayer-location-refresh:active{
+  transform:scale(.98)!important;
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.5 — GÜNLÜK SÜNNET TAKİBİ
+   ========================================================= */
+body.sunnet-daily-open{overflow:hidden!important}
+.sunnet-daily-modal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:100000!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px 12px!important;
+  background:rgba(0,20,14,.72)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+.sunnet-daily-modal.hidden{display:none!important}
+.sunnet-daily-dialog{
+  width:min(94vw,520px)!important;
+  max-height:86vh!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  border-radius:23px!important;
+  border:1px solid rgba(226,184,90,.44)!important;
+  background:linear-gradient(180deg,rgba(8,64,47,.985),rgba(4,43,31,.995))!important;
+  box-shadow:0 26px 80px rgba(0,0,0,.50),inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+.sunnet-daily-head{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  padding:17px 17px 13px!important;
+  border-bottom:1px solid rgba(226,184,90,.15)!important;
+}
+.sunnet-daily-kicker{
+  font-size:9.5px!important;
+  font-weight:950!important;
+  letter-spacing:.8px!important;
+  opacity:.72!important;
+}
+.sunnet-daily-title{
+  margin-top:3px!important;
+  font-size:18px!important;
+  line-height:1.25!important;
+  font-weight:950!important;
+}
+.sunnet-daily-sub{
+  margin-top:4px!important;
+  font-size:11.5px!important;
+  opacity:.68!important;
+}
+.sunnet-daily-close{
+  width:38px!important;height:38px!important;flex:0 0 38px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:12px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  background:rgba(255,255,255,.045)!important;
+  color:inherit!important;font-size:16px!important;
+}
+.sunnet-daily-progress-wrap{
+  padding:11px 16px 8px!important;
+}
+.sunnet-daily-progress-text{
+  margin-bottom:6px!important;
+  text-align:right!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  opacity:.72!important;
+}
+.sunnet-daily-progress{
+  height:7px!important;
+  overflow:hidden!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+}
+.sunnet-daily-progress i{
+  display:block!important;
+  height:100%!important;
+  width:0;
+  border-radius:999px!important;
+  background:#249b62!important;
+  transition:width .25s ease!important;
+}
+.sunnet-daily-list{
+  display:grid!important;
+  gap:9px!important;
+  padding:8px 15px 13px!important;
+  overflow:auto!important;
+}
+.sunnet-daily-item{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:42px 1fr 30px!important;
+  gap:10px!important;
+  align-items:center!important;
+  padding:11px!important;
+  border-radius:16px!important;
+  border:1px solid rgba(255,255,255,.11)!important;
+  background:rgba(255,255,255,.055)!important;
+  color:inherit!important;
+  text-align:left!important;
+  opacity:.72!important;
+  transition:background .2s ease,border-color .2s ease,opacity .2s ease,transform .15s ease!important;
+}
+.sunnet-daily-item:active{transform:scale(.985)!important}
+.sunnet-daily-item.done{
+  opacity:1!important;
+  background:rgba(24,132,79,.30)!important;
+  border-color:rgba(72,211,133,.48)!important;
+  box-shadow:inset 0 0 0 1px rgba(72,211,133,.08)!important;
+}
+.sunnet-daily-item-icon{
+  width:42px!important;height:42px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.055)!important;
+  font-size:21px!important;
+}
+.sunnet-daily-item.done .sunnet-daily-item-icon{
+  background:rgba(36,155,98,.32)!important;
+}
+.sunnet-daily-item-title{
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:920!important;
+}
+.sunnet-daily-item-sub{
+  margin-top:3px!important;
+  font-size:10.5px!important;
+  line-height:1.35!important;
+  opacity:.62!important;
+}
+.sunnet-daily-item-check{
+  width:27px!important;height:27px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border-radius:999px!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  font-size:14px!important;
+  font-weight:950!important;
+}
+.sunnet-daily-item.done .sunnet-daily-item-check{
+  background:#249b62!important;
+  border-color:#249b62!important;
+  color:#fff!important;
+}
+.sunnet-daily-foot{
+  padding:10px 15px 14px!important;
+  text-align:center!important;
+  font-size:10.5px!important;
+  line-height:1.45!important;
+  opacity:.58!important;
+  border-top:1px solid rgba(255,255,255,.06)!important;
+}
+.sunnet-daily-empty{
+  padding:22px 14px!important;
+  text-align:center!important;
+  font-size:12px!important;
+  opacity:.68!important;
+}
+@media(max-width:420px){
+  .sunnet-daily-dialog{width:96vw!important;max-height:89vh!important}
+  .sunnet-daily-head{padding:15px 14px 12px!important}
+  .sunnet-daily-list{padding:7px 12px 12px!important}
+}
+
+
+
+/* HİLAL ANDROID v1.6 — HOCA TAKİP EDENLERİM */
+.teacher-followers-hero{margin-bottom:12px!important}
+.teacher-followers-summary{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:9px!important;margin:0 0 12px!important
+}
+.teacher-followers-summary article{
+  min-width:0!important;padding:12px 8px!important;border-radius:16px!important;
+  border:1px solid rgba(226,184,90,.22)!important;background:rgba(255,255,255,.035)!important;text-align:center!important
+}
+.teacher-followers-summary span{display:block!important;font-size:9.5px!important;line-height:1.25!important;opacity:.66!important;font-weight:800!important}
+.teacher-followers-summary strong{display:block!important;margin-top:4px!important;font-size:21px!important;line-height:1!important}
+.teacher-followers-panel{overflow:hidden!important;border-radius:20px!important;border:1px solid rgba(226,184,90,.30)!important;background:rgba(255,255,255,.025)!important}
+.teacher-followers-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;padding:10px!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.teacher-followers-tabs button{min-height:40px!important;border-radius:13px!important;border:1px solid rgba(255,255,255,.09)!important;background:rgba(255,255,255,.035)!important;color:inherit!important;font-size:12px!important;font-weight:900!important}
+.teacher-followers-tabs button.active{background:rgba(31,137,86,.24)!important;border-color:rgba(62,190,119,.43)!important}
+.teacher-followers-list{display:grid!important;gap:8px!important;padding:11px!important}
+.teacher-follower-row{
+  display:grid!important;grid-template-columns:42px minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;
+  min-height:64px!important;padding:10px!important;border-radius:16px!important;border:1px solid rgba(255,255,255,.09)!important;background:rgba(255,255,255,.035)!important
+}
+.teacher-follower-avatar{width:42px!important;height:42px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:14px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.08)!important;font-size:20px!important}
+.teacher-follower-copy{min-width:0!important}
+.teacher-follower-name{font-size:13.5px!important;line-height:1.25!important;font-weight:950!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.teacher-follower-meta{margin-top:3px!important;font-size:10.5px!important;line-height:1.3!important;opacity:.64!important}
+.teacher-follower-follow-btn{
+  min-width:92px!important;min-height:36px!important;padding:7px 10px!important;border-radius:12px!important;
+  border:1px solid rgba(226,184,90,.28)!important;background:rgba(255,255,255,.04)!important;color:inherit!important;font-size:10.5px!important;font-weight:900!important;white-space:nowrap!important
+}
+.teacher-follower-follow-btn.active{background:rgba(35,147,91,.28)!important;border-color:rgba(63,198,122,.45)!important}
+.teacher-follower-role-badge{min-width:72px!important;padding:6px 8px!important;border-radius:999px!important;background:rgba(255,255,255,.045)!important;border:1px solid rgba(255,255,255,.075)!important;text-align:center!important;font-size:9.5px!important;font-weight:850!important;opacity:.7!important}
+.teacher-followers-empty{padding:30px 14px!important;text-align:center!important;font-size:12px!important;opacity:.64!important}
+@media(max-width:420px){
+  .teacher-followers-summary{gap:6px!important}
+  .teacher-followers-summary article{padding:10px 5px!important}
+  .teacher-followers-summary span{font-size:8.8px!important}
+  .teacher-follower-row{grid-template-columns:40px minmax(0,1fr) auto!important;gap:8px!important}
+  .teacher-follower-follow-btn{min-width:80px!important;padding:7px 8px!important;font-size:9.8px!important}
+}
+
+
+/* =========================================================
+   HİLAL ANDROID v1.7 — PROFESYONEL TAKİPÇİ KARTLARI
+   ========================================================= */
+.teacher-followers-list{
+  gap:12px!important;
+  padding:13px!important;
+}
+.teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:56px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-height:82px!important;
+  padding:13px!important;
+  overflow:hidden!important;
+  border-radius:20px!important;
+  border:1px solid rgba(226,184,90,.18)!important;
+  background:linear-gradient(135deg,rgba(255,255,255,.060),rgba(255,255,255,.022))!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+.teacher-follower-row::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:13px!important;
+  bottom:13px!important;
+  width:3px!important;
+  border-radius:0 8px 8px 0!important;
+  background:linear-gradient(180deg,#d6b45d,#8d6f2f)!important;
+  opacity:.88!important;
+}
+.teacher-follower-row.guest-card::before{
+  background:linear-gradient(180deg,#39b978,#18724b)!important;
+}
+.teacher-follower-avatar{
+  width:54px!important;
+  height:54px!important;
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(17,120,78,.35),rgba(255,255,255,.055))!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+  font-size:21px!important;
+  font-weight:950!important;
+}
+.teacher-follower-avatar .tf-initials{
+  font-size:17px!important;
+  letter-spacing:.3px!important;
+  font-weight:950!important;
+}
+.teacher-follower-avatar .tf-status-dot{
+  position:absolute!important;
+  right:-2px!important;
+  bottom:-2px!important;
+  width:15px!important;
+  height:15px!important;
+  border-radius:999px!important;
+  border:3px solid #083e2d!important;
+  background:#33b874!important;
+}
+.teacher-follower-copy{min-width:0!important}
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+}
+.teacher-follower-name{
+  max-width:100%!important;
+  font-size:14px!important;
+  line-height:1.25!important;
+  font-weight:950!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.teacher-follower-type{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:20px!important;
+  padding:3px 7px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  background:rgba(255,255,255,.045)!important;
+  font-size:8.8px!important;
+  line-height:1!important;
+  font-weight:900!important;
+  opacity:.82!important;
+}
+.teacher-follower-type.guest{
+  border-color:rgba(55,184,116,.28)!important;
+  background:rgba(28,137,85,.15)!important;
+}
+.teacher-follower-type.teacher{
+  border-color:rgba(226,184,90,.28)!important;
+  background:rgba(226,184,90,.08)!important;
+}
+.teacher-follower-meta{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:5px!important;
+  margin-top:6px!important;
+  font-size:10.7px!important;
+  line-height:1.35!important;
+  opacity:.72!important;
+}
+.teacher-follower-meta .tf-relation{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+}
+.teacher-follower-meta .tf-sep{opacity:.45!important}
+.teacher-follower-role-badge{
+  min-width:78px!important;
+  min-height:34px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  padding:7px 10px!important;
+  border-radius:12px!important;
+  background:rgba(30,143,89,.13)!important;
+  border:1px solid rgba(52,185,112,.25)!important;
+  color:inherit!important;
+  font-size:9.7px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+  opacity:.9!important;
+}
+.teacher-follower-role-badge.guest-only{
+  color:rgba(235,255,245,.90)!important;
+}
+.teacher-follower-follow-btn{
+  min-width:100px!important;
+  min-height:38px!important;
+  padding:8px 11px!important;
+  border-radius:13px!important;
+  font-size:10px!important;
+}
+@media(max-width:420px){
+  .teacher-followers-list{gap:10px!important;padding:10px!important}
+  .teacher-follower-row{grid-template-columns:50px minmax(0,1fr) auto!important;gap:9px!important;min-height:76px!important;padding:11px!important}
+  .teacher-follower-avatar{width:48px!important;height:48px!important;border-radius:16px!important}
+  .teacher-follower-avatar .tf-initials{font-size:15px!important}
+  .teacher-follower-name{font-size:13.2px!important}
+  .teacher-follower-role-badge{min-width:68px!important;padding:7px 8px!important;font-size:9px!important}
+  .teacher-follower-follow-btn{min-width:84px!important;padding:7px 8px!important;font-size:9.2px!important}
+}
+
+
+/* =========================================================
+   HİLAL ANDROID v1.8 — TAKİPÇİ KARTI TEMİZ TASARIM
+   İşaretlenen iç içe çerçeveler kaldırıldı.
+   ========================================================= */
+.teacher-followers-panel{
+  border:0!important;
+  background:transparent!important;
+  border-radius:0!important;
+  overflow:visible!important;
+}
+.teacher-followers-tabs{
+  display:flex!important;
+  gap:20px!important;
+  padding:0 4px 10px!important;
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-followers-tabs button{
+  position:relative!important;
+  min-height:38px!important;
+  padding:4px 2px 9px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  opacity:.58!important;
+  font-size:13px!important;
+  font-weight:900!important;
+}
+.teacher-followers-tabs button.active{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+.teacher-followers-tabs button.active::after{
+  content:""!important;
+  position:absolute!important;
+  left:8%!important;
+  right:8%!important;
+  bottom:0!important;
+  height:3px!important;
+  border-radius:999px!important;
+  background:#39b978!important;
+}
+.teacher-followers-list{
+  display:grid!important;
+  gap:10px!important;
+  padding:0!important;
+  background:transparent!important;
+}
+.teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:54px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-height:78px!important;
+  padding:13px 12px!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:17px!important;
+  background:linear-gradient(135deg,rgba(16,91,64,.62),rgba(6,55,40,.54))!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.15)!important;
+}
+.teacher-follower-row::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:14px!important;
+  bottom:14px!important;
+  width:3px!important;
+  border-radius:0 5px 5px 0!important;
+  background:#36b574!important;
+  opacity:.9!important;
+}
+.teacher-follower-row.teacher-card::before{
+  background:#d1ae55!important;
+}
+.teacher-follower-avatar{
+  width:50px!important;
+  height:50px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.teacher-follower-avatar .tf-status-dot{
+  right:1px!important;
+  bottom:1px!important;
+  width:12px!important;
+  height:12px!important;
+  border:2px solid #0b5039!important;
+}
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+}
+.teacher-follower-type{
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:9px!important;
+  opacity:.62!important;
+}
+.teacher-follower-type.guest,
+.teacher-follower-type.teacher{
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-follower-meta{
+  margin-top:5px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  opacity:.68!important;
+}
+.teacher-follower-role-badge{
+  min-width:auto!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:10px!important;
+  opacity:.72!important;
+}
+.teacher-follower-role-badge.guest-only{
+  color:inherit!important;
+  background:transparent!important;
+  border:0!important;
+}
+.teacher-follower-follow-btn{
+  min-width:auto!important;
+  min-height:34px!important;
+  padding:7px 10px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:none!important;
+}
+.teacher-follower-follow-btn.active{
+  border:0!important;
+  background:rgba(40,156,96,.22)!important;
+}
+@media(max-width:420px){
+  .teacher-followers-tabs{gap:18px!important;padding-left:3px!important}
+  .teacher-follower-row{
+    grid-template-columns:48px minmax(0,1fr) auto!important;
+    gap:9px!important;
+    padding:12px 10px!important;
+    min-height:72px!important;
+  }
+  .teacher-follower-avatar{width:46px!important;height:46px!important}
+  .teacher-follower-role-badge{font-size:9px!important}
+}
+
+
+/* v1.9 - üç takip sayacı için uyumlu ortak dış çerçeve */
+.teacher-followers-summary{
+ position:relative!important;display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:8px!important;margin:0 0 14px!important;padding:7px!important;
+ border:1px solid rgba(226,184,90,.34)!important;border-radius:22px!important;
+ background:linear-gradient(135deg,rgba(10,77,55,.46),rgba(4,48,35,.32))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 22px rgba(0,0,0,.10)!important;
+}
+.teacher-followers-summary::before{
+ content:""!important;position:absolute!important;inset:3px!important;pointer-events:none!important;
+ border-radius:18px!important;border:1px solid rgba(255,255,255,.035)!important;
+}
+.teacher-followers-summary article{
+ position:relative!important;z-index:1!important;min-width:0!important;padding:12px 7px!important;
+ border:1px solid rgba(226,184,90,.22)!important;border-radius:16px!important;
+ background:linear-gradient(180deg,rgba(18,103,73,.36),rgba(7,64,46,.32))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+@media(max-width:420px){
+ .teacher-followers-summary{gap:6px!important;padding:6px!important;border-radius:20px!important}
+ .teacher-followers-summary::before{border-radius:16px!important}
+ .teacher-followers-summary article{padding:10px 5px!important;border-radius:14px!important}
+}
+
+
+/* =========================================================
+   HİLAL ANDROID v1.10 — ALT TAKİPÇİ KARTLARI UYUMLU PRO
+   ========================================================= */
+
+/* Liste alanı artık ayrı bir kutu gibi görünmez */
+.teacher-followers-list{
+  display:grid!important;
+  gap:10px!important;
+  padding:0!important;
+  margin-top:2px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Her kişi tek, bütünleşik bir kart */
+.teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-height:78px!important;
+  padding:13px 14px!important;
+  overflow:hidden!important;
+
+  border:1px solid rgba(226,184,90,.30)!important;
+  border-radius:19px!important;
+  background:
+    linear-gradient(135deg,rgba(12,82,59,.72),rgba(5,55,40,.68))!important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 6px 18px rgba(0,0,0,.11)!important;
+}
+
+/* İnce renk vurgusu: çerçeve içine ikinci kutu hissi vermeden */
+.teacher-follower-row::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:15px!important;
+  bottom:15px!important;
+  width:3px!important;
+  border-radius:0 5px 5px 0!important;
+  background:#3abc79!important;
+  opacity:.92!important;
+}
+
+.teacher-follower-row.teacher-card::before{
+  background:#d3b05a!important;
+}
+
+/* İçerideki avatar da sade ve kartla bütünleşik */
+.teacher-follower-avatar{
+  width:48px!important;
+  height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:none!important;
+}
+
+.teacher-follower-avatar .tf-status-dot{
+  right:1px!important;
+  bottom:1px!important;
+  width:12px!important;
+  height:12px!important;
+  border:2px solid rgba(8,63,45,.96)!important;
+  background:#39bc77!important;
+}
+
+/* İsim ve rol tek satırda, kutusuz */
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+}
+
+.teacher-follower-name{
+  font-size:13.8px!important;
+  line-height:1.25!important;
+  font-weight:950!important;
+}
+
+.teacher-follower-type,
+.teacher-follower-type.guest,
+.teacher-follower-type.teacher{
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:0!important;
+  min-height:auto!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:9px!important;
+  font-weight:850!important;
+  opacity:.62!important;
+}
+
+/* İlişki bilgisi de kart içine gömülü, ayrı kutu değil */
+.teacher-follower-meta{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:5px!important;
+  margin-top:5px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:10.5px!important;
+  opacity:.69!important;
+}
+
+/* Misafirde sağ taraf düz metin; ekstra çerçeve yok */
+.teacher-follower-role-badge,
+.teacher-follower-role-badge.guest-only{
+  min-width:auto!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:9.8px!important;
+  font-weight:900!important;
+  opacity:.72!important;
+}
+
+/* Hoca-hoca takip butonu kalıyor ama çevresi karta uyumlu, ağır kutu değil */
+.teacher-follower-follow-btn{
+  min-width:92px!important;
+  min-height:34px!important;
+  padding:7px 10px!important;
+  border:1px solid rgba(226,184,90,.20)!important;
+  border-radius:11px!important;
+  background:rgba(255,255,255,.045)!important;
+  box-shadow:none!important;
+  font-size:9.8px!important;
+}
+
+.teacher-follower-follow-btn.active{
+  border-color:rgba(63,198,122,.28)!important;
+  background:rgba(39,150,92,.20)!important;
+}
+
+/* Kartlar arası uyum */
+.teacher-follower-row + .teacher-follower-row{
+  margin-top:0!important;
+}
+
+@media(max-width:420px){
+  .teacher-follower-row{
+    grid-template-columns:47px minmax(0,1fr) auto!important;
+    gap:9px!important;
+    min-height:72px!important;
+    padding:12px 11px!important;
+    border-radius:17px!important;
+  }
+
+  .teacher-follower-avatar{
+    width:44px!important;
+    height:44px!important;
+  }
+
+  .teacher-follower-name{
+    font-size:13px!important;
+  }
+
+  .teacher-follower-role-badge,
+  .teacher-follower-role-badge.guest-only{
+    font-size:9px!important;
+  }
+
+  .teacher-follower-follow-btn{
+    min-width:80px!important;
+    padding:7px 8px!important;
+    font-size:9px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.11 — TAKİP EDENLER ALT PANEL PRO
+   Tek ana panel + sade sekme + tek katmanlı kişi kartları
+   ========================================================= */
+
+/* Alt bölümün tek ana kabuğu */
+.teacher-followers-panel{
+  position:relative!important;
+  margin-top:10px!important;
+  padding:12px!important;
+  border:1px solid rgba(226,184,90,.30)!important;
+  border-radius:22px!important;
+  background:
+    linear-gradient(180deg,rgba(8,69,49,.70),rgba(5,49,36,.68))!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 10px 24px rgba(0,0,0,.13)!important;
+  overflow:hidden!important;
+}
+
+/* İçte ikinci panel hissini kaldır */
+.teacher-followers-panel::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(circle at 20% 0%,rgba(255,255,255,.035),transparent 35%)!important;
+}
+
+/* Sekmeler tek satır, çerçevesiz ve temiz */
+.teacher-followers-tabs{
+  position:relative!important;
+  z-index:1!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:4px!important;
+  padding:0 0 10px!important;
+  margin:0 0 10px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+  background:transparent!important;
+}
+
+.teacher-followers-tabs button{
+  position:relative!important;
+  min-height:38px!important;
+  padding:6px 8px 10px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  opacity:.56!important;
+}
+
+.teacher-followers-tabs button.active{
+  opacity:1!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.teacher-followers-tabs button.active::after{
+  content:""!important;
+  position:absolute!important;
+  left:18%!important;
+  right:18%!important;
+  bottom:-1px!important;
+  height:3px!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#2fac6c,#65d89a)!important;
+}
+
+/* Liste artık ayrı panel değil */
+.teacher-followers-list{
+  position:relative!important;
+  z-index:1!important;
+  display:grid!important;
+  gap:9px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Tek katmanlı kullanıcı kartı */
+.teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:11px!important;
+  min-height:70px!important;
+  padding:11px 12px!important;
+  overflow:hidden!important;
+
+  border:1px solid rgba(255,255,255,.075)!important;
+  border-radius:15px!important;
+  background:rgba(255,255,255,.035)!important;
+
+  box-shadow:none!important;
+}
+
+/* Sol vurgu çizgisi, ayrı kutu değil */
+.teacher-follower-row::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:12px!important;
+  bottom:12px!important;
+  width:3px!important;
+  border-radius:0 4px 4px 0!important;
+  background:#36b879!important;
+  opacity:.92!important;
+}
+
+.teacher-follower-row.teacher-card::before{
+  background:#d2ae57!important;
+}
+
+/* Avatar sade */
+.teacher-follower-avatar{
+  width:44px!important;
+  height:44px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.065)!important;
+  box-shadow:none!important;
+}
+
+.teacher-follower-avatar .tf-initials{
+  font-size:14px!important;
+  font-weight:950!important;
+}
+
+.teacher-follower-avatar .tf-status-dot{
+  right:0!important;
+  bottom:0!important;
+  width:10px!important;
+  height:10px!important;
+  border:2px solid rgba(8,61,44,.96)!important;
+  background:#38bd79!important;
+}
+
+/* Metin alanında kutu yok */
+.teacher-follower-copy{
+  min-width:0!important;
+}
+
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+}
+
+.teacher-follower-name{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:13.3px!important;
+  line-height:1.2!important;
+  font-weight:950!important;
+}
+
+.teacher-follower-type,
+.teacher-follower-type.guest,
+.teacher-follower-type.teacher{
+  display:inline!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:8.8px!important;
+  font-weight:850!important;
+  opacity:.58!important;
+}
+
+.teacher-follower-meta{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:4px!important;
+  margin-top:4px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:9.8px!important;
+  line-height:1.3!important;
+  opacity:.63!important;
+}
+
+/* Misafir sağ bilgi sade metin */
+.teacher-follower-role-badge,
+.teacher-follower-role-badge.guest-only{
+  min-width:auto!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:9.2px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  opacity:.64!important;
+}
+
+/* Hoca-hoca takip butonu hafif, karta gömülü */
+.teacher-follower-follow-btn{
+  min-width:86px!important;
+  min-height:32px!important;
+  padding:6px 9px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.045)!important;
+  box-shadow:none!important;
+  font-size:9.2px!important;
+  font-weight:900!important;
+}
+
+.teacher-follower-follow-btn.active{
+  border-color:rgba(58,190,116,.22)!important;
+  background:rgba(43,151,94,.17)!important;
+}
+
+/* Boş durum da panel içine uyumlu */
+.teacher-followers-empty{
+  padding:22px 12px!important;
+  border:1px dashed rgba(255,255,255,.08)!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.02)!important;
+  font-size:11px!important;
+  opacity:.58!important;
+}
+
+@media(max-width:420px){
+  .teacher-followers-panel{
+    padding:10px!important;
+    border-radius:20px!important;
+  }
+
+  .teacher-followers-tabs{
+    margin-bottom:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  .teacher-followers-tabs button{
+    min-height:36px!important;
+    font-size:12px!important;
+  }
+
+  .teacher-follower-row{
+    grid-template-columns:44px minmax(0,1fr) auto!important;
+    gap:8px!important;
+    min-height:66px!important;
+    padding:10px 9px!important;
+    border-radius:14px!important;
+  }
+
+  .teacher-follower-avatar{
+    width:40px!important;
+    height:40px!important;
+  }
+
+  .teacher-follower-name{
+    font-size:12.6px!important;
+  }
+
+  .teacher-follower-meta{
+    font-size:9.2px!important;
+  }
+
+  .teacher-follower-follow-btn{
+    min-width:76px!important;
+    padding:6px 7px!important;
+    font-size:8.7px!important;
+  }
+
+  .teacher-follower-role-badge,
+  .teacher-follower-role-badge.guest-only{
+    font-size:8.7px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.12 — TAKİP EDENLER TEK KATMAN PRO
+   Ekran görüntüsünde işaretlenen alt alan sadeleştirildi.
+   ========================================================= */
+
+/* Kırmızıyla çevrilen bölüm: tek ve düzgün ana yüzey */
+.teacher-followers-panel{
+  position:relative!important;
+  margin-top:12px!important;
+  padding:14px 14px 13px!important;
+  overflow:hidden!important;
+  border:1px solid rgba(211,176,87,.32)!important;
+  border-radius:22px!important;
+  background:linear-gradient(180deg,rgba(8,70,50,.72),rgba(5,52,38,.72))!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+.teacher-followers-panel::before{display:none!important}
+
+/* Takip Edenler / Beğenenler: kutu değil, modern sekme */
+.teacher-followers-tabs{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:24px!important;
+  margin:0 2px 12px!important;
+  padding:0!important;
+  border:0!important;
+  border-bottom:1px solid rgba(255,255,255,.075)!important;
+  background:transparent!important;
+}
+.teacher-followers-tabs button{
+  position:relative!important;
+  min-height:44px!important;
+  padding:7px 4px 12px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:13.5px!important;
+  font-weight:900!important;
+  opacity:.50!important;
+}
+.teacher-followers-tabs button.active{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+.teacher-followers-tabs button.active::after{
+  content:""!important;
+  position:absolute!important;
+  left:22%!important;
+  right:22%!important;
+  bottom:-1px!important;
+  height:3px!important;
+  border-radius:999px!important;
+  background:#46c886!important;
+}
+
+/* Liste kendi başına ikinci bir kutu oluşturmaz */
+.teacher-followers-list{
+  display:grid!important;
+  gap:9px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Kişi kartı: tek yüzey. İçeride başka çerçeve yok. */
+.teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:46px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:11px!important;
+  min-height:70px!important;
+  padding:11px 12px!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:16px!important;
+  background:rgba(255,255,255,.045)!important;
+  box-shadow:none!important;
+}
+.teacher-follower-row::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:12px!important;
+  bottom:12px!important;
+  width:3px!important;
+  border-radius:0 4px 4px 0!important;
+  background:#43c682!important;
+}
+.teacher-follower-row.teacher-card::before{background:#d3b05a!important}
+
+/* Profil simgesi de çerçevesiz, sakin */
+.teacher-follower-avatar{
+  width:42px!important;
+  height:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.075)!important;
+  box-shadow:none!important;
+}
+.teacher-follower-avatar .tf-initials{
+  font-size:14px!important;
+  font-weight:950!important;
+}
+.teacher-follower-avatar .tf-status-dot{
+  right:0!important;
+  bottom:0!important;
+  width:10px!important;
+  height:10px!important;
+  border:2px solid #0a4d38!important;
+  background:#3bc47e!important;
+}
+
+/* Metinlerin tamamı aynı kart yüzeyinde */
+.teacher-follower-copy,
+.teacher-follower-topline,
+.teacher-follower-meta{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.teacher-follower-copy{min-width:0!important}
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:baseline!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+}
+.teacher-follower-name{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:13.5px!important;
+  line-height:1.2!important;
+  font-weight:950!important;
+}
+.teacher-follower-type,
+.teacher-follower-type.guest,
+.teacher-follower-type.teacher{
+  display:inline!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:8.8px!important;
+  font-weight:850!important;
+  opacity:.55!important;
+}
+.teacher-follower-meta{
+  display:block!important;
+  margin-top:5px!important;
+  padding:0!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+  opacity:.64!important;
+}
+.teacher-follower-meta .tf-sep{display:none!important}
+.teacher-follower-meta > span:last-child{
+  margin-left:6px!important;
+  opacity:.70!important;
+}
+
+/* Misafir: sağda yalnızca sade durum yazısı */
+.teacher-follower-role-badge,
+.teacher-follower-role-badge.guest-only{
+  min-width:auto!important;
+  min-height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:9.2px!important;
+  line-height:1.2!important;
+  font-weight:900!important;
+  opacity:.62!important;
+}
+
+/* Sadece hocalar için gerçek takip butonu görünür */
+.teacher-follower-follow-btn{
+  min-width:84px!important;
+  min-height:32px!important;
+  padding:6px 9px!important;
+  border:1px solid rgba(211,176,87,.18)!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.045)!important;
+  box-shadow:none!important;
+  font-size:9px!important;
+}
+.teacher-follower-follow-btn.active{
+  border-color:rgba(67,198,126,.22)!important;
+  background:rgba(43,151,94,.17)!important;
+}
+
+@media(max-width:420px){
+  .teacher-followers-panel{
+    padding:12px 11px!important;
+    border-radius:20px!important;
+  }
+  .teacher-followers-tabs{
+    gap:16px!important;
+    margin-bottom:10px!important;
+  }
+  .teacher-followers-tabs button{
+    min-height:41px!important;
+    font-size:12.7px!important;
+  }
+  .teacher-follower-row{
+    grid-template-columns:43px minmax(0,1fr) auto!important;
+    gap:8px!important;
+    min-height:66px!important;
+    padding:10px 9px!important;
+    border-radius:14px!important;
+  }
+  .teacher-follower-avatar{
+    width:39px!important;
+    height:39px!important;
+  }
+  .teacher-follower-name{font-size:12.7px!important}
+  .teacher-follower-meta{font-size:9.2px!important}
+  .teacher-follower-role-badge,
+  .teacher-follower-role-badge.guest-only{font-size:8.6px!important}
+}
+
+
+
+/* =========================================================
+   HİLAL ANDROID v1.13 — TAKİPÇİ KARTI İÇ YAZILAR TEMİZ
+   Küçük bilgi etiketlerinin tüm çerçeveleri kaldırıldı.
+   ========================================================= */
+
+/* İsim satırı daha ferah ve sade */
+.teacher-follower-topline{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.teacher-follower-name{
+  font-size:13.8px!important;
+  line-height:1.25!important;
+  font-weight:950!important;
+  letter-spacing:.05px!important;
+}
+
+/* Misafir / Hoca etiketi artık rozet kutusu değil, sade metin */
+.teacher-follower-type,
+.teacher-follower-type.guest,
+.teacher-follower-type.teacher{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:3px!important;
+  min-height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:9.2px!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  opacity:.57!important;
+}
+
+/* Sizi takip ediyor / Misafir hesabı alanı tamamen düz yazı */
+.teacher-follower-meta{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  margin:5px 0 0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+  opacity:.68!important;
+}
+
+.teacher-follower-meta .tf-relation{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  font-weight:780!important;
+}
+
+.teacher-follower-meta .tf-sep{
+  display:inline!important;
+  margin:0 1px!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  opacity:.32!important;
+}
+
+.teacher-follower-meta > span:last-child{
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  opacity:.70!important;
+}
+
+/* Sağdaki 'Takipçiniz' bilgisi de kutu değil */
+.teacher-follower-role-badge,
+.teacher-follower-role-badge.guest-only{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:3px!important;
+  min-width:auto!important;
+  min-height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:9.4px!important;
+  line-height:1.2!important;
+  font-weight:850!important;
+  opacity:.66!important;
+  white-space:nowrap!important;
+}
+
+/* İçeride kalan olası pseudo-frame efektlerini sıfırla */
+.teacher-follower-type::before,
+.teacher-follower-type::after,
+.teacher-follower-meta::before,
+.teacher-follower-meta::after,
+.teacher-follower-role-badge::before,
+.teacher-follower-role-badge::after{
+  content:none!important;
+  display:none!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+
+/* Mobilde yazıları daha dengeli tut */
+@media(max-width:420px){
+  .teacher-follower-name{font-size:13px!important}
+  .teacher-follower-type,
+  .teacher-follower-type.guest,
+  .teacher-follower-type.teacher{font-size:8.8px!important}
+  .teacher-follower-meta{font-size:9.3px!important;gap:5px!important}
+  .teacher-follower-role-badge,
+  .teacher-follower-role-badge.guest-only{font-size:8.7px!important}
+}
+
+
+
+/* v1.13 DÜZELTME — yalnızca takipçi kartı iç yazılarında tüm kutu/altın çerçeve etkilerini öldür */
+#teacherFollowersList .teacher-follower-copy,
+#teacherFollowersList .teacher-follower-copy > *,
+#teacherFollowersList .teacher-follower-copy span,
+#teacherFollowersList .teacher-follower-copy div,
+#teacherFollowersList .teacher-follower-role-badge.guest-only{
+  border:0!important;
+  border-top:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  border-left:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  text-decoration:none!important;
+}
+#teacherFollowersList .teacher-follower-copy::before,
+#teacherFollowersList .teacher-follower-copy::after,
+#teacherFollowersList .teacher-follower-copy > *::before,
+#teacherFollowersList .teacher-follower-copy > *::after,
+#teacherFollowersList .teacher-follower-copy span::before,
+#teacherFollowersList .teacher-follower-copy span::after,
+#teacherFollowersList .teacher-follower-role-badge.guest-only::before,
+#teacherFollowersList .teacher-follower-role-badge.guest-only::after{
+  content:none!important;
+  display:none!important;
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.3 — AÇILIR TAKİP EDENLER / BEĞENENLER
+   ========================================================= */
+.teacher-followers-accordion-buttons{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:9px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-followers-accordion-buttons button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  min-height:46px!important;
+  padding:10px 13px!important;
+  border:1px solid rgba(211,176,87,.24)!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.035)!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  opacity:.82!important;
+}
+.teacher-followers-accordion-buttons button.active{
+  border-color:rgba(66,194,123,.35)!important;
+  background:rgba(41,146,91,.16)!important;
+  opacity:1!important;
+}
+.teacher-followers-arrow{
+  font-size:16px!important;
+  line-height:1!important;
+  opacity:.72!important;
+}
+.teacher-followers-list.hidden{
+  display:none!important;
+}
+.teacher-followers-list{
+  margin-top:10px!important;
+  padding-top:10px!important;
+  border-top:1px solid rgba(255,255,255,.06)!important;
+}
+@media(max-width:420px){
+  .teacher-followers-accordion-buttons{
+    gap:7px!important;
+  }
+  .teacher-followers-accordion-buttons button{
+    min-height:44px!important;
+    padding:9px 10px!important;
+    font-size:11px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.4 — TAKİP/BEĞENİ PANELİ SADELEŞTİRİLDİ
+   ========================================================= */
+
+/* Takip Edenler + Beğenenler butonlarını saran dış panel çerçevesini kaldır */
+.teacher-followers-panel{
+  margin-top:10px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.teacher-followers-panel::before,
+.teacher-followers-panel::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* İki buton kendi başına sade ve uyumlu */
+.teacher-followers-accordion-buttons{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:9px!important;
+  margin:0 0 10px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-followers-accordion-buttons button{
+  min-height:46px!important;
+  padding:10px 13px!important;
+  border:1px solid rgba(211,176,87,.24)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,rgba(15,92,65,.35),rgba(8,63,46,.28))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+  color:inherit!important;
+}
+.teacher-followers-accordion-buttons button.active{
+  border-color:rgba(66,194,123,.38)!important;
+  background:linear-gradient(180deg,rgba(31,133,84,.26),rgba(18,94,64,.22))!important;
+}
+
+/* Açılan liste ayrı bir kutu/panel değil */
+.teacher-followers-list{
+  display:grid!important;
+  gap:8px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-top:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.teacher-followers-list.hidden{
+  display:none!important;
+}
+
+/* Kişi satırında yalnızca tek kullanıcı kartı bırak */
+#teacherFollowersList .teacher-follower-row{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:66px!important;
+  padding:10px 11px!important;
+  border:1px solid rgba(211,176,87,.18)!important;
+  border-radius:15px!important;
+  background:linear-gradient(135deg,rgba(13,83,59,.58),rgba(7,58,42,.52))!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+
+/* Kart içinde kart görünümüne sebep olan tüm iç kabukları kaldır */
+#teacherFollowersList .teacher-follower-copy,
+#teacherFollowersList .teacher-follower-copy > *,
+#teacherFollowersList .teacher-follower-topline,
+#teacherFollowersList .teacher-follower-name,
+#teacherFollowersList .teacher-follower-type,
+#teacherFollowersList .teacher-follower-meta,
+#teacherFollowersList .teacher-follower-meta *,
+#teacherFollowersList .teacher-follower-role-badge,
+#teacherFollowersList .teacher-follower-role-badge.guest-only{
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+
+/* İç pseudo çerçeveleri de kaldır */
+#teacherFollowersList .teacher-follower-copy::before,
+#teacherFollowersList .teacher-follower-copy::after,
+#teacherFollowersList .teacher-follower-copy > *::before,
+#teacherFollowersList .teacher-follower-copy > *::after,
+#teacherFollowersList .teacher-follower-meta::before,
+#teacherFollowersList .teacher-follower-meta::after,
+#teacherFollowersList .teacher-follower-meta *::before,
+#teacherFollowersList .teacher-follower-meta *::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* Avatar sade kalsın */
+#teacherFollowersList .teacher-follower-avatar{
+  width:40px!important;
+  height:40px!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:none!important;
+}
+
+/* Sağdaki takip durumu düz metin */
+#teacherFollowersList .teacher-follower-role-badge,
+#teacherFollowersList .teacher-follower-role-badge.guest-only{
+  padding:0!important;
+  min-width:auto!important;
+  min-height:auto!important;
+  font-size:8.8px!important;
+  opacity:.62!important;
+}
+
+/* Hoca-hoca takip butonu sade ama gerçek buton olarak kalsın */
+#teacherFollowersList .teacher-follower-follow-btn{
+  min-width:80px!important;
+  min-height:32px!important;
+  padding:6px 8px!important;
+  border:1px solid rgba(211,176,87,.18)!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.04)!important;
+  box-shadow:none!important;
+}
+#teacherFollowersList .teacher-follower-follow-btn.active{
+  border-color:rgba(65,190,121,.24)!important;
+  background:rgba(41,147,91,.17)!important;
+}
+
+@media(max-width:420px){
+  .teacher-followers-accordion-buttons{gap:7px!important}
+  .teacher-followers-accordion-buttons button{
+    min-height:44px!important;
+    padding:9px 10px!important;
+    font-size:10.8px!important;
+  }
+  #teacherFollowersList .teacher-follower-row{
+    grid-template-columns:41px minmax(0,1fr) auto!important;
+    gap:8px!important;
+    min-height:63px!important;
+    padding:9px 9px!important;
+    border-radius:14px!important;
+  }
+  #teacherFollowersList .teacher-follower-avatar{
+    width:38px!important;
+    height:38px!important;
+  }
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.5 — ALT ALTA PROFESYONEL AKORDEON
+   ========================================================= */
+.teacher-social-accordion{
+  display:grid!important;
+  gap:10px!important;
+  margin-top:10px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-social-accordion-item{
+  overflow:hidden!important;
+  border:1px solid rgba(211,176,87,.28)!important;
+  border-radius:17px!important;
+  background:linear-gradient(180deg,rgba(10,75,54,.48),rgba(6,56,41,.44))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+.teacher-social-accordion-btn{
+  width:100%!important;
+  min-height:58px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  padding:11px 14px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  text-align:left!important;
+}
+.teacher-social-accordion-btn.active{
+  background:rgba(40,145,92,.12)!important;
+}
+.teacher-social-accordion-left{
+  display:flex!important;
+  align-items:center!important;
+  gap:11px!important;
+  min-width:0!important;
+}
+.teacher-social-accordion-icon{
+  width:38px!important;
+  height:38px!important;
+  flex:0 0 38px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.055)!important;
+  font-size:17px!important;
+}
+.teacher-social-accordion-left strong{
+  display:block!important;
+  font-size:12.8px!important;
+  line-height:1.2!important;
+  font-weight:950!important;
+}
+.teacher-social-accordion-left small{
+  display:block!important;
+  margin-top:3px!important;
+  font-size:9.4px!important;
+  line-height:1.2!important;
+  opacity:.55!important;
+  font-weight:750!important;
+}
+.teacher-social-accordion-btn.active .teacher-followers-arrow{
+  color:#63d99a!important;
+  opacity:1!important;
+}
+.teacher-social-accordion-item .teacher-followers-list{
+  display:grid!important;
+  gap:8px!important;
+  margin:0!important;
+  padding:10px!important;
+  border:0!important;
+  border-top:1px solid rgba(255,255,255,.065)!important;
+  background:rgba(0,0,0,.035)!important;
+  box-shadow:none!important;
+}
+.teacher-social-accordion-item .teacher-followers-list.hidden{
+  display:none!important;
+}
+.teacher-social-accordion-item .teacher-follower-row{
+  border:1px solid rgba(255,255,255,.065)!important;
+  background:rgba(255,255,255,.032)!important;
+  border-radius:13px!important;
+  box-shadow:none!important;
+}
+@media(max-width:420px){
+  .teacher-social-accordion{gap:8px!important}
+  .teacher-social-accordion-item{border-radius:15px!important}
+  .teacher-social-accordion-btn{min-height:54px!important;padding:9px 11px!important}
+  .teacher-social-accordion-icon{
+    width:34px!important;height:34px!important;flex-basis:34px!important;
+    border-radius:10px!important;font-size:15px!important;
+  }
+  .teacher-social-accordion-left strong{font-size:12px!important}
+  .teacher-social-accordion-item .teacher-followers-list{padding:8px!important}
+}
+
+
+
+/* HİLAL v1.13.6 — Takip Edenler + Beğenenler ortak dış çerçevesi kaldırıldı */
+.teacher-followers-panel{
+  margin-top:10px!important;
+  padding:0!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.teacher-followers-panel::before,
+.teacher-followers-panel::after{
+  content:none!important;
+  display:none!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+}
+.teacher-social-accordion{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+/* İki kartın kendi profesyonel çerçeveleri aynen korunur */
+
+
+/* v1.13.7: iki kart alt alta, açılan liste tıklanan kartın hemen altında */
+.teacher-social-accordion{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;width:100%!important;margin:10px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.teacher-social-accordion-item{display:block!important;width:100%!important;margin:0!important;padding:0!important;overflow:hidden!important;flex:none!important}
+.teacher-social-accordion-btn{display:flex!important;width:100%!important}
+#teacherFollowersListFollowers,#teacherFollowersListLikers{width:100%!important;margin:0!important;box-sizing:border-box!important}
+#teacherFollowersListFollowers:not(.hidden),#teacherFollowersListLikers:not(.hidden){display:grid!important}
+#teacherFollowersListFollowers.hidden,#teacherFollowersListLikers.hidden{display:none!important}
+
+
+/* =========================================================
+   HİLAL v1.13.10 — AYNI KART SİSTEMİ + İKİ YAYIN SEÇENEĞİ
+   ========================================================= */
+.teacher-audience-help{
+  margin:13px 0 8px!important;
+  padding:9px 11px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.035)!important;
+  box-shadow:none!important;
+}
+.teacher-audience-help strong{
+  display:block!important;
+  font-size:10.5px!important;
+  font-weight:950!important;
+}
+.teacher-audience-help span{
+  display:block!important;
+  margin-top:3px!important;
+  font-size:8.4px!important;
+  line-height:1.35!important;
+  opacity:.62!important;
+}
+.teacher-audience-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:9px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+.teacher-audience-btn{
+  min-height:64px!important;
+  display:grid!important;
+  grid-template-columns:38px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:10px 11px!important;
+  border-radius:15px!important;
+  color:inherit!important;
+  text-align:left!important;
+  box-shadow:none!important;
+  transition:transform .12s ease,border-color .12s ease,background .12s ease!important;
+}
+.teacher-audience-btn:active{transform:scale(.985)!important}
+.teacher-audience-btn.general{
+  border:1px solid rgba(211,176,87,.28)!important;
+  background:linear-gradient(145deg,rgba(17,96,69,.48),rgba(8,68,49,.42))!important;
+}
+.teacher-audience-btn.followers{
+  border:1px solid rgba(74,205,133,.30)!important;
+  background:linear-gradient(145deg,rgba(26,126,81,.34),rgba(10,78,55,.42))!important;
+}
+.teacher-audience-btn.current-audience{
+  outline:2px solid rgba(91,220,149,.18)!important;
+  outline-offset:2px!important;
+}
+.audience-icon{
+  width:38px!important;
+  height:38px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.055)!important;
+  font-size:17px!important;
+}
+.audience-copy strong{
+  display:block!important;
+  font-size:10.8px!important;
+  line-height:1.2!important;
+  font-weight:950!important;
+}
+.audience-copy small{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:8px!important;
+  line-height:1.3!important;
+  opacity:.58!important;
+}
+.compact-reset-action{
+  margin-top:8px!important;
+  justify-content:flex-end!important;
+}
+.compact-reset-action .btn{
+  min-height:34px!important;
+  padding:6px 11px!important;
+  font-size:9px!important;
+}
+.follower-only-badge{
+  display:inline-flex!important;
+  align-items:center!important;
+  margin-left:5px!important;
+  padding:3px 7px!important;
+  border:1px solid rgba(82,207,137,.25)!important;
+  border-radius:999px!important;
+  background:rgba(82,207,137,.08)!important;
+  color:#71dda4!important;
+  font-size:7.4px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  vertical-align:middle!important;
+  white-space:nowrap!important;
+}
+@media(max-width:430px){
+  .teacher-audience-actions{grid-template-columns:1fr!important}
+}
+
+
+
+/* HİLAL v1.13.11 — takipçilere özel hoca paylaşımları doğrudan yayınlanır */
+.follower-only-badge{
+  cursor:default!important;
+}
+.teacher-audience-btn.followers::after{
+  content:"Onaysız direkt yayın"!important;
+  display:block!important;
+  grid-column:2!important;
+  margin-top:3px!important;
+  font-size:7px!important;
+  line-height:1!important;
+  font-weight:850!important;
+  color:#78e2aa!important;
+  opacity:.82!important;
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.12 — MİSAFİR / TAKİP ETTİKLERİM
+   ========================================================= */
+.guest-following-hero{margin-bottom:10px!important}
+.guest-following-summary{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:8px!important;
+  margin:10px 0!important;
+}
+.guest-following-summary article{
+  padding:10px 7px!important;
+  border:1px solid rgba(211,176,87,.18)!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.025)!important;
+  text-align:center!important;
+  box-shadow:none!important;
+}
+.guest-following-summary span{
+  display:block!important;
+  font-size:7.6px!important;
+  line-height:1.25!important;
+  opacity:.58!important;
+}
+.guest-following-summary strong{
+  display:block!important;
+  margin-top:5px!important;
+  font-size:17px!important;
+  font-weight:950!important;
+}
+.guest-following-panel{
+  margin-top:8px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.guest-following-tabs{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  margin-bottom:10px!important;
+}
+.guest-following-tabs button{
+  min-height:42px!important;
+  border:1px solid rgba(211,176,87,.20)!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.025)!important;
+  color:inherit!important;
+  font-size:9.5px!important;
+  font-weight:900!important;
+}
+.guest-following-tabs button.active{
+  border-color:rgba(83,211,142,.34)!important;
+  background:rgba(41,143,91,.20)!important;
+  color:#7be2ad!important;
+}
+.guest-following-list{
+  display:grid!important;
+  gap:10px!important;
+}
+.guest-following-card{
+  border:1px solid rgba(211,176,87,.20)!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,rgba(10,80,57,.40),rgba(5,56,41,.34))!important;
+  box-shadow:none!important;
+}
+.guest-following-card .follower-only-badge{
+  margin:5px 0 0 0!important;
+}
+.guest-following-teacher-line{
+  margin:9px 0!important;
+}
+.guest-following-teacher-identity{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+.guest-following-avatar{
+  flex:none!important;
+  width:34px!important;
+  height:34px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:50%!important;
+  border:1px solid rgba(211,176,87,.22)!important;
+  background:rgba(255,255,255,.045)!important;
+  font-size:9px!important;
+  font-weight:950!important;
+}
+.guest-following-teacher-identity strong{
+  display:block!important;
+  font-size:10.5px!important;
+}
+.guest-following-teacher-identity .muted{
+  margin-top:2px!important;
+  font-size:7.7px!important;
+}
+.guest-following-empty{
+  padding:24px 14px!important;
+  border:1px dashed rgba(211,176,87,.20)!important;
+  border-radius:16px!important;
+  background:rgba(255,255,255,.018)!important;
+  text-align:center!important;
+}
+.guest-following-empty > div{
+  font-size:25px!important;
+  margin-bottom:8px!important;
+}
+.guest-following-empty strong{
+  display:block!important;
+  font-size:11px!important;
+}
+.guest-following-empty span{
+  display:block!important;
+  max-width:350px!important;
+  margin:5px auto 0!important;
+  font-size:8.5px!important;
+  line-height:1.45!important;
+  opacity:.58!important;
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.15 — YAYIN GÖRSELİ / KAYIT STABİLİTESİ
+   ========================================================= */
+.publication-image-field{
+  overflow:hidden!important;
+}
+.publication-image-preview-wrap{
+  position:relative!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:120px!important;
+  max-height:280px!important;
+  margin-top:8px!important;
+  padding:7px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  border:1px solid rgba(211,176,87,.18)!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.025)!important;
+}
+.publication-image-preview-wrap.hidden{
+  display:none!important;
+}
+.publication-image-preview{
+  display:block!important;
+  width:100%!important;
+  height:220px!important;
+  max-width:100%!important;
+  object-fit:contain!important;
+  border:0!important;
+  border-radius:10px!important;
+  background:rgba(0,0,0,.10)!important;
+}
+.publication-image-remove{
+  position:absolute!important;
+  right:12px!important;
+  bottom:12px!important;
+  min-height:30px!important;
+  padding:5px 9px!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  border-radius:9px!important;
+  background:rgba(5,48,35,.88)!important;
+  color:inherit!important;
+  font-size:8px!important;
+  font-weight:900!important;
+}
+.publication-image-status{
+  min-height:14px!important;
+  margin-top:5px!important;
+  font-size:7.8px!important;
+  line-height:1.3!important;
+  opacity:.62!important;
+}
+
+
+
+/* =========================================================
+   HİLAL v1.13.17 — TAKİPÇİYE ÖZEL YAYIN = DİREKT YAYIN
+   ========================================================= */
+.compact-card-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:7px!important;
+  width:100%!important;
+  margin:0!important;
+}
+.compact-card-actions .approval-send{
+  min-height:38px!important;
+  padding:7px 8px!important;
+  border-radius:11px!important;
+  font-size:8px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+}
+.audience-followers-card-btn{
+  border-color:rgba(82,207,137,.30)!important;
+  background:rgba(28,128,81,.22)!important;
+  color:#72dda5!important;
+}
+.audience-general-card-btn{
+  border-color:rgba(211,176,87,.24)!important;
+  background:rgba(255,255,255,.025)!important;
+}
+@media(max-width:430px){
+  .compact-card-actions{grid-template-columns:1fr!important}
+}
+
+
+/* v1.13.18 — Takipçilere özel Hatim / Dua / Zikir Katılım Merkezi */
+.participation-launch{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:14px 15px;border:1px solid rgba(211,176,87,.28);border-radius:17px;background:linear-gradient(145deg,rgba(9,83,58,.86),rgba(5,55,40,.9));box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.participation-launch>div{display:flex;flex-direction:column;gap:4px;min-width:0}.participation-launch strong{font-size:15px;color:#f6e6ae}.participation-launch small{color:rgba(255,255,255,.72);line-height:1.35}.participation-kicker{font-size:9px;font-weight:900;letter-spacing:.7px;color:#72dda5}
+.participation-plus{flex:0 0 48px;width:48px;height:48px;border-radius:15px;border:1px solid rgba(211,176,87,.6);background:linear-gradient(145deg,#d8b75c,#a47c22);color:#082f22;font-size:29px;font-weight:900;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.participation-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,20,14,.76);display:flex;align-items:flex-end;justify-content:center;padding:12px}.participation-modal.hidden{display:none!important}
+.participation-sheet{width:min(100%,560px);max-height:90vh;overflow:auto;border:1px solid rgba(211,176,87,.42);border-radius:22px 22px 14px 14px;padding:16px;background:linear-gradient(180deg,#0b4935,#062f23);box-shadow:0 -18px 50px rgba(0,0,0,.38)}
+.participation-sheet-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:13px}.participation-sheet-head span{font-size:9px;color:#72dda5;font-weight:900;letter-spacing:.8px}.participation-sheet-head h3{margin:3px 0;color:#f4dda0}.participation-sheet-head button{border:0;background:rgba(255,255,255,.08);color:#fff;width:36px;height:36px;border-radius:11px}
+.participation-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.participation-type-grid button{min-height:82px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.035);color:#fff;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:11px;text-align:left;font-size:19px}.participation-type-grid button strong{font-size:12px;margin-top:3px}.participation-type-grid button small{font-size:9px;opacity:.68;margin-top:2px}.participation-type-grid button.active{border-color:rgba(211,176,87,.62);background:rgba(211,176,87,.11);box-shadow:inset 0 0 0 1px rgba(211,176,87,.12)}
+.participation-direct-note{margin:12px 0;padding:10px 11px;border-radius:12px;background:rgba(55,183,112,.1);border:1px solid rgba(82,207,137,.22);color:#b9f0cf;font-size:10px;line-height:1.45}.participation-publish-btn{width:100%!important;background:linear-gradient(145deg,#d8b75c,#a47c22)!important;color:#082f22!important;font-weight:900!important}
+.participation-list{display:grid;gap:10px;margin:10px 0}.participation-card{border:1px solid rgba(211,176,87,.24);border-radius:17px;padding:14px;background:linear-gradient(145deg,rgba(9,75,54,.8),rgba(5,49,36,.82));box-shadow:0 9px 24px rgba(0,0,0,.12)}.participation-card.private-card{border-color:rgba(82,207,137,.28)}
+.participation-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.participation-card-head h3{margin:2px 0 3px;color:#f5dda0;font-size:15px}.participation-card-head small{color:rgba(255,255,255,.6)}.participation-badge{display:inline-flex;padding:5px 8px;border-radius:999px;background:rgba(55,183,112,.12);border:1px solid rgba(82,207,137,.24);color:#76e0a8;font-size:9px;font-weight:900;white-space:nowrap}
+.participation-progress{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:12px 0 7px}.participation-progress>i{display:block;height:100%;background:linear-gradient(90deg,#b88d2f,#efd47f);border-radius:inherit}
+.participation-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.participation-stats span{padding:8px 6px;border-radius:10px;background:rgba(255,255,255,.035);text-align:center;font-size:9px;color:rgba(255,255,255,.7)}.participation-stats b{display:block;color:#fff;font-size:12px;margin-top:2px}
+.participation-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}.participation-actions button,.cuz-btn,.amount-choice{border:1px solid rgba(211,176,87,.24);border-radius:10px;background:rgba(255,255,255,.035);color:#f6e5b2;padding:8px 10px;font-size:10px;font-weight:800}.participation-actions button.primary,.amount-choice.primary{background:rgba(55,183,112,.15);border-color:rgba(82,207,137,.3);color:#82e5ae}
+.cuz-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:11px}.cuz-btn{padding:8px 3px;text-align:center;color:#fff}.cuz-btn.mine{border-color:rgba(211,176,87,.72);background:rgba(211,176,87,.14);color:#f6dda0}.cuz-btn.done{border-color:rgba(82,207,137,.5);background:rgba(55,183,112,.16);color:#8ce7b5}.cuz-btn.taken:not(.mine){opacity:.45}
+.my-participation-note{margin-top:9px;padding:8px 10px;border-radius:10px;background:rgba(211,176,87,.08);color:#efd88e;font-size:10px}
+.amount-choices{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.participation-free-row{display:flex;gap:7px;margin-top:9px}.participation-free-row input{flex:1;min-width:0}.participation-complete-row{display:flex;gap:7px;align-items:center;margin-top:9px}.participation-complete-row input{flex:1;min-width:0}
+.guest-following-tabs{grid-template-columns:repeat(3,1fr)!important}.guest-following-summary{grid-template-columns:repeat(4,1fr)!important}
+@media(max-width:430px){.participation-type-grid{grid-template-columns:1fr}.cuz-grid{grid-template-columns:repeat(5,1fr)}.guest-following-summary{grid-template-columns:repeat(2,1fr)!important}.guest-following-tabs button{font-size:9px!important;padding-left:5px!important;padding-right:5px!important}}
+
+
+/* v1.13.20 — Çoklu Hatim Satırları / Tamamlanma Geçmişi */
+.hatim-rounds{display:grid;gap:8px;margin-top:11px}
+.hatim-round-row{border:1px solid rgba(211,176,87,.22);border-radius:13px;background:rgba(255,255,255,.025);overflow:hidden}
+.hatim-round-row.complete{border-color:rgba(82,207,137,.32);background:rgba(55,183,112,.07)}
+.hatim-round-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:0;background:transparent;color:#fff;text-align:left}
+.hatim-round-head strong{display:block;font-size:11px;color:#f3d98f}.hatim-round-head small{display:block;font-size:9px;color:rgba(255,255,255,.62);margin-top:2px}.hatim-round-chevron{font-size:13px;color:#d9bd6b}
+.hatim-round-body{padding:0 10px 11px;border-top:1px solid rgba(255,255,255,.06)}
+.hatim-round-body.hidden{display:none!important}
+.hatim-round-complete-note{padding:8px 10px;margin-top:9px;border-radius:10px;background:rgba(55,183,112,.11);border:1px solid rgba(82,207,137,.23);color:#8ce7b5;font-size:10px;font-weight:800}
+.hatim-user-history{display:grid;gap:6px;margin-top:9px}
+.hatim-user-history-item{display:flex;justify-content:space-between;gap:10px;padding:8px 9px;border-radius:10px;background:rgba(255,255,255,.03);font-size:9px}
+.hatim-user-history-item b{color:#f3d98f}.hatim-user-history-item span{color:rgba(255,255,255,.68);text-align:right}
+.cuz-btn .cuz-state{display:block;font-size:8px;margin-top:2px}
+.cuz-btn.mine .cuz-state{color:#f3d98f}.cuz-btn.done .cuz-state{color:#8ce7b5}
+.participation-card.compact-participation{cursor:pointer}
+.participation-card-body.hidden{display:none!important}
+.participation-card-toggle{font-size:13px;color:#d9bd6b;align-self:center}
+
+
+/* v1.13.22 — Hatim ana kart açıklaması ve otomatik yeni tur */
+.hatim-main-guide{
+  display:grid;gap:3px;margin-top:8px;padding:8px 9px;
+  border-radius:10px;border:1px solid rgba(211,176,87,.20);
+  background:rgba(211,176,87,.065);color:rgba(255,255,255,.78);
+  font-size:9px;line-height:1.35
+}
+.hatim-main-guide span b{color:#f3d98f}
+.hatim-main-guide small{font-size:8px!important;color:rgba(255,255,255,.55)!important;margin-top:2px}
+
+
+/* v1.13.23 — Seri Hatim Satırları */
+.hatim-round-head{
+  position:relative!important;
+  padding:11px 12px!important;
+  align-items:center!important;
+}
+.hatim-round-titleblock{min-width:0;flex:1}
+.hatim-round-row.distributed{
+  border-color:rgba(211,176,87,.26)!important;
+  background:rgba(211,176,87,.045)!important;
+}
+.hatim-row-state{
+  flex:0 0 auto;
+  min-width:42px;
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid rgba(211,176,87,.22);
+  background:rgba(255,255,255,.03);
+  color:#e8cf87;
+  font-size:8px;
+  font-weight:900;
+  text-align:center
+}
+.hatim-round-pending-note{
+  padding:8px 10px;
+  margin-top:9px;
+  border-radius:10px;
+  background:rgba(211,176,87,.08);
+  border:1px solid rgba(211,176,87,.2);
+  color:#f0dd9c;
+  font-size:9px;
+  line-height:1.4
+}
+.hatim-round-pending-note b{color:#fff}
+
+
+/* v1.13.25 — Sahibi açar / tamamlar / tekrar kapatır */
+.owner-hatim-guide{
+  display:flex;flex-wrap:wrap;gap:7px 12px;margin:10px 0 9px;padding:8px 10px;
+  border-radius:10px;border:1px solid rgba(211,176,87,.18);
+  background:rgba(211,176,87,.055);font-size:9px;color:rgba(255,255,255,.74)
+}
+.owner-hatim-guide b{color:#f3d98f}
+.owner-hatim-rounds{display:grid;gap:8px;margin-top:8px}
+.owner-hatim-round{
+  border:1px solid rgba(211,176,87,.20);border-radius:12px;
+  background:rgba(255,255,255,.025);padding:10px
+}
+.owner-hatim-round.collapsed{padding:9px 11px}
+.owner-hatim-round.can-open{cursor:pointer;background:rgba(211,176,87,.05)}
+.owner-hatim-round.locked{opacity:.68}
+.owner-hatim-round.completed{
+  padding:9px 11px;border-color:rgba(82,207,137,.28);background:rgba(55,183,112,.07)
+}
+.owner-hatim-summary{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.owner-hatim-summary strong{color:#f2d88c;font-size:10px}
+.owner-hatim-summary small{display:block;color:rgba(255,255,255,.62);font-size:8px;margin-top:2px}
+.owner-hatim-action-note{color:#f3d98f!important;font-weight:800}
+.owner-close-btn{
+  border:1px solid rgba(211,176,87,.20);background:rgba(255,255,255,.03);
+  color:#e9cf83;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900
+}
+.cuz-btn .cuz-state{display:block;font-size:7px;margin-top:2px}
+.cuz-btn.mine .cuz-state{color:#f3d98f}
+.cuz-btn.done .cuz-state{color:#8ce7b5}
+
+
+/* v1.13.26 — Katılım ana kartları */
+.participation-group-card{
+  padding:0!important;
+  overflow:hidden!important;
+}
+.participation-group-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 13px;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer
+}
+.participation-group-main{min-width:0;flex:1}
+.participation-group-main small{
+  display:block;
+  color:rgba(255,255,255,.60);
+  font-size:8px
+}
+.participation-group-main h3{
+  margin:3px 0 2px;
+  color:#f2d88c;
+  font-size:13px
+}
+.participation-group-desc{
+  color:rgba(255,255,255,.68)!important;
+  line-height:1.35
+}
+.participation-group-summary{
+  display:block;
+  margin-top:5px;
+  color:#8fd7b2;
+  font-size:8px;
+  font-weight:800
+}
+.participation-group-status{
+  flex:0 0 auto;
+  min-width:42px;
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid rgba(211,176,87,.22);
+  background:rgba(255,255,255,.03);
+  color:#e8cf87;
+  font-size:8px;
+  font-weight:900;
+  text-align:center
+}
+.participation-group-body{
+  padding:0 12px 12px
+}
+.participation-group-body.hidden{display:none!important}
+.participation-group-card.is-open{
+  border-color:rgba(211,176,87,.30)!important;
+}
+
+
+/* v1.13.27 — Dua/Zikir seri hedef kartları */
+.dhikr-main-guide{
+  display:flex;flex-wrap:wrap;gap:7px 12px;margin:10px 0 9px;padding:8px 10px;
+  border-radius:10px;border:1px solid rgba(211,176,87,.18);
+  background:rgba(211,176,87,.055);font-size:9px;color:rgba(255,255,255,.74)
+}
+.dhikr-rounds{display:grid;gap:8px;margin-top:8px}
+.dhikr-round{
+  border:1px solid rgba(211,176,87,.20);border-radius:12px;
+  background:rgba(255,255,255,.025);padding:10px
+}
+.dhikr-round.collapsed{padding:9px 11px}
+.dhikr-round.can-open{cursor:pointer;background:rgba(211,176,87,.05)}
+.dhikr-round.locked{opacity:.66}
+.dhikr-round.completed{
+  padding:9px 11px;border-color:rgba(82,207,137,.28);background:rgba(55,183,112,.07)
+}
+.dhikr-round strong{color:#f2d88c;font-size:10px}
+.dhikr-round small{display:block;color:rgba(255,255,255,.62);font-size:8px;margin-top:2px}
+.dhikr-my-note{color:#f1d68a!important;font-weight:800}
+.dhikr-round-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dhikr-mini-btn{
+  border:1px solid rgba(211,176,87,.20);background:rgba(255,255,255,.03);
+  color:#e9cf83;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900
+}
+.dhikr-counter-card{margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}
+.dhikr-counter-label{display:block;text-align:center;font-size:8px;color:rgba(255,255,255,.55);margin-bottom:5px}
+.dhikr-counter{display:grid;grid-template-columns:42px 1fr 42px;gap:7px;align-items:center}
+.dhikr-counter button{
+  height:38px;border-radius:10px;border:1px solid rgba(211,176,87,.28);
+  background:rgba(211,176,87,.08);color:#f0d889;font-size:20px;font-weight:900
+}
+.dhikr-counter b{
+  display:flex;align-items:center;justify-content:center;height:38px;border-radius:10px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);
+  color:white;font-size:16px
+}
+.dhikr-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:6px}
+.dhikr-quick button{
+  padding:6px 4px;border-radius:8px;border:1px solid rgba(211,176,87,.18);
+  background:rgba(255,255,255,.025);color:#e8d28f;font-size:9px;font-weight:800
+}
+.dhikr-my-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
+.dhikr-my-stats span{
+  padding:6px;border-radius:8px;background:rgba(255,255,255,.025);
+  text-align:center;font-size:7px;color:rgba(255,255,255,.56)
+}
+.dhikr-my-stats b{display:block;margin-top:2px;color:white;font-size:10px}
+.dhikr-complete-btn{
+  width:100%;margin-top:8px;padding:9px;border-radius:10px;
+  border:1px solid rgba(82,207,137,.28);background:rgba(55,183,112,.09);
+  color:#91e8b9;font-size:9px;font-weight:900
+}
+
+
+/* v1.13.28 — Hatim sayaç isimleri */
+.hatim-count-stats span{
+  min-width:0;
+}
+.hatim-count-stats span:nth-child(2) b,
+.hatim-count-stats span:nth-child(3) b{
+  color:#f1d68a;
+}
+
+</style>
+<style id="hilal-v11334-account-access-style">
+#adminContactSettingsCard{display:none}
+.admin-contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-contact-grid .field:last-child{grid-column:1/-1}
+.admin-contact-publish{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;margin:12px 0}
+.admin-

@@ -1,0 +1,15 @@
+
+#teacherDelegatedAdminPage .hero{
+  padding:14px 15px!important;
+  border-radius:18px!important;
+  margin-bottom:12px!important;
+}
+#teacherDelegatedAdminPage .hero .muted:first-child{
+  font-size:10px!important;
+  letter-spacing:.08em!important;
+  font-weight:900!important;
+}
+#teacherDelegatedAdminPage .hero h2{
+  margin:4px 0 5px!important;
+  font-size:20px!important;
+}

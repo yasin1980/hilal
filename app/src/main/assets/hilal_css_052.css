@@ -1,0 +1,15 @@
+
+/* Yalnız üst Hicrî Takvim yazısı */
+#calendarPage .hilal-ref-hijri-title-v1{
+  left:25.5%!important;
+  width:49%!important;
+  top:8.35%!important;
+  font-size:clamp(12px,3.55vw,29px)!important;
+  line-height:1!important;
+  letter-spacing:.015em!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  transform:none!important;
+}
+</style>
+<style id="hilal-old-pre

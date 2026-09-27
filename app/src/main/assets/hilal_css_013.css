@@ -1,0 +1,11 @@
+
+/* V1.13.68 — Kerâhet bilgisi Bugünün Vakitleri başlık kartının içinde */
+#calendarPage .hilal-prayer-head-card{
+  grid-template-rows:auto auto!important;
+}
+#calendarPage #hilalKerahatCard{
+  grid-column:1 / -1!important;
+  margin:4px 0 0!important;
+  border:1px solid rgba(216,173,77,.30)!important;
+  border-radius:16px!important;
+  background:linear-gradient(1

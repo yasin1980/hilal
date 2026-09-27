@@ -1,0 +1,15 @@
+
+/* 1.14.22 — temiz, sabit, DOM taşımayan yetki paneli */
+#teacherDelegatedPermissionGrid{
+  display:block!important;
+}
+.v1422-permission-card{
+  border:1px solid rgba(218,183,91,.30);
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(8,92,69,.14),rgba(4,54,43,.20));
+  margin-bottom:12px;
+}
+.v1422-permission-head{
+  width:100%;
+  min-heig

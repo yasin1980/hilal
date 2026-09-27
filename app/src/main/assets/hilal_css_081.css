@@ -1,0 +1,56 @@
+
+/* Ortak premium sınıfın yüzeyini değiştirmeden yalnız çerçeveye kabartma/derinlik verir. */
+#announcementsPage .hilal-shared-premium-button-card,
+#generalPublicationsPage .hilal-shared-premium-button-card{
+  border:1px solid rgba(226,184,78,.62)!important;
+  outline:0!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,176,.42),
+    inset 1px 0 0 rgba(255,218,116,.16),
+    inset 0 -2px 0 rgba(116,75,10,.34),
+    inset -1px 0 0 rgba(121,82,18,.22),
+    0 1px 0 rgba(255,221,126,.20),
+    0 3px 0 rgba(104,69,12,.34),
+    0 8px 20px rgba(0,0,0,.22),
+    0 0 13px rgba(230,190,82,.17)!important;
+}
+#announcementsPage .hilal-shared-premium-button-card:active,
+#generalPublicationsPage .hilal-shared-premium-button-card:active{
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,176,.34),
+    inset 0 -1px 0 rgba(116,75,10,.30),
+    0 1px 0 rgba(255,221,126,.16),
+    0 2px 0 rgba(104,69,12,.30),
+    0 5px 14px rgba(0,0,0,.20),
+    0 0 10px rgba(230,190,82,.14)!important;
+}
+</style>
+<!-- HILAL V11 — GENEL DUYURULAR / GENEL YAYINLAR: MEVCUT ORTAK 3D SINIF BAGLANTISI
+     Yeni tasarim yok. Yalniz mevcut hilal-shared-premium-button-card sinifi hedeflere eklenir. -->
+<script id="hilal-v11-general-pages-shared-3d-bind">
+(function(){
+  'use strict';
+  var ROOTS=['#announcementsPage','#generalPublicationsPage','#sharedAnnouncementsFeed'];
+  var TARGETS=[
+    '.shared-feed-card','.feed-card','.publisher-card','.publication-card','.announcement-card',
+    '.shared-feed-card button','.feed-card button','.publisher-card button','.publication-card button','.announcement-card button'
+  ];
+  function excluded(el){
+    return !!el.closest('.nav,.topbar,.menu-panel,.reader-modal,.modal,.publication-form-modal,.announcement-form-modal') ||
+           el.matches('.back-btn,.menu-btn,.announcement-fab,.teacher-publication-fab');
+  }
+  function bind(root){
+    TARGETS.forEach(function(sel){
+      root.querySelectorAll(sel).forEach(function(el){
+        if(!excluded(el)) el.classList.add('hilal-shared-premium-button-card');
+      });
+    });
+  }
+  function apply(){
+    ROOTS.forEach(function(sel){
+      document.querySelectorAll(sel).forEach(bind);
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply,{once:true}); else apply();
+  document.addEventListener('hilal:data-changed',function(){requestAnimationFrame(apply);});
+  var obs=new MutationObserver

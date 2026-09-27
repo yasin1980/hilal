@@ -1,0 +1,28 @@
+
+/* Katılımlar açıldığında iki kategori kartını çevreleyen dış kart görünmesin */
+#guestFollowingList .participation-category-shell{
+  width:100%!important;
+  margin:8px 0 2px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  outline:0!important;
+  overflow:visible!important;
+}
+
+/* İki iç kart yan yana ve bağımsız görünür */
+#guestFollowingList .participation-category-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Android dokunma sırasında gereksiz titreşim/zıpla

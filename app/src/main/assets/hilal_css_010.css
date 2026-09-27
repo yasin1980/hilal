@@ -1,0 +1,4 @@
+
+/* V1.13.53 - Hicrî gün kartının içinde gömülü içerik yönetimi */
+.hijri-inline-composer{margin:0 0 12px;border:1px solid rgba(228,187,87,.28);border-radius:16px;background:rgba(255,255,255,.035);overflow:hidden}
+.hijri-inline-composer>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 

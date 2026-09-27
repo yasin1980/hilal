@@ -1,0 +1,70 @@
+
+/* V90U — SADECE Paylaştıklarım +Ekle paneli
+   Açıldığında sabit kalır; kendi kendine kapanmaz. */
+
+#hilalDuaAddSheetV53{
+  overscroll-behavior:contain!important;
+}
+
+#hilalDuaAddSheetV53.hdv53-open{
+  display:flex!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+
+#hilalDuaAddSheetV53.hdv53-open .hdv53-sheet{
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
+#hilalDuaAddSheetV53 .hdv53-option{
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+
+#hilalDuaMyPageV53.hdv53-open #hilalDuaAddBtnV53{
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+</style>
+<script data-disabled-by="paylastiklarim-clean-v2" id="hilal-my-add-sheet-stable-v90u-js" type="text/plain">
+(function(){
+'use strict';
+
+let openedAt=0;
+
+function sheet(){
+  return document.getElementById('hilalDuaAddSheetV53');
+}
+
+function openStable(){
+  const s=sheet();
+  if(!s) return;
+
+  openedAt=Date.now();
+  s.classList.add('hdv53-open');
+  s.setAttribute('aria-hidden','false');
+}
+
+function closeStable(){
+  const s=sheet();
+  if(!s) return;
+
+  s.classList.remove('hdv53-open');
+  s.setAttribute('aria-hidden','true');
+}
+
+function installCleanAddButton(){
+  const old=document.getElementById('hilalDuaAddBtnV53');
+  if(!old || old.dataset.v90uClean==='1') return;
+
+  /* V90T'deki pointerdown + click ikili açılışını ve eski listener'ları temizler */
+  const clean=old.cloneNode(true);
+  clean.dataset.v90uClean='1';
+
+  clean.addEventListener('click',function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImme

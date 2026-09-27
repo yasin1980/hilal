@@ -1,0 +1,17 @@
+
+html,body{
+  width:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overscroll-behavior-y:none!important;
+}
+body{
+  overflow-x:hidden!important;
+  background:#04392f!important;
+}
+
+/* Tüm rol sayfalarında gereksiz siyah dip boşluğu oluşturabilecek sabit/min yükseklikleri kır. */
+.page{
+  min-height:100dvh!important;
+  height:a

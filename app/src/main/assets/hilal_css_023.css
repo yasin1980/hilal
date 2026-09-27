@@ -1,0 +1,13 @@
+
+#calendarPage #hilalKerahatCard{
+  display:none!important;
+}
+</style>
+<style id="hilal-prayer-head-balance-v84">
+#calendarPage .hilal-prayer-head-card .hilal-card-kicker{
+  display:none!important;
+}
+
+/* Cami solda, söz ortada, Allah lafzı sağda; dengeli ve simetrik görünüm */
+#calendarPage .hilal-prayer-head-card{
+  grid-template-columns:46px minmax(0,1fr) 46px!im
