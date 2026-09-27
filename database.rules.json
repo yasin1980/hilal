@@ -18,6 +18,10 @@
       "hilal_hijri_daily_content_v1": {
         ".read": true,
         ".write": true
+      },
+      "hilal_dua_requests_v2": {
+        ".read": true,
+        ".write": true
       }
     }
   }
