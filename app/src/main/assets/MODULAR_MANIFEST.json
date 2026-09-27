@@ -1,0 +1,11 @@
+{
+  "base": "HILAL_V56_DUA_CALISAN_MOTOR_V59.html",
+  "css_files": 89,
+  "js_files": 42,
+  "images": [
+    "hilal_image_01_6e045ce7e2.png",
+    "hilal_image_02_95f7b90618.png",
+    "hilal_image_03_04a60f17ca.png"
+  ],
+  "note": "Inline top-level CSS/JS extracted in original execution order; V59 logic preserved."
+}
