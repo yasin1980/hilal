@@ -20621,8 +20621,7 @@ const HILAL_CLOUD_KEYS=new Set([
   "hilal_hijri_daily_content_v1",
   "hilal_publications_v1",
   "hilal_teacher_announcements_v1",
-  "hilal_follower_participations_v1",
-  "hilal_dua_requests_v2"
+  "hilal_follower_participations_v1"
 ]);
 const HILAL_CLOUD_META_PREFIX="hilal_cloud_meta_v2::";
 let __hilalCloudApplying=false;
@@ -20659,12 +20658,6 @@ function hilalCloudRefreshKey(key){
       hijriDailyEntries=loadJSON(key,[]);
       if(typeof refreshHijriDailyEverywhere==="function")refreshHijriDailyEverywhere();
       else if(typeof renderDailyEntries==="function")renderDailyEntries();
-    }else if(key==="hilal_dua_requests_v2"){
-      /* Dua İstekleri kendi kilitli motorunu değiştirmeden yalnız veri değişikliği bildirimi alır. */
-      try{window.dispatchEvent(new StorageEvent("storage",{key:key,newValue:localStorage.getItem(key)}));}catch(_){
-        try{window.dispatchEvent(new CustomEvent("storage",{detail:{key:key}}));}catch(__){}
-      }
-      try{document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:key,source:"cloud"}}));}catch(_){}
     }else if(key==="hilal_follower_participations_v1"){
       if(typeof syncStateFromStorage==="function")syncStateFromStorage();
       if(typeof renderTeacherParticipations==="function")renderTeacherParticipations();
@@ -30962,8 +30955,8 @@ function publishParticipation(){
     ownerName:participationUserName(),
     type:participationComposerType,
     title,description,
-    audience:"public",followerOnly:false,status:"published",
-    approvalDecision:"public_shared_auto",
+    audience:"followers",followerOnly:true,status:"published",
+    approvalDecision:"follower_private_auto",
     publishedAt:now,createdAt:now,
     participants:{}
   };
@@ -31050,12 +31043,15 @@ function deleteParticipation(id){
   saveParticipations(items.filter(x=>x.id!==id));
 }
 function guestFollowingParticipationItems(){
-  /* Ortak Dua havuzu: yayınlanan katılımlar bütün Hilâl kullanıcılarına görünür. */
-  return allParticipations().filter(p=>p && p.status==="published");
+  return allParticipations().filter(p=>
+    p.status==="published" &&
+    p.followerOnly===true &&
+    currentUserFollowsTeacherOwner(p.ownerId)
+  );
 }
 function takeJuz(pid,no){
   const items=allParticipations(),p=items.find(x=>x.id===pid);
-  if(!p||p.status!=="published")return;
+  if(!p||!currentUserFollowsTeacherOwner(p.ownerId))return;
   const j=(p.juz||[]).find(x=>Number(x.no)===Number(no));
   if(!j)return;
   const u=String(userKey());
@@ -31082,7 +31078,7 @@ function remainingCapacity(p){
 }
 function takeParticipationAmount(pid,amount){
   const items=allParticipations(),p=items.find(x=>x.id===pid);
-  if(!p||p.status!=="published")return;
+  if(!p||!currentUserFollowsTeacherOwner(p.ownerId))return;
   amount=Math.max(0,parseInt(amount,10)||0);
   if(!amount){alert("Geçerli bir miktar girin.");return}
   const cap=remainingCapacity(p);
@@ -44224,7 +44220,68 @@ window.addEventListener('pagehide',stopCamera);
   color:#fff7d6!important;
   border-color:rgba(239,199,94,.92)!important;
   background:linear-gradient(180deg,#0c8b62,#086247)!important;
-  box-shadow:0 0 0 2px rgba(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  box-shadow:0 0 0 2px rgb
+<!-- HILAL V55 — Dua İstekleri: çalışan Takip Ettiklerim Firebase hattına gerçek köprü -->
+<script id="hilal-v55-dua-firebase-following-engine">
+(function(){
+  "use strict";
+  const KEY="hilal_follower_participations_v1";
+  const DUA_KINDS=new Set(["hilal_dua_request","hilal_zikir_request","hilal_yasin_request","hilal_hatim_request"]);
+  let timer=0, pushing=false, lastSeen="";
+
+  function raw(){try{return localStorage.getItem(KEY)||"[]"}catch(_){return "[]"}}
+  function list(){try{const a=JSON.parse(raw());return Array.isArray(a)?a:[]}catch(_){return []}}
+  function containsDua(){return list().some(x=>x&&DUA_KINDS.has(String(x.kind||"")))}
+  function refresh(){
+    try{document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:KEY,source:"cloud-v55"}}))}catch(_){}
+    try{window.dispatchEvent(new CustomEvent("hilal:dua-cloud-refresh",{detail:{key:KEY}}))}catch(_){}
+    try{typeof syncStateFromStorage==="function"&&syncStateFromStorage()}catch(_){}
+    try{typeof forceLiveRefresh==="function"&&forceLiveRefresh()}catch(_){}
+  }
+  async function push(){
+    if(pushing||window.__hilalCloudApplying||typeof hilalCloudPush!=="function")return;
+    const r=raw(); if(r===lastSeen)return;
+    let a;try{a=JSON.parse(r)}catch(_){return}
+    if(!Array.isArray(a))return;
+    pushing=true;
+    try{const ok=await hilalCloudPush(KEY,a);if(ok)lastSeen=r;}catch(e){console.warn("[V55 dua push]",e)}
+    finally{pushing=false}
+  }
+  function queue(){clearTimeout(timer);timer=setTimeout(push,100)}
+  async function pull(force){
+    if(typeof hilalCloudPullKey!=="function")return;
+    const before=raw();
+    try{await hilalCloudPullKey(KEY,{force:!!force});}catch(e){return}
+    const after=raw();
+    if(after!==before){lastSeen=after;refresh()}
+  }
+
+  /* Dua motorlarının doğrudan localStorage yazımlarını çalışan cloud push hattına bağla. */
+  const nativeSet=Storage.prototype.setItem;
+  if(!Storage.prototype.__hilalV55DuaCloud){
+    Storage.prototype.setItem=function(k,v){
+      const ret=nativeSet.apply(this,arguments);
+      if(this===localStorage&&k===KEY&&!window.__hilalCloudApplying)queue();
+      return ret;
+    };
+    try{Object.defineProperty(Storage.prototype,"__hilalV55DuaCloud",{value:true})}catch(_){}
+  }
+  document.addEventListener("hilal:data-changed",function(e){
+    const d=e&&e.detail||{}; if(d.key!==KEY)return;
+    if(String(d.source||"").startsWith("cloud")){refresh();return}
+    queue();
+  });
+
+  /* EventSource olmayan WebView/content:// testlerinde de ikinci telefon verisini al. */
+  setInterval(function(){if(!document.hidden)pull(false)},2500);
+  window.addEventListener("focus",()=>pull(true));
+  window.addEventListener("online",()=>pull(true));
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull(true)});
+  setTimeout(()=>pull(true),700);
+  setTimeout(()=>{if(containsDua())queue()},1200);
+})();
+</script>
+a(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
 }
 </style>
 <script>
