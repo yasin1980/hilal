@@ -7918,7 +7918,7 @@ body.admin-profile-modal-open{
   margin:0 0 8px!important;
 }
 .admin-profile-browser-count{
-  min-height:22px!important;
+  min-height:44px!important;
   margin-bottom:8px!important;
   text-align:right!important;
   font-size:11.5px!important;
@@ -18545,6 +18545,277 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
   -webkit-backdrop-filter:none!important;
 }
 </style>
+
+<style id="v98-splash-fullscreen-only">
+/* YALNIZ AÇILIŞ EKRANI — mevcut görsel tam ekran */
+#splash,
+.splash,
+#splashScreen,
+.splash-screen,
+.opening-screen,
+.intro-screen{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:#064c3a!important;
+  overflow:hidden!important;
+}
+#splash img,
+.splash img,
+#splashScreen img,
+.splash-screen img,
+.opening-screen img,
+.intro-screen img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  display:block!important;
+}
+</style>
+
+
+<style id="v99-real-startscreen-fullscreen">
+/* YALNIZ GERÇEK AÇILIŞ EKRANI:
+   siyah/krem üst bantları kaldır, mevcut görseli en üstten başlat. */
+#startScreen{
+  padding-top:0!important;
+  margin:0!important;
+  min-height:100vh!important;
+  min-height:100dvh!important;
+  height:100dvh!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+#startScreen .login-stage{
+  position:relative!important;
+  inset:0!important;
+  margin:0!important;
+  padding:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+#startScreen .login-stage-bg{
+  position:absolute!important;
+  inset:0!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  width:100%!important;
+  height:100%!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+#startScreen .login-stage-mask{
+  position:absolute!important;
+  inset:0!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  width:100%!important;
+  height:100%!important;
+}
+/* Açılış butonları görselin üzerinde kalır; safe-area boşluğu üretmez. */
+#startScreen .login-teacher-compact,
+#startScreen .login-admin{
+  top:8px!important;
+}
+</style>
+
+
+<style id="v100-start-login-buttons-down">
+/* YALNIZ AÇILIŞ: Hoca Girişi + Yönetici/Hilâl butonu 48px aşağı */
+#startScreen .login-teacher-compact,
+#startScreen .login-admin{
+  top:56px!important; /* V99: 8px + 48px */
+}
+</style>
+
+
+<style id="v101-calendar-black-gap-remove-only">
+/* YALNIZ TAKVİM & EZAN:
+   üstteki siyah boşluğu kapat; mevcut zümrüt sahne/görsel yukarı doğru uzasın. */
+#calendarPage.hilal-prayer-pro-page{
+  padding-top:0!important;
+  margin-top:0!important;
+  background:#062f23!important;
+}
+#calendarPage.hilal-prayer-pro-page.hilal-top-menu-gap-v1{
+  padding-top:0!important;
+}
+#calendarPage .hilal-prayer-scene{
+  top:0!important;
+  inset:0!important;
+  min-height:100%!important;
+  background-position:center top!important;
+}
+/* İlk altın Takvim kartını üst yeşil navigasyonun hemen altına yaklaştır. */
+#calendarPage > .hilal-hijri-card:first-of-type{
+  margin-top:0!important;
+}
+</style>
+
+
+<style id="v102-calendar-top-gap-real-fix">
+/* YALNIZ TAKVİM & EZAN — üst siyah bant tamamen kapanır */
+#mainApp > #calendarPage.page.hilal-prayer-pro-page{
+  padding-top:0!important;
+  margin-top:-86px!important;
+  min-height:calc(100dvh + 86px)!important;
+  background:#063f31!important;
+}
+
+/* Zümrüt/kubbe sahnesi yukarı taşınan alanı da doldurur */
+#calendarPage > .hilal-prayer-scene{
+  position:absolute!important;
+  top:0!important;
+  right:0!important;
+  bottom:0!important;
+  left:0!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:100%!important;
+  background-position:center top!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+}
+
+/* İlk Hicrî Takvim çerçevesi üst yeşil alanın hemen altında başlasın */
+#calendarPage > .hilal-hijri-card.hilal-visual-hijri-v91{
+  margin-top:0!important;
+}
+
+/* Genel üst-menü boşluk kuralları bu sayfada yeniden siyah alan açmasın */
+#calendarPage.hilal-top-menu-gap-v1{
+  padding-top:0!important;
+}
+</style>
+
+
+<style id="v103-calendar-background-up-content-safe">
+/* TAKVİM & EZAN: içerik kesilmesin, yalnız zümrüt arka plan yukarı uzasın */
+#mainApp > #calendarPage.page.hilal-prayer-pro-page{
+  margin-top:0!important;
+  padding-top:0!important;
+  min-height:100dvh!important;
+  background:#063f31!important;
+  position:relative!important;
+}
+
+/* Arka sahne sayfanın tamamını, üst bölge dahil, doldurur */
+#calendarPage > .hilal-prayer-scene{
+  position:absolute!important;
+  inset:0!important;
+  top:0!important;
+  width:100%!important;
+  min-height:100%!important;
+  background-position:center top!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+
+/* Hicrî Takvim kartı artık yukarı kesilmez */
+#calendarPage > .hilal-hijri-card.hilal-visual-hijri-v91{
+  margin-top:14px!important;
+}
+
+/* Bu sayfada eski genel üst boşluk yeniden siyah bant üretmesin */
+#calendarPage.hilal-top-menu-gap-v1{
+  padding-top:0!important;
+}
+</style>
+
+
+<style id="v104-calendar-emerald-camera-gap">
+/* YALNIZ TAKVİM & EZAN — kamera/delik alanı kadar zümrüt üst nefes payı */
+#mainApp > #calendarPage.page.hilal-prayer-pro-page{
+  padding-top:44px!important;
+  background:#063f31!important;
+  box-sizing:border-box!important;
+}
+
+/* Boşluk da Takvim sahnesiyle aynı koyu zümrüt tonda kalsın */
+#calendarPage::after{
+  content:""!important;
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  height:44px!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,#064936 0%,#063f31 100%)!important;
+}
+
+/* Hicrî Takvim kartı kendi mevcut ölçü/hizasında kalır */
+#calendarPage > .hilal-hijri-card.hilal-visual-hijri-v91{
+  margin-top:0!important;
+}
+</style>
+
+
+<!-- HILAL V112 — ANA MENU EV: ONAYLANAN SEFFAF YUZEY / GUVENLI HEAD CSS -->
+<style id="hilal-v112-home-approved-glass">
+#hilalNavigation #hilalNavigationBack.hilal-navigation__back{
+  border:1px solid rgba(255,255,255,.16)!important;
+  background:rgba(255,255,255,.10)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:0 7px 18px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+</style>
+
+
+<style id="v122-calendar-bismillah-wide-lower">
+/* YALNIZ TAKVİM & EZAN — mevcut üst siyah şeride altın Besmele. Yerleşimi değiştirmez. */
+#calendarPage{position:relative!important;}
+#calendarPage .hilal-calendar-bismillah-v120{
+  position:absolute!important;
+  top:5px!important;
+  left:50%!important;
+  right:auto!important;
+  width:68%!important;
+  height:29px!important;
+  z-index:8!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  direction:rtl!important;
+  pointer-events:none!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  color:#e8c15a!important;
+  font-family:"Noto Naskh Arabic","Amiri","Traditional Arabic",serif!important;
+  font-size:clamp(21px,5.8vw,28px)!important;
+  font-weight:700!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  transform:translateX(-50%) scaleX(1.38)!important;
+  transform-origin:center center!important;
+  text-shadow:0 1px 0 #6d4b08,0 0 5px rgba(255,215,112,.42),0 2px 7px rgba(0,0,0,.88)!important;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -19111,6 +19382,7 @@ body.hilal-dua-v165-open #mainMenuTrigger{display:flex!important;visibility:visi
 </main>
 <main class="page hilal-prayer-pro-page hilal-top-menu-gap-v1" id="calendarPage">
 <div aria-hidden="true" class="hilal-prayer-scene"></div>
+<div class="hilal-calendar-bismillah-v120" lang="ar" dir="rtl" aria-label="Bismillahirrahmanirrahim">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
 <section class="hilal-hijri-card hilal-visual-hijri-v91">
 <div aria-hidden="true" class="hilal-medallion hilal-medallion-muhammed">
 <span class="hilal-medallion-inner">محمد</span>
@@ -21284,8 +21556,9 @@ function toggleGuestMenu(){document.getElementById("guestMenu")?.classList.toggl
 function closeGuestMenu(){document.getElementById("guestMenu")?.classList.add("hidden")}
 function guestGoPage(id,b){
  showPage(id);
- document.querySelectorAll("#guestMenu [data-gpage]").forEach(x=>x.classList.remove("active"));
- if(b)b.classList.add("active");closeGuestMenu();
+ document.querySelectorAll("#guestMenu .guest-menu-grid > button,#guestMenu .guest-menu-grid > a,#guestMenu .guest-menu-grid > [role=\"button\"]").forEach(x=>x.classList.remove("active"));
+ if(b)b.classList.add("active");
+ closeGuestMenu();
  if(id==="announcementsPage"){try{syncStateFromStorage();renderSharedAnnouncementsFeed()}catch(e){}}
  if(id==="generalPublicationsPage"){try{syncStateFromStorage();renderGeneralPublicationsFeed()}catch(e){}}
  if(id==="guestFollowingPage"){try{syncStateFromStorage();renderGuestFollowingPage()}catch(e){}}
@@ -21295,7 +21568,17 @@ function guestGoPage(id,b){
  if(id==="dailyVirtPage"){try{renderVirtList()}catch(e){}}
  if(id==="sunnetIhyaPage"){try{enterSunnetIhyaPage()}catch(e){}}
 }
-document.addEventListener("click",e=>{const m=document.getElementById("guestMenu"),b=document.getElementById("mainMenuTrigger");if(m&&!m.classList.contains("hidden")&&!m.contains(e.target)&&!b?.contains(e.target))closeGuestMenu()});
+document.addEventListener("click",e=>{
+ const m=document.getElementById("guestMenu"),trigger=document.getElementById("mainMenuTrigger");
+ const picked=e.target?.closest?.("#guestMenu .guest-menu-grid > button,#guestMenu .guest-menu-grid > a,#guestMenu .guest-menu-grid > [role=\"button\"]");
+ if(picked){
+   m?.querySelectorAll(".guest-menu-grid > button,.guest-menu-grid > a,.guest-menu-grid > [role=\"button\"]").forEach(x=>x.classList.remove("active"));
+   picked.classList.add("active");
+   closeGuestMenu();
+   return;
+ }
+ if(m&&!m.classList.contains("hidden")&&!m.contains(e.target)&&!trigger?.contains(e.target))closeGuestMenu();
+});
 
 
 
@@ -29914,10 +30197,14 @@ function sunnetDailyBackdrop(event){
   }
 }
 
-function enterSunnetIhyaPage(){
-  try{renderSunnetIhya()}catch(e){}
-  setTimeout(()=>{try{openSunnetDailyModal(false)}catch(e){}},180);
+let __hilalSunnetDataPromise=null;
+function hilalEnsureSunnetData(){
+ if(Array.isArray(SUNNET_IHYA_DATA)&&SUNNET_IHYA_DATA.length>=4000)return Promise.resolve(SUNNET_IHYA_DATA);
+ if(__hilalSunnetDataPromise)return __hilalSunnetDataPromise;
+ __hilalSunnetDataPromise=new Promise((resolve,reject)=>{const sc=document.createElement("script");sc.src="sunnet_ihya_data_v65.js";sc.async=true;sc.onload=()=>{try{window.SUNNET_IHYA_DATA=SUNNET_IHYA_DATA}catch(e){}resolve(SUNNET_IHYA_DATA)};sc.onerror=()=>{__hilalSunnetDataPromise=null;reject(new Error("sunnet-data"))};document.head.appendChild(sc)});
+ return __hilalSunnetDataPromise;
 }
+function enterSunnetIhyaPage(){hilalEnsureSunnetData().then(()=>{try{renderSunnetIhya()}catch(e){}setTimeout(()=>{try{openSunnetDailyModal(false)}catch(e){}},180)}).catch(()=>{try{renderSunnetIhya()}catch(e){}})}
 
 function sunnetEsc(v){
   return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -29958,11 +30245,7 @@ function toggleSunnetCategory(key){
   const complete=arr.length>0 && arr.every(x=>!!claims[String(x.id)]);
   const actorHasClaim=arr.some(x=>claims[String(x.id)]?.ownerKey===actor.key);
 
-  // Bölüm tamamen doluysa yalnızca o bölümde sünnet alan kişi açabilir.
-  if(complete && !actorHasClaim){
-    return;
-  }
-
+  // V116: Tüm bölümler içerikleriyle birlikte açılabilir; claim/ilerleme motoru aynen korunur.
   const o=loadSunnetOpen();
   o["cat_"+key]=!o["cat_"+key];
   saveSunnetOpen(o);
@@ -30115,13 +30398,10 @@ function renderSunnetIhya(){
     const complete=done===arr.length;
     const actorHasClaim=arr.some(x=>claims[String(x.id)]?.ownerKey===actor.key);
 
-    // Tamamlanmış bölüm otomatik kapalıdır.
-    // Yalnızca o bölümde sünneti olan kişi isterse tekrar açabilir.
-    const catOpen = complete
-      ? (actorHasClaim && !!open["cat_"+ci])
-      : !!open["cat_"+ci];
+    // V116: Tamamlanmış bölümler de gerçek sünnet içerikleriyle açılır.
+    const catOpen = !!open["cat_"+ci];
 
-    const locked=complete && !actorHasClaim;
+    const locked=false;
     const incompleteAlert=done>0 && !complete;
     const catPct=Math.round(done*100/arr.length);
 
@@ -30133,11 +30413,11 @@ function renderSunnetIhya(){
             <div class="sunnet-cat-title">${sunnetEsc(cat.name)}</div>
             <div class="sunnet-cat-status">${
               complete
-                ? (actorHasClaim ? "✓ Tamamlandı • Aldığınız sünneti yönetmek için açabilirsiniz" : "✓ Tamamlandı • Kilitli")
+                ? "✓ Tamamlandı • Listeyi görmek için açabilirsiniz"
                 : done+" / "+arr.length+" sünnet alındı"
             }</div>
           </span>
-          <span class="sunnet-cat-chevron">${locked?"🔒":"⌄"}</span>
+          <span class="sunnet-cat-chevron">⌄</span>
         </button>
 
         <div class="sunnet-cat-progress"><i style="width:${catPct}%"></i></div>
@@ -30173,8 +30453,8 @@ function renderSunnetIhya(){
                 </div>
               </article>`;
           }).join("") : ""}
-          ${complete && actorHasClaim
-            ? `<div class="sunnet-lock-note">Bu bölüm tamamlanmıştır. Yalnızca bu bölümde sünnet alan kişiler kendi aldıkları sünnetten vazgeçmek için bölümü açabilir.</div>`
+          ${complete
+            ? `<div class="sunnet-lock-note">Bu bölüm tamamlanmıştır. Sünnetlerin tamamını inceleyebilirsiniz.</div>`
             : ""}
         </div>
       </section>`;
@@ -35496,11 +35776,26 @@ load();
       item.textContent='☾  Kaza Namazlarım';
     }
     item.id='kazaNamazlarimMenuItem';
+    item.dataset.gpage='kazaNamazlarimPage';
+    item.removeAttribute('data-page');
+    item.removeAttribute('data-tpage');
+    item.removeAttribute('data-apage');
+    item.classList.remove('active');
     item.style.cursor='pointer';
     item.addEventListener('click',function(e){
       e.preventDefault();
       e.stopPropagation();
-      /* Kaza Namazlarım seçilince açık rol menüsünü kapat, sonra sayfayı aç. */
+
+      /* TEK AKTİF NAVİGASYON:
+         Kaza seçilince Takvim & Ezan dahil bütün eski aktiflikler temizlenir. */
+      const roleMenu=item.closest('#guestMenu,#teacherMenu,#adminMenu');
+      if(roleMenu){
+        roleMenu.querySelectorAll('.guest-menu-grid > button,.guest-menu-grid > a,.guest-menu-grid > [role="button"],.teacher-menu-grid > button,.teacher-menu-grid > a,.admin-menu-grid > button,.admin-menu-grid > a')
+          .forEach(function(x){ x.classList.remove('active'); });
+      }
+      item.classList.add('active');
+
+      /* Önce menüyü kapat, sonra Kaza sayfasını aç. */
       ['guestMenu','teacherMenu','adminMenu'].forEach(function(id){
         document.getElementById(id)?.classList.add('hidden');
       });
@@ -43358,7 +43653,7 @@ else window.VerticalPageScrollControllerV112.init();
 }
 .hilal-navigation__back .hilal-navigation__arrow{display:none!important;}
 .hilal-navigation__home{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;color:#f0cd76!important;}
-.hilal-navigation__home svg{display:block!important;width:22px!important;height:22px!important;}
+.hilal-navigation__home svg{display:block!important;width:22px!important;height:44px!important;}
 </style>
 <style id="hilal-transition-vertical-stability-v114">
 /* V114 — Sayfalar arası geçişte dikey sallanmayı önler.
@@ -43595,7 +43890,7 @@ html,body{
   Hatim: tek kategori tıklama motoru, yerel durum önce güncellenir.
   Diğer sınıflar sabittir.
 -->
-\n\n\n
+
 
 
 
@@ -43906,69 +44201,8 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera(
 window.addEventListener('pagehide',stopCamera);
 })();
 </script>
-<!-- HİLÂL: Dua İstekleri iç kütüphanesi tamamen kaldırıldı. Yalnız navigasyon butonu yer tutucu olarak korunur. Yeni içerik daha sonra temiz bağlantıyla eklenecek. --></body>
-</html>
-
-
-
-<!-- HILAL V2: only Qibla camera position + Ezan notification visibility/state -->
-<style id="hilal-v2-qibla-camera-lower-and-ezan-active-fix">
-/* Kamera açıkken pusula çemberini görüntünün biraz daha aşağı/orta bölümüne al. */
-#calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{
-  margin-top:42px!important;
-  margin-bottom:10px!important;
-}
-@media(max-width:390px){
-  #calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{margin-top:34px!important;}
-}
-/* Eski katmanlarda gizlenmiş Ezan Hatırlatıcı kartını tekrar aktif/görünür tut. */
-#calendarPage #ezanReminderCard{display:block!important;visibility:visible!important;opacity:1!important;}
-/* Aktif vakit zili eski genel 3D stiller tarafından ezilmesin. */
-#calendarPage .ezan-vakit-bell.active,
-#calendarPage [data-ezan-bell].active{
-  color:#fff7d6!important;
-  border-color:rgba(239,199,94,.92)!important;
-  background:linear-gradient(180deg,#0c8b62,#086247)!important;
-  box-shadow:0 0 
-<script defer src="sunnet_ihya_data_v65.js"></script>
-0 2px rgba(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
-}
-</style>
-<script id="hilal-v2-ezan-notification-state-refresh">
-(function(){
-  function refresh(){
-    try{window.renderEzanReminderRows?.();}catch(e){}
-    try{window.refreshPrayerBellButtons?.();}catch(e){}
-    try{window.syncEzanRemindersToNative?.();}catch(e){}
-  }
-  window.addEventListener('load',()=>setTimeout(refresh,900));
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refresh,120)});
-  window.addEventListener('pageshow',()=>setTimeout(refresh,180));
-})();
-</script>
-<style id="hilal-v54-qibla-premium-frame">
-/* V54 — yalnız Kıble pusulası: mavi premium çerçeve/halka.
-   Kıble yakalandığında mevcut q1432-aligned durumu yeşile döner. */
-#calendarPage .hilal-qibla-v1428{
-  border:1.5px solid rgba(55,166,255,.72)!important;
-  border-radius:24px!important;
-  box-shadow:0 18px 42px rgba(0,0,0,.34),0 0 0 1px rgba(65,174,255,.10),0 0 22px rgba(36,145,255,.14)!important;
-}
-#calendarPage .q1428-compass:not(.q1432-aligned){
-  border-color:#3aa7ff!important;
-  box-shadow:
-    0 20px 44px rgba(0,0,0,.44),
-    0 0 0 2px #071827,
-    0 0 0 5px #319cf3,
-    0 0 0 8px #0b2941,
-    0 0 24px rgba(48,158,255,.26),
-    inset 0 0 0 2px #7bc7ff,
-    inset 0 0 0 7px #061522,
-    inset 0 0 0 9px rgba(48,158,255,.42),
-    inset 0 0 50px rgba(0,0,0,.66)!important;
-}
-#calendarPage .q1428-compass:not(.q1432-aligned) .q
-<!-- HILAL V46 — DUA REQUESTS V2 TELEFONLAR ARASI CANLI SENKRON -->
+<!-- HİLÂL: Dua İstekleri iç kütüphanesi tamamen kaldırıldı. Yalnız navigasyon butonu yer tutucu olarak korunur. Yeni içerik daha sonra temiz bağlantıyla eklenecek. -->
+<!-- V59: V56 hızlı taban + çalışan tek Dua iframe/Firebase köprüsü -->
 <script id="hilal-v56-dua-firebase-canonical-bridge">
 (function(){
 'use strict';
@@ -44068,7 +44302,67 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&doc
 })();
 </script>
 
+</body>
+</html>
 
+
+
+<!-- HILAL V2: only Qibla camera position + Ezan notification visibility/state -->
+<style id="hilal-v2-qibla-camera-lower-and-ezan-active-fix">
+/* Kamera açıkken pusula çemberini görüntünün biraz daha aşağı/orta bölümüne al. */
+#calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{
+  margin-top:42px!important;
+  margin-bottom:10px!important;
+}
+@media(max-width:390px){
+  #calendarPage .hilal-qibla-v1428.qcam-live > .q1428-compass{margin-top:34px!important;}
+}
+/* Eski katmanlarda gizlenmiş Ezan Hatırlatıcı kartını tekrar aktif/görünür tut. */
+#calendarPage #ezanReminderCard{display:block!important;visibility:visible!important;opacity:1!important;}
+/* Aktif vakit zili eski genel 3D stiller tarafından ezilmesin. */
+#calendarPage .ezan-vakit-bell.active,
+#calendarPage [data-ezan-bell].active{
+  color:#fff7d6!important;
+  border-color:rgba(239,199,94,.92)!important;
+  background:linear-gradient(180deg,#0c8b62,#086247)!important;
+  box-shadow:0 0 0 2px rgba(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+</style>
+<!-- V63: Sünnet-i İhya 4000 kayıt açılışta parse edilmez; sayfa ilk açıldığında ayrı asset yüklenir. -->
+<script id="hilal-v2-ezan-notification-state-refresh">
+(function(){
+  function refresh(){
+    try{window.renderEzanReminderRows?.();}catch(e){}
+    try{window.refreshPrayerBellButtons?.();}catch(e){}
+    try{window.syncEzanRemindersToNative?.();}catch(e){}
+  }
+  window.addEventListener('load',()=>setTimeout(refresh,900));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(refresh,120)});
+  window.addEventListener('pageshow',()=>setTimeout(refresh,180));
+})();
+</script>
+<style id="hilal-v54-qibla-premium-frame">
+/* V54 — yalnız Kıble pusulası: mavi premium çerçeve/halka.
+   Kıble yakalandığında mevcut q1432-aligned durumu yeşile döner. */
+#calendarPage .hilal-qibla-v1428{
+  border:1.5px solid rgba(55,166,255,.72)!important;
+  border-radius:24px!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.34),0 0 0 1px rgba(65,174,255,.10),0 0 22px rgba(36,145,255,.14)!important;
+}
+#calendarPage .q1428-compass:not(.q1432-aligned){
+  border-color:#3aa7ff!important;
+  box-shadow:
+    0 20px 44px rgba(0,0,0,.44),
+    0 0 0 2px #071827,
+    0 0 0 5px #319cf3,
+    0 0 0 8px #0b2941,
+    0 0 24px rgba(48,158,255,.26),
+    inset 0 0 0 2px #7bc7ff,
+    inset 0 0 0 7px #061522,
+    inset 0 0 0 9px rgba(48,158,255,.42),
+    inset 0 0 50px rgba(0,0,0,.66)!important;
+}
+#calendarPage .q1428-compass:not(.q1432-aligned) .q
 <!-- HILAL V43 — DUA ALT SAYFALARI GERİ BUTONU GERÇEK MENÜ HİZASI -->
 <style id="hilal-v43-dua-back-real-menu-align-css">
 /* Konum JS tarafından gerçek hamburger düğmesinin ekrandaki konumundan hesaplanır. */
@@ -44146,7 +44440,8 @@ body.hilal-dua-subpage-active-v76 #hilalNavigationBack,
 })();
 </script>
 
-1428-ring{
+<style id="hilal-qibla-ring-leak-fix-restored">
+#calendarPage .q1428-ring{
   border-color:#48adff!important;
   box-shadow:0 0 0 1px rgba(112,198,255,.34),0 0 16px rgba(48,158,255,.28)!important;
 }
@@ -44660,7 +44955,78 @@ body #teacherPublicationList .feed-type,body #teacherAnnouncementFeed .feed-type
 }
 </style>
 
-\n<!-- HILAL PREMIUM YAYIN-DUYURU KART SINIFI V3 — SADECE GORSEL, MOTOR YOK -->\n<style id="hilal-premium-publish-cards-v3">\n:root{\n --hilal-premium-emerald-1:#07523f;\n --hilal-premium-emerald-2:#043b30;\n --hilal-premium-emerald-3:#032f27;\n --hilal-premium-gold:#d9b760;\n --hilal-premium-text:#fffdf6;\n --hilal-premium-muted:#d7e4df;\n --hilal-premium-accent:#67d9ad;\n --hilal-premium-shadow:0 14px 30px rgba(0,0,0,.27),0 0 15px rgba(217,183,96,.12),inset 0 1px 0 rgba(255,255,255,.07);\n}\n/* Hoca > Yayınlarım dış sarı kutuyu kaldır: başlık ve liste tek premium yüzey hissi */\n#teacherPublicationsPage .teacher-publications-list-card{\n background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;padding:0!important;\n}\n#teacherPublicationsPage .teacher-publications-list-head,\n#teacherMyAnnouncementsPage .teacher-own-announcement-head{\n background:linear-gradient(145deg,var(--hilal-premium-emerald-1),var(--hilal-premium-emerald-2))!important;\n border:0!important;outline:0!important;border-radius:24px!important;\n box-shadow:var(--hilal-premium-shadow)!important;color:var(--hilal-premium-text)!important;\n}\n/* Yayın + duyuru + genel paylaşılan kartlar: sert altın çizgi yok */\n#teacherPublicationList .feed-card,\n#teacherAnnouncementFeed .teacher-announcement-card,\n#generalPublicationsPage .shared-feed-card,\n#announcementsPage .shared-feed-card,\n#sharedAnnouncementsFeed .shared-feed-card,\n.shared-feed-card.hilal-shared-premium-button-card{\n background:linear-gradient(150deg,var(--hilal-premium-emerald-1),var(--hilal-premium-emerald-2) 62%,var(--hilal-premium-emerald-3))!important;\n border:0!important;outline:0!important;border-radius:26px!important;\n box-shadow:var(--hilal-premium-shadow)!important;color:var(--hilal-premium-text)!important;\n}\n/* Dinamik kartlara eski sınıflardan taşınan sarı çerçeveyi de kesin kapat */\n#teacherPublicationList > *,#teacherAnnouncementFeed > *,#sharedAnnouncementsFeed > *{outline-color:transparent!important;}\n#teacherPublicationList .feed-card::before,#teacherPublicationList .feed-card::after,\n#teacherAnnouncementFeed .teacher-announcement-card::before,#teacherAnnouncementFeed .teacher-announcement-card::after,\n.shared-feed-card::before,.shared-feed-card::after{border-color:transparent!important;outline:0!important;}\n/* Okunabilir premium tipografi */\n#teacherPublicationList .feed-card,#teacherAnnouncementFeed .teacher-announcement-card,.shared-feed-card{\n --text:var(--hilal-premium-text);--muted:var(--hilal-premium-muted);\n}\n#teacherPublicationList .feed-card h1,#teacherPublicationList .feed-card h2,#teacherPublicationList .feed-card h3,#teacherPublicationList .feed-card h4,\n#teacherAnnouncementFeed .teacher-announcement-card h1,#teacherAnnouncementFeed .teacher-announcement-card h2,#teacherAnnouncementFeed .teacher-announcement-card h3,#teacherAnnouncementFeed .teacher-announcement-card h4,\n.shared-feed-card h1,.shared-feed-card h2,.shared-feed-card h3,.shared-feed-card h4{\n color:var(--hilal-premium-accent)!important;background:transparent!important;border:0!important;outline:0!important;\n text-shadow:0 2px 8px rgba(0,0,0,.28)!important;font-weight:900!important;\n}\n#teacherPublicationList .feed-card p,#teacherPublicationList .feed-card .feed-meta,#teacherPublicationList .feed-card .muted,\n#teacherAnnouncementFeed .teacher-announcement-card p,#teacherAnnouncementFeed .teacher-announcement-card .feed-meta,#teacherAnnouncementFeed .teacher-announcement-card .muted,\n.shared-feed-card p,.shared-feed-card .shared-meta,.shared-feed-card .muted{\n color:var(--hilal-premium-muted)!important;text-shadow:0 1px 3px rgba(0,0,0,.18)!important;\n}\n/* Kaynak etiketi kesin kutusuz */\n#teacherPublicationList .feed-meta b,#teacherPublicationList .feed-meta strong,\n#teacherAnnouncementFeed .feed-meta b,#teacherAnnouncementFeed .feed-meta strong,\n.shared-feed-card .shared-meta b,.shared-feed-card .shared-meta strong{\n border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;color:#f5f3df!important;\n}\n/* Tür rozeti: zümrüt buton, altın border yok */\n#teacherPublicationList .feed-type,#teacherAnnouncementFeed .feed-type,.shared-feed-card .shared-kind{\n background:linear-gradient(180deg,#0b6b50,#07513e)!important;color:#f8fff9!important;border:0!important;\n box-shadow:0 5px 13px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.08)!important;border-radius:999px!important;\n}\n/* Onay kutusu okunaklı ama sade */\n#teacherPublicationList .approval-note,#teacherAnnouncementFeed .approval-note{\n background:rgba(2,43,34,.52)!important;border:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;\n color:#cfe9de!important;border-radius:18px!important;\n}\n</style>\n
+
+<!-- HILAL PREMIUM YAYIN-DUYURU KART SINIFI V3 — SADECE GORSEL, MOTOR YOK -->
+<style id="hilal-premium-publish-cards-v3">
+:root{
+ --hilal-premium-emerald-1:#07523f;
+ --hilal-premium-emerald-2:#043b30;
+ --hilal-premium-emerald-3:#032f27;
+ --hilal-premium-gold:#d9b760;
+ --hilal-premium-text:#fffdf6;
+ --hilal-premium-muted:#d7e4df;
+ --hilal-premium-accent:#67d9ad;
+ --hilal-premium-shadow:0 14px 30px rgba(0,0,0,.27),0 0 15px rgba(217,183,96,.12),inset 0 1px 0 rgba(255,255,255,.07);
+}
+/* Hoca > Yayınlarım dış sarı kutuyu kaldır: başlık ve liste tek premium yüzey hissi */
+#teacherPublicationsPage .teacher-publications-list-card{
+ background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;padding:0!important;
+}
+#teacherPublicationsPage .teacher-publications-list-head,
+#teacherMyAnnouncementsPage .teacher-own-announcement-head{
+ background:linear-gradient(145deg,var(--hilal-premium-emerald-1),var(--hilal-premium-emerald-2))!important;
+ border:0!important;outline:0!important;border-radius:24px!important;
+ box-shadow:var(--hilal-premium-shadow)!important;color:var(--hilal-premium-text)!important;
+}
+/* Yayın + duyuru + genel paylaşılan kartlar: sert altın çizgi yok */
+#teacherPublicationList .feed-card,
+#teacherAnnouncementFeed .teacher-announcement-card,
+#generalPublicationsPage .shared-feed-card,
+#announcementsPage .shared-feed-card,
+#sharedAnnouncementsFeed .shared-feed-card,
+.shared-feed-card.hilal-shared-premium-button-card{
+ background:linear-gradient(150deg,var(--hilal-premium-emerald-1),var(--hilal-premium-emerald-2) 62%,var(--hilal-premium-emerald-3))!important;
+ border:0!important;outline:0!important;border-radius:26px!important;
+ box-shadow:var(--hilal-premium-shadow)!important;color:var(--hilal-premium-text)!important;
+}
+/* Dinamik kartlara eski sınıflardan taşınan sarı çerçeveyi de kesin kapat */
+#teacherPublicationList > *,#teacherAnnouncementFeed > *,#sharedAnnouncementsFeed > *{outline-color:transparent!important;}
+#teacherPublicationList .feed-card::before,#teacherPublicationList .feed-card::after,
+#teacherAnnouncementFeed .teacher-announcement-card::before,#teacherAnnouncementFeed .teacher-announcement-card::after,
+.shared-feed-card::before,.shared-feed-card::after{border-color:transparent!important;outline:0!important;}
+/* Okunabilir premium tipografi */
+#teacherPublicationList .feed-card,#teacherAnnouncementFeed .teacher-announcement-card,.shared-feed-card{
+ --text:var(--hilal-premium-text);--muted:var(--hilal-premium-muted);
+}
+#teacherPublicationList .feed-card h1,#teacherPublicationList .feed-card h2,#teacherPublicationList .feed-card h3,#teacherPublicationList .feed-card h4,
+#teacherAnnouncementFeed .teacher-announcement-card h1,#teacherAnnouncementFeed .teacher-announcement-card h2,#teacherAnnouncementFeed .teacher-announcement-card h3,#teacherAnnouncementFeed .teacher-announcement-card h4,
+.shared-feed-card h1,.shared-feed-card h2,.shared-feed-card h3,.shared-feed-card h4{
+ color:var(--hilal-premium-accent)!important;background:transparent!important;border:0!important;outline:0!important;
+ text-shadow:0 2px 8px rgba(0,0,0,.28)!important;font-weight:900!important;
+}
+#teacherPublicationList .feed-card p,#teacherPublicationList .feed-card .feed-meta,#teacherPublicationList .feed-card .muted,
+#teacherAnnouncementFeed .teacher-announcement-card p,#teacherAnnouncementFeed .teacher-announcement-card .feed-meta,#teacherAnnouncementFeed .teacher-announcement-card .muted,
+.shared-feed-card p,.shared-feed-card .shared-meta,.shared-feed-card .muted{
+ color:var(--hilal-premium-muted)!important;text-shadow:0 1px 3px rgba(0,0,0,.18)!important;
+}
+/* Kaynak etiketi kesin kutusuz */
+#teacherPublicationList .feed-meta b,#teacherPublicationList .feed-meta strong,
+#teacherAnnouncementFeed .feed-meta b,#teacherAnnouncementFeed .feed-meta strong,
+.shared-feed-card .shared-meta b,.shared-feed-card .shared-meta strong{
+ border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;color:#f5f3df!important;
+}
+/* Tür rozeti: zümrüt buton, altın border yok */
+#teacherPublicationList .feed-type,#teacherAnnouncementFeed .feed-type,.shared-feed-card .shared-kind{
+ background:linear-gradient(180deg,#0b6b50,#07513e)!important;color:#f8fff9!important;border:0!important;
+ box-shadow:0 5px 13px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.08)!important;border-radius:999px!important;
+}
+/* Onay kutusu okunaklı ama sade */
+#teacherPublicationList .approval-note,#teacherAnnouncementFeed .approval-note{
+ background:rgba(2,43,34,.52)!important;border:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+ color:#cfe9de!important;border-radius:18px!important;
+}
+</style>
+
 <!-- HILAL KOYU ZUMRUT / CERCEVESIZ ALTIN GOLGE OVERRIDE V3
      SADECE yayin-duyuru ortak gorsel kartlari. Kilitli motor/siniflara dokunmaz. -->
 <style id="hilal-shared-dark-emerald-borderless-v3">
@@ -45420,9 +45786,6 @@ html.hv79-prev::view-transition-new(root){animation-name:hv79-new-prev!important
   }}
 @media(prefers-reduced-motion:reduce){#calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1,
   #calendarPage .hilal-ref-prayer-row-v1.is-next-prayer-v1 .hilal-ref-prayer-name-v1::after{animation:none!important}}
-#calendarPage.hilal-prayer-pro-page{position:\n
-\n
-
 <!-- 
 <script id="hilal-paylastiklarim-tek-crud-motor-v1" type="text/plain" data-disabled-by="paylastiklarim-clean-v2">
 (function(){
@@ -45569,8 +45932,33 @@ window.addEventListener('focus',run);
 })();
 </script>
 
-HILAL FIX — Aldıklarım > Hatim yalnız gerçekten alınan ve okunmamış cüzler -->
-\n<script id="hilal-dua-aldiklarim-complete-v1-js">\n(function(){\n  "use strict";\n  function items(){try{return Array.isArray(allParticipations())?allParticipations():[]}catch(_){try{return JSON.parse(localStorage.getItem("hilal_follower_participations_v1")||"[]")}catch(e){return []}}}\n  function me(){try{return String(userKey())}catch(_){return String(currentUser?.key||"anonymous")}}\n  function name(){try{return participationUserName()}catch(_){return currentUser?.name||currentUser?.fullName||currentUser?.displayName||"Misafir"}}\n  function save(a){try{localStorage.setItem("hilal_follower_participations_v1",JSON.stringify(a))}catch(_){} try{document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:"hilal_follower_participations_v1"}}))}catch(_){}}\n  function state(id){const a=items(),it=a.find(x=>x?.kind==="hilal_dua_request"&&String(x.id)===String(id)),p=it?.participants?.[me()]; return {a,it,p};}\n  function paint(btn){const {p}=state(btn.dataset.hdtiPray); if(!p){btn.textContent="🤲 Dua al";btn.setAttribute("aria-pressed","false");return} const done=Number(p.done||0)>=Number(p.taken||1); btn.textContent=done?"✓ Dua tamamlandı":"✓ Dua ettim";btn.setAttribute("aria-pressed",done?"false":"true");btn.classList.toggle("is-prayed",!done)}\n  function paintAll(){document.querySelectorAll('#hilalDuaPageV2 [data-hdti-pray]').forEach(paint)}\n  document.addEventListener("click",function(e){\n    const btn=e.target.closest?.('#hilalDuaPageV2 [data-hdti-pray]'); if(!btn)return;\n    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();\n    const id=btn.dataset.hdtiPray,{a,it,p}=state(id); if(!it)return; it.participants=it.participants&&typeof it.participants==="object"?it.participants:{}; const u=me();\n    if(!p){it.participants[u]={userKey:u,userName:name(),taken:1,done:0,prayed:false,takenAt:new Date().toISOString()};}\n    else if(Number(p.done||0)<Number(p.taken||1)){p.done=Number(p.taken||1);p.prayed=true;p.prayedAt=new Date().toISOString();}\n    else{return}\n    it.updatedAt=new Date().toISOString(); save(a); paint(btn);\n    try{if(window.hilalGeneralAldiklarimGetMode?.()==="mine")setTimeout(()=>window.hilalGeneralAldiklarimApply?.(),30)}catch(_){}\n  },true);\n  new MutationObserver(()=>paintAll()).observe(document.getElementById("hilalDuaPageV2")||document.body,{childList:true,subtree:true});\n  setTimeout(paintAll,300);\n})();\n</script>\n
+<!-- HILAL FIX — Aldıklarım > Hatim yalnız gerçekten alınan ve okunmamış cüzler -->
+
+<script id="hilal-dua-aldiklarim-complete-v1-js">
+(function(){
+  "use strict";
+  function items(){try{return Array.isArray(allParticipations())?allParticipations():[]}catch(_){try{return JSON.parse(localStorage.getItem("hilal_follower_participations_v1")||"[]")}catch(e){return []}}}
+  function me(){try{return String(userKey())}catch(_){return String(currentUser?.key||"anonymous")}}
+  function name(){try{return participationUserName()}catch(_){return currentUser?.name||currentUser?.fullName||currentUser?.displayName||"Misafir"}}
+  function save(a){try{localStorage.setItem("hilal_follower_participations_v1",JSON.stringify(a))}catch(_){} try{document.dispatchEvent(new CustomEvent("hilal:data-changed",{detail:{key:"hilal_follower_participations_v1"}}))}catch(_){}}
+  function state(id){const a=items(),it=a.find(x=>x?.kind==="hilal_dua_request"&&String(x.id)===String(id)),p=it?.participants?.[me()]; return {a,it,p};}
+  function paint(btn){const {p}=state(btn.dataset.hdtiPray); if(!p){btn.textContent="🤲 Dua al";btn.setAttribute("aria-pressed","false");return} const done=Number(p.done||0)>=Number(p.taken||1); btn.textContent=done?"✓ Dua tamamlandı":"✓ Dua ettim";btn.setAttribute("aria-pressed",done?"false":"true");btn.classList.toggle("is-prayed",!done)}
+  function paintAll(){document.querySelectorAll('#hilalDuaPageV2 [data-hdti-pray]').forEach(paint)}
+  document.addEventListener("click",function(e){
+    const btn=e.target.closest?.('#hilalDuaPageV2 [data-hdti-pray]'); if(!btn)return;
+    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    const id=btn.dataset.hdtiPray,{a,it,p}=state(id); if(!it)return; it.participants=it.participants&&typeof it.participants==="object"?it.participants:{}; const u=me();
+    if(!p){it.participants[u]={userKey:u,userName:name(),taken:1,done:0,prayed:false,takenAt:new Date().toISOString()};}
+    else if(Number(p.done||0)<Number(p.taken||1)){p.done=Number(p.taken||1);p.prayed=true;p.prayedAt=new Date().toISOString();}
+    else{return}
+    it.updatedAt=new Date().toISOString(); save(a); paint(btn);
+    try{if(window.hilalGeneralAldiklarimGetMode?.()==="mine")setTimeout(()=>window.hilalGeneralAldiklarimApply?.(),30)}catch(_){}
+  },true);
+  new MutationObserver(()=>paintAll()).observe(document.getElementById("hilalDuaPageV2")||document.body,{childList:true,subtree:true});
+  setTimeout(paintAll,300);
+})();
+</script>
+
 <!-- HILAL MOTOR KILIDI — Dua İstekleri / Dua-Zikir-Yasin-Hatim
      Bu dört iş motoru ortak tasarım sınıflarından bağımsız tutulur.
      Görsel sınıflar motor DOM/event yapısını değiştirmemelidir. -->
@@ -45582,7 +45970,8 @@ HILAL FIX — Aldıklarım > Hatim yalnız gerçekten alınan ve okunmamış cü
   ['hdtiGeneralList','hilalRealHatimArea'].forEach(id=>{const el=document.getElementById(id);if(el)el.dataset.hilalMotorLocked='1';});
 })();
 </script>
-relative!important;isolation:isolate;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;padding:20px 0 34px!important;background:#062019!important;color:#fff!important}
+<style id="hilal-calendar-restored-leak-css">
+#calendarPage.hilal-prayer-pro-page{position:relative!important;isolation:isolate;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;padding:20px 0 34px!important;background:#062019!important;color:#fff!important}
 #calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_embedded_3_42f99fe6e8.png");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
 #calendarPage.hilal-prayer-pro-page:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 18%,rgba(243,192,76,.10),transparent 25%),linear-gradient(180deg,rgba(1,17,12,.04),rgba(1,17,12,.22) 52%,rgba(1,17,12,.52));pointer-events:none}
 #calendarPage #ezanReminderCard,#calendarPage #bugununTarihiCard{display:none!important}
