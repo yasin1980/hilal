@@ -1,8 +1,0 @@
-
-html,body{overscroll-behavior-x:none}
-#mainApp,#hilalDuaPageV2,#hilalZikirmatikPageV13,#kazaNamazlarimPage{touch-action:pan-y!important}
-#hilalSwipeCurtainV108{display:none!important;position:fixed;inset:0;pointer-events:none;opacity:0!important;background:transparent!important;transition:none!important}
-#hilalSwipeCurtainV108.on{display:none!important;opacity:0!important}
-.hilal-swipe-v108-enter{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
-@keyframes hilalSwipeEnterV108{0%{opacity:.18}100%{opacity:1}}
-#hilalSwipeCoachV108{position:fixed;left:50%;bottom:max(92px,calc(env(safe-area-inset-bottom,0px) + 76px));transform:translateX(-50%);z-index:2147483000;display:none;align-items:center;gap:11px;padding:10px 15px;border:1px solid rgba(255,255,255,.42);border-radius:999px;background:rgba(5,49,37,.
