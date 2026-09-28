@@ -79,7 +79,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setAllowContentAccess(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-        s.setCacheMode(WebSettings.LOAD_DEFAULT);
+        // V69: Uygulama HTML/CSS/JS APK assetidir; eski WebView disk cache'inden eski paket görünümü alma.
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
@@ -89,6 +90,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         webView.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
+        // Yalnız HTTP/WebView cache temizlenir; localStorage/oturum/Firebase verisi korunur.
+        try { webView.clearCache(true); } catch (Throwable ignored) {}
 
         // HTML hatırlatıcı motorunun Android AlarmManager köprüsü.
         webView.addJavascriptInterface(new HilalBridge(), "AndroidHilal");
@@ -103,6 +106,11 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
+            }
+            @Override @SuppressWarnings("deprecation")
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                // API 20 ve altı / eski WebView uyumluluğu.
+                return assetLoader.shouldInterceptRequest(android.net.Uri.parse(url));
             }
 });
 
@@ -144,7 +152,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         webView.postDelayed(() -> exactAlarmWasGranted = hasExactAlarmAccess(), 1200L);
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+        // Her APK açılışında paket içindeki gerçek index zorlanır; eski WebView cache anahtarı kullanılamaz.
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=69");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
