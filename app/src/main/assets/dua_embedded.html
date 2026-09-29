@@ -1,0 +1,1740 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Dua İstekleri</title>
+<style>
+:root{--bg:#073d2c;--panel:#0b4d36;--panel2:#176b48;--gold:#d9b760;--cream:#f6f0df;--muted:#cfe2d8;--danger:#9d3c35;--ok:#2f8f63}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#063627,#0b4d36 42%,#073d2c);color:var(--cream);min-height:100vh}.app{max-width:720px;margin:auto;min-height:100vh;padding:calc(14px + env(safe-area-inset-top)) 14px calc(90px + env(safe-area-inset-bottom))}header{position:sticky;top:0;z-index:5;background:rgba(7,61,44,.94);backdrop-filter:blur(12px);padding:10px 0 14px}.top{display:flex;align-items:center;gap:10px}.back{display:none;flex:0 0 48px;width:48px;height:48px;margin-left:62px;padding:0;align-items:center;justify-content:center}.btn,.card,.type{border:1px solid rgba(217,183,96,.38);background:linear-gradient(145deg,rgba(23,107,72,.98),rgba(11,77,54,.98));color:var(--cream);box-shadow:0 7px 18px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08);border-radius:16px}.btn{padding:11px 14px;font-weight:750;cursor:pointer}.btn:active,.card:active{transform:translateY(1px)}h1{font-size:22px;margin:0;flex:1}.user{font-size:12px;color:var(--muted)}.hero{padding:18px 4px 8px}.hero h2{margin:0 0 6px;font-size:26px}.hero p{margin:0;color:var(--muted);line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.card{padding:18px;cursor:pointer}.card b{display:block;font-size:18px;color:#fff}.card small{display:block;color:var(--muted);margin-top:6px;line-height:1.35}.list{display:grid;gap:12px;margin-top:14px}.request{padding:15px;border-radius:18px;background:rgba(246,240,223,.96);color:#17382c;box-shadow:0 8px 20px rgba(0,0,0,.2)}.request .meta{display:flex;justify-content:space-between;gap:8px;color:#557066;font-size:12px}.request h3{margin:8px 0 4px}.request p{margin:4px 0 10px;white-space:pre-wrap}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions .btn{font-size:13px;padding:9px 11px}.gold{background:linear-gradient(145deg,#e0c371,#b99743);color:#18362c}.danger{background:var(--danger)}.secondary{background:#376353}.progress{height:9px;background:#d9dfd9;border-radius:10px;overflow:hidden;margin:9px 0}.progress i{display:block;height:100%;background:#2f8f63}.screen{display:none}.screen.active{display:block}.toolbar{display:flex;gap:8px;margin:12px 0}.toolbar .btn{flex:1}.empty{text-align:center;padding:34px 15px;color:var(--muted)}dialog{border:0;border-radius:20px;width:min(92vw,560px);background:#f6f0df;color:#17382c;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.45)}dialog::backdrop{background:rgba(0,0,0,.65)}form{padding:18px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-weight:750}.field input,.field textarea,.field select{width:100%;border:1px solid #b9c8c0;border-radius:12px;padding:12px;font:inherit;background:white}.field textarea{min-height:90px;resize:vertical}.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}.juz{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}.juz button{padding:10px 4px;border:0;border-radius:10px;font-weight:800;background:#dbe8e1;color:#17382c}.juz button.taken{background:#e4cf92}.juz button.done{background:#66a984;color:white}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#dcebe4;font-size:12px;font-weight:800}.switcher{display:flex;gap:8px;margin-top:10px}.switcher .btn{flex:1;font-size:12px}.note{font-size:12px;color:var(--muted);margin-top:10px}@media(max-width:420px){.grid{grid-template-columns:1fr}.juz{grid-template-columns:repeat(5,1fr)}}
+
+#takenList details[data-locked="1"] summary{cursor:default;opacity:.78}
+#takenList details[data-locked="1"] .fold-arrow{font-size:18px}
+#takenList details[data-locked="1"] button:disabled{cursor:not-allowed;opacity:.75}
+</style>
+<style id="dua-v17-features-css">
+.v17-exp{font-size:12px;opacity:.72;margin-top:6px}
+.v17-zikirbox{margin-top:12px;padding:14px;border-radius:20px;background:rgba(5,79,58,.09);text-align:center}
+.v17-zikircount{font-size:30px;font-weight:900;margin:8px 0}
+.v17-zikirbtn{width:92px;height:92px;border-radius:50%;border:1px solid rgba(211,174,65,.7);font-size:18px;font-weight:900;background:#0d674c;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.18)}
+.v17-zikirminus{margin-left:10px}
+.v17-minebox{margin:12px 0 18px;padding:14px;border-radius:18px;background:rgba(255,255,255,.08)}
+.v17-minebox h3{margin:0 0 10px}
+.v17-taken-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+</style>
+
+<style id="v118-taken-fold-style">
+#takenList .taken-fold{padding:0;overflow:hidden}
+#takenList .taken-fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;font-size:20px;font-weight:800;user-select:none}
+#takenList .taken-fold summary::-webkit-details-marker{display:none}
+#takenList .taken-fold summary span:first-child{display:flex;flex-direction:column;gap:4px}
+#takenList .taken-fold summary small{font-size:14px;font-weight:600;opacity:.72}
+#takenList .fold-arrow{font-size:27px;transition:transform .2s ease}
+#takenList details[open] .fold-arrow{transform:rotate(180deg)}
+#takenList .taken-body{padding:0 22px 22px}
+#takenList .taken-juz{margin-top:14px}
+</style>
+
+<style id="v121-public-hatim-fold">
+.hatim-public-fold{margin-top:10px}
+.hatim-public-fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;font-weight:800}
+.hatim-public-fold summary::-webkit-details-marker{display:none}
+.hatim-public-fold summary span:first-child{display:flex;flex-direction:column;gap:3px}
+.hatim-public-fold summary small{font-size:13px;font-weight:600;opacity:.7}
+.hatim-public-fold .fold-arrow{font-size:24px;transition:transform .2s ease}
+.hatim-public-fold[open] .fold-arrow{transform:rotate(180deg)}
+.hatim-public-fold[data-locked="1"] summary{cursor:default;opacity:.78}
+</style>
+
+<style id="v122-hatim-no-touch-shadow">
+/* Hatim aç/kapa sırasında dokunma gölgesi, highlight ve basma efekti yok */
+.hatim-public-fold,
+.hatim-public-fold summary,
+#takenList .hatim-fold,
+#takenList .hatim-fold summary{
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
+}
+.hatim-public-fold summary:focus,
+.hatim-public-fold summary:focus-visible,
+.hatim-public-fold summary:active,
+#takenList .hatim-fold summary:focus,
+#takenList .hatim-fold summary:focus-visible,
+#takenList .hatim-fold summary:active{
+  outline: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+  transform: none !important;
+}
+.hatim-public-fold summary::before,
+.hatim-public-fold summary::after,
+#takenList .hatim-fold summary::before,
+#takenList .hatim-fold summary::after{
+  box-shadow:none !important;
+  filter:none !important;
+}
+</style>
+<style id="v123-hatim-stable-style">
+.hatim-public-fold .fold-arrow,#takenList .hatim-fold .fold-arrow{transition:none!important}
+.hatim-public-fold summary,#takenList .hatim-fold summary{-webkit-tap-highlight-color:transparent!important;box-shadow:none!important;filter:none!important}
+</style><style id="v124-ui">
+.hatim-public-body .juz,#takenList .hatim-fold .juz{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+.hatim-public-body .juz button,#takenList .hatim-fold .juz button{width:100%!important;min-height:58px!important;border-radius:14px!important}
+.zikirmatik-box{display:grid;place-items:center;gap:10px;padding:16px;margin:12px 0;border-radius:20px;background:rgba(3,69,50,.07)}
+.zik-count{font-size:28px;font-weight:900}.zik-touch{width:118px;height:118px;border-radius:50%;border:3px solid #b8872a;background:#0d5a43;color:#fff8df;font-size:17px;font-weight:900;-webkit-tap-highlight-color:transparent}.zik-touch:active{transform:scale(.97)}
+</style>
+<style id="v126-hatim-set-style">
+.hatim-set-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0;font-weight:900}
+.hatim-set-title small{font-weight:600;opacity:.7}
+</style>
+<style id="v127-take-ui">
+.take-fold{width:100%;margin-top:8px}.take-fold summary{list-style:none;display:flex;justify-content:center;gap:8px;padding:13px 16px;border-radius:13px;background:#0d5a43;color:#fff8df;font-weight:850;cursor:pointer;-webkit-tap-highlight-color:transparent}.take-fold summary::-webkit-details-marker{display:none}.take-body{display:grid;gap:9px;padding:12px 2px 2px}.take-body label{font-size:13px;font-weight:750}.take-body input{box-sizing:border-box;width:100%;padding:13px;border-radius:13px;border:1px solid rgba(184,135,42,.5);background:#fffdf6;font-size:17px}
+</style>
+<style id="v128-hatim-multi">
+.hatim-sets{display:grid;gap:12px}.hatim-total-note{font-size:13px;font-weight:750;opacity:.72;padding:6px 0}
+.hatim-public-fold summary small{display:block}.hatim-public-body .juz button small{display:block;font-size:10px;margin-top:2px}
+</style>
+
+<style id="v133-kaza-real-3d">
+/* YALNIZ GÖRSEL KATMAN — V1.31 iş motorları aynen korunur */
+:root{
+ --v133-bg:#064b39;
+ --v133-face1:#13785a;
+ --v133-face2:#086148;
+ --v133-face3:#064b39;
+ --v133-white:#fffaf0;
+ --v133-soft:#e9eee7;
+ --v133-gold:#d6b45b;
+ --v133-gold-soft:rgba(214,180,91,.38);
+ --v133-dark:rgba(0,31,23,.55);
+}
+html,body{background:linear-gradient(180deg,#064936 0%,#07563f 48%,#034431 100%)!important}
+body{color:var(--v133-white)!important}
+h1,h2,h3,.title,.screen-title{color:var(--v133-white)!important;text-shadow:0 2px 3px rgba(0,0,0,.34)!important}
+p,small,.muted,label{color:var(--v133-soft)}
+
+/* Ana giriş ve içerik kartları: Kaza kartı gibi gövdeden yükselmiş */
+.card,.request,.taken-fold,.hatim-public-fold,.participation-fold{
+ position:relative;
+ border:1px solid rgba(214,180,91,.30)!important;
+ background:
+   linear-gradient(145deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(0,0,0,.075) 100%),
+   linear-gradient(180deg,var(--v133-face1),var(--v133-face2) 55%,var(--v133-face3))!important;
+ box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.17),
+   inset 1px 0 0 rgba(255,226,151,.08),
+   inset 0 -4px 7px rgba(0,34,25,.28),
+   0 2px 0 rgba(226,190,95,.17),
+   0 9px 14px rgba(0,31,23,.32),
+   0 0 9px rgba(214,180,91,.10)!important;
+}
+.card:after,.request:after,.taken-fold:after,.hatim-public-fold:after{
+ content:"";position:absolute;pointer-events:none;inset:1px;border-radius:inherit;
+ border-top:1px solid rgba(255,231,166,.17);
+}
+
+/* Kaza +/- düğmesi hissi: dışarı taşan, yuvarlak/kabartmalı */
+.btn,.zik-touch,.take-fold>summary,.juz button,.hatim-public-body .juz button{
+ position:relative;
+ color:var(--v133-white)!important;
+ border:1px solid rgba(218,183,89,.38)!important;
+ background:
+   linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.015) 42%,rgba(0,0,0,.12)),
+   linear-gradient(180deg,#168260,#09654b 58%,#064b39)!important;
+ box-shadow:
+   inset 0 2px 1px rgba(255,255,255,.18),
+   inset 0 -5px 7px rgba(0,35,26,.34),
+   0 2px 0 rgba(221,184,85,.20),
+   0 7px 10px rgba(0,29,21,.38),
+   0 0 7px rgba(214,180,91,.12)!important;
+ text-shadow:0 2px 2px rgba(0,0,0,.34)!important;
+ transform:translateY(-1px);
+ transition:transform .08s ease,box-shadow .08s ease,filter .08s ease;
+}
+.btn:active,.zik-touch:active,.take-fold>summary:active,.juz button:active{
+ transform:translateY(2px) scale(.985)!important;
+ box-shadow:
+   inset 0 4px 8px rgba(0,34,25,.42),
+   inset 0 1px 1px rgba(255,255,255,.08),
+   0 1px 2px rgba(0,24,18,.28)!important;
+}
+
+/* Altın yalnız ince yansıma/vurgu */
+.btn.gold{
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.015) 42%,rgba(0,0,0,.12)),
+  linear-gradient(180deg,#168260,#09654b 58%,#064b39)!important;
+ border-color:rgba(224,190,98,.55)!important;
+}
+.btn.danger{
+ background:linear-gradient(180deg,#b84c3d,#8f332a)!important;
+ border-color:rgba(235,194,108,.38)!important;
+}
+
+/* Cüz yüzleri de kabartmalı fakat durum renkleri korunur */
+.juz button.empty{
+ color:#173b30!important;
+ background:linear-gradient(145deg,#f5f1df,#d8dfd5)!important;
+ box-shadow:inset 0 2px 1px rgba(255,255,255,.72),inset 0 -4px 6px rgba(73,101,89,.17),0 5px 8px rgba(0,31,23,.25)!important;
+}
+.juz button.taken{
+ color:#18382d!important;
+ background:linear-gradient(145deg,#f0d77f,#c8a84d)!important;
+ box-shadow:inset 0 2px 1px rgba(255,249,216,.62),inset 0 -4px 6px rgba(119,82,15,.20),0 5px 8px rgba(0,31,23,.25)!important;
+}
+.juz button.done{
+ color:#fffaf0!important;
+ background:linear-gradient(145deg,#27a278,#117054 58%,#07513d)!important;
+}
+
+/* Açılır alanların içi ana zeminden ayrışsın */
+.take-body,.taken-body,.hatim-public-body{
+ background:rgba(1,55,40,.20);
+ border-radius:0 0 18px 18px;
+}
+.take-fold>summary{border-radius:18px!important}
+
+/* Form alanları */
+input,textarea,select{
+ color:#173b30!important;background:#fffdf4!important;
+ border:1px solid rgba(214,180,91,.52)!important;
+ box-shadow:inset 0 2px 4px rgba(0,0,0,.10),0 2px 4px rgba(0,31,23,.16)!important;
+}
+
+/* Genel Dua / Paylaştıklarım / Aldıklarım ana kartlarında daha belirgin yükselme */
+#home .card,.home-card,.menu-card{
+ box-shadow:
+   inset 0 1px 0 rgba(255,255,255,.18),
+   inset 0 -5px 8px rgba(0,34,25,.28),
+   0 3px 0 rgba(216,180,85,.18),
+   0 10px 16px rgba(0,29,21,.34),
+   0 0 10px rgba(216,180,85,.10)!important;
+}
+@media(prefers-reduced-motion:reduce){.btn,.zik-touch,.take-fold>summary,.juz button{transition:none!important}}
+</style>
+
+
+<style id="v134-contrast-clean-fix">
+/* V1.34 — sadece görünüm/kontrast. İş motorlarına dokunulmaz. */
+:root{
+ --v134-white:#fffaf0;
+ --v134-soft:#e8eee7;
+ --v134-muted:#d2ddd5;
+ --v134-gold:#efd276;
+ --v134-deep:#064a38;
+}
+
+/* Üst başlık alanlarını zemine karıştır: siyah/koyu blok görünümünü kaldır */
+header,.topbar,.page-head,.screen-head,.header,
+#home>header,#general>header,#mine>header,#taken>header{
+ background:transparent!important;
+ box-shadow:none!important;
+ border-color:transparent!important;
+}
+
+/* Başlık ve kart metinleri */
+body,.screen,.page{color:var(--v134-white)!important}
+h1,h2,h3,h4,.title,.screen-title,
+.card h2,.card h3,.request h2,.request h3,
+.taken-fold b,.hatim-public-fold b,.take-fold b{
+ color:var(--v134-white)!important;
+ opacity:1!important;
+}
+
+/* Meta, kullanıcı, tarih ve açıklamalar */
+.request .meta,.request .meta *,
+.meta,.meta *,time,.date,
+.request small,.card small,.taken-fold small,
+.hatim-public-fold small,.take-fold small,
+.hatim-total-note,.hatim-total-note *,
+.request p,.card p,.taken-body p,.hatim-public-body p{
+ color:var(--v134-soft)!important;
+ opacity:1!important;
+}
+
+/* Hatim açılır başlıkları ve sayaçları */
+.hatim-public-fold summary,
+.hatim-public-fold summary *,
+.taken-fold summary,.taken-fold summary *,
+.take-fold summary,.take-fold summary *{
+ color:var(--v134-white)!important;
+ opacity:1!important;
+}
+.hatim-public-fold summary small,
+.taken-fold summary small,.take-fold summary small{
+ color:var(--v134-soft)!important;
+}
+
+/* Sayaç / ilerleme metinleri: Kaza ekranındaki krem-altın vurgusu */
+.request .count,.request .progress-text,
+.taken-body>b,.hatim-public-body>b,
+[data-count],.counter,.stat,.amount{
+ color:var(--v134-gold)!important;
+ opacity:1!important;
+}
+
+/* Koyu kalan genel metinleri zümrüt kartlarda güvenli biçimde aç */
+.request,.taken-fold,.hatim-public-fold,.participation-fold,.card{
+ color:var(--v134-white)!important;
+}
+.request>div:not(.juz):not(.progress),
+.request>span,.request>section,
+.hatim-public-body,.taken-body,.take-body{
+ color:var(--v134-soft)!important;
+}
+
+/* Progress çizgisi */
+progress{accent-color:#efd276!important}
+.progress,.progress-track{
+ background:rgba(255,250,240,.24)!important;
+}
+.progress>i,.progress-bar,.progress-fill{
+ background:linear-gradient(90deg,#d6b45b,#f1d77f)!important;
+}
+
+/* Buton yazıları net beyaz */
+.btn,.zik-touch,.take-fold>summary,
+.juz button.taken,.juz button.done{
+ color:var(--v134-white)!important;
+}
+.juz button.empty{color:#173b30!important}
+
+/* Altın çerçeveyi ince tut, mevcut gerçek 3D derinliği koru */
+.card,.request,.taken-fold,.hatim-public-fold{
+ border-color:rgba(218,184,91,.32)!important;
+}
+
+/* Görselde koyu kalan details metinlerini kesin düzelt */
+details summary{color:var(--v134-white)!important}
+details summary small{color:var(--v134-soft)!important}
+details:not([open]) summary{opacity:1!important}
+</style>
+
+
+<style id="v135-kaza-shadow-editor-3d">
+/* V1.35 — Kaza Namazları tarzı ışık-gölge derinliği + Yeni İstek formu */
+:root{
+ --kz-face-hi:#17815f;
+ --kz-face-mid:#0c684e;
+ --kz-face-lo:#07513d;
+ --kz-edge:rgba(218,183,91,.34);
+ --kz-light:rgba(255,255,255,.17);
+ --kz-shadow:rgba(0,25,18,.48);
+ --kz-cream:#fff9ec;
+ --kz-soft:#e5ece5;
+ --kz-gold:#efd276;
+}
+
+/* Kaza kartlarındaki gibi: üst/sol ışık, alt/sağ koyu gölge, ince altın yansıma */
+.card,.request,.taken-fold,.hatim-public-fold,.participation-fold,
+.modal-card,.editor-card,.form-card{
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.095) 0%,rgba(255,255,255,.018) 38%,rgba(0,0,0,.105) 100%),
+  linear-gradient(180deg,var(--kz-face-hi) 0%,var(--kz-face-mid) 55%,var(--kz-face-lo) 100%)!important;
+ border:1px solid var(--kz-edge)!important;
+ box-shadow:
+  inset 1px 1px 0 var(--kz-light),
+  inset -1px -2px 0 rgba(0,31,23,.22),
+  inset 0 -6px 9px rgba(0,31,23,.20),
+  0 3px 0 rgba(226,190,95,.14),
+  0 10px 15px var(--kz-shadow),
+  0 0 8px rgba(218,183,91,.08)!important;
+}
+
+/* Fiziksel Kaza +/- düğmesi benzeri yükseltilmiş buton */
+.btn,.zik-touch,.take-fold>summary,.juz button,
+.hatim-public-body .juz button,
+button:not(.juz button){
+ border:1px solid rgba(224,190,98,.38)!important;
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.02) 43%,rgba(0,0,0,.14)),
+  linear-gradient(180deg,#198663,#0b684e 58%,#064c39)!important;
+ color:var(--kz-cream)!important;
+ box-shadow:
+  inset 1px 2px 1px rgba(255,255,255,.18),
+  inset -1px -4px 6px rgba(0,31,23,.31),
+  0 3px 0 rgba(220,184,88,.16),
+  0 7px 10px rgba(0,27,20,.42)!important;
+}
+.btn:active,.zik-touch:active,.take-fold>summary:active,
+button:not(.juz button):active,.juz button:active{
+ transform:translateY(2px)!important;
+ box-shadow:
+  inset 0 4px 7px rgba(0,28,20,.40),
+  inset 0 1px 1px rgba(255,255,255,.08),
+  0 1px 2px rgba(0,24,18,.28)!important;
+}
+
+/* + Yeni İstek ile açılan sayfa/form: aynı 3D aile */
+#editor,#compose,#newRequest,#requestEditor,
+.editor,.compose,.new-request,.form-screen{
+ color:var(--kz-cream)!important;
+}
+#editor .field,#compose .field,.editor .field,.form-screen .field{
+ margin-bottom:14px;
+ padding:12px;
+ border-radius:16px;
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.07),rgba(0,0,0,.06)),
+  linear-gradient(180deg,#116f53,#07543f)!important;
+ border:1px solid rgba(218,183,91,.25)!important;
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.12),
+  inset 0 -4px 7px rgba(0,31,23,.20),
+  0 5px 9px rgba(0,29,21,.27)!important;
+}
+#editor label,#compose label,.editor label,.form-screen label{
+ color:var(--kz-soft)!important;font-weight:700;
+}
+#editor input,#editor textarea,#editor select,
+#compose input,#compose textarea,#compose select,
+.editor input,.editor textarea,.editor select,
+.form-screen input,.form-screen textarea,.form-screen select{
+ color:#173a2f!important;
+ background:linear-gradient(180deg,#fffdf5,#eee9d8)!important;
+ border:1px solid rgba(218,183,91,.52)!important;
+ border-radius:13px!important;
+ box-shadow:
+  inset 0 3px 5px rgba(0,36,27,.12),
+  0 2px 0 rgba(255,255,255,.08),
+  0 4px 7px rgba(0,29,21,.20)!important;
+}
+#editor input:focus,#editor textarea:focus,#editor select:focus,
+#compose input:focus,#compose textarea:focus,#compose select:focus,
+.editor input:focus,.editor textarea:focus,.editor select:focus{
+ outline:none!important;
+ border-color:rgba(239,210,118,.90)!important;
+ box-shadow:inset 0 3px 5px rgba(0,36,27,.12),0 0 0 2px rgba(239,210,118,.16),0 5px 8px rgba(0,29,21,.22)!important;
+}
+
+/* Form başlığı / geri butonu da bütünleşsin */
+#editor h2,#compose h2,.editor h2,.form-screen h2,
+#editor h3,#compose h3,.editor h3{
+ color:var(--kz-cream)!important;
+ text-shadow:0 2px 3px rgba(0,0,0,.30)!important;
+}
+
+/* Açılır form seçeneklerinin metni */
+option{color:#173a2f;background:#fffdf5}
+</style>
+
+
+<style id="v136-kaza-unified-design">
+/* V1.36 — Referans Kaza Namazları görsel dili, yalnız CSS */
+:root{
+ --kbg:#064b3a; --kbg2:#043d30;
+ --kface:#0b674e; --kfaceHi:#11785a; --kfaceLo:#07513e;
+ --kcream:#fff8e9; --ksoft:#dbe5de; --kgold:#e4c46d;
+ --kline:rgba(204,177,98,.24); --kshadow:rgba(0,28,21,.46);
+}
+html,body{background:linear-gradient(180deg,#07513e 0%,#064b3a 42%,#033d30 100%)!important;color:var(--kcream)!important}
+
+/* TÜM ANA / PAYLAŞIM / AÇILIR KARTLAR */
+.card,.request,.taken-fold,.hatim-public-fold,.participation-fold,
+.take-fold,.editor-card,.form-card,.modal-card,
+#editor .field,#compose .field,.editor .field,.form-screen .field{
+ border:1px solid var(--kline)!important;
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.055),transparent 42%,rgba(0,0,0,.07)),
+  linear-gradient(180deg,var(--kfaceHi),var(--kface) 58%,var(--kfaceLo))!important;
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.105),
+  inset 0 -3px 5px rgba(0,31,23,.18),
+  0 2px 0 rgba(212,181,93,.08),
+  0 8px 12px var(--kshadow)!important;
+}
+
+/* KAZA + / - GİBİ GERÇEK KABARTMA BUTON */
+.btn,.zik-touch,.take-fold>summary,
+button:not(.juz button),.juz button,.hatim-public-body .juz button{
+ color:var(--kcream)!important;
+ border:1px solid rgba(202,174,96,.26)!important;
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.09),transparent 43%,rgba(0,0,0,.09)),
+  linear-gradient(180deg,#117759,#0a624a 58%,#064a39)!important;
+ box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.13),
+  inset 0 -4px 6px rgba(0,31,23,.25),
+  0 5px 8px rgba(0,27,20,.40)!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+}
+.btn:active,.zik-touch:active,.take-fold>summary:active,
+button:not(.juz button):active,.juz button:active{
+ transform:translateY(2px)!important;
+ box-shadow:inset 0 3px 6px rgba(0,28,21,.34),0 1px 2px rgba(0,25,18,.28)!important;
+}
+
+/* BAŞLIKLAR — Kaza referansındaki kırık beyaz / sakin altın */
+h1,h2,h3,h4,.title,.screen-title,.request h2,.request h3,
+.card h2,.card h3,.taken-fold b,.hatim-public-fold b,.take-fold b{
+ color:var(--kcream)!important;
+ text-shadow:0 2px 2px rgba(0,0,0,.25)!important;
+}
+.meta,.meta *,time,.date,small,.muted,label,.request p,.card p,
+.hatim-total-note,.hatim-total-note *{color:var(--ksoft)!important;opacity:1!important}
+.counter,.count,.stat,.amount,.progress-text,.taken-body>b,.hatim-public-body>b{
+ color:var(--kgold)!important;
+}
+
+/* AÇILIR HATİM/YASİN/ZİKİR BAŞLIKLARI da aynı fiziksel yüzey */
+.hatim-public-fold>summary,.taken-fold>summary,.take-fold>summary{
+ color:var(--kcream)!important;
+ border:1px solid rgba(202,174,96,.22)!important;
+ background:linear-gradient(180deg,#0d6b50,#07513e)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -3px 5px rgba(0,30,22,.20),0 5px 8px rgba(0,27,20,.32)!important;
+}
+.hatim-public-body,.taken-body,.take-body{background:rgba(2,54,41,.16)!important}
+
+/* CÜZLER */
+.juz button.empty{
+ color:#254137!important;
+ background:linear-gradient(180deg,#e9eee7,#d6dfd8)!important;
+ border-color:rgba(197,174,108,.20)!important;
+}
+.juz button.taken{
+ color:#34402f!important;
+ background:linear-gradient(180deg,#e7d18c,#c8ad61)!important;
+}
+.juz button.done{
+ color:var(--kcream)!important;
+ background:linear-gradient(180deg,#19805f,#0b6048)!important;
+}
+
+/* YENİ İSTEK SAYFASI: referansla aynı sakin zümrüt 3D */
+#editor,#compose,#newRequest,#requestEditor,.editor,.compose,.new-request,.form-screen{
+ color:var(--kcream)!important;background:transparent!important;
+}
+#editor input,#editor textarea,#editor select,#compose input,#compose textarea,#compose select,
+.editor input,.editor textarea,.editor select,.form-screen input,.form-screen textarea,.form-screen select{
+ color:#284037!important;
+ background:linear-gradient(180deg,#f5f3e8,#e3e6dc)!important;
+ border:1px solid rgba(196,171,101,.28)!important;
+ box-shadow:inset 0 2px 4px rgba(0,35,26,.10),0 4px 7px rgba(0,27,20,.25)!important;
+}
+
+/* Altın sadece vurgu; kalın parlak çerçeve yok */
+.card,.request,.taken-fold,.hatim-public-fold,.take-fold{outline:none!important}
+progress{accent-color:var(--kgold)!important}
+</style>
+
+
+<style id="v137-kaza-frame-shadow-no-gold">
+/* V1.37 — Kaza Namazları referansı: yumuşak köşe, zümrüt çerçeve, altınsız doğal 3D */
+:root{
+ --v137-line:rgba(104,174,151,.34);
+ --v137-line-hi:rgba(157,210,190,.25);
+ --v137-shadow:rgba(0,31,24,.44);
+ --v137-face1:#117458;
+ --v137-face2:#0b654e;
+ --v137-face3:#07523f;
+}
+
+/* Ana kartlar: Kaza kartlarındaki yuvarlaklık ve sakin çerçeve */
+.card,.request,.taken-fold,.hatim-public-fold,.participation-fold,
+.editor-card,.form-card,.modal-card{
+ border-radius:26px!important;
+ border:1px solid var(--v137-line)!important;
+ outline:none!important;
+ background:
+   linear-gradient(145deg,rgba(255,255,255,.055),transparent 42%,rgba(0,0,0,.055)),
+   linear-gradient(180deg,var(--v137-face1),var(--v137-face2) 60%,var(--v137-face3))!important;
+ box-shadow:
+   inset 0 1px 0 var(--v137-line-hi),
+   inset 0 -2px 4px rgba(0,35,26,.20),
+   0 7px 11px var(--v137-shadow)!important;
+}
+
+/* Hatim 1/2, Yasin/Zikir açılır alanları: kare/altın çizgi yerine Kaza sayaç kutusu */
+.hatim-public-fold>summary,.taken-fold>summary,.take-fold>summary,
+.take-fold,.participation-fold>summary{
+ border-radius:18px!important;
+ border:1px solid rgba(91,157,136,.30)!important;
+ outline:none!important;
+ background:linear-gradient(180deg,#0d684f,#07513f)!important;
+ box-shadow:
+   inset 0 1px 0 rgba(173,218,200,.16),
+   inset 0 -2px 4px rgba(0,31,23,.23),
+   0 5px 8px rgba(0,29,22,.36)!important;
+}
+
+/* Filtre ve normal aksiyon butonları: Kaza +/- buton formu */
+.btn,.zik-touch,button:not(.juz button){
+ border-radius:20px!important;
+ border:1px solid rgba(101,169,146,.32)!important;
+ outline:none!important;
+ background:
+   linear-gradient(145deg,rgba(255,255,255,.075),transparent 44%,rgba(0,0,0,.07)),
+   linear-gradient(180deg,#117559,#0a614a 60%,#064b3a)!important;
+ box-shadow:
+   inset 0 1px 0 rgba(174,219,201,.17),
+   inset 0 -3px 5px rgba(0,30,22,.24),
+   0 5px 8px rgba(0,28,21,.39)!important;
+}
+
+/* Form girişleri de aynı aile */
+#editor input,#editor textarea,#editor select,#compose input,#compose textarea,#compose select,
+.editor input,.editor textarea,.editor select,.form-screen input,.form-screen textarea,.form-screen select{
+ border-radius:16px!important;
+ border:1px solid rgba(102,162,142,.30)!important;
+ outline:none!important;
+ box-shadow:inset 0 2px 4px rgba(0,34,25,.12),0 4px 7px rgba(0,28,21,.25)!important;
+}
+
+/* Altın/sarı dekoratif çerçeve ve gölgeyi kaldır */
+.card,.request,.taken-fold,.hatim-public-fold,.participation-fold,
+.hatim-public-fold>summary,.taken-fold>summary,.take-fold>summary,
+.btn,.zik-touch,button{
+ border-color:rgba(102,169,146,.31)!important;
+}
+</style>
+
+
+<style id="v1371-yasin-general-card-fix">
+/* V1.37.1 — SADECE Genel Dua > Yasin paylaşımındaki beyaz sayaç/rozet alanı */
+.request[data-type="yasin"] .badge,
+.request[data-type="yasin"] .count,
+.request[data-type="yasin"] .counter,
+.request.yasin .badge,
+.request.yasin .count,
+.request.yasin .counter{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:7px 14px!important;
+  color:#fff8e9!important;
+  opacity:1!important;
+  font-weight:700!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.25)!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.055),transparent 45%,rgba(0,0,0,.06)),
+    linear-gradient(180deg,#117458,#0b654e 60%,#07523f)!important;
+  border:1px solid rgba(104,174,151,.34)!important;
+  border-radius:16px!important;
+  box-shadow:
+    inset 0 1px 0 rgba(157,210,190,.22),
+    inset 0 -2px 4px rgba(0,35,26,.20),
+    0 5px 8px rgba(0,31,24,.34)!important;
+}
+.request[data-type="yasin"] .badge *,
+.request[data-type="yasin"] .count *,
+.request[data-type="yasin"] .counter *,
+.request.yasin .badge *,
+.request.yasin .count *,
+.request.yasin .counter *{
+  color:#fff8e9!important;
+  opacity:1!important;
+}
+</style>
+
+
+<style id="v138-hatim-master-fold">
+/* V1.38 — Çoklu Hatimleri tek manuel açılır kartta toplar. İş motoru değişmez. */
+.hatim-master-fold{margin-top:12px;border-radius:22px;overflow:visible}
+.hatim-master-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px;border-radius:20px;background:linear-gradient(180deg,rgba(20,126,94,.78),rgba(3,78,58,.92));border:1px solid rgba(220,235,226,.22);box-shadow:inset 0 1px 1px rgba(255,255,255,.20),inset 0 -5px 9px rgba(0,38,28,.25),0 7px 13px rgba(0,35,25,.26);color:#fffaf0;font-weight:900;-webkit-tap-highlight-color:transparent}
+.hatim-master-fold>summary::-webkit-details-marker{display:none}
+.hatim-master-fold>summary small{display:block;margin-top:3px;color:rgba(255,250,240,.78)!important;font-size:13px;font-weight:650}
+.hatim-master-fold>.hatim-master-body{display:grid;gap:11px;padding:13px 2px 2px}
+.hatim-master-fold .master-arrow{font-size:22px;line-height:1}
+.hatim-master-fold[open] .master-arrow{transform:rotate(180deg)}
+.hatim-master-fold .hatim-public-fold{margin-top:0}
+</style>
+
+<style id="v140-feed-entry-motion">
+/* Filtre çubuğu sabit görsel referans; yeni kartlar hemen altından akışa girer */
+#general .filters,#general .filterbar,#generalFilters,
+#public .filters,#public .filterbar{
+ position:sticky!important;
+ top:0!important;
+ z-index:20!important;
+ backdrop-filter:blur(7px);
+ -webkit-backdrop-filter:blur(7px);
+}
+.v140-feed-enter{
+ animation:v140FeedEnter .38s cubic-bezier(.2,.75,.25,1) both;
+ transform-origin:top center;
+}
+@keyframes v140FeedEnter{
+ 0%{opacity:0;transform:translateY(-18px) scale(.985);filter:blur(2px)}
+ 65%{opacity:.94;filter:blur(0)}
+ 100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+</style>
+
+
+<style id="v164-real-scroll-architecture">
+/*
+ V1.64 MİMARİ:
+ - Uygulamanın Genel Dua başlığı: mevcut üst katmanda sabit.
+ - Tümü/Dua/Zikir/Yasin/Hatim: scroll alanının DIŞINDA sabit.
+ - #generalList: TEK hareket eden dikey scroll container.
+*/
+#general.screen.active{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  height:calc(100dvh - var(--v164-top-offset, 132px))!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  touch-action:none!important;
+}
+
+/* Filtre artık sticky olmaya çalışmıyor; zaten scroll container dışında. */
+#general > .toolbar{
+  grid-row:1!important;
+  position:relative!important;
+  inset:auto!important;
+  z-index:10000!important;
+  margin:0!important;
+  padding:9px 0 12px!important;
+  background:#075b44!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+  box-shadow:0 9px 15px rgba(0,34,25,.27)!important;
+}
+
+/* Filtrenin arkasını opak kapak yap. */
+#general > .toolbar::before{
+  content:"";
+  position:absolute;
+  left:-32px;right:-32px;top:-100px;bottom:0;
+  background:#075b44;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* TEK HAREKET EDEN ALAN */
+#general > #generalList{
+  grid-row:2!important;
+  min-height:0!important;
+  height:100%!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+  position:relative!important;
+  z-index:1!important;
+  margin:0!important;
+  padding:14px 2px 120px!important;
+  scroll-behavior:auto!important;
+  align-content:start!important;
+}
+
+/* Katılım/rerender sonrası yalpalama yok */
+#generalList > .request,
+#generalList > .card{
+  animation:none!important;
+  transition:none!important;
+  transform:none!important;
+  filter:none!important;
+}
+</style>
+
+
+<style id="v165-pending-pull-reveal-disabled" media="not all">
+/* Yeni yayınlanan kart, kullanıcı aşağı çekene kadar feed'de yer kaplamaz. */
+#generalList > .v165-pending{
+  display:none!important;
+}
+/* Açılan kart kalıcı olarak normal akışa girer. */
+#generalList > .v165-reveal{
+  animation:v165Drop .28s ease-out both!important;
+}
+@keyframes v165Drop{
+  from{opacity:0;transform:translateY(-22px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
+
+
+<style id="v166-real-new-pulse">
+/* V1.65 tabanı: yalnız gerçek katılım yapılmamış Genel Dua kartlarında yeni-paylaşım nabzı. */
+#generalList>.request.v166-new-pulse{position:relative!important;isolation:isolate}
+#generalList>.request.v166-new-pulse::before{
+ content:"";position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;z-index:2;
+ border:2px solid rgba(239,210,118,.76);
+ box-shadow:0 0 0 0 rgba(239,210,118,.42),0 0 14px rgba(239,210,118,.30);
+ animation:v166NewPulse 1.35s ease-in-out infinite!important;
+}
+@keyframes v166NewPulse{
+ 0%,100%{opacity:.38;box-shadow:0 0 0 0 rgba(239,210,118,.30),0 0 8px rgba(239,210,118,.18)}
+ 50%{opacity:1;box-shadow:0 0 0 5px rgba(239,210,118,.08),0 0 20px rgba(239,210,118,.48)}
+}
+@media(prefers-reduced-motion:reduce){#generalList>.request.v166-new-pulse::before{animation:none!important;opacity:.72}}
+</style>
+
+<style id="v167-general-natural-top-flow-fix">
+/* Yalnız Dua İstekleri > Genel Dua: üst filtre yüzeyi artık sabit/farklı renkli kart değildir; normal sayfa akışındadır. */
+#general.screen.active{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;touch-action:auto!important;}
+#general > .toolbar{position:static!important;inset:auto!important;z-index:auto!important;margin:12px 0!important;padding:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+#general > .toolbar::before{content:none!important;display:none!important;background:transparent!important;}
+#general > #generalList{height:auto!important;min-height:0!important;overflow:visible!important;touch-action:auto!important;position:static!important;margin:0!important;padding:14px 2px 120px!important;}
+</style>
+
+<style id="hilal-v37-dua-home-nav-flow">
+/* Ana Dua ekranında üst ortak menü + ev satırı için doğal boşluk. Alt ekranların geri tuşuna dokunmaz. */
+#home .hero{padding-top:76px!important;}
+</style>
+
+<style id="v87-only-transparent-fill">
+/* TEK DEĞİŞİKLİK: mevcut iki butonun katı yeşil dolgusu kaldırılır.
+   Konum, boyut, ikon, border, click ve navigasyon değişmez. */
+html body.v177-general #v177QuickDock #v177Taken.v177-fab,
+html body.v177-general #v177QuickDock #v177Share.v177-fab{
+  background:rgba(7,70,53,.04)!important;
+  background-image:none!important;
+}
+</style>
+
+
+<style id="v89-v87-hafif-beyaz">
+html body.v177-general #v177QuickDock #v177Taken.v177-fab,
+html body.v177-general #v177QuickDock #v177Share.v177-fab{
+  background:rgba(255,255,255,.10)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+</style>
+
+
+<style id="v97-dua-menu-back-centerline">
+/* SON İNCE AYAR: ok + başlık birlikte biraz aşağı; modern ince geri oku */
+body:not(.v177-general) header{
+  display:flex!important;
+  align-items:center!important;
+  min-height:58px!important;
+  height:58px!important;
+  padding:8px 14px 8px 0!important;
+  margin:25px 0 0 0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-color:transparent!important;
+}
+body:not(.v177-general) #back{
+  position:relative!important;
+  top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+  flex:0 0 48px!important;
+  width:48px!important;min-width:48px!important;height:48px!important;
+  margin:0 8px 0 62px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  font-size:0!important;line-height:1!important;
+  opacity:1!important;z-index:20!important;
+}
+/* Modern/kibar chevron: ince iki çizgi */
+body:not(.v177-general) #back::before{
+  content:""!important;
+  position:absolute!important;
+  width:14px!important;height:14px!important;
+  border-left:3px solid #fff!important;
+  border-bottom:3px solid #fff!important;
+  transform:rotate(45deg)!important;
+  left:18px!important;top:15px!important;
+  border-top:0!important;border-right:0!important;
+  margin:0!important;
+}
+body:not(.v177-general) #back::after{
+  content:""!important;
+  position:absolute!important;
+  left:18px!important;top:22px!important;
+  width:18px!important;height:3px!important;
+  border-radius:3px!important;
+  background:#fff!important;
+}
+body:not(.v177-general) #title{
+  display:block!important;
+  flex:1 1 auto!important;
+  margin:0!important;padding:0!important;
+  align-self:center!important;
+  font-size:25px!important;font-weight:900!important;line-height:48px!important;
+  text-align:left!important;white-space:nowrap!important;
+}
+</style>
+
+
+<style id="v93-taken-duplicate-title-only">
+#taken > h1:first-of-type,
+#taken > h2:first-of-type,
+#taken > .title:first-child,
+#taken > .section-title:first-child,
+#taken > .section-head:first-child{display:none!important}
+</style>
+
+</head><body><main class="app"><header><div class="top"><button id="back" class="btn back">←</button><h1 id="title"></h1></div></header>
+<section id="home" class="screen">
+<div class="hero"><h2>Bir duada buluşalım</h2><p>Dua, zikir, Yasin ve hatim isteklerini paylaş; katılımları tek yerden takip et.</p></div>
+<div class="grid">
+  <div class="card" data-go="general"><b>Genel Dua</b><small>Yayınlanmış Dua, Zikir, Yasin ve Hatim istekleri</small></div>
+  <div class="card" data-go="mine"><b>Paylaştıklarım</b><small>Yeni istek oluştur, düzenle, yayınla veya sil</small></div>
+  <div class="card" data-go="taken"><b>Aldıklarım</b><small>Aldığım Dua, Zikir, Yasin ve Hatimleri takip et</small></div>
+</div>
+</section>
+<section id="general" class="screen active"><div class="toolbar"><button class="btn" data-filter="all">Tümü</button><button class="btn" data-filter="Dua">Dua</button><button class="btn" data-filter="Zikir">Zikir</button><button class="btn" data-filter="Yasin">Yasin</button><button class="btn" data-filter="Hatim">Hatim</button></div><div id="generalList" class="list"></div></section>
+<section id="mine" class="screen"><div class="toolbar"><button id="newReq" class="btn gold">+ Yeni İstek</button></div><div id="mineList" class="list"></div></section>
+<section id="taken" class="screen">
+  <div class="section-head"><h2>Aldıklarım</h2></div>
+  <div id="takenList" class="list"></div>
+</section>
+</main>
+<dialog id="editor"><form id="form"><h2 id="formTitle">Yeni İstek</h2><input type="hidden" id="editId"><div class="field"><label>Tür</label><select id="type"><option>Dua</option><option>Zikir</option><option>Yasin</option><option>Hatim</option></select></div><div class="field"><label>Başlık</label><input id="reqTitle" required maxlength="80"></div><div class="field"><label>Açıklama</label><textarea id="desc" maxlength="500"></textarea></div><div class="field" id="hatimModeField" style="display:none"><label>Hatim paylaşım şekli</label><select id="hatimMode"><option value="counted">Sayılı</option><option value="free">Serbest</option></select></div>
+<div class="field" id="hatimQtyField" style="display:none"><label>Dağıtılacak Hatim adedi</label><input id="hatimQty" type="number" min="1" value="1"></div>
+<div class="field" id="modeField" style="display:none"><label>Paylaşım şekli</label><select id="countMode"><option value="counted">Sayılı</option><option value="free">Serbest</option></select></div><div class="field" id="targetField"><label>Hedef adet</label><input id="target" type="number" min="1" value="100"></div><div class="form-actions"><button type="button" class="btn secondary" id="cancel">Vazgeç</button><button class="btn gold">Kaydet ve Yayınla</button></div></form></dialog>
+<script>
+(()=>{'use strict';
+const KEY='dua_istekleri_standalone_v1'; const USERKEY='dua_istekleri_user_v1';
+let __hilalCloudImporting=false;
+const Store={
+ load(){try{return JSON.parse(localStorage.getItem(KEY))||{requests:[]}}catch{return{requests:[]}}},
+ save(s){
+   localStorage.setItem(KEY,JSON.stringify(s));
+   if(!__hilalCloudImporting){
+     try{parent.postMessage({type:'hilal-dua-v56-save',state:s},'*')}catch(e){}
+   }
+ },state:null
+};
+Store.state=Store.load();
+/* HILAL STATE MONOTONIC MERGE — BOS(0) -> ALINDI(1) -> OKUNDU(2), geri donus yok. */
+function hilalMergeRemoteState(remoteState){
+  if(!remoteState||!Array.isArray(remoteState.requests))return Store.state;
+  const localBy=new Map((Store.state?.requests||[]).map(r=>[String(r.id),r]));
+  const rank=s=>s==='done'?2:s==='taken'?1:0;
+  const merged=remoteState.requests.map(rr=>{
+    const lr=localBy.get(String(rr.id)); if(!lr)return rr;
+    // Kullanici katilimlari: alinan/tamamlanan sayaclar yalniz ileri gider.
+    const rp=rr.userParticipation||{}, lp=lr.userParticipation||{};
+    const keys=new Set([...Object.keys(rp),...Object.keys(lp)]); rr.userParticipation=rr.userParticipation||{};
+    keys.forEach(k=>{const a=rp[k]||{},b=lp[k]||{};rr.userParticipation[k]={...b,...a,
+      zikirTaken:Math.max(Number(a.zikirTaken||0),Number(b.zikirTaken||0)),
+      zikirDone:Math.max(Number(a.zikirDone||0),Number(b.zikirDone||0)),
+      yasinTaken:Math.max(Number(a.yasinTaken||0),Number(b.yasinTaken||0)),
+      yasinDone:Math.max(Number(a.yasinDone||0),Number(b.yasinDone||0))};});
+    // Hatim: ayni cüz eski snapshot yüzünden ALINDI/OKUNDU'dan geriye dönemez.
+    if(rr.type==='Hatim'){
+      const rs=Array.isArray(rr.hatimSets)&&rr.hatimSets.length?rr.hatimSets:[{no:1,juz:rr.juz||[]}];
+      const ls=Array.isArray(lr.hatimSets)&&lr.hatimSets.length?lr.hatimSets:[{no:1,juz:lr.juz||[]}];
+      const count=Math.max(rs.length,ls.length); rr.hatimSets=[];
+      for(let si=0;si<count;si++){
+        const R=rs[si]||{no:si+1,juz:[]},L=ls[si]||{no:si+1,juz:[]},out={...L,...R,no:si+1,juz:[]};
+        for(let n=1;n<=30;n++){
+          const a=(R.juz||[]).find(j=>Number(j.n)===n)||{n,status:'empty'};
+          const b=(L.juz||[]).find(j=>Number(j.n)===n)||{n,status:'empty'};
+          let pick=a;
+          if(rank(b.status)>rank(a.status))pick=b;
+          else if(rank(b.status)===rank(a.status)&&a.status==='taken'&&b.status==='taken'&&a.takenBy!==b.takenBy){
+            const at=Date.parse(a.takenAt||'9999-12-31'),bt=Date.parse(b.takenAt||'9999-12-31'); pick=bt<at?b:a;
+          }
+          out.juz.push({...pick,n});
+        }
+        rr.hatimSets.push(out);
+      }
+      rr.juz=rr.hatimSets[0].juz;
+    }
+    return rr;
+  });
+  // Bulutta henüz görünmeyen yerel yeni kayıtları kaybetme.
+  const remoteIds=new Set(merged.map(r=>String(r.id)));
+  (Store.state?.requests||[]).forEach(r=>{if(!remoteIds.has(String(r.id)))merged.push(r)});
+  return {requests:merged};
+}
+window.addEventListener('message',function(ev){
+ const m=ev.data||{};
+ if(m.type==='hilal-dua-v56-user'){
+   window.__hilalUserId=String(m.id||'local-user');
+   window.__hilalName=String(m.name||'Kullanıcı');
+   try{render()}catch(e){}
+   return;
+ }
+ if(m.type==='hilal-dua-v56-import' && m.state && Array.isArray(m.state.requests)){
+   __hilalCloudImporting=true;
+   try{
+     Store.state=hilalMergeRemoteState(m.state);
+     localStorage.setItem(KEY,JSON.stringify(Store.state));
+     render();
+   }finally{__hilalCloudImporting=false;}
+ }
+},false);
+setTimeout(function(){try{parent.postMessage({type:'hilal-dua-v56-ready'},'*')}catch(e){}},0);
+let filter='all';
+let openHatimSets=new Set(); let openHatimMasters=new Set(); let openZikirTakeFolds=new Set(); const uname=()=>window.__hilalName||`Kullanıcı`; const uid=()=>window.__hilalUserId||`local-user`;
+document.addEventListener('toggle',function(e){const d=e.target;if(d&&d.matches&&d.matches('.take-fold[data-zikir-take]')){const id=String(d.dataset.zikirTake||'');if(d.open)openZikirTakeFolds.add(id);else openZikirTakeFolds.delete(id)}},true);
+document.addEventListener('focusin',function(e){const i=e.target;if(i&&i.matches&&i.matches('[data-take-qty]')){const d=i.closest('.take-fold[data-zikir-take]');if(d){d.open=true;openZikirTakeFolds.add(String(d.dataset.zikirTake||''));}}},true);
+document.addEventListener('input',function(e){const i=e.target;if(i&&i.matches&&i.matches('[data-take-qty]')){const d=i.closest('.take-fold[data-zikir-take]');if(d){d.open=true;openZikirTakeFolds.add(String(d.dataset.zikirTake||''));}}},true);
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function persist(){Store.save(Store.state);render();}
+function hatimCanOpen(r){
+  if(!r||r.type!=='Hatim')return false;
+  return (r.juz||[]).some(j=>j.status==='taken'&&j.takenBy===uid());
+}
+function hatimSets(r){
+ if(!Array.isArray(r.hatimSets)||!r.hatimSets.length)r.hatimSets=[{no:1,juz:r.juz||[]}];
+ r.hatimSets.forEach((set,i)=>{set.no=i+1;if(!Array.isArray(set.juz)||set.juz.length!==30)set.juz=Array.from({length:30},(_,k)=>set.juz?.[k]||{n:k+1,status:'empty'})});
+ r.juz=r.hatimSets[0].juz;
+ return r.hatimSets;
+}
+function newHatimSet(r){
+ const sets=hatimSets(r),no=sets.length+1;
+ const set={no,juz:Array.from({length:30},(_,i)=>({n:i+1,status:'empty'}))};
+ sets.push(set);return set;
+}
+function hatimAllDone(r){
+ if(!r||r.type!=='Hatim')return false;
+ const sets=hatimSets(r);
+ return sets.length>0&&sets.every(set=>set.juz.every(j=>j.status==='done'));
+}
+function userPart(r,create=false){
+  r.userParticipation=(r.userParticipation&&typeof r.userParticipation==="object")?r.userParticipation:{};
+  const k=uid();
+  if(!r.userParticipation[k]&&create)r.userParticipation[k]={userId:k,userName:uname(),zikirTaken:0,zikirDone:0,yasinTaken:0,yasinDone:0,updatedAt:new Date().toISOString()};
+  return r.userParticipation[k]||null;
+}
+function totalPart(r,key){return Object.values(r.userParticipation||{}).reduce((n,p)=>n+Number(p?.[key]||0),0)}
+function renderTaken(){
+  const box=$('#takenList'); if(!box)return;
+  const openIds=new Set([...box.querySelectorAll('details[open]')].map(d=>d.dataset.keepOpen).filter(Boolean));
+  const rows=[];
+  Store.state.requests.forEach(r=>{
+    if(r.type==='Hatim'){hatimSets(r).forEach((set,si)=>{const taken=set.juz.filter(j=>j.status==='taken'&&j.takenBy===uid());if(taken.length)rows.push({type:'Hatim',r,set,si});});}
+    const p=userPart(r,false);
+    if(r.type==='Zikir'&&p&&Number(p.zikirTaken||0)>Number(p.zikirDone||0))rows.push({type:'Zikir',r,p});
+    if(r.type==='Yasin'&&p&&Number(p.yasinTaken||0)>Number(p.yasinDone||0))rows.push({type:'Yasin',r,p});
+  });
+  if(!rows.length){box.innerHTML='<div class="empty">Henüz aldığınız Zikir, Yasin veya Hatim bulunmuyor.</div>';return}
+  box.innerHTML=rows.map(x=>{const r=x.r;
+    if(x.type==='Hatim'){const all=x.set.juz,doneCount=all.filter(j=>j.status==='done').length;return `<details class="request taken-fold hatim-fold" data-keep-open="hatim-${r.id}-${x.si}" ${openIds.has('hatim-'+r.id+'-'+x.si)?'open':''}><summary><span><b>Hatim ${x.si+1}</b><small>${doneCount}/30 cüz okundu</small></span><span class="fold-arrow">⌄</span></summary><div class="taken-body"><h3>${esc(r.title||'Hatim')}</h3><div class="juz">${all.map(j=>`<button type="button" class="${j.status}${j.status==='taken'&&j.takenBy!==uid()?' other':''}" ${j.status!=='taken'||j.takenBy!==uid()?'disabled':''} ${j.status==='taken'&&j.takenBy===uid()?`data-taken-act="hatimDone" data-id="${r.id}" data-set="${x.si}" data-juz="${j.n}"`:''}>${j.n}<small style="display:block">${j.status==='done'?'Okundu':j.status==='taken'?(j.takenBy===uid()?'Okudum':'Alındı'):'Boş'}</small></button>`).join('')}</div></div></details>`;}
+    if(x.type==='Yasin'){const left=Number(x.p.yasinTaken||0)-Number(x.p.yasinDone||0);return `<details class="request taken-fold"><summary><span><b>Yasin</b><small>${left} adet bekliyor • ${r.countMode==='free'?'Serbest':'Sayılı'}</small></span><span class="fold-arrow">⌄</span></summary><div class="taken-body"><h3>${esc(r.title||'Yasin')}</h3><p>Aldığınız: <b>${left}</b> adet</p><button class="btn gold" data-taken-act="yasinDone" data-id="${r.id}">Tamamını Okudum</button></div></details>`;}
+    if(x.type==='Zikir'){const goal=Number(x.p.zikirTaken||0),done=Number(x.p.zikirDone||0),left=Math.max(0,goal-done);return `<details class="request taken-fold" data-keep-open="zikir-${r.id}" ${openIds.has('zikir-'+r.id)?'open':''}><summary><span><b>Zikir</b><small>${left} kaldı • ${r.countMode==='free'?'Serbest':'Sayılı'}</small></span><span class="fold-arrow">⌄</span></summary><div class="taken-body"><h3>${esc(r.title||'Zikir')}</h3><div class="zikirmatik-box"><div class="zik-count">${done} / ${goal}</div><button class="zik-touch" data-taken-act="zTap" data-id="${r.id}">ZİKRET</button><small>Dokunmatik • titreşimli</small></div></div></details>`;}
+    return `<details class="request taken-fold"><summary><span><b>Dua</b><small>Bekliyor</small></span><span class="fold-arrow">⌄</span></summary><div class="taken-body"><h3>${esc(r.title||'Dua')}</h3><p>${esc(r.description||'')}</p><button class="btn gold" data-taken-act="duaDone" data-id="${r.id}">Dua Ettim</button></div></details>`;
+  }).join('');
+}
+
+function nav(id){if(id==='home')id='general';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id)); $('#back').style.display=id==='general'?'none':'inline-block'; $('#title').textContent=id==='general'?'':id==='mine'?'Paylaştıklarım':id==='taken'?'Aldıklarım':'Dua İstekleri'; document.body.classList.toggle('v177-general',id==='general');render();if(id==='taken'){try{renderTaken()}catch(e){}}}
+function hasMyRealParticipation(r){
+ if(!r)return false;
+ if(r.type==='Dua') return !!r.takenByMe || (Array.isArray(r.participants)&&r.participants.includes(uid()));
+ const p=userPart(r,false);
+ if(r.type==='Zikir') return !!p&&Number(p.zikirTaken||0)>0;
+ if(r.type==='Yasin') return !!p&&Number(p.yasinTaken||0)>0;
+ if(r.type==='Hatim') return hatimSets(r).some(set=>set.juz.some(j=>(j.status==='taken'&&j.takenBy===uid())||(j.status==='done'&&j.completedBy===uid())));
+ return false;
+}
+function reqCard(r,mine=false){let extra='';
+ if(r.type==='Dua')extra=`<span class="badge">${r.participants?.length||0} kişi dua etti</span>`;
+ if(r.type==='Yasin'){const claimed=totalPart(r,'yasinTaken'),done=totalPart(r,'yasinDone'),target=Number(r.targetCount||0);extra=r.countMode==='free'?`<div><b>${claimed.toLocaleString('tr-TR')} alındı • ${done.toLocaleString('tr-TR')} okundu • Sınırsız</b></div>`:`<div><b>${claimed.toLocaleString('tr-TR')} / ${target.toLocaleString('tr-TR')} alındı • ${done.toLocaleString('tr-TR')} okundu</b><div class="progress"><i style="width:${target?Math.min(100,claimed/target*100):0}%"></i></div></div>`;}
+ if(r.type==='Zikir'){const claimed=totalPart(r,'zikirTaken'),done=totalPart(r,'zikirDone'),target=Number(r.targetCount||0);extra=r.countMode==='free'?`<div><b>${claimed.toLocaleString('tr-TR')} alındı • ${done.toLocaleString('tr-TR')} çekildi • Sınırsız</b></div>`:`<div><b>${claimed.toLocaleString('tr-TR')} / ${target.toLocaleString('tr-TR')} alındı • ${done.toLocaleString('tr-TR')} çekildi</b><div class="progress"><i style="width:${target?Math.min(100,claimed/target*100):0}%"></i></div></div>`;}
+ if(r.type==='Hatim'){const sets=hatimSets(r),target=r.hatimMode==='free'?sets.length:Number(r.hatimSetTarget||1),totalTaken=sets.reduce((n,set)=>n+set.juz.filter(j=>j.status!=='empty').length,0),totalDone=sets.reduce((n,set)=>n+set.juz.filter(j=>j.status==='done').length,0);extra=`<details class="hatim-master-fold" data-master-hatim="${r.id}" ${openHatimMasters.has(String(r.id))?'open':''}><summary><span><b>Hatimler</b><small>${sets.length} Hatim • ${totalTaken} cüz alındı • ${totalDone} cüz okundu</small></span><span class="master-arrow">⌄</span></summary><div class="hatim-master-body"><div class="hatim-sets">${sets.map((set,si)=>{const taken=set.juz.filter(j=>j.status!=='empty').length,done=set.juz.filter(j=>j.status==='done').length,allTaken=taken===30,allDone=done===30,locked=allTaken;return `<details class="hatim-public-fold" data-hatim-id="${r.id}" data-set="${si}" ${locked?'data-locked="1"':''} ${(!locked&&openHatimSets.has(String(r.id)+'::'+si))?'open':''}><summary><span><b>Hatim ${si+1}</b><small>${taken}/30 alındı • ${done}/30 okundu${allDone?' • Tamamlandı ve kilitlendi':allTaken?' • Dağıtım tamamlandı':''}</small></span><span class="fold-arrow">${locked?'🔒':'⌄'}</span></summary><div class="hatim-public-body"><div class="juz">${set.juz.map(j=>`<button type="button" class="${j.status}${j.status==='taken'&&j.takenBy!==uid()?' other':''}" ${j.status!=='empty'?'disabled':''} ${j.status==='empty'?`data-set-juz="${j.n}" data-set="${si}" data-id="${r.id}"`:''}>${j.n}${j.status==='taken'?`<small>${j.takenBy===uid()?'Aldım':'Alındı'}</small>`:j.status==='done'?'<small>Okundu</small>':''}</button>`).join('')}</div></div></details>`}).join('')}${r.hatimMode==='counted'?`<div class="hatim-total-note">${sets.length} / ${target} Hatim</div>`:'<div class="hatim-total-note">Serbest Hatim</div>'}</div></div></details>`;}
+ let actions='';if(mine){actions=`<button class="btn secondary" data-act="edit" data-id="${r.id}">Düzenle</button><button class="btn ${r.published?'secondary':'gold'}" data-act="publish" data-id="${r.id}">${r.published?'Yayından Kaldır':'Yayınla'}</button><button class="btn danger" data-act="delete" data-id="${r.id}">Sil</button>`}else{if(r.type==='Dua')actions=`<button class="btn gold" data-act="takeDua" data-id="${r.id}">Dua Ettim</button>`;if(r.type==='Yasin')actions=`<details class="take-fold"><summary>Yasin Al <span>⌄</span></summary><div class="take-body"><label>Kaç Yasin alacaksınız?</label><input type="number" min="1" value="1" data-take-qty="${r.id}"><button class="btn gold" data-act="takeYasin" data-id="${r.id}">Aldım</button></div></details>`;if(r.type==='Zikir')actions=`<details class="take-fold" data-zikir-take="${r.id}" ${openZikirTakeFolds.has(String(r.id))?'open':''}><summary>Zikir Al <span>⌄</span></summary><div class="take-body"><label>Kaç zikir alacaksınız?</label><input type="number" min="1" value="" placeholder="Adet yazın" data-take-qty="${r.id}"><button class="btn gold" data-act="takeZikir" data-id="${r.id}">Aldım</button></div></details>`;}
+ return `<article class="request${(!mine&&!hasMyRealParticipation(r))?' v166-new-pulse':''}" data-id="${r.id}" data-type="${String(r.type||'').toLowerCase()}"><div class="meta"><span>${esc(r.type)} • ${esc(r.ownerName)}</span><span>${new Date(r.createdAt).toLocaleDateString('tr-TR')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.description)}</p>${extra}<div class="actions">${actions}</div></article>`}
+
+function render(){
+ openHatimMasters=new Set([...document.querySelectorAll('.hatim-master-fold[open]')].map(d=>String(d.dataset.masterHatim||'')));
+ openHatimSets=new Set([...document.querySelectorAll('.hatim-public-fold[open]')].map(d=>(d.dataset.hatimId||'')+'::'+(d.dataset.set||'0'))); let pub=Store.state.requests.filter(r=>r.published&&(filter==='all'||r.type===filter)).slice().sort((a,b)=>new Date(b.publishedAt||b.createdAt||0)-new Date(a.publishedAt||a.createdAt||0)); $('#generalList').innerHTML=pub.length?pub.map(r=>reqCard(r)).join(''):'<div class="empty">Henüz yayınlanmış istek yok.</div>'; let mine=Store.state.requests.filter(r=>String(r.ownerId||'')===String(uid())); $('#mineList').innerHTML=mine.length?mine.map(r=>reqCard(r,true)).join(''):'<div class="empty">Henüz bir paylaşımın yok.</div>'; if($('#taken')?.classList.contains('active'))renderTaken(); }
+function openEditor(r){$('#editId').value=r?.id||'';$('#type').value=r?.type||'Dua';$('#reqTitle').value=r?.title||'';$('#desc').value=r?.description||'';$('#target').value=r?.targetCount||100;$('#countMode').value=r?.countMode||'counted';$('#hatimMode').value=r?.hatimMode||'counted';$('#hatimQty').value=r?.hatimSetTarget||1;$('#formTitle').textContent=r?'İsteği Düzenle':'Yeni İstek';toggleTarget();$('#editor').showModal()}
+function toggleTarget(){const t=$('#type').value,on=t==='Zikir'||t==='Yasin',h=t==='Hatim';$('#modeField').style.display=on?'grid':'none';$('#targetField').style.display=on&&$('#countMode').value==='counted'?'grid':'none';$('#hatimModeField').style.display=h?'grid':'none';$('#hatimQtyField').style.display=h&&$('#hatimMode').value==='counted'?'grid':'none'}
+function act(a,id){let r=Store.state.requests.find(x=>x.id===id);if(!r)return;if(a==='delete'){var doDelete=function(){Store.state.requests=Store.state.requests.filter(x=>x.id!==id);persist();setTimeout(function(){try{window.HilalNotice&&window.HilalNotice.show('deleted')}catch(e){}},60)};if(window.HilalNotice&&typeof window.HilalNotice.confirm==='function'){window.HilalNotice.confirm({title:'Paylaşımı sil',msg:'Bu paylaşım Paylaştıklarım ve Genel Dua akışından kaldırılacak.',quote:'Güzel bir niyet, yeniden paylaşmak istediğinizde yine burada.',source:'Hilâl'}).then(function(ok){if(ok)doDelete()})}else if(confirm('Bu paylaşımı silmek istiyor musunuz?'))doDelete();return}if(a==='edit'){openEditor(r);return}if(a==='publish'){r.published=!r.published;r.publishedAt=r.published?new Date().toISOString():null;var _hilalPublished=r.published;persist();setTimeout(()=>{try{window.HilalNotice&&window.HilalNotice.show(_hilalPublished?'publish':'unpublished')}catch(e){}},60);return}r.participants??=[];
+if(a==='takeZikir'||a==='takeYasin'){
+ const input=document.querySelector(`[data-take-qty="${id}"]`);
+ const parsed=parseInt(String(input?.value||'').trim(),10);
+ if(!Number.isFinite(parsed)||parsed<1){if(input){input.focus();const d=input.closest('.take-fold[data-zikir-take]');if(d){d.open=true;openZikirTakeFolds.add(String(id));}}return;}
+ let qty=parsed;
+ const key=a==='takeZikir'?'zikirTaken':'yasinTaken',used=totalPart(r,key);
+ if(r.countMode!=='free'&&r.targetCount){qty=Math.min(qty,Math.max(0,Number(r.targetCount)-used));if(qty<1)return}
+ const userKey=String(uid());
+ r.userParticipation=(r.userParticipation&&typeof r.userParticipation==='object')?r.userParticipation:{};
+ const p=r.userParticipation[userKey]||{userId:userKey,userName:uname(),zikirTaken:0,zikirDone:0,yasinTaken:0,yasinDone:0};
+ p.userId=userKey;p.userName=uname();p[key]=Number(p[key]||0)+qty;p.updatedAt=new Date().toISOString();r.userParticipation[userKey]=p;
+ if(a==='takeZikir'){r.takenByMe=true;r.myZikirTaken=Number(p.zikirTaken||0);r.myZikirDone=Number(p.zikirDone||0);openZikirTakeFolds.delete(String(id));}
+ Store.save(Store.state);render();try{renderTaken()}catch(_){}return;
+}if(a==='takeDua'){r.participants??=[];if(!r.participants.includes(uid()))r.participants.push(uid());r.takenByMe=false;persist();return}if(a==='dua'||a==='yasin'){r.takenByMe=true;if(a==='yasin')r.myYasinTaken=Math.max(1,Number(r.myYasinTaken||0)+1);if(!r.participants.includes(uid()))r.participants.push(uid());persist();return}if(a==='zplus'){r.takenByMe=true;r.userCounts??={};r.userCounts[uid()]=(r.userCounts[uid()]||0)+1;r.currentCount=Object.values(r.userCounts).reduce((a,b)=>a+b,0);if(navigator.vibrate)navigator.vibrate(18);persist();return}if(a==='zminus'){r.userCounts??={};r.userCounts[uid()]=Math.max(0,(r.userCounts[uid()]||0)-1);r.currentCount=Object.values(r.userCounts).reduce((a,b)=>a+b,0);persist();}}
+function juzAct(id,n){
+ let r=Store.state.requests.find(x=>x.id===id);if(!r||r.type!=='Hatim'||hatimAllDone(r))return;
+ let j=r.juz.find(x=>x.n===+n);if(!j)return;
+ if(j.status==='empty'){
+   j.status='taken';j.takenBy=uid();j.takenAt=new Date().toISOString();r.takenByMe=true;
+   Store.save(Store.state);
+   const allTaken=(r.juz||[]).length===30&&(r.juz||[]).every(x=>x.status!=='empty');
+   render();renderTaken();
+   if(allTaken)document.querySelectorAll(`.hatim-public-fold[data-hatim-id="${r.id}"][open]`).forEach(d=>d.open=false);
+   return;
+ }
+ // A taken cüz can only be completed by the person who took it.
+ if(j.status==='taken'&&j.takenBy===uid()){
+   j.status='done';j.completedBy=uid();j.completedAt=new Date().toISOString();
+   Store.save(Store.state);render();renderTaken();
+   if(hatimAllDone(r))document.querySelectorAll(`[data-hatim-id="${r.id}"],#takenList .hatim-fold`).forEach(d=>d.open=false);
+ }
+}
+document.addEventListener('click',e=>{
+let g=e.target.closest('[data-go]');if(g)return nav(g.dataset.go);
+let ta=e.target.closest('[data-taken-act]');if(ta){
+ let r=Store.state.requests.find(x=>x.id===ta.dataset.id);if(!r)return;
+ if(ta.dataset.takenAct==='hatimDone'){
+ let sets=hatimSets(r);
+ let set=sets[Number(ta.dataset.set||0)]||sets[0];
+ let j=set&&set.juz.find(x=>x.n===+ta.dataset.juz);
+ if(!j||j.status!=='taken'||j.takenBy!==uid())return;
+
+ j.status='done';j.completedBy=uid();j.completedAt=new Date().toISOString();
+ Store.save(Store.state);
+
+ const setAllDone=set.juz.length===30&&set.juz.every(x=>x.status==='done');
+
+ if(setAllDone){
+   // Yalnız bu 30'luk Hatim tamamen okununca kapanır ve kilitlenir.
+   render();renderTaken();
+   document.querySelectorAll(`#takenList details[data-keep-open="hatim-${r.id}"]`).forEach(d=>d.open=false);
+   return;
+ }
+
+ // Tek tek "Okudum": tam render YOK. Kart açık kalır, kullanıcı manuel kapatır.
+ ta.className='done';
+ ta.removeAttribute('data-taken-act');
+ ta.removeAttribute('data-id');
+ ta.removeAttribute('data-set');
+ ta.removeAttribute('data-juz');
+ let sm=ta.querySelector('small');
+ if(sm)sm.textContent='Okundu';
+ else ta.insertAdjacentHTML('beforeend','<small style="display:block">Okundu</small>');
+
+ const det=ta.closest('details');
+ if(det){
+   const doneCount=set.juz.filter(x=>x.status==='done').length;
+   const summarySmall=det.querySelector('summary small');
+   if(summarySmall)summarySmall.textContent=doneCount+'/30 cüz tamamlandı';
+   const bodyCount=det.querySelector('.taken-body > b');
+   if(bodyCount)bodyCount.textContent=doneCount+'/30 cüz tamamlandı';
+ }
+ return;
+}
+ if(ta.dataset.takenAct==='zplus'){r.userCounts??={};r.userCounts[uid()]=(r.userCounts[uid()]||0)+1;r.currentCount=Object.values(r.userCounts).reduce((a,b)=>a+b,0);if(navigator.vibrate)navigator.vibrate(18)}
+ if(ta.dataset.takenAct==='zminus'){r.userCounts??={};r.userCounts[uid()]=Math.max(0,(r.userCounts[uid()]||0)-1);r.currentCount=Object.values(r.userCounts).reduce((a,b)=>a+b,0)}
+ if(ta.dataset.takenAct==='duaDone'){r.participants??=[];if(!r.participants.includes(uid()))r.participants.push(uid());r.takenByMe=false;}
+ if(ta.dataset.takenAct==='removeDua'){r.takenByMe=false;}
+ if(ta.dataset.takenAct==='removeHatim'){let sets=hatimSets(r),set=sets[Number(ta.dataset.set||0)]||sets[0];if(set){set.juz.forEach(j=>{if(j.status==='taken'&&j.takenBy===uid()){j.status='empty';delete j.takenBy;delete j.takenAt;}});}r.takenByMe=hatimSets(r).some(st=>st.juz.some(j=>j.status==='taken'&&j.takenBy===uid()));}
+ if(ta.dataset.takenAct==='yasinDone'){const p=userPart(r,true),left=Math.max(0,Number(p.yasinTaken||0)-Number(p.yasinDone||0));p.yasinDone=Number(p.yasinDone||0)+left;p.updatedAt=new Date().toISOString();r.participants??=[];if(left>0&&!r.participants.includes(uid()))r.participants.push(uid());}
+
+ if(ta.dataset.takenAct==='zTap'){const p=userPart(r,true),goal=Number(p.zikirTaken||0),done=Number(p.zikirDone||0);if(done<goal){p.zikirDone=done+1;p.updatedAt=new Date().toISOString();try{navigator.vibrate&&navigator.vibrate(25)}catch(_){}Store.save(Store.state);if(p.zikirDone>=goal){render();renderTaken();return;}let c=ta.closest('details')?.querySelector('.zik-count');if(c)c.textContent=p.zikirDone+' / '+goal;}return;}
+
+Store.save(Store.state);render();renderTaken();return;
+}
+let f=e.target.closest('[data-filter]');if(f){filter=f.dataset.filter;render();return}
+let b=e.target.closest('[data-act]');if(b){act(b.dataset.act,b.dataset.id);return}
+let sj=e.target.closest('[data-set-juz]');if(sj){
+ let r=Store.state.requests.find(x=>x.id===sj.dataset.id);if(!r)return;
+ let sets=hatimSets(r),set=sets[+sj.dataset.set],j=set&&set.juz.find(x=>x.n===+sj.dataset.setJuz);if(!j)return;
+ if(j.status==='empty'){j.status='taken';j.takenBy=uid();j.takenAt=new Date().toISOString();r.takenByMe=true;
+   const allTaken=set.juz.every(x=>x.status!=='empty');
+   if(allTaken){ openHatimSets.delete(String(r.id)+'::'+String(sj.dataset.set)); }
+ }
+ Store.save(Store.state);render();renderTaken();return;
+}
+let j=e.target.closest('[data-juz]');if(j){juzAct(j.dataset.id,j.dataset.juz);return}
+});
+$('#back').onclick=()=>nav('general');$('#newReq').onclick=()=>openEditor();$('#cancel').onclick=()=>$('#editor').close();$('#type').onchange=toggleTarget;$('#countMode').onchange=toggleTarget;$('#hatimMode').onchange=toggleTarget;
+$('#form').onsubmit=e=>{e.preventDefault();let id=$('#editId').value,r=id&&Store.state.requests.find(x=>x.id===id);const type=$('#type').value;if(r){r.type=type;r.title=$('#reqTitle').value.trim();r.description=$('#desc').value.trim();r.published=true;r.publishedAt=r.publishedAt||new Date().toISOString();if(type==='Zikir'||type==='Yasin'){r.countMode=$('#countMode').value;r.targetCount=r.countMode==='counted'?Math.max(1,+$('#target').value||1):null;}
+if(type==='Hatim'){r.hatimMode=$('#hatimMode').value;r.hatimSetTarget=r.hatimMode==='counted'?Math.max(1,+$('#hatimQty').value||1):null;}if(type==='Hatim'&&!r.juz)r.juz=Array.from({length:30},(_,i)=>({n:i+1,status:'empty'}));}else{r={id:crypto.randomUUID?crypto.randomUUID():'r'+Date.now(),ownerId:uid(),ownerName:uname(),type,title:$('#reqTitle').value.trim(),description:$('#desc').value.trim(),hatimMode:type==='Hatim'?$('#hatimMode').value:null,hatimSetTarget:type==='Hatim'&&$('#hatimMode').value==='counted'?Math.max(1,+$('#hatimQty').value||1):null,countMode:(type==='Zikir'||type==='Yasin')?$('#countMode').value:null,targetCount:(type==='Zikir'||type==='Yasin')&&$('#countMode').value==='counted'?Math.max(1,+$('#target').value||1):null,currentCount:0,userCounts:{},participants:[],createdAt:new Date().toISOString(),published:true,publishedAt:new Date().toISOString(),juz:type==='Hatim'?Array.from({length:30},(_,i)=>({n:i+1,status:'empty'})):null};Store.state.requests.unshift(r)}Store.save(Store.state);$('#editor').close();filter='all';render();nav('general')};
+document.addEventListener('toggle',e=>{
+ let d=e.target;if(!d||!d.matches||!d.open)return;
+ if(d.matches('#takenList details[data-locked="1"]')){d.open=false;return}
+ if(d.matches('.hatim-public-fold')){
+   let r=Store.state.requests.find(x=>String(x.id)===String(d.dataset.hatimId));
+   if(!r){d.open=false;return}
+   if(hatimAllDone(r)){d.open=false;return}
+   
+ }
+},true);
+window.HilalBridge={version:'1.0',setUser({id,name}){window.__hilalUserId=id||'local-user';window.__hilalName=name||null;render()},open(){nav('general')},exportData(){return structuredClone(Store.state)},importData(data){if(data&&Array.isArray(data.requests)){Store.state=data;persist()}}};render();
+})();
+</script>
+
+<script id="dua-v16-single-source-migration">
+(function(){
+  function normalize(){
+    try{
+      if(!window.Store || !Store.state || !Array.isArray(Store.state.requests)) return;
+      let changed=false;
+      Store.state.requests.forEach(function(r){
+        if(r.status==='published' || r.published===1 || r.published==='true'){
+          if(r.published!==true){ r.published=true; changed=true; }
+        }
+        if(r.published===true && r.status!=='published'){ r.status='published'; changed=true; }
+      });
+      if(changed) Store.save(Store.state);
+    }catch(e){}
+  }
+  normalize();
+})();
+</script>
+
+<script id="dua-v17-features">
+(function(){
+ const DAY=24*60*60*1000, now=()=>Date.now();
+ function save(){try{Store.save(Store.state)}catch(e){}}
+ function normalize(){
+   if(!window.Store||!Store.state||!Array.isArray(Store.state.requests))return;
+   let ch=false;
+   Store.state.requests.forEach(r=>{
+     if(!r.createdAt){r.createdAt=new Date().toISOString();ch=true}
+     if((r.type==='Dua'||r.type==='Zikir')&&!r.expiresAt){r.expiresAt=new Date(new Date(r.createdAt).getTime()+DAY).toISOString();ch=true}
+     if(r.type==='Yasin'&&!r.targetCount){r.targetCount=1;ch=true}
+     if(r.type==='Dua'&&!Array.isArray(r.duaUsers)){r.duaUsers=[];ch=true}
+     if(r.type==='Yasin'&&!Array.isArray(r.yasinUsers)){r.yasinUsers=[];ch=true}
+   });
+   if(ch)save();
+ }
+ function active(r){
+   if((r.type==='Dua'||r.type==='Zikir')&&r.expiresAt&&new Date(r.expiresAt).getTime()<=now()) return false;
+   if((r.type==='Yasin') && Number(r.currentCount||0)>=Number(r.targetCount||1)) return false;
+   if(r.type==='Hatim' && (r.juz||[]).length && (r.juz||[]).every(j=>j.status==='done')) return false;
+   return true;
+ }
+ function vibrate(){try{navigator.vibrate&&navigator.vibrate(35)}catch(e){}}
+ function ensureTakenBox(){
+   let page=document.querySelector('#minePage,#sharedPage,[data-page="mine"]');
+   if(!page)return;
+   let old=document.getElementById('v17-taken'); if(old)old.remove();
+   let rows=[];
+   (Store.state.requests||[]).forEach(r=>{
+     if(r.type==='Hatim') (r.juz||[]).forEach(j=>{if(j.status==='taken')rows.push(`<div class="v17-taken-row"><span>${r.title||'Hatim'} — ${j.n}. Cüz</span><button class="btn gold" data-v17-done="${r.id}" data-juz="${j.n}">Okundu</button></div>`)});
+   });
+   let box=document.createElement('div');box.id='v17-taken';box.className='v17-minebox';
+   box.innerHTML=`<h3>Aldıklarım</h3>${rows.length?rows.join(''):'<div>Henüz aldığınız cüz yok.</div>'}`;
+   let list=page.querySelector('.list,#mineList,#sharedList'); if(list) list.before(box); else page.appendChild(box);
+ }
+ const baseRender=window.render;
+ if(typeof baseRender==='function'){
+   window.render=function(){
+     normalize();
+     baseRender();
+     // General Dua: hide expired/completed requests without deleting owner's record.
+     document.querySelectorAll('[data-id]').forEach(card=>{
+       let id=card.dataset&&card.dataset.id;if(!id)return;
+       let r=Store.state.requests.find(x=>String(x.id)===String(id));if(!r)return;
+       let general=card.closest('#generalPage,[data-page="general"]');
+       if(general&&!active(r)) card.style.display='none';
+       if(general&&r.type==='Zikir'){
+         let actions=card.querySelector('.actions');
+         if(actions&&!card.querySelector('.v17-zikirbox')){
+           let box=document.createElement('div');box.className='v17-zikirbox';
+           box.innerHTML=`<div>Zikirmatik</div><div class="v17-zikircount">${Number(r.currentCount||0)} / ${Number(r.targetCount||0)}</div><button class="v17-zikirbtn" data-v17-zplus="${r.id}">ZİKRET</button>`;
+           actions.before(box);
+         }
+       }
+       if(general&&(r.type==='Dua'||r.type==='Zikir')&&r.expiresAt){
+         let meta=card.querySelector('.meta');if(meta&&!card.querySelector('.v17-exp')){
+           let d=document.createElement('div');d.className='v17-exp';d.textContent='24 saatlik paylaşım';meta.after(d);
+         }
+       }
+     });
+     ensureTakenBox();
+   }
+ }
+ document.addEventListener('click',function(e){
+   let p=e.target.closest('[data-v17-zplus]'); if(p){let r=Store.state.requests.find(x=>String(x.id)===String(p.dataset.v17Zplus));if(r&&active(r)){r.currentCount=Math.min(Number(r.targetCount||Infinity),Number(r.currentCount||0)+1);vibrate();save();render()}return}
+   let m=e.target.closest('[data-v17-zminus]'); if(m){let r=Store.state.requests.find(x=>String(x.id)===String(m.dataset.v17Zminus));if(r){r.currentCount=Math.max(0,Number(r.currentCount||0)-1);vibrate();save();render()}return}
+   let d=e.target.closest('[data-v17-done]'); if(d){let r=Store.state.requests.find(x=>String(x.id)===String(d.dataset.v17Done));let j=r&&(r.juz||[]).find(x=>String(x.n)===String(d.dataset.juz));if(j){j.status='done';j.completedAt=new Date().toISOString();save();render()}return}
+ },true);
+ setTimeout(()=>{normalize();try{render()}catch(e){}},0);
+})();
+</script>
+
+
+
+
+<script id="v123-hatim-stable-toggle">
+document.addEventListener('click',function(e){
+ const sum=e.target.closest('.hatim-public-fold > summary, #takenList .hatim-fold > summary');
+ if(!sum)return;
+ const d=sum.parentElement;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(d.dataset.locked==='1'){d.open=false;return}
+ d.open=!d.open;
+},true);
+</script>
+<script id="v126-hatim-multi-set-ui">
+(function(){
+ // UI enhancement is intentionally additive: existing first 30-cüz engine remains compatible.
+ document.addEventListener('click',function(e){
+   const add=e.target.closest('[data-add-hatim-set]');
+   if(!add)return;
+   e.preventDefault();e.stopImmediatePropagation();
+   if(window.HilalNotice){window.HilalNotice.show('hatimTake',{title:'Hatim bilgisi',msg:'Yeni 30 cüzlük Hatim, mevcut Hatim tamamı alındıktan sonra otomatik açılır.',quote:'“Kur’an’ı tane tane oku.”',source:'Müzzemmil 73:4'})}else{alert('Yeni 30 cüzlük Hatim, mevcut Hatim tamamı alındıktan sonra otomatik açılır.');}
+ },true);
+})();
+</script>
+
+<!-- v139-newest-first-feed disabled in V1.56: main render sorts by publishedAt -->
+
+
+<!-- v140-feed-top-entry disabled in V1.64 -->
+
+
+<style id="v141-feed-fix">
+/* Dua kartındaki beyaz sayaç rozetini V1.37/Kaza görünümüne uyarla */
+#general .request .badge,
+#general .card .badge,
+#generalList .request .badge,
+#generalList .card .badge,
+#publicList .request .badge,
+#publicList .card .badge,
+#mine .request .badge,
+#mineList .request .badge{
+  background:linear-gradient(180deg,rgba(18,126,92,.96),rgba(5,83,62,.98))!important;
+  color:#fffdf2!important;
+  border:1px solid rgba(220,210,145,.30)!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.15),0 5px 10px rgba(0,35,25,.28)!important;
+}
+
+/* Filtreler üstte; kartlar onun ALTINDAN akan tek dikey feed */
+#general .filters,#general .filterbar,#generalFilters,
+#public .filters,#public .filterbar{
+  position:sticky!important;
+  top:0!important;
+  z-index:50!important;
+  background:rgba(4,83,62,.96)!important;
+}
+</style>
+
+<!-- v141-feed-order-fix disabled in V1.56: main render sorts by publishedAt -->
+
+
+<style id="v142-sticky-filter-feed">
+/* Tümü / Dua / Zikir / Yasin / Hatim ekranda sabit kalır.
+   Kartlar bu çubuğun ALTINDAN görünür ve yukarı giderken arkasında kaybolur. */
+#general .filters,#general .filterbar,#generalFilters,
+#public .filters,#public .filterbar{
+ position:sticky!important;
+ top:0!important;
+ z-index:999!important;
+ isolation:isolate;
+ background:linear-gradient(180deg,#075f48 0%,#075840 100%)!important;
+ padding-top:8px!important;
+ padding-bottom:10px!important;
+ box-shadow:0 10px 14px rgba(0,45,32,.22)!important;
+}
+
+/* Çubuğun arkasına giren kartın görünmesini engelleyen maske */
+#general .filters:before,#general .filterbar:before,#generalFilters:before,
+#public .filters:before,#public .filterbar:before{
+ content:"";
+ position:absolute;
+ left:-30px;right:-30px;
+ top:-80px;bottom:0;
+ z-index:-1;
+ background:#075b44;
+}
+
+/* Paylaşım akışı filtre çubuğunun hemen altından başlar */
+#generalList,#publicList,#feed,#general .list{
+ position:relative!important;
+ z-index:1!important;
+}
+
+/* Yeni kart ilk görünüşte sabit çubuğun altından yumuşakça çıkar */
+@keyframes v142UnderFilter{
+ from{opacity:0;transform:translateY(-24px);filter:blur(2px)}
+ to{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+.v142-enter{
+ animation:v142UnderFilter .32s ease-out both!important;
+}
+</style>
+
+<!-- v142-under-filter-entry disabled in V1.64 -->
+
+
+<style id="v144-fixed-filter-overlay">
+/* V1.42 tabanı: filtre satırı viewport'ta kalır; kartlar arkasından kayar. */
+#general .filters,#general .filterbar,#generalFilters,
+#public .filters,#public .filterbar{
+ position:sticky!important;
+ top:0!important;
+ z-index:9999!important;
+ isolation:isolate!important;
+ background:#075b44!important;
+ padding-top:8px!important;
+ padding-bottom:12px!important;
+ margin-bottom:0!important;
+ box-shadow:0 10px 14px rgba(0,38,28,.24)!important;
+}
+
+/* Üst maske: kartlar filtre satırının arkasına girince görünmez */
+#general .filters::before,#general .filterbar::before,#generalFilters::before,
+#public .filters::before,#public .filterbar::before{
+ content:"";
+ position:absolute;
+ left:-30px;right:-30px;
+ top:-160px;bottom:0;
+ z-index:-1;
+ background:#075b44!important;
+ pointer-events:none;
+}
+
+/* Feed filtre satırının hemen arkasından/altından akar */
+#generalList,#publicList,#feed,#general .list{
+ position:relative!important;
+ z-index:1!important;
+ margin-top:0!important;
+ padding-top:18px!important;
+}
+</style>
+
+
+<script id="v164-size-scroll-area">
+(function(){
+"use strict";
+function sizeGeneral(){
+ var g=document.getElementById("general");
+ if(!g || !g.classList.contains("active"))return;
+ var top=Math.max(0,Math.round(g.getBoundingClientRect().top));
+ g.style.setProperty("--v164-top-offset",top+"px");
+}
+document.addEventListener("click",function(e){
+ var go=e.target.closest&&e.target.closest('[data-go="general"]');
+ if(go)requestAnimationFrame(function(){requestAnimationFrame(sizeGeneral);});
+},true);
+window.addEventListener("resize",sizeGeneral,{passive:true});
+})();
+</script>
+
+
+<script id="v165-pull-new-persistent-disabled" type="application/x-disabled">
+(function(){
+"use strict";
+var feed=null,startY=0,pulling=false,pending=[];
+
+/* V1.56 motorunda en yeni kart ilk sırada render edilir.
+   Yeni yayınlamadan hemen önce mevcut görünür kartların kimliklerini tutuyoruz.
+   Yayın sonrası sadece gerçekten yeni olan ilk kartı beklemeye alıyoruz.
+   Sürekli observer yok. */
+function key(c){
+ return c.getAttribute("data-id")||c.getAttribute("data-request-id")||"";
+}
+function cards(){
+ return feed?Array.from(feed.children).filter(function(c){
+   return c.matches&&c.matches(".request,.card");
+ }):[];
+}
+function revealOne(){
+ if(!pending.length)return;
+ var c=pending.shift();
+ if(!c || !c.isConnected)return;
+ c.classList.remove("v165-pending");
+ c.classList.add("v165-reveal");
+ setTimeout(function(){c.classList.remove("v165-reveal")},360);
+ /* Bir kez görünen kart sayfada kalır; tekrar gizlenmez. */
+}
+function bind(){
+ feed=document.getElementById("generalList");
+ if(!feed||feed.dataset.v165==="1")return;
+ feed.dataset.v165="1";
+
+ feed.addEventListener("touchstart",function(e){
+   if(feed.scrollTop<=1){
+     startY=e.touches[0].clientY;
+     pulling=true;
+   }
+ },{passive:true});
+ feed.addEventListener("touchend",function(e){
+   if(!pulling)return;
+   pulling=false;
+   var y=e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientY:startY;
+   if(y-startY>36)revealOne();
+ },{passive:true});
+}
+
+/* Yayınla aksiyonunda mevcut kartları snapshot al.
+   Ana uygulama render'ını tamamladıktan sonra yeni kartı belirle. */
+document.addEventListener("click",function(e){
+ var t=e.target.closest&&e.target.closest("button,[role=button]");
+ if(!t)return;
+ var text=(t.textContent||"").trim().toLocaleLowerCase("tr-TR");
+ if(text!=="yayınla"&&text!=="yayinla")return;
+
+ feed=document.getElementById("generalList");
+ if(!feed)return;
+ var before=new Set(cards().map(key).filter(Boolean));
+
+ setTimeout(function(){
+   feed=document.getElementById("generalList");
+   if(!feed)return;
+   var fresh=cards().filter(function(c){
+     var k=key(c);
+     return k && !before.has(k);
+   });
+   fresh.forEach(function(c){
+     c.classList.add("v165-pending");
+     pending.push(c);
+   });
+ },80);
+},true);
+
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});
+else bind();
+})();
+</script>
+
+
+<!-- Hilâl ortak işlem bildirimi: yalnız görsel geri bildirim katmanı; Dua/Zikir/Yasin/Hatim motorları değişmez. -->
+<style id="hilal-notice-v1-style">
+#hilalNoticeHost{position:fixed;inset:0;z-index:2147483000;pointer-events:none;display:flex;align-items:center;justify-content:center;padding:calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom))}
+.hilal-notice{width:min(88vw,460px);pointer-events:auto;opacity:0;transform:scale(.965);transition:opacity .2s ease,transform .24s cubic-bezier(.2,.75,.25,1);border-radius:24px;border:1px solid rgba(117,190,165,.36);background:linear-gradient(145deg,rgba(255,255,255,.08),transparent 42%,rgba(0,0,0,.07)),linear-gradient(180deg,#13795c,#0a624b 60%,#064a39);box-shadow:inset 0 1px 0 rgba(185,228,211,.22),inset 0 -4px 7px rgba(0,31,23,.24),0 12px 28px rgba(0,25,18,.42);color:#fff9ec;padding:16px 17px 15px}
+.hilal-notice.show{opacity:1;transform:scale(1)}
+.hilal-notice-head{display:flex;align-items:center;gap:10px}.hilal-notice-icon{width:42px;height:42px;flex:0 0 42px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:900;background:linear-gradient(180deg,#17815f,#07513e);border:1px solid rgba(225,210,139,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 5px 9px rgba(0,28,21,.35)}
+.hilal-notice-title{font-size:17px;font-weight:900;line-height:1.2}.hilal-notice-msg{margin-top:5px;color:#e4ece6;font-size:13px;line-height:1.4}.hilal-notice-quote{margin-top:12px;padding:11px 12px;border-radius:16px;background:rgba(1,52,39,.24);border:1px solid rgba(134,190,170,.20);color:#fff7e6;font-size:13px;line-height:1.45}.hilal-notice-source{display:block;margin-top:5px;color:#d9e5dd;font-size:11px;opacity:.86}.hilal-notice-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.hilal-notice-actions button{min-width:86px!important;padding:9px 13px!important;border-radius:15px!important;font-size:13px!important}.hilal-notice.cancel .hilal-notice-icon{background:linear-gradient(180deg,#7b5c35,#59442c)}
+@media(prefers-reduced-motion:reduce){.hilal-notice{transition:none}}
+</style>
+<script id="hilal-notice-v1">
+(function(){
+ 'use strict';
+ var host,timer;
+ var copy={
+  publish:{title:'Paylaşımınız yayınlandı',msg:'İsteğiniz Genel Dua akışına eklendi.',icon:'✓',quote:'“Bana dua edin, size cevap vereyim.”',source:'Mü’min 40:60'},
+  duaTake:{title:'Dua kaydedildi',msg:'Dua ettiğiniz bilgisi bu paylaşımda kaydedildi.',icon:'☾',quote:'“Müminin mümine gıyabında yaptığı dua kabul olunur.”',source:'Müslim, Zikir 87'},
+  duaDone:{title:'Duanız kaydedildi',msg:'Dua tamamlandı ve Aldıklarım listenizden kaldırıldı.',icon:'✓',quote:'“Bana dua edin, size cevap vereyim.”',source:'Mü’min 40:60'},
+  zikirTake:{title:'Zikir aldınız',msg:'Aldığınız zikir tamamlanana kadar Aldıklarım sayfanızda kalacak.',icon:'◉',quote:'“Beni anın ki ben de sizi anayım.”',source:'Bakara 2:152'},
+  zikirDone:{title:'Zikir tamamlandı',msg:'Aldığınız zikir tamamlandı ve listenizden kaldırıldı.',icon:'✓',quote:'“Beni anın ki ben de sizi anayım.”',source:'Bakara 2:152'},
+  yasinTake:{title:'Yasin aldınız',msg:'Aldığınız Yasin Aldıklarım sayfanıza eklendi.',icon:'۞',quote:'“Kur’an’dan kolayınıza geleni okuyun.”',source:'Müzzemmil 73:20'},
+  yasinDone:{title:'Yasin tamamlandı',msg:'Okuma tamamlandı ve Aldıklarım listenizden kaldırıldı.',icon:'✓',quote:'“Kur’an’dan kolayınıza geleni okuyun.”',source:'Müzzemmil 73:20'},
+  hatimTake:{title:'Cüz aldınız',msg:'Aldığınız cüz, okuyana kadar Aldıklarım sayfanızda kalacak.',icon:'۞',quote:'“Kur’an’ı tane tane oku.”',source:'Müzzemmil 73:4'},
+  hatimDone:{title:'Cüz okundu',msg:'Okuduğunuz cüz tamamlandı olarak kaydedildi.',icon:'✓',quote:'“Kur’an’ı tane tane oku.”',source:'Müzzemmil 73:4'},
+  removed:{title:'Aldıklarımdan kaldırıldı',msg:'Kayıt tamamlandı sayılmadan kişisel listenizden kaldırıldı.',icon:'×'},
+  unpublished:{title:'Paylaşım yayından kaldırıldı',msg:'Paylaşımınız Genel Dua akışından kaldırıldı; kaydınız Paylaştıklarım bölümünde duruyor.',icon:'✓',quote:'“İyilik ve takvâ üzerinde yardımlaşın.”',source:'Mâide 5:2'},
+  deleted:{title:'Paylaşımınız silindi',msg:'Paylaşımınız güvenli şekilde kaldırıldı. Yeni bir hayra vesile olmak istediğinizde tekrar paylaşabilirsiniz.',icon:'✓',quote:'“Hayra vesile olan, onu yapan gibidir.”',source:'Tirmizî, İlim 14'}
+ };
+ function ensure(){if(host&&host.isConnected)return host;host=document.createElement('div');host.id='hilalNoticeHost';document.body.appendChild(host);return host}
+ function esc(v){return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+ function show(kind,override){clearTimeout(timer);var d=Object.assign({},copy[kind]||copy.publish,override||{}),h=ensure();h.innerHTML='<div class="hilal-notice'+(kind==='removed'?' cancel':'')+'"><div class="hilal-notice-head"><div class="hilal-notice-icon">'+esc(d.icon)+'</div><div><div class="hilal-notice-title">'+esc(d.title)+'</div><div class="hilal-notice-msg">'+esc(d.msg)+'</div></div></div>'+(d.quote?'<div class="hilal-notice-quote">'+esc(d.quote)+(d.source?'<span class="hilal-notice-source">'+esc(d.source)+'</span>':'')+'</div>':'')+'</div>';var n=h.firstElementChild;requestAnimationFrame(function(){n&&n.classList.add('show')});timer=setTimeout(close,3300)}
+ function close(){if(!host)return;var n=host.firstElementChild;if(!n)return;if(n.classList)n.classList.remove('show');setTimeout(function(){if(host)host.innerHTML=''},240)}
+ function confirmBox(opts){opts=opts||{};clearTimeout(timer);var h=ensure();h.innerHTML='<div class="hilal-notice cancel"><div class="hilal-notice-head"><div class="hilal-notice-icon">?</div><div><div class="hilal-notice-title">'+esc(opts.title||'Emin misiniz?')+'</div><div class="hilal-notice-msg">'+esc(opts.msg||'Bu işlem geri alınamayabilir.')+'</div></div></div>'+(opts.quote?'<div class="hilal-notice-quote">'+esc(opts.quote)+(opts.source?'<span class="hilal-notice-source">'+esc(opts.source)+'</span>':'')+'</div>':'')+'<div class="hilal-notice-actions"><button class="btn secondary" data-hn-no>Vazgeç</button><button class="btn danger" data-hn-yes>Sil</button></div></div>';var n=h.firstElementChild;requestAnimationFrame(function(){n&&n.classList.add('show')});return new Promise(function(resolve){h.querySelector('[data-hn-no]').onclick=function(){close();resolve(false)};h.querySelector('[data-hn-yes]').onclick=function(){close();resolve(true)}})}
+ window.HilalNotice={show:show,confirm:confirmBox,close:close};
+
+ // İş motoruna dokunmadan, mevcut gerçek aksiyonlardan sonra görsel geri bildirim verir.
+ document.addEventListener('click',function(e){
+   var b=e.target.closest&&e.target.closest('[data-act],[data-taken-act],[data-set-juz]');if(!b)return;
+   var act=b.dataset.act||b.dataset.takenAct||'';
+   if(act==='takeDua')setTimeout(function(){show('duaTake')},40);
+   else if(act==='takeZikir')setTimeout(function(){show('zikirTake')},40);
+   else if(act==='takeYasin')setTimeout(function(){show('yasinTake')},40);
+   else if(act==='duaDone')setTimeout(function(){show('duaDone')},40);
+   else if(act==='yasinDone')setTimeout(function(){show('yasinDone')},40);
+   else if(act==='hatimDone')setTimeout(function(){show('hatimDone')},40);
+   else if(act==='removeDua'||act==='removeZikir'||act==='removeYasin'||act==='removeHatim')setTimeout(function(){show('removed')},40);
+   else if(b.hasAttribute('data-set-juz')){var wasEmpty=b.classList.contains('empty');setTimeout(function(){show(wasEmpty?'hatimTake':'hatimDone')},40)}
+ },false);
+
+ // Zikir son dokunuşunda tamamlanmayı mevcut sayaç değerinden tespit et.
+ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-taken-act="zTap"]');if(!b)return;var d=b.closest('details'),c=d&&d.querySelector('.zik-count');if(!c)return;var m=(c.textContent||'').match(/(\d+)\s*\/\s*(\d+)/);if(m&&Number(m[1])+1>=Number(m[2]))setTimeout(function(){show('zikirDone')},50)},true);
+
+ // Form başarıyla kapanıp Genel Dua açıldığında paylaşım geri bildirimi.
+ var form=document.getElementById('form');if(form)form.addEventListener('submit',function(){setTimeout(function(){show('publish')},90)},false);
+})();
+</script>
+
+<!-- V1.65 Aldıklarım: tamamlanan Dua/Zikir/Yasin/Hatim otomatik temizlenir; manuel Aldıklarımdan Sil yalnız bekleyen kişisel kaydı bırakır. -->
+
+<style id="v177-dua-direct-general-dock">
+/* V1.77 — yalnız gerçek Dua İstekleri kabuğu. İş motorları değişmez. */
+body.v177-general header{display:none!important}
+body.v177-general #general{padding-top:72px!important}
+#v177QuickDock{
+ position:fixed;right:14px;bottom:92px;z-index:2147482000;
+ display:none;flex-direction:column;align-items:center;gap:9px;
+ pointer-events:none
+}
+body.v177-general #v177QuickDock{display:flex}
+.v177-fab{
+ pointer-events:auto!important;width:52px!important;height:52px!important;padding:0!important;
+ display:grid!important;place-items:center!important;border-radius:18px!important;
+ border:1px solid rgba(255,255,255,.16)!important;
+ background:rgba(8,73,58,.34)!important;
+ -webkit-backdrop-filter:blur(13px);backdrop-filter:blur(13px);
+ color:#f4d77f!important;
+ box-shadow:0 7px 18px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+#v177Taken .v177-icon{font-size:23px;line-height:1}
+#v177Share{font-size:30px!important;line-height:1!important}
+</style>
+<div id="v177QuickDock" aria-label="Dua hızlı işlemler">
+ <button id="v177Taken" class="v177-fab" type="button" aria-label="Aldıklarım" title="Aldıklarım"><span class="v177-icon">🤲</span></button>
+ <button id="v177Share" class="v177-fab" type="button" aria-label="Yeni paylaşım">＋</button>
+</div>
+<script id="v177-dua-direct-general-js">
+(function(){
+ 'use strict';
+ function boot(){
+   document.body.classList.add('v177-general');
+   var share=document.getElementById('v177Share');
+   var taken=document.getElementById('v177Taken');
+   if(share)share.onclick=function(e){
+     e.preventDefault();e.stopPropagation();
+     try{
+       var nb=document.getElementById('newBtn');
+       if(nb){nb.click();return;}
+       nav('mine');
+       setTimeout(function(){var x=document.getElementById('newBtn');if(x)x.click();},0);
+     }catch(_){}
+   };
+   if(taken)taken.onclick=function(e){
+     e.preventDefault();e.stopPropagation();
+     try{nav('taken');}catch(_){}
+   };
+   /* Eski ara ana ekran artık kullanılmaz; dış uygulama/geri çağrısı gelse bile Genel Dua'ya dön. */
+   try{nav('general')}catch(e){}
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
+</script>
+
+
+<script id="v89-float-action-bridge">
+(function(){
+  'use strict';
+
+  function openRealDuaScreen(id){
+    if (typeof window.nav === 'function') {
+      window.nav(id);
+      return;
+    }
+    /* fallback uses the existing real screens only; no new business engine */
+    document.querySelectorAll('.screen').forEach(function(x){
+      x.classList.toggle('active', x.id === id);
+    });
+    var back=document.getElementById('back');
+    if(back) back.style.display = id==='general' ? 'none' : 'inline-block';
+    var title=document.getElementById('title');
+    if(title) title.textContent = id==='general' ? '' : id==='mine' ? 'Paylaştıklarım' : id==='taken' ? 'Aldıklarım' : '';
+    document.body.classList.toggle('v177-general', id==='general');
+    try{ if(typeof render==='function') render(); }catch(_){}
+    try{ if(id==='taken' && typeof renderTaken==='function') renderTaken(); }catch(_){}
+  }
+
+  var lastTouch=0;
+  function handle(e){
+    var t=e.target && e.target.closest ? e.target.closest('#v177Share,#v177Taken') : null;
+    if(!t) return;
+    if(e.type==='click' && Date.now()-lastTouch < 500) return;
+    if(e.type==='pointerup') lastTouch=Date.now();
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    openRealDuaScreen(t.id==='v177Share' ? 'mine' : 'taken');
+  }
+
+  document.addEventListener('pointerup', handle, true);
+  document.addEventListener('click', handle, true);
+})();
+</script>
+
+
+<script id="v92-back-title-sync">
+(function(){
+ function sync(){
+   var active=document.querySelector('.screen.active');
+   if(!active)return;
+   var title=document.getElementById('title');
+   if(!title)return;
+   if(active.id==='mine') title.textContent='Paylaştıklarım';
+   else if(active.id==='taken') title.textContent='Aldıklarım';
+   else if(active.id==='general') title.textContent='';
+ }
+ document.addEventListener('click',function(){setTimeout(sync,0)},true);
+ document.addEventListener('DOMContentLoaded',sync,{once:true});
+ setTimeout(sync,0);
+})();
+</script>
+
+
+<script id="hilal-v56-dua-frame-cloud-bridge">
+(function(){
+'use strict';
+var applying=false;
+try{
+  var originalSave=Store.save.bind(Store);
+  Store.save=function(state){
+    originalSave(state);
+    if(!applying){
+      try{ parent.postMessage({type:'hilal-dua-v56-save',state:structuredClone(state)},'*'); }catch(e){}
+    }
+  };
+  window.addEventListener('message',function(ev){
+    var msg=ev.data||{};
+    if(msg.type==='hilal-dua-v56-user'){
+      window.__hilalUserId=String(msg.id||'local-user');
+      window.__hilalName=String(msg.name||'Kullanıcı');
+      try{render(); if(document.getElementById('taken')?.classList.contains('active'))renderTaken();}catch(e){}
+      return;
+    }
+    if(msg.type==='hilal-dua-v56-import' && msg.state && Array.isArray(msg.state.requests)){
+      applying=true;
+      try{
+        Store.state=hilalMergeRemoteState(msg.state);
+        originalSave(Store.state);
+        render();
+        if(document.getElementById('taken')?.classList.contains('active'))renderTaken();
+      }finally{applying=false;}
+    }
+  });
+  setTimeout(function(){
+    try{parent.postMessage({type:'hilal-dua-v56-ready'},'*');}catch(e){}
+  },0);
+}catch(e){
+  try{parent.postMessage({type:'hilal-dua-v56-error',error:String(e)},'*');}catch(_){}
+}
+})();
+</script>
+
+</body></html>
+
+<script id="hilal-zikir-aldiklarim-owner-fix-v2">
+(function(){
+ 'use strict';
+ function currentId(){return String(window.__hilalUserId||'local-user');}
+ function migrateLocalClaim(newId){
+   if(!newId||newId==='local-user'||!window.Store?.state?.requests)return;
+   let changed=false;
+   Store.state.requests.forEach(function(r){
+     if(!r||r.type!=='Zikir')return;
+     r.userParticipation=(r.userParticipation&&typeof r.userParticipation==='object')?r.userParticipation:{};
+     const old=r.userParticipation['local-user'];
+     if(!old)return;
+     const cur=r.userParticipation[newId]||{userId:newId,userName:window.__hilalName||old.userName||'Kullanıcı',zikirTaken:0,zikirDone:0,yasinTaken:0,yasinDone:0};
+     cur.zikirTaken=Math.max(Number(cur.zikirTaken||0),Number(old.zikirTaken||0));
+     cur.zikirDone=Math.min(cur.zikirTaken,Math.max(Number(cur.zikirDone||0),Number(old.zikirDone||0)));
+     cur.updatedAt=new Date().toISOString();
+     r.userParticipation[newId]=cur; delete r.userParticipation['local-user']; changed=true;
+   });
+   if(changed){try{Store.save(Store.state)}catch(_){}}
+ }
+ window.addEventListener('message',function(ev){
+   const m=ev.data||{}; if(m.type!=='hilal-dua-v56-user')return;
+   setTimeout(function(){migrateLocalClaim(String(m.id||currentId())); try{render();renderTaken()}catch(_){}},0);
+ },false);
+ document.addEventListener('click',function(e){
+   const b=e.target.closest?.('[data-act="takeZikir"]'); if(!b)return;
+   setTimeout(function(){
+     try{
+       const id=String(b.dataset.id||''); const r=Store.state.requests.find(x=>String(x.id)===id); if(!r)return;
+       const p=userPart(r,false);
+       if(p&&Number(p.zikirTaken||0)>Number(p.zikirDone||0)){
+         r.takenByMe=true; r.myZikirTaken=Number(p.zikirTaken||0); r.myZikirDone=Number(p.zikirDone||0);
+         Store.save(Store.state);
+       }
+       if(document.getElementById('taken')?.classList.contains('active'))renderTaken();
+     }catch(_){}
+   },0);
+ },true);
+ const oldRenderTaken=window.renderTaken;
+ if(typeof oldRenderTaken==='function')window.renderTaken=function(){
+   try{
+     Store.state.requests.forEach(function(r){
+       if(!r||r.type!=='Zikir')return;
+       const p=userPart(r,false);
+       if(!p&&r.takenByMe&&Number(r.myZikirTaken||0)>Number(r.myZikirDone||0)){
+         r.userParticipation=r.userParticipation||{};
+         r.userParticipation[currentId()]={userId:currentId(),userName:window.__hilalName||'Kullanıcı',zikirTaken:Number(r.myZikirTaken||0),zikirDone:Number(r.myZikirDone||0),yasinTaken:0,yasinDone:0,updatedAt:new Date().toISOString()};
+       }
+     });
+   }catch(_){}
+   return oldRenderTaken();
+ };
+})();
+</script>
