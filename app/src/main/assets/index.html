@@ -30025,6 +30025,18 @@ const SUNNET_IHYA_CLAIMS_KEY="hilal_sunnet_ihya_claims_v1";
 const SUNNET_IHYA_DEVICE_KEY="hilal_sunnet_ihya_device_v1";
 const SUNNET_IHYA_OPEN_KEY="hilal_sunnet_ihya_open_v1";
 
+/* ===== SÜNNETİ İHYA • FIREBASE ÇOKLU CİHAZ KATILIM MOTORU =====
+   MASTER/FINGERPRINT: yalnız bu alt bileşen değiştirilebilir. */
+const SUNNET_IHYA_CLOUD_ROOT="shared/hilal_sunnet_ihya_claims_v2";
+let __sunnetCloudStarted=false;
+let __sunnetCloudStream=null;
+function sunnetCloudUrl(id){const base=String(HILAL_FIREBASE_DATABASE_URL||"").replace(/\/$/,"");return base+"/"+SUNNET_IHYA_CLOUD_ROOT+(id!=null?"/"+encodeURIComponent(String(id)):"")+".json";}
+function sunnetApplyCloudClaims(data){const clean=(data&&typeof data==="object"&&!Array.isArray(data))?data:{};try{localStorage.setItem(SUNNET_IHYA_CLAIMS_KEY,JSON.stringify(clean));}catch(e){}try{renderSunnetIhya()}catch(e){}try{renderSunnetDailyModal()}catch(e){}}
+async function sunnetCloudPull(){if(typeof navigator!=="undefined"&&navigator.onLine===false)return false;try{const r=await fetch(sunnetCloudUrl(),{method:"GET",mode:"cors",credentials:"omit",cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);sunnetApplyCloudClaims((await r.json())||{});return true;}catch(e){console.warn("Sünnet Firebase pull",e);return false;}}
+async function sunnetCloudClaimAtomic(id,claim){const url=sunnetCloudUrl(id);try{const g=await fetch(url,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store",headers:{"X-Firebase-ETag":"true","Accept":"application/json"}});if(!g.ok)throw new Error("HTTP "+g.status);const current=await g.json();if(current!==null)return {ok:false,reason:"taken",current};const etag=g.headers.get("ETag");const headers={"Content-Type":"application/json"};if(etag)headers["if-match"]=etag;const p=await fetch(url,{method:"PUT",mode:"cors",credentials:"omit",cache:"no-store",headers,body:JSON.stringify(claim)});if(p.status===412)return {ok:false,reason:"taken"};if(!p.ok)throw new Error("HTTP "+p.status);return {ok:true};}catch(e){console.warn("Sünnet Firebase claim",e);return {ok:false,reason:"network",error:e};}}
+async function sunnetCloudReleaseAtomic(id,ownerKey){const url=sunnetCloudUrl(id);try{const g=await fetch(url,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store",headers:{"X-Firebase-ETag":"true","Accept":"application/json"}});if(!g.ok)throw new Error("HTTP "+g.status);const current=await g.json();if(!current||current.ownerKey!==ownerKey)return {ok:false,reason:"owner"};const etag=g.headers.get("ETag");const headers={};if(etag)headers["if-match"]=etag;const d=await fetch(url,{method:"DELETE",mode:"cors",credentials:"omit",cache:"no-store",headers});if(d.status===412)return {ok:false,reason:"changed"};if(!d.ok)throw new Error("HTTP "+d.status);return {ok:true};}catch(e){console.warn("Sünnet Firebase release",e);return {ok:false,reason:"network",error:e};}}
+function startSunnetCloudSync(){if(__sunnetCloudStarted)return;__sunnetCloudStarted=true;sunnetCloudPull();try{__sunnetCloudStream=new EventSource(sunnetCloudUrl());const apply=(ev)=>{try{const packet=JSON.parse(ev.data||"{}");if(packet.path==="/")sunnetApplyCloudClaims(packet.data||{});else sunnetCloudPull();}catch(e){sunnetCloudPull();}};__sunnetCloudStream.addEventListener("put",apply);__sunnetCloudStream.addEventListener("patch",apply);}catch(e){console.warn("Sünnet Firebase stream",e);}window.addEventListener("online",sunnetCloudPull);document.addEventListener("visibilitychange",()=>{if(!document.hidden)sunnetCloudPull();});}
+
 const SUNNET_DAILY_KEY="hilal_sunnet_daily_tracking_v1";
 
 function sunnetTodayKey(){
@@ -30252,113 +30264,22 @@ function toggleSunnetItem(id){
 }
 
 function claimSunnet(id){
-  id=String(id);
-  const claims=loadSunnetClaims();
-  if(claims[id]){
-    hilalIslamicAlert("Bu sünnet ihya edilmek üzere bir kişi tarafından alınmış.","Bilgilendirme");
-    return;
-  }
-
-  const actor=sunnetActor();
-  const item=SUNNET_IHYA_DATA.find(x=>String(x.id)===id);
-  if(!item)return;
-
-  hilalIslamicConfirm(
-    "“"+item.title+"”\n\n"+
-    "Bu sünneti Allah rızası için hayatımda uygulamaya, yaşatmaya ve ömrüm boyunca devam ettirmeye niyet ediyorum.\n\n"+
-    "Bu sünneti üzerinize almak istiyor musunuz?",
-    {
-      title:"Sünneti İhya Niyeti",
-      badge:"☾",
-      okLabel:"✓ Evet, Bu Sünneti Alıyorum",
-      cancelLabel:"Şimdilik Değil",
-      onYes:function(){
-        const fresh=loadSunnetClaims();
-        if(fresh[id]){
-          hilalIslamicAlert("Bu sünnet siz onay verirken başka biri tarafından alınmış.","Bilgilendirme");
-          renderSunnetIhya();
-          return;
-        }
-
-        fresh[id]={
-          ownerKey:actor.key,
-          ownerName:actor.name,
-          ownerRole:actor.role,
-          claimedAt:new Date().toISOString()
-        };
-        saveSunnetClaims(fresh);
-
-        const catIndex=SUNNET_IHYA_CATS.findIndex(cat=>Number(id)>=cat.start&&Number(id)<=cat.end);
-        if(catIndex>=0){
-          const cat=SUNNET_IHYA_CATS[catIndex];
-          const arr=SUNNET_IHYA_DATA.filter(x=>x.id>=cat.start&&x.id<=cat.end);
-          const complete=arr.every(x=>!!fresh[String(x.id)]);
-          if(complete){
-            const o=loadSunnetOpen();
-            o["cat_"+catIndex]=false;
-            saveSunnetOpen(o);
-          }
-        }
-
-        renderSunnetIhya();
-        try{renderSunnetDailyModal()}catch(e){}
-        hilalIslamicAlert("Seçtiğiniz sünnet ihya niyetiyle üzerinize kaydedildi. Sünneti İhya bölümüne her girişinizde günlük takibinizde görünecektir. Allah kabul etsin ve devamlı kılsın.","Maşâallah");
-      }
-    }
-  );
+  id=String(id); const claims=loadSunnetClaims();
+  if(claims[id]){hilalIslamicAlert("Bu sünnet ihya edilmek üzere bir kişi tarafından alınmış.","Bilgilendirme");return;}
+  const actor=sunnetActor(); const item=SUNNET_IHYA_DATA.find(x=>String(x.id)===id); if(!item)return;
+  hilalIslamicConfirm("“"+item.title+"”\n\nBu sünneti Allah rızası için hayatımda uygulamaya, yaşatmaya ve ömrüm boyunca devam ettirmeye niyet ediyorum.\n\nBu sünneti üzerinize almak istiyor musunuz?",{title:"Sünneti İhya Niyeti",badge:"☾",okLabel:"✓ Evet, Bu Sünneti Alıyorum",cancelLabel:"Şimdilik Değil",onYes:async function(){
+    const claim={ownerKey:actor.key,ownerName:actor.name,ownerRole:actor.role,claimedAt:new Date().toISOString()}; const result=await sunnetCloudClaimAtomic(id,claim);
+    if(!result.ok){await sunnetCloudPull();hilalIslamicAlert(result.reason==="network"?"Bağlantı kurulamadı. Sünnet alınmadı; internet bağlantınızı kontrol edip tekrar deneyin.":"Bu sünnet siz onay verirken başka biri tarafından alınmış.","Bilgilendirme");return;}
+    const fresh=loadSunnetClaims();fresh[id]=claim;saveSunnetClaims(fresh);renderSunnetIhya();try{renderSunnetDailyModal()}catch(e){}hilalIslamicAlert("Seçtiğiniz sünnet ihya niyetiyle üzerinize kaydedildi. Diğer cihazlarda da alınmış olarak görünecektir. Allah kabul etsin ve devamlı kılsın.","Maşâallah");
+  }});
 }
 
-
 function releaseSunnet(id){
-  id=String(id);
-  const claims=loadSunnetClaims();
-  const actor=sunnetActor();
-  const c=claims[id];
-  if(!c || c.ownerKey!==actor.key)return;
-
-  const item=SUNNET_IHYA_DATA.find(x=>String(x.id)===id);
-  if(!item)return;
-
-  hilalIslamicConfirm(
-    "“"+item.title+"”\n\n"+
-    "Bu sünneti artık üzerimde devam ettiremeyeceğim ve ihya sıramdan vazgeçiyorum.\n\n"+
-    "Sünneti tekrar başkasının alabilmesi için boşa çıkarmak istiyor musunuz?",
-    {
-      title:"Sünnetten Vazgeçme",
-      badge:"↩",
-      okLabel:"Evet, Boşa Çıkar",
-      cancelLabel:"Hayır, Devam Edeceğim",
-      onYes:function(){
-        const fresh=loadSunnetClaims();
-        const current=fresh[id];
-        if(!current || current.ownerKey!==actor.key)return;
-
-        delete fresh[id];
-        saveSunnetClaims(fresh);
-
-        try{
-          const daily=loadSunnetDailyState();
-          Object.keys(daily).forEach(day=>{
-            if(Array.isArray(daily[day])){
-              daily[day]=daily[day].map(String).filter(x=>x!==String(id));
-            }
-          });
-          saveSunnetDailyState(daily);
-        }catch(e){}
-
-        const catIndex=SUNNET_IHYA_CATS.findIndex(cat=>Number(id)>=cat.start&&Number(id)<=cat.end);
-        if(catIndex>=0){
-          const o=loadSunnetOpen();
-          o["cat_"+catIndex]=false;
-          o["item_"+id]=false;
-          saveSunnetOpen(o);
-        }
-
-        renderSunnetIhya();
-        hilalIslamicAlert("Sünnet tekrar ihya edilmek üzere diğer kullanıcıların seçimine açıldı.","Bilgilendirme");
-      }
-    }
-  );
+  id=String(id);const claims=loadSunnetClaims();const actor=sunnetActor();const c=claims[id];if(!c||c.ownerKey!==actor.key)return;const item=SUNNET_IHYA_DATA.find(x=>String(x.id)===id);if(!item)return;
+  hilalIslamicConfirm("“"+item.title+"”\n\nBu sünneti artık üzerimde devam ettiremeyeceğim ve ihya sıramdan vazgeçiyorum.\n\nSünneti tekrar başkasının alabilmesi için boşa çıkarmak istiyor musunuz?",{title:"Sünnetten Vazgeçme",badge:"↩",okLabel:"Evet, Boşa Çıkar",cancelLabel:"Hayır, Devam Edeceğim",onYes:async function(){
+    const result=await sunnetCloudReleaseAtomic(id,actor.key);if(!result.ok){await sunnetCloudPull();hilalIslamicAlert(result.reason==="network"?"Bağlantı kurulamadı. İşlem yapılmadı.":"Bu kayıt başka bir cihazda değişmiş. Liste yenilendi.","Bilgilendirme");return;}
+    const fresh=loadSunnetClaims();if(fresh[id]?.ownerKey===actor.key)delete fresh[id];saveSunnetClaims(fresh);try{const daily=loadSunnetDailyState();Object.keys(daily).forEach(day=>{if(Array.isArray(daily[day]))daily[day]=daily[day].map(String).filter(x=>x!==id);});saveSunnetDailyState(daily);}catch(e){}renderSunnetIhya();hilalIslamicAlert("Sünnet tekrar ihya edilmek üzere diğer kullanıcıların seçimine açıldı.","Bilgilendirme");
+  }});
 }
 
 function renderSunnetIhya(){
@@ -30458,6 +30379,10 @@ function renderSunnetIhya(){
 }
 
 
+
+
+/* Tek Sünnet Firebase listener */
+setTimeout(startSunnetCloudSync,0);
 
 /* ===== HİLAL İSLAMİ ALERT + ONAY MOTORU ===== */
 (function(){
