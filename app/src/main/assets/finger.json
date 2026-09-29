@@ -1,0 +1,19 @@
+{
+  "baseline": "HILAL_MASTER_V8_SUNNET_FIREBASE_FINGERPRINT_V1.html",
+  "baseline_sha256": "6b7de6dd4c493e07a6b08cb6c33d32917d094f1659b5cb3eae0cbbb585c0adf6",
+  "candidate": "HILAL_MASTER_V8_DUA_FIREBASE_TEK_KAYNAK_V1.html",
+  "candidate_sha256": "c389cd78d73b3b598fad284e330072d827c871a91872db3ed92fae7fdb842df0",
+  "unlocked": "Dua İstekleri parent↔Firebase repository adapter only",
+  "firebase_root": "/shared/hilal_dua_requests_v2/requests",
+  "preserved": [
+    "embedded Dua UI/engines",
+    "Zikir engine",
+    "Yasin engine",
+    "Hatim engine",
+    "Sünnet engine",
+    "navigation",
+    "all existing MASTER code"
+  ],
+  "sync": "requestId-based PUT + EventSource + 2.5s fallback pull",
+  "status": "TEST ADAYI — kullanıcı onayı olmadan MASTER değildir"
+}

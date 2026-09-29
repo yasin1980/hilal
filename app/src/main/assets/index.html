@@ -30030,13 +30030,12 @@ const SUNNET_IHYA_OPEN_KEY="hilal_sunnet_ihya_open_v1";
 const SUNNET_IHYA_CLOUD_ROOT="shared/hilal_sunnet_ihya_claims_v2";
 let __sunnetCloudStarted=false;
 let __sunnetCloudStream=null;
-let __sunnetCloudPollTimer=0;
 function sunnetCloudUrl(id){const base=String(HILAL_FIREBASE_DATABASE_URL||"").replace(/\/$/,"");return base+"/"+SUNNET_IHYA_CLOUD_ROOT+(id!=null?"/"+encodeURIComponent(String(id)):"")+".json";}
 function sunnetApplyCloudClaims(data){const clean=(data&&typeof data==="object"&&!Array.isArray(data))?data:{};try{localStorage.setItem(SUNNET_IHYA_CLAIMS_KEY,JSON.stringify(clean));}catch(e){}try{renderSunnetIhya()}catch(e){}try{renderSunnetDailyModal()}catch(e){}}
 async function sunnetCloudPull(){if(typeof navigator!=="undefined"&&navigator.onLine===false)return false;try{const r=await fetch(sunnetCloudUrl(),{method:"GET",mode:"cors",credentials:"omit",cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);sunnetApplyCloudClaims((await r.json())||{});return true;}catch(e){console.warn("Sünnet Firebase pull",e);return false;}}
 async function sunnetCloudClaimAtomic(id,claim){const url=sunnetCloudUrl(id);try{const g=await fetch(url,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store",headers:{"X-Firebase-ETag":"true","Accept":"application/json"}});if(!g.ok)throw new Error("HTTP "+g.status);const current=await g.json();if(current!==null)return {ok:false,reason:"taken",current};const etag=g.headers.get("ETag");const headers={"Content-Type":"application/json"};if(etag)headers["if-match"]=etag;const p=await fetch(url,{method:"PUT",mode:"cors",credentials:"omit",cache:"no-store",headers,body:JSON.stringify(claim)});if(p.status===412)return {ok:false,reason:"taken"};if(!p.ok)throw new Error("HTTP "+p.status);return {ok:true};}catch(e){console.warn("Sünnet Firebase claim",e);return {ok:false,reason:"network",error:e};}}
 async function sunnetCloudReleaseAtomic(id,ownerKey){const url=sunnetCloudUrl(id);try{const g=await fetch(url,{method:"GET",mode:"cors",credentials:"omit",cache:"no-store",headers:{"X-Firebase-ETag":"true","Accept":"application/json"}});if(!g.ok)throw new Error("HTTP "+g.status);const current=await g.json();if(!current||current.ownerKey!==ownerKey)return {ok:false,reason:"owner"};const etag=g.headers.get("ETag");const headers={};if(etag)headers["if-match"]=etag;const d=await fetch(url,{method:"DELETE",mode:"cors",credentials:"omit",cache:"no-store",headers});if(d.status===412)return {ok:false,reason:"changed"};if(!d.ok)throw new Error("HTTP "+d.status);return {ok:true};}catch(e){console.warn("Sünnet Firebase release",e);return {ok:false,reason:"network",error:e};}}
-function startSunnetCloudSync(){if(__sunnetCloudStarted)return;__sunnetCloudStarted=true;sunnetCloudPull();try{__sunnetCloudStream=new EventSource(sunnetCloudUrl());const apply=(ev)=>{try{const packet=JSON.parse(ev.data||"{}");if(packet.path==="/")sunnetApplyCloudClaims(packet.data||{});else sunnetCloudPull();}catch(e){sunnetCloudPull();}};__sunnetCloudStream.addEventListener("put",apply);__sunnetCloudStream.addEventListener("patch",apply);}catch(e){console.warn("Sünnet Firebase stream",e);}if(!__sunnetCloudPollTimer)__sunnetCloudPollTimer=setInterval(()=>{if(!document.hidden)sunnetCloudPull();},2000);window.addEventListener("online",sunnetCloudPull);window.addEventListener("focus",sunnetCloudPull);document.addEventListener("visibilitychange",()=>{if(!document.hidden)sunnetCloudPull();});}
+function startSunnetCloudSync(){if(__sunnetCloudStarted)return;__sunnetCloudStarted=true;sunnetCloudPull();try{__sunnetCloudStream=new EventSource(sunnetCloudUrl());const apply=(ev)=>{try{const packet=JSON.parse(ev.data||"{}");if(packet.path==="/")sunnetApplyCloudClaims(packet.data||{});else sunnetCloudPull();}catch(e){sunnetCloudPull();}};__sunnetCloudStream.addEventListener("put",apply);__sunnetCloudStream.addEventListener("patch",apply);}catch(e){console.warn("Sünnet Firebase stream",e);}window.addEventListener("online",sunnetCloudPull);document.addEventListener("visibilitychange",()=>{if(!document.hidden)sunnetCloudPull();});}
 
 const SUNNET_DAILY_KEY="hilal_sunnet_daily_tracking_v1";
 
@@ -44134,7 +44133,7 @@ window.addEventListener('pagehide',stopCamera);
 var ROOT=(window.HILAL_FIREBASE_DATABASE_URL||'https://hilal-2b1a5-default-rtdb.europe-west1.firebasedatabase.app')
   +'/shared/hilal_dua_requests_v2/requests';
 var frame=null, stream=null, pollTimer=0, pulling=false, pushQueue=Promise.resolve();
-var lastOwnedIds=new Set(), cloudReady=false, pendingState=null;
+var lastOwnedIds=new Set();
 
 function f(){ return document.getElementById('hilalDuaV165Frame'); }
 function profile(){
@@ -44168,8 +44167,6 @@ async function delReq(id){
 }
 function queueState(state){
   if(!state||!Array.isArray(state.requests))return;
-  /* İlk Firebase okuması bitmeden cihaz önbelleğini buluta yazma. */
-  if(!cloudReady){pendingState=JSON.parse(JSON.stringify(state));return;}
   var me=profile().id;
   var ownedNow=new Set(state.requests.filter(r=>String(r.ownerId||'')===me).map(r=>String(r.id)));
   var removed=[...lastOwnedIds].filter(id=>!ownedNow.has(id));
@@ -44192,9 +44189,7 @@ async function pull(){
     if(raw&&typeof raw==='object') list=Object.keys(raw).map(k=>raw[k]).filter(x=>x&&typeof x==='object'&&x.id);
     list.sort((a,b)=>new Date(b.publishedAt||b.createdAt||0)-new Date(a.publishedAt||a.createdAt||0));
     send({type:'hilal-dua-v56-import',state:{requests:list}});
-    cloudReady=true;
     document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'online',direction:'pull'}}));
-    if(pendingState){var ps=pendingState;pendingState=null;setTimeout(function(){queueState(ps)},50);}
   }catch(e){
     console.error('[Hilal V56 Dua Firebase pull]',e);
     document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'offline',error:String(e)}}));
@@ -44212,7 +44207,7 @@ function start(){
       stream.onerror=function(){};
     }catch(e){}
   }
-  if(!pollTimer)pollTimer=setInterval(function(){if(!document.hidden)pull();},2000);
+  if(!pollTimer)pollTimer=setInterval(function(){if(!document.hidden)pull();},3000);
 }
 window.addEventListener('message',function(ev){
   var msg=ev.data||{};
@@ -44228,7 +44223,6 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&doc
 })();
 </script>
 
-<!-- HILAL FIREBASE DUAL SYNC V3: MASTER + Dua V59 bridge + Sunnet RTDB, Android WebView polling fallback -->
 </body>
 </html>
 
@@ -44252,7 +44246,67 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&doc
   color:#fff7d6!important;
   border-color:rgba(239,199,94,.92)!important;
   background:linear-gradient(180deg,#0c8b62,#086247)!important;
-  box-shadow:0 0 0 2px rgba(239,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  box-shadow:0 0 0 2px rgba(23
+<script id="hilal-dua-authoritative-repository-v1">
+(function(){
+'use strict';
+if(window.__hilalDuaAuthoritativeRepoV1)return;
+window.__hilalDuaAuthoritativeRepoV1=true;
+var DB=(window.HILAL_FIREBASE_DATABASE_URL||'https://hilal-2b1a5-default-rtdb.europe-west1.firebasedatabase.app').replace(/\/+$/,'');
+var ROOT=DB+'/shared/hilal_dua_requests_v2/requests';
+var frameId='hilalDuaV165Frame', es=null, timer=null, pulling=false;
+function frame(){return document.getElementById(frameId)}
+function send(state){var f=frame();if(f&&f.contentWindow)try{f.contentWindow.postMessage({type:'hilal-dua-v56-import',state:state},'*')}catch(_){}}
+function normalize(raw){
+  if(!raw)return {requests:[]};
+  var list=Array.isArray(raw)?raw:Object.keys(raw).map(function(k){var v=raw[k]||{};if(!v.id)v.id=k;return v});
+  return {requests:list.filter(Boolean)};
+}
+async function pull(){
+  if(pulling||!navigator.onLine)return; pulling=true;
+  try{
+    var r=await fetch(ROOT+'.json?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('GET '+r.status);
+    send(normalize(await r.json()));
+  }catch(e){console.warn('Hilal Dua Firebase pull',e)}
+  finally{pulling=false}
+}
+async function putOne(req){
+  if(!req||!req.id)return;
+  var r=await fetch(ROOT+'/'+encodeURIComponent(req.id)+'.json',{
+    method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)
+  });
+  if(!r.ok)throw new Error('PUT '+r.status);
+}
+async function pushState(state){
+  var arr=state&&Array.isArray(state.requests)?state.requests:[];
+  try{
+    await Promise.all(arr.filter(function(x){return x&&x.id}).map(putOne));
+    setTimeout(pull,120);
+  }catch(e){console.warn('Hilal Dua Firebase push',e)}
+}
+window.addEventListener('message',function(ev){
+  var f=frame(); if(!f||ev.source!==f.contentWindow)return;
+  var d=ev.data||{};
+  if(d.type==='hilal-dua-v56-ready'){pull();return}
+  if(d.type==='hilal-dua-v56-save'){pushState(d.state);return}
+});
+function start(){
+  pull();
+  try{
+    es=new EventSource(ROOT+'.json');
+    var n=function(){setTimeout(pull,80)};
+    es.addEventListener('put',n);es.addEventListener('patch',n);
+  }catch(_){}
+  timer=setInterval(function(){if(!document.hidden)pull()},2500);
+}
+window.addEventListener('online',pull);
+window.addEventListener('focus',pull);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)pull()});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script>
+9,199,94,.13),0 0 15px rgba(30,190,125,.38),inset 0 1px 0 rgba(255,255,255,.18)!important;
 }
 </style>
 <script>
