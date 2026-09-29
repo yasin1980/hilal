@@ -5061,7 +5061,7 @@ V1.13.51 — Kayıtlı günlük içeriklerde 12 ay / 30 gün / 4 içerik türü 
 <!-- Hilâl 01: Takvim adı Takvim & Ezan; namaz vakti uygulama içi bildirim ve özgün kısa uyarı sesi eklendi -->
 <style id="hilalPrayerExactDesign">
 #calendarPage.hilal-prayer-pro-page{position:relative!important;isolation:isolate;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;padding:20px 0 34px!important;background:#062019!important;color:#fff!important}
-#calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_embedded_3_42f99fe6e87f.png");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
+#calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_embedded_3_42f99fe6e87f.jpg");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
 #calendarPage.hilal-prayer-pro-page:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 18%,rgba(243,192,76,.10),transparent 25%),linear-gradient(180deg,rgba(1,17,12,.04),rgba(1,17,12,.22) 52%,rgba(1,17,12,.52));pointer-events:none}
 #calendarPage #ezanReminderCard,#calendarPage #bugununTarihiCard{display:none!important}
 #calendarPage .hilal-hijri-card,#calendarPage .hilal-prayer-head-card,#calendarPage .hilal-prayer-panel{margin-left:20px!important;margin-right:20px!important;border:1.5px solid #d8ad4d!important;background:linear-gradient(145deg,rgba(7,60,42,.90),rgba(6,40,30,.87))!important;backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 12px 30px rgba(0,0,0,.20)!important}
@@ -19241,7 +19241,7 @@ body.hilal-dua-v165-open #mainMenuTrigger{display:flex!important;visibility:visi
 <strong>📚 Hoca Paneli</strong>
 <span class="muted">Yönetim menüsü</span>
 </div>
-<img alt="Hilâl" aria-hidden="true" class="hilal-role-menu-logo" src="hilal_embedded_4_be2b8c88f377.png"/>
+<img alt="Hilâl" aria-hidden="true" class="hilal-role-menu-logo" src="hilal_embedded_4_be2b8c88f377.jpg"/>
 </div>
 <div class="teacher-menu-grid">
 <button data-tpage="todayPage" onclick="teacherGoPage('todayPage',this)">☀️<br/>Bugün</button>
@@ -19266,7 +19266,7 @@ body.hilal-dua-v165-open #mainMenuTrigger{display:flex!important;visibility:visi
 <strong id="guestMenuIdentity">👤 Misafir Menüsü</strong>
 <span class="muted">Uygulama bölümleri</span>
 </div>
-<img alt="Hilâl" aria-hidden="true" class="hilal-role-menu-logo" src="hilal_embedded_4_be2b8c88f377.png"/>
+<img alt="Hilâl" aria-hidden="true" class="hilal-role-menu-logo" src="hilal_embedded_4_be2b8c88f377.jpg"/>
 </div>
 <div class="guest-menu-grid">
 <button data-gpage="todayPage" onclick="guestGoPage('todayPage',this)">☀️<br/>Bugün</button>
@@ -27770,6 +27770,20 @@ let __hilalPrayerLocation={
 };
 
 let __hilalPrayerCache={dateKey:"",locationKey:"",times:null,source:""};
+const HILAL_PRAYER_TIMES_CACHE_KEY="hilal_prayer_times_cache_v2";
+function loadPersistentPrayerCache(){
+  try{
+    const c=JSON.parse(localStorage.getItem(HILAL_PRAYER_TIMES_CACHE_KEY)||"null");
+    if(c&&c.dateKey===dateKeyLocal(new Date())&&c.times){
+      __hilalPrayerCache=c;
+      return c;
+    }
+  }catch(e){}
+  return null;
+}
+function savePersistentPrayerCache(c){
+  try{if(c&&c.times)localStorage.setItem(HILAL_PRAYER_TIMES_CACHE_KEY,JSON.stringify(c))}catch(e){}
+}
 let __hilalPrayerGeoRequestRunning=false;
 
 function loadPrayerLocation(){
@@ -28028,6 +28042,7 @@ async function fetchPrayerTimes(date){
           Isha:cleanPrayerTime(t.Isha)
         }
       };
+      savePersistentPrayerCache(__hilalPrayerCache);
     }
   }catch(e){}
 
@@ -28097,8 +28112,9 @@ function paintPrayerTimes(times,source){
 }
 
 async function renderPrayerTimesForDate(date){
-  const cached=approxPrayerTimes(date);
-  paintPrayerTimes(cached,"Yaklaşık astronomik hesaplama");
+  const persisted=loadPersistentPrayerCache();
+  if(persisted&&persisted.times) paintPrayerTimes(persisted.times,persisted.source||"Son kayıtlı vakitler");
+  else paintPrayerTimes(approxPrayerTimes(date),"Yaklaşık astronomik hesaplama");
   const result=await fetchPrayerTimes(date);
   paintPrayerTimes(result.times,result.source);
 }
@@ -44127,25 +44143,26 @@ window.addEventListener('pagehide',stopCamera);
 <script id="hilal-v56-dua-firebase-canonical-bridge">
 (function(){
 'use strict';
-/* MASTER dış senkron katmanı: Dua iç motoruna dokunmaz.
-   Firebase: /shared/hilal_dua_requests_v2/requests/{requestId}
-   Her cihaz yalnız değişen kayıtları yazar; uzaktaki yeni kayıtları topluca ezmez. */
 var ROOT=(window.HILAL_FIREBASE_DATABASE_URL||'https://hilal-2b1a5-default-rtdb.europe-west1.firebasedatabase.app')+'/shared/hilal_dua_requests_v2/requests';
-var stream=null,pollTimer=0,pulling=false,pushQueue=Promise.resolve(),baseline=new Map(),ready=false;
-function f(){return document.getElementById('hilalDuaV165Frame');}
-function clone(v){return JSON.parse(JSON.stringify(v));}
-function stable(v){try{return JSON.stringify(v);}catch(e){return '';}}
-function profile(){try{var u=(typeof currentUser!=='undefined'&&currentUser)?currentUser:{};var p=(typeof window.currentAccountProfile==='function'?window.currentAccountProfile():{})||{};var role=String(p.role||u.role||'guest');var rawId=String(p.id||p.key||u.id||u.key||'').trim();if(!rawId){var dk='hilal_dua_device_user_v56';rawId=localStorage.getItem(dk)||'';if(!rawId){rawId='device-'+(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));localStorage.setItem(dk,rawId);}}return{id:role+':'+rawId,name:String(p.name||u.name||'Kullanıcı')};}catch(e){return{id:'guest:local-user',name:'Kullanıcı'};}}
-function send(m){var x=f();if(x&&x.contentWindow)try{x.contentWindow.postMessage(m,'*');}catch(e){}}
-function url(id){return ROOT+'/'+encodeURIComponent(String(id))+'.json';}
-async function write(r){var res=await fetch(url(r.id),{method:'PUT',mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});if(!res.ok)throw new Error('Firebase PUT '+res.status);}
-async function remove(id){var res=await fetch(url(id),{method:'DELETE',mode:'cors',credentials:'omit',cache:'no-store'});if(!res.ok)throw new Error('Firebase DELETE '+res.status);}
-function queueState(state){if(!ready||!state||!Array.isArray(state.requests))return;var now=new Map();state.requests.forEach(function(r){if(r&&r.id)now.set(String(r.id),clone(r));});var changed=[];now.forEach(function(r,id){if(baseline.get(id)!==stable(r))changed.push(r);});var removed=[];baseline.forEach(function(_,id){if(!now.has(id))removed.push(id);});if(!changed.length&&!removed.length)return;pushQueue=pushQueue.then(async function(){for(var i=0;i<changed.length;i++)await write(changed[i]);for(var j=0;j<removed.length;j++)await remove(removed[j]);changed.forEach(function(r){baseline.set(String(r.id),stable(r));});removed.forEach(function(id){baseline.delete(id);});}).then(function(){return pull();}).catch(function(e){console.error('[Hilal Dua Firebase]',e);document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'offline',error:String(e)}}));});}
-async function pull(){if(pulling)return;pulling=true;try{var res=await fetch(ROOT+'.json?t='+Date.now(),{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Firebase GET '+res.status);var raw=await res.json(),list=[];if(raw&&typeof raw==='object')list=Object.keys(raw).map(function(k){return raw[k];}).filter(function(x){return x&&typeof x==='object'&&x.id;});list.sort(function(a,b){return new Date(b.publishedAt||b.createdAt||0)-new Date(a.publishedAt||a.createdAt||0);});baseline.clear();list.forEach(function(r){baseline.set(String(r.id),stable(r));});ready=true;send({type:'hilal-dua-v56-import',state:{requests:list}});document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'online',direction:'pull'}}));}catch(e){console.error('[Hilal Dua Firebase pull]',e);document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'offline',error:String(e)}}));}finally{pulling=false;}}
-function start(){var x=f();if(!x)return;var p=profile();send({type:'hilal-dua-v56-user',id:p.id,name:p.name});pull();if(!stream&&typeof EventSource==='function')try{stream=new EventSource(ROOT+'.json');var n=function(){setTimeout(pull,80);};stream.addEventListener('put',n);stream.addEventListener('patch',n);stream.onerror=function(){};}catch(e){}if(!pollTimer)pollTimer=setInterval(function(){if(!document.hidden)pull();},2000);}
-window.addEventListener('message',function(ev){var m=ev.data||{};if(m.type==='hilal-dua-v56-ready'){start();return;}if(m.type==='hilal-dua-v56-save'){queueState(m.state);return;}},false);
-document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('[data-hilal-dua-nav-placeholder="1"]'))setTimeout(start,120);},true);
-window.addEventListener('online',pull);window.addEventListener('focus',function(){if(document.body.classList.contains('hilal-dua-v165-open'))pull();});document.addEventListener('visibilitychange',function(){if(!document.hidden&&document.body.classList.contains('hilal-dua-v165-open'))pull();});
+var stream=null,pollTimer=0,pulling=false,pushQueue=Promise.resolve(),started=false;
+var remoteHash=Object.create(null),lastLocalIds=new Set();
+function f(){return document.getElementById('hilalDuaV165Frame')}
+function profile(){try{var u=(typeof currentUser!=='undefined'&&currentUser)?currentUser:{};var p=(typeof window.currentAccountProfile==='function'?window.currentAccountProfile():{})||{};var role=String(p.role||u.role||'guest');var rawId=String(p.id||p.key||u.id||u.key||'').trim();if(!rawId){var dk='hilal_dua_device_user_v56';rawId=localStorage.getItem(dk)||'';if(!rawId){rawId='device-'+(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));localStorage.setItem(dk,rawId)}}return{id:role+':'+rawId,name:String(p.name||u.name||'Kullanıcı')}}catch(e){return{id:'guest:local-user',name:'Kullanıcı'}}}
+function send(m){var x=f();if(x&&x.contentWindow)try{x.contentWindow.postMessage(m,'*')}catch(e){}}
+function stable(o){try{return JSON.stringify(o,Object.keys(o||{}).sort())}catch(e){try{return JSON.stringify(o)}catch(_){return''}}}
+function hash(o){var x=stable(o),h=2166136261;for(var i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}return String(h>>>0)}
+function url(id){return ROOT+'/'+encodeURIComponent(String(id))+'.json'}
+function http(method,u,body){
+ if(typeof fetch==='function')return fetch(u,{method:method,mode:'cors',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json','Accept':'application/json'},body:body==null?undefined:JSON.stringify(body)}).then(function(r){if(!r.ok)throw new Error('Firebase '+method+' '+r.status);return method==='DELETE'?null:r.json()});
+ return new Promise(function(resolve,reject){try{var x=new XMLHttpRequest();x.open(method,u,true);x.setRequestHeader('Content-Type','application/json');x.onreadystatechange=function(){if(x.readyState!==4)return;if(x.status>=200&&x.status<300){try{resolve(x.responseText?JSON.parse(x.responseText):null)}catch(e){resolve(null)}}else reject(new Error('Firebase '+method+' '+x.status))};x.onerror=function(){reject(new Error('Firebase network'))};x.send(body==null?null:JSON.stringify(body))}catch(e){reject(e)}})
+}
+function markRemote(list){remoteHash=Object.create(null);lastLocalIds=new Set();for(var i=0;i<list.length;i++){var r=list[i];if(r&&r.id){remoteHash[String(r.id)]=hash(r);lastLocalIds.add(String(r.id))}}}
+async function pull(){if(pulling)return;pulling=true;try{var raw=await http('GET',ROOT+'.json?t='+Date.now());var list=[];if(raw&&typeof raw==='object')list=Object.keys(raw).map(function(k){return raw[k]}).filter(function(x){return x&&typeof x==='object'&&x.id});list.sort(function(a,b){return new Date(b.publishedAt||b.createdAt||0)-new Date(a.publishedAt||a.createdAt||0)});markRemote(list);send({type:'hilal-dua-v56-import',state:{requests:list}});document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'online',direction:'pull'}}))}catch(e){console.error('[Hilal Dua Firebase pull]',e);document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'offline',error:String(e)}}))}finally{pulling=false}}
+function queueState(state){if(!state||!Array.isArray(state.requests))return;var snapshot=state.requests.map(function(r){return JSON.parse(JSON.stringify(r))});var nowIds=new Set(snapshot.filter(function(r){return r&&r.id}).map(function(r){return String(r.id)}));var changed=snapshot.filter(function(r){return r&&r.id&&remoteHash[String(r.id)]!==hash(r)});var me=profile().id;var removed=[];lastLocalIds.forEach(function(id){if(!nowIds.has(id))removed.push(id)});pushQueue=pushQueue.then(async function(){for(var i=0;i<changed.length;i++){await http('PUT',url(changed[i].id),changed[i]);remoteHash[String(changed[i].id)]=hash(changed[i])}for(var j=0;j<removed.length;j++){var id=removed[j];/* yalnız kendi oluşturduğu istek uzaktan silinebilir */var owner='';try{var old=await http('GET',url(id));owner=String(old&&old.ownerId||'')}catch(e){}if(owner===me){await http('DELETE',url(id));delete remoteHash[id]}}lastLocalIds=nowIds}).then(function(){return pull()}).catch(function(e){console.error('[Hilal Dua Firebase push]',e);document.dispatchEvent(new CustomEvent('hilal:cloud-status',{detail:{key:'hilal_dua_requests_v2',status:'offline',error:String(e)}}))})}
+function start(){var x=f();if(!x)return;var p=profile();send({type:'hilal-dua-v56-user',id:p.id,name:p.name});pull();if(!started){started=true;if(typeof EventSource==='function')try{stream=new EventSource(ROOT+'.json');var n=function(){setTimeout(pull,80)};stream.addEventListener('put',n);stream.addEventListener('patch',n);stream.onerror=function(){}}catch(e){}pollTimer=setInterval(function(){if(!document.hidden)pull()},2000)}}
+window.addEventListener('message',function(ev){var m=ev.data||{};if(m.type==='hilal-dua-v56-ready'){start();return}if(m.type==='hilal-dua-v56-save'){queueState(m.state);return}},false);
+document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('[data-hilal-dua-nav-placeholder="1"]'))setTimeout(start,120)},true);
+window.addEventListener('online',pull);window.addEventListener('focus',function(){if(document.body.classList.contains('hilal-dua-v165-open'))pull()});document.addEventListener('visibilitychange',function(){if(!document.hidden&&document.body.classList.contains('hilal-dua-v165-open'))pull()});
 })();
 </script>
 
@@ -45824,7 +45841,7 @@ window.addEventListener('focus',run);
 </script>
 <style id="hilal-calendar-restored-leak-css">
 #calendarPage.hilal-prayer-pro-page{position:relative!important;isolation:isolate;overflow-x:hidden!important;overflow-y:auto!important;touch-action:pan-y!important;padding:20px 0 34px!important;background:#062019!important;color:#fff!important}
-#calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_embedded_3_42f99fe6e87f.png");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
+#calendarPage .hilal-prayer-scene{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(180deg,rgba(2,18,13,.14),rgba(2,18,13,.25) 38%,rgba(2,18,13,.72) 100%),url("hilal_embedded_3_42f99fe6e87f.jpg");background-size:cover;background-position:center top;background-repeat:no-repeat;filter:saturate(.92) brightness(.86)}
 #calendarPage.hilal-prayer-pro-page:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 18%,rgba(243,192,76,.10),transparent 25%),linear-gradient(180deg,rgba(1,17,12,.04),rgba(1,17,12,.22) 52%,rgba(1,17,12,.52));pointer-events:none}
 #calendarPage #ezanReminderCard,#calendarPage #bugununTarihiCard{display:none!important}
 #calendarPage .hilal-hijri-card,#calendarPage .hilal-prayer-head-card,#calendarPage .hilal-prayer-panel{margin-left:20px!important;margin-right:20px!important;border:1.5px solid #d8ad4d!important;background:linear-gradient(145deg,rgba(7,60,42,.90),rgba(6,40,30,.87))!important;backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 12px 30px rgba(0,0,0,.20)!important}
