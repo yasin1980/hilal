@@ -1,5 +1,0 @@
-Master taban: /mnt/data/index.html
-Degisen: index.html (startup/sync plumbing only)
-Yeni: sunnet_ihya_4000_data.js (4000 Sünnet veri dizisi; motor degil)
-Yeni: hilal_embedded_* (base64 gorseller dis asset)
-Dua DUA_B64 motoru korunmustur.
