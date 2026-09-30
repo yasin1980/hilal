@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final String PERMISSION_PREFS = "hilal_permission_setup_v2";
 
     private WebView webView;
+    private HilalSyncManager hilalSyncManager;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
     private Sensor accelerometerSensor;
@@ -95,6 +96,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // HTML hatırlatıcı motorunun Android AlarmManager köprüsü.
         webView.addJavascriptInterface(new HilalBridge(), "AndroidHilal");
+        hilalSyncManager = new HilalSyncManager(this, webView);
 
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
@@ -353,6 +355,11 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private class HilalBridge {
+        @JavascriptInterface public void syncSubscribe(String channel) { if (hilalSyncManager != null) hilalSyncManager.subscribe(channel); }
+        @JavascriptInterface public void syncWrite(String channel, String id, String json) { if (hilalSyncManager != null) hilalSyncManager.write(channel, id, json); }
+        @JavascriptInterface public void syncPatch(String channel, String id, String json) { if (hilalSyncManager != null) hilalSyncManager.patch(channel, id, json); }
+        @JavascriptInterface public void syncRemove(String channel, String id) { if (hilalSyncManager != null) hilalSyncManager.remove(channel, id); }
+
         @JavascriptInterface public void performHaptic(int kind) {
             runOnUiThread(() -> {
                 try {
