@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         // V69: Uygulama HTML/CSS/JS APK assetidir; eski WebView disk cache'inden eski paket görünümü alma.
-        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        s.setCacheMode(WebSettings.LOAD_DEFAULT);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
@@ -91,12 +91,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         webView.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
-        // Yalnız HTTP/WebView cache temizlenir; localStorage/oturum/Firebase verisi korunur.
-        try { webView.clearCache(true); } catch (Throwable ignored) {}
 
         // HTML hatırlatıcı motorunun Android AlarmManager köprüsü.
         webView.addJavascriptInterface(new HilalBridge(), "AndroidHilal");
-        hilalSyncManager = new HilalSyncManager(this, webView);
 
         final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
@@ -155,7 +152,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         // Her APK açılışında paket içindeki gerçek index zorlanır; eski WebView cache anahtarı kullanılamaz.
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=69");
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=70");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
@@ -355,10 +352,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private class HilalBridge {
-        @JavascriptInterface public void syncSubscribe(String channel) { if (hilalSyncManager != null) hilalSyncManager.subscribe(channel); }
-        @JavascriptInterface public void syncWrite(String channel, String id, String json) { if (hilalSyncManager != null) hilalSyncManager.write(channel, id, json); }
-        @JavascriptInterface public void syncPatch(String channel, String id, String json) { if (hilalSyncManager != null) hilalSyncManager.patch(channel, id, json); }
-        @JavascriptInterface public void syncRemove(String channel, String id) { if (hilalSyncManager != null) hilalSyncManager.remove(channel, id); }
+        private HilalSyncManager syncManager() {
+            if (hilalSyncManager == null) hilalSyncManager = new HilalSyncManager(MainActivity.this, webView);
+            return hilalSyncManager;
+        }
+        @JavascriptInterface public void syncSubscribe(String channel) { syncManager().subscribe(channel); }
+        @JavascriptInterface public void syncWrite(String channel, String id, String json) { syncManager().write(channel, id, json); }
+        @JavascriptInterface public void syncPatch(String channel, String id, String json) { syncManager().patch(channel, id, json); }
+        @JavascriptInterface public void syncRemove(String channel, String id) { syncManager().remove(channel, id); }
 
         @JavascriptInterface public void performHaptic(int kind) {
             runOnUiThread(() -> {
