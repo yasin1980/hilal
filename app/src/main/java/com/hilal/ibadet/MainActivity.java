@@ -69,6 +69,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         webView = new WebView(this);
         webView.setBackgroundColor(android.graphics.Color.rgb(7,29,24));
+        // Eski Android WebView'larda önceki/boş Takvim karesinin kısa süre görünmesini engelle.
+        webView.setVisibility(android.view.View.INVISIBLE);
         setContentView(webView);
 
         WebSettings s = webView.getSettings();
@@ -102,6 +104,17 @@ public class MainActivity extends Activity implements SensorEventListener {
         webView.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
+            }
+            @Override public void onPageCommitVisible(WebView view, String url) {
+                super.onPageCommitVisible(view, url);
+                view.setVisibility(android.view.View.VISIBLE);
+            }
+            @Override public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // API/WebView farklarında güvenli fallback; içerik tamamen yüklenmeden eski kare gösterilmez.
+                if (view.getVisibility() != android.view.View.VISIBLE) {
+                    view.setVisibility(android.view.View.VISIBLE);
+                }
             }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
@@ -152,7 +165,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         // Her APK açılışında paket içindeki gerçek index zorlanır; eski WebView cache anahtarı kullanılamaz.
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=70");
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=71");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
