@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         // Her APK açılışında paket içindeki gerçek index zorlanır; eski WebView cache anahtarı kullanılamaz.
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=71");
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=72");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
