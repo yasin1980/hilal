@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 
-<html lang="tr" class="hilal-parser-boot">
-<head><style id="hilal-v67-parser-first-paint">
-html.hilal-parser-boot{background:#071d18!important}
-html.hilal-parser-boot body{visibility:hidden!important}
-html.hilal-parser-boot::before{
- content:"☾  Hilâl";position:fixed;inset:0;z-index:2147483647;
- display:flex;align-items:center;justify-content:center;
- background:#071d18;color:#e8c96b;font:800 28px system-ui,sans-serif;
- letter-spacing:.04em
-}
-</style>
+<html lang="tr">
+<head>
 <!--
 HİLÂL İZOLE MİMARİ SÖZLEŞMESİ — KALICI
 1. Hilal Core: yalnız uygulama çekirdeği ve yaşam döngüsü.
@@ -43705,12 +43696,24 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&doc
 })();
 </script>
 
-<script id="hilal-v67-parser-first-paint-release">
+
+<script id="hilal-v68-direct-guest-start">
 (function(){
- function done(){document.documentElement.classList.remove('hilal-parser-boot');}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',done,{once:true});else done();
+'use strict';
+function enter(){
+  try{
+    if(typeof window.directGuestEntry==='function'){
+      window.directGuestEntry();
+      return;
+    }
+  }catch(e){console.error('[Hilal direct guest]',e);}
+  setTimeout(enter,30);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enter,{once:true});
+else enter();
 })();
-</script></body>
+</script>
+</body>
 </html>
 
 
@@ -43746,9 +43749,9 @@ window.hilalEnsureSunnetDatasetV66=function(){
   var t=document.getElementById('hilalSunnetDatasetLazyV66');
   if(!t)return false;
   try{
-    var data=JSON.parse(t.textContent||'[]');
+    var raw=(t.content&&typeof t.content.textContent==='string')?t.content.textContent:t.textContent; var data=JSON.parse(raw||'[]');
     SUNNET_IHYA_DATA=data; window.SUNNET_IHYA_DATA=data; loaded=true;
-    t.textContent='';
+    if(t.content)t.content.textContent='';else t.textContent='';
     return data.length>0;
   }catch(e){console.error('[Hilal Sünnet lazy data]',e);return false;}
 };
