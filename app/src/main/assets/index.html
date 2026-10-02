@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 
 <html lang="tr">
-<head>
+<head><style id="hilal-startup-hard-gate">
+html:not(.hilal-app-ready) #mainApp{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+html:not(.hilal-app-ready) #startScreen{display:flex!important;visibility:visible!important;opacity:1!important}
+</style>
+
 <!--
 HİLÂL İZOLE MİMARİ SÖZLEŞMESİ — KALICI
 1. Hilal Core: yalnız uygulama çekirdeği ve yaşam döngüsü.
@@ -48021,5 +48025,17 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
 
-</body>
+<script id="hilal-startup-single-entry">
+(function(){
+'use strict';
+try{
+  if(typeof window.directGuestEntry==='function'){
+    window.directGuestEntry();
+    try{window.showPage&&window.showPage('calendarPage')}catch(_){}
+  }
+}finally{
+  document.documentElement.classList.add('hilal-app-ready');
+}
+})();
+</script></body>
 </html>
