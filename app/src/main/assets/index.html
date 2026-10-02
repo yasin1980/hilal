@@ -18816,7 +18816,13 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 }
 </style>
 
-</head>
+<style id="hilal-sunnet-alindi-badge-fix">
+#sunnetIhyaPage .sunnet-item.claimed .sunnet-item-state{
+  min-width:72px;text-align:center;font-size:11px;font-weight:900;letter-spacing:.03em;
+  color:#fff4bf;background:rgba(8,112,75,.92);border:1px solid rgba(235,198,91,.65);
+  border-radius:999px;padding:5px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+</style></head>
 <body>
 
 
@@ -19113,7 +19119,17 @@ html, body, #mainApp, #startScreen{
 </div>
 </div>
 </section>
-<section class="main-app hidden" id="mainApp">
+<section class="main-app" id="mainApp"><script id="hilal-v69-instant-guest-state">
+(function(){
+'use strict';
+try{
+  window.selectedRole='guest';
+  var iid=localStorage.getItem('hilal_install_id_v1')||localStorage.getItem('hilal_install_id')||'guest';
+  window.currentUser={name:'Misafir',displayName:'Misafir',role:'guest',key:'guest-public-'+iid};
+  document.body.classList.add('guest-mode');
+}catch(e){}
+})();
+</script>
 <header class="topbar">
 <div style="display:flex;align-items:center;gap:9px">
 <button aria-label="Menü" class="main-role-menu-trigger" id="mainMenuTrigger" onclick="toggleMainRoleMenu(event)">⋮</button>
@@ -30031,7 +30047,7 @@ const SUNNET_IHYA_OPEN_KEY="hilal_sunnet_ihya_open_v1";
 
 /* ===== SÜNNETİ İHYA • FIREBASE ÇOKLU CİHAZ KATILIM MOTORU =====
    MASTER/FINGERPRINT: yalnız bu alt bileşen değiştirilebilir. */
-const SUNNET_IHYA_CLOUD_ROOT="shared/hilal_sunnet_ihya_claims_v2";
+const SUNNET_IHYA_CLOUD_ROOT="hilal/dua_live_v1/requests/__sunnet_ihya_claims_v1";
 let __sunnetCloudStarted=false;
 let __sunnetCloudStream=null;
 function sunnetCloudUrl(id){const base=String(HILAL_FIREBASE_DATABASE_URL||"").replace(/\/$/,"");return base+"/"+SUNNET_IHYA_CLOUD_ROOT+(id!=null?"/"+encodeURIComponent(String(id)):"")+".json";}
@@ -30213,7 +30229,11 @@ function sunnetDailyBackdrop(event){
   }
 }
 
-function enterSunnetIhyaPage(){ try{window.hilalEnsureSunnetDatasetV66?.()}catch(e){} try{renderSunnetIhya()}catch(e){}
+function enterSunnetIhyaPage(){
+  try{window.hilalEnsureSunnetDatasetV66?.()}catch(e){}
+  try{renderSunnetIhya()}catch(e){}
+  try{startSunnetCloudSync()}catch(e){}
+  try{sunnetCloudPull()}catch(e){}
   setTimeout(()=>{try{openSunnetDailyModal(false)}catch(e){}},180);
 }
 
@@ -30271,9 +30291,16 @@ function claimSunnet(id){
   if(claims[id]){hilalIslamicAlert("Bu sünnet ihya edilmek üzere bir kişi tarafından alınmış.","Bilgilendirme");return;}
   const actor=sunnetActor(); const item=SUNNET_IHYA_DATA.find(x=>String(x.id)===id); if(!item)return;
   hilalIslamicConfirm("“"+item.title+"”\n\nBu sünneti Allah rızası için hayatımda uygulamaya, yaşatmaya ve ömrüm boyunca devam ettirmeye niyet ediyorum.\n\nBu sünneti üzerinize almak istiyor musunuz?",{title:"Sünneti İhya Niyeti",badge:"☾",okLabel:"✓ Evet, Bu Sünneti Alıyorum",cancelLabel:"Şimdilik Değil",onYes:async function(){
-    const claim={ownerKey:actor.key,ownerName:actor.name,ownerRole:actor.role,claimedAt:new Date().toISOString()}; const result=await sunnetCloudClaimAtomic(id,claim);
-    if(!result.ok){await sunnetCloudPull();hilalIslamicAlert(result.reason==="network"?"Bağlantı kurulamadı. Sünnet alınmadı; internet bağlantınızı kontrol edip tekrar deneyin.":"Bu sünnet siz onay verirken başka biri tarafından alınmış.","Bilgilendirme");return;}
-    const fresh=loadSunnetClaims();fresh[id]=claim;saveSunnetClaims(fresh);renderSunnetIhya();try{renderSunnetDailyModal()}catch(e){}hilalIslamicAlert("Seçtiğiniz sünnet ihya niyetiyle üzerinize kaydedildi. Diğer cihazlarda da alınmış olarak görünecektir. Allah kabul etsin ve devamlı kılsın.","Maşâallah");
+    const claim={ownerKey:actor.key,ownerName:actor.name,ownerRole:actor.role,claimedAt:new Date().toISOString()};
+    const optimistic=loadSunnetClaims(); optimistic[id]=claim; saveSunnetClaims(optimistic); renderSunnetIhya(); try{renderSunnetDailyModal()}catch(e){}
+    const result=await sunnetCloudClaimAtomic(id,claim);
+    if(!result.ok){
+      const rollback=loadSunnetClaims(); if(rollback[id]?.ownerKey===actor.key)delete rollback[id]; saveSunnetClaims(rollback); renderSunnetIhya();
+      await sunnetCloudPull();
+      hilalIslamicAlert(result.reason==="network"?"Bağlantı kurulamadı. Sünnet alınmadı; internet bağlantınızı kontrol edip tekrar deneyin.":"Bu sünnet siz onay verirken başka biri tarafından alınmış.","Bilgilendirme");return;
+    }
+    await sunnetCloudPull(); renderSunnetIhya(); try{renderSunnetDailyModal()}catch(e){}
+    hilalIslamicAlert("Seçtiğiniz sünnet ihya niyetiyle üzerinize kaydedildi. Diğer cihazlarda da alınmış olarak görünecektir. Allah kabul etsin ve devamlı kılsın.","Maşâallah");
   }});
 }
 
@@ -30353,7 +30380,7 @@ function renderSunnetIhya(){
                 <button type="button" class="sunnet-item-head" onclick="toggleSunnetItem(${x.id})">
                   <span class="sunnet-num">${c?"✓":x.id}</span>
                   <span class="sunnet-item-title">${sunnetEsc(x.title)}</span>
-                  <span class="sunnet-item-state">${c?"●":"›"}</span>
+                  <span class="sunnet-item-state">${c?(mine?"✓ ALINDI":"✓ ALINDI"):"›"}</span>
                 </button>
 
                 <div class="sunnet-item-detail">
@@ -30384,8 +30411,7 @@ function renderSunnetIhya(){
 
 
 
-/* Tek Sünnet Firebase listener */
-setTimeout(startSunnetCloudSync,0);
+/* Tek Sünnet Firebase listener: yalnız Sünnet-i İhya açıldığında başlar. */
 
 /* ===== HİLAL İSLAMİ ALERT + ONAY MOTORU ===== */
 (function(){
@@ -43697,24 +43723,9 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&doc
 </script>
 
 
-<script id="hilal-v68-direct-guest-start">
-(function(){
-'use strict';
-function enter(){
-  try{
-    if(typeof window.directGuestEntry==='function'){
-      window.directGuestEntry();
-      return;
-    }
-  }catch(e){console.error('[Hilal direct guest]',e);}
-  setTimeout(enter,30);
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enter,{once:true});
-else enter();
-})();
-</script>
-</body>
-</html>
+
+
+
 
 
 
@@ -48019,3 +48030,12 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 @media(max-width:380px){#calendarPage .hilal-vakit-card-v91{grid-template-columns:minmax(0,1fr) 104px !important;padding:9px 11px !important;gap:7px !important;min-height:58px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-value{min-width:104px !important;font-size:22px !important}#calendarPage .hilal-vakit-card-v91 .hilal-vakit-cikis-label{font-size:12px !important}}
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
+
+<script id="hilal-v69-guest-engine-sync">
+(function(){
+try{
+ if(typeof window.directGuestEntry==='function') window.directGuestEntry();
+}catch(e){console.error('[Hilal guest sync]',e);}
+})();
+</script></body>
+</html>
