@@ -18818,6 +18818,75 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 
 </head>
 <body>
+<style id="hilal-core-startup-first-frame-fix">
+html.hilal-core-booting body > *:not(#startScreen):not(script):not(style){
+  visibility:hidden!important;
+}
+html.hilal-core-booting #startScreen{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+html.hilal-core-booting #mainApp{
+  display:none!important;
+  visibility:hidden!important;
+}
+</style>
+<script id="hilal-core-startup-first-frame-controller">
+(function(){
+'use strict';
+var root=document.documentElement;
+root.classList.add('hilal-core-booting');
+
+function startVisible(){
+  var start=document.getElementById('startScreen');
+  var main=document.getElementById('mainApp');
+  if(start){
+    start.classList.remove('hidden');
+    start.style.removeProperty('display');
+    start.style.removeProperty('visibility');
+    start.style.removeProperty('opacity');
+  }
+  if(main){
+    main.classList.add('hidden');
+    main.style.setProperty('display','none','important');
+  }
+}
+function releaseForLogin(){
+  var main=document.getElementById('mainApp');
+  if(main) main.style.removeProperty('display');
+  root.classList.remove('hilal-core-booting');
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',startVisible,{once:true});
+}else startVisible();
+
+/* Yalnız gerçek giriş kontrolleri boot kilidini açar.
+   Takvim/Ezan'ın arka plandaki init işlemleri bunu açamaz. */
+document.addEventListener('click',function(e){
+  var t=e.target && e.target.closest ? e.target.closest(
+    '#guestEntryButton,.guest-entry-button,.login-panel-actions button,.login-admin,.login-teacher-compact,[data-login-role],[onclick*="directMainLogin"],[onclick*="openLogin"]'
+  ):null;
+  if(t) releaseForLogin();
+},true);
+
+/* Programatik giriş fonksiyonu çağrılırsa da ilk çağrıda kilidi bırak. */
+function wrap(name){
+  var tries=0, timer=setInterval(function(){
+    tries++;
+    var fn=window[name];
+    if(typeof fn==='function' && !fn.__hilalBootWrapped){
+      var w=function(){ releaseForLogin(); return fn.apply(this,arguments); };
+      w.__hilalBootWrapped=true;
+      try{window[name]=w}catch(_){}
+      clearInterval(timer);
+    } else if(tries>80) clearInterval(timer);
+  },25);
+}
+wrap('directMainLogin');
+})();
+</script>
+
 <div class="app">
 <section class="start-screen" id="startScreen">
 
