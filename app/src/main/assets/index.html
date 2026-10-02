@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="tr">
-<head><style id="hilal-startup-hard-gate">
-html:not(.hilal-app-ready) #mainApp{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
-html:not(.hilal-app-ready) #startScreen{display:flex!important;visibility:visible!important;opacity:1!important}
-</style>
-
-<!--
+<head><!--
 HİLÂL İZOLE MİMARİ SÖZLEŞMESİ — KALICI
 1. Hilal Core: yalnız uygulama çekirdeği ve yaşam döngüsü.
 2. HilalUI: yalnız gerçekten ortak UI (menü, geri, safe-area vb.).
@@ -18833,7 +18828,15 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 
 
 <div class="app">
-<section class="start-screen" id="startScreen">
+<section class="start-screen" id="startScreen"><script id="hilal-native-opening-ready">
+(function(){
+  try{
+    if(window.AndroidHilal && typeof AndroidHilal.openingReady==='function'){
+      AndroidHilal.openingReady();
+    }
+  }catch(e){}
+})();
+</script>
 
 <div class="login-stage">
 <div class="login-stage-bg"></div>
@@ -40242,6 +40245,7 @@ body.hilal-login-active #adminMenu {
 
   function isLoginScreenVisible(){
     var candidates = [
+      '#startScreen',
       '#loginPage',
       '#loginScreen',
       '.login-page',
@@ -48025,17 +48029,5 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
 
-<script id="hilal-startup-single-entry">
-(function(){
-'use strict';
-try{
-  if(typeof window.directGuestEntry==='function'){
-    window.directGuestEntry();
-    try{window.showPage&&window.showPage('calendarPage')}catch(_){}
-  }
-}finally{
-  document.documentElement.classList.add('hilal-app-ready');
-}
-})();
-</script></body>
+</body>
 </html>
