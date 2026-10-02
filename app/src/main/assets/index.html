@@ -18818,74 +18818,73 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 
 </head>
 <body>
-<style id="hilal-core-startup-first-frame-fix">
-html.hilal-core-booting body > *:not(#startScreen):not(script):not(style){
+<style id="hilal-core-startscreen-authority-v2">
+/* İlk yüklemede hiçbir ana sayfa, özellikle Takvim & Ezan, giriş ekranının önüne çıkamaz. */
+html.hilal-prelogin #mainApp,
+html.hilal-prelogin #calendarPage,
+html.hilal-prelogin .page{
+  display:none!important;
   visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
 }
-html.hilal-core-booting #startScreen{
+html.hilal-prelogin #startScreen{
   display:block!important;
   visibility:visible!important;
   opacity:1!important;
-}
-html.hilal-core-booting #mainApp{
-  display:none!important;
-  visibility:hidden!important;
+  pointer-events:auto!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483600!important;
 }
 </style>
-<script id="hilal-core-startup-first-frame-controller">
+<script id="hilal-core-startscreen-authority-v2-js">
 (function(){
 'use strict';
-var root=document.documentElement;
-root.classList.add('hilal-core-booting');
+const H=document.documentElement;
+H.classList.add('hilal-prelogin');
 
-function startVisible(){
-  var start=document.getElementById('startScreen');
-  var main=document.getElementById('mainApp');
-  if(start){
-    start.classList.remove('hidden');
-    start.style.removeProperty('display');
-    start.style.removeProperty('visibility');
-    start.style.removeProperty('opacity');
+function forceStart(){
+  if(!H.classList.contains('hilal-prelogin')) return;
+  const st=document.getElementById('startScreen');
+  const app=document.getElementById('mainApp');
+  if(st){
+    st.classList.remove('hidden');
+    st.hidden=false;
+    st.removeAttribute('hidden');
   }
-  if(main){
-    main.classList.add('hidden');
-    main.style.setProperty('display','none','important');
+  if(app) app.classList.add('hidden');
+}
+function release(){
+  if(!H.classList.contains('hilal-prelogin')) return;
+  H.classList.remove('hilal-prelogin');
+  const app=document.getElementById('mainApp');
+  if(app){
+    app.classList.remove('hidden');
+    app.style.removeProperty('display');
+    app.style.removeProperty('visibility');
+    app.style.removeProperty('opacity');
   }
 }
-function releaseForLogin(){
-  var main=document.getElementById('mainApp');
-  if(main) main.style.removeProperty('display');
-  root.classList.remove('hilal-core-booting');
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',startVisible,{once:true});
-}else startVisible();
+window.__hilalReleasePrelogin=release;
 
-/* Yalnız gerçek giriş kontrolleri boot kilidini açar.
-   Takvim/Ezan'ın arka plandaki init işlemleri bunu açamaz. */
-document.addEventListener('click',function(e){
-  var t=e.target && e.target.closest ? e.target.closest(
-    '#guestEntryButton,.guest-entry-button,.login-panel-actions button,.login-admin,.login-teacher-compact,[data-login-role],[onclick*="directMainLogin"],[onclick*="openLogin"]'
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',forceStart,{once:true});
+else forceStart();
+
+/* Sadece gerçek giriş niyeti kilidi açar. Menü veya Takvim init'i açamaz. */
+document.addEventListener('click',function(ev){
+  const el=ev.target && ev.target.closest ? ev.target.closest(
+    '.guest-entry-button,#guestEntryButton,[data-login-role],.login-panel-actions button,.login-admin,.login-teacher-compact'
   ):null;
-  if(t) releaseForLogin();
+  if(el) release();
 },true);
 
-/* Programatik giriş fonksiyonu çağrılırsa da ilk çağrıda kilidi bırak. */
-function wrap(name){
-  var tries=0, timer=setInterval(function(){
-    tries++;
-    var fn=window[name];
-    if(typeof fn==='function' && !fn.__hilalBootWrapped){
-      var w=function(){ releaseForLogin(); return fn.apply(this,arguments); };
-      w.__hilalBootWrapped=true;
-      try{window[name]=w}catch(_){}
-      clearInterval(timer);
-    } else if(tries>80) clearInterval(timer);
-  },25);
-}
-wrap('directMainLogin');
+/* Eski init kodları startScreen'i saklamaya çalışsa bile giriş öncesi geri getir. */
+window.addEventListener('pageshow',forceStart);
 })();
 </script>
+
+
 
 <div class="app">
 <section class="start-screen" id="startScreen">
