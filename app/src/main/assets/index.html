@@ -18829,7 +18829,7 @@ body #startScreen article.login-panel.guest.guest-simple-panel{
 
 
 <div class="app">
-<section class="start-screen hidden" id="startScreen">
+<section class="start-screen" id="startScreen">
 
 <div class="login-stage">
 <div class="login-stage-bg"></div>
@@ -19119,17 +19119,7 @@ html, body, #mainApp, #startScreen{
 </div>
 </div>
 </section>
-<section class="main-app" id="mainApp"><script id="hilal-v69-instant-guest-state">
-(function(){
-'use strict';
-try{
-  window.selectedRole='guest';
-  var iid=localStorage.getItem('hilal_install_id_v1')||localStorage.getItem('hilal_install_id')||'guest';
-  window.currentUser={name:'Misafir',displayName:'Misafir',role:'guest',key:'guest-public-'+iid};
-  document.body.classList.add('guest-mode');
-}catch(e){}
-})();
-</script>
+<section class="main-app hidden" id="mainApp">
 <header class="topbar">
 <div style="display:flex;align-items:center;gap:9px">
 <button aria-label="Menü" class="main-role-menu-trigger" id="mainMenuTrigger" onclick="toggleMainRoleMenu(event)">⋮</button>
@@ -19400,7 +19390,7 @@ body.hilal-dua-v165-open #mainMenuTrigger{display:flex!important;visibility:visi
 <span>4.000 sünnetlik Cüz 1 içeriği tamamlandı.</span>
 </section>
 </main>
-<main class="page hilal-prayer-pro-page hilal-top-menu-gap-v1 active" id="calendarPage">
+<main class="page hilal-prayer-pro-page hilal-top-menu-gap-v1" id="calendarPage">
 <div aria-hidden="true" class="hilal-prayer-scene"></div>
 <div class="hilal-calendar-bismillah-v120" lang="ar" dir="rtl" aria-label="Bismillahirrahmanirrahim">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
 <section class="hilal-hijri-card hilal-visual-hijri-v91">
@@ -48031,11 +48021,5 @@ body:has(#calendarPage.active) #mainMenuTrigger.main-role-menu-trigger{
 #calendarPage .hilal-vakit-card-v91{display:none !important;}
 </style>
 
-<script id="hilal-v69-guest-engine-sync">
-(function(){
-try{
- if(typeof window.directGuestEntry==='function') window.directGuestEntry();
-}catch(e){console.error('[Hilal guest sync]',e);}
-})();
-</script></body>
+</body>
 </html>
