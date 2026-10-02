@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                view.setVisibility(android.view.View.VISIBLE);
+                // Yarım parse edilmiş iç sayfa artık burada gösterilmez.
             }
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         // Secure appassets HTTPS origin: required for reliable getUserMedia in WebView.
         // Her APK açılışında paket içindeki gerçek index zorlanır; eski WebView cache anahtarı kullanılamaz.
-        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=72");
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html?v=74");
 
         // STABLE V2: açılışta izin ekranı zorlanmaz. İzinler ilgili özellik kullanıldığında istenir.
     }
@@ -373,6 +373,12 @@ public class MainActivity extends Activity implements SensorEventListener {
         @JavascriptInterface public void syncWrite(String channel, String id, String json) { syncManager().write(channel, id, json); }
         @JavascriptInterface public void syncPatch(String channel, String id, String json) { syncManager().patch(channel, id, json); }
         @JavascriptInterface public void syncRemove(String channel, String id) { syncManager().remove(channel, id); }
+
+        @JavascriptInterface public void openingReady() {
+            runOnUiThread(() -> {
+                if (webView != null) webView.setVisibility(android.view.View.VISIBLE);
+            });
+        }
 
         @JavascriptInterface public void performHaptic(int kind) {
             runOnUiThread(() -> {
