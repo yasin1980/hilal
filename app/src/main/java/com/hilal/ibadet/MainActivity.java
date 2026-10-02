@@ -88,7 +88,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            s.setOffscreenPreRaster(false);
+            s.setOffscreenPreRaster(true);
         }
         webView.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
         webView.setVerticalScrollBarEnabled(false);
@@ -107,12 +107,13 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             @Override public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                // Yarım parse edilmiş iç sayfa artık burada gösterilmez.
+                // Erken aşamada WebView gösterilmez.
             }
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                // API/WebView farklarında güvenli fallback; içerik tamamen yüklenmeden eski kare gösterilmez.
-                if (view.getVisibility() != android.view.View.VISIBLE) {
+                // API 22 ve altı fallback; API 23+ openingReady() kullanır.
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
+                        view.getVisibility() != android.view.View.VISIBLE) {
                     view.setVisibility(android.view.View.VISIBLE);
                 }
             }
@@ -373,10 +374,18 @@ public class MainActivity extends Activity implements SensorEventListener {
         @JavascriptInterface public void syncWrite(String channel, String id, String json) { syncManager().write(channel, id, json); }
         @JavascriptInterface public void syncPatch(String channel, String id, String json) { syncManager().patch(channel, id, json); }
         @JavascriptInterface public void syncRemove(String channel, String id) { syncManager().remove(channel, id); }
-
         @JavascriptInterface public void openingReady() {
             runOnUiThread(() -> {
-                if (webView != null) webView.setVisibility(android.view.View.VISIBLE);
+                if (webView == null) return;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    webView.postVisualStateCallback(7401L, new WebView.VisualStateCallback() {
+                        @Override public void onComplete(long requestId) {
+                            webView.setVisibility(android.view.View.VISIBLE);
+                        }
+                    });
+                } else {
+                    webView.setVisibility(android.view.View.VISIBLE);
+                }
             });
         }
 
